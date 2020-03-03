@@ -3,97 +3,83 @@
 namespace App\Models;
 
 use \Exception;
+use InvalidArgumentException;
 
 class Produto
 {
-    private static $conn;
-    private $data;
+    private $descricao;
+    private $estoque;
+    private $preco;
 
-    public function __get($pro)
+
+    public function setDescricao(string $descricao):bool
     {
-        if(in_array($prop))
+        if(!((is_string($descricao)) && (strlen($descricao) >= 4)))
         {
-            return $this->data[$prop];
+            throw new Exception("Descricao inválida<br/>\n");
         }
 
-        throw new Exception("Propriedade inválida\n");
+        $this->descricao = $descricao;
+
+        return true;
     }
 
 
-    public function __set($pro, $val)
+
+    public function getDescricao():string
     {
-        if((isset($prop)) && (isset($val)))
+        if(empty($this->descricao))
         {
-            if(!empty($val))
-            {
-                $this->data[$prop] = $val;
-
-                return true;
-            }
-
-
-            return false;
-        }
-        return false;
-    }
-
-    public static function setConnetion(PDO $con)
-    {
-        self::$con = $con;
-    }
-
-
-    public static function find($id)
-    {
-        $sql = "select * from produto where id= '$id' ";
-        
-        print $sql.'<br/>\n';
-
-        $result = self::$con->query($sql);
-        return $result->fetchObject(__CLASS__);
-    }
-
-
-
-    public static function all($filter = '')
-    {
-        $sql = "SELECT * FROM produtos";
-
-        if($filter)
-        {
-            $sql .= "where $filter";
+            throw new InvalidArgumentException("Descrição não definida<br/>");
         }
 
-        print $sql.'<br/>';
-        
-        $restult = self::$con->query($sql);
-
-        return $restult->fetchAll(PDO::FETCH_CLASS, __CLASS__);
-
+        return $this->descricao;
     }
 
 
-    public function delete()
+    public function setEstoque(int $estoque):bool
     {
-        $sql = "DELET FROM produtos where id = '{$this->id}'";
-        print $sql;;
+        if(!(is_integer($estoque) && ($estoque > 0)))
+        {
+            throw new Exception("Estoque inválido<br/>\n");
+        }
 
-        return slef::$conn->query($sql);
-
-   
+        $this->estoque = $estoque;
+        return true;
     }
 
+    public function getEstoque():int
+    {
+        if(empty($this->estoque))
+        {
+            throw new InvalidArgumentException("Estoque indefinido<br/>");
+        }
+
+        return $this->estoque;
+    }   
 
 
+    public function setPreco(float $preco):bool
+    {
+        if(is_float($preco) && ($preco > 0))
+        {
+            $this->preco = $preco;
+            return true;
+        }
 
+        throw new Exception("Preço inválido<br/>\n");
 
+    }
 
+    public function getPreco():float
+    {
+        if(empty($this->preco))
+        {
+            throw new Exception("Preço indefinido<br/>\n");
+        }
 
-
-
-
-
-
+        return $this->preco;
+    }
 
 
 }
