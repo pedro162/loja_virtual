@@ -1,0 +1,22 @@
+<li>Produto: <?php echo $this->view->produto_descricao; ?></li>
+<li>Fabricante: <?php echo $this->view->produto; ?></li>
+<li>Caracteristicas:
+    <ul>
+        <?php 
+            for($i = 0; !($i == count($this->view->caracteristicas)); $i++)
+            {
+                echo "<li>{$this->view->caracteristicas[$i]->getNome()} = {$this->view->caracteristicas[$i]->getValor()}</li>";
+            }
+        ?>
+
+    </ul>
+
+    <li>Cesta:
+        <ul>
+            <?php 
+
+
+            ?>
+        </ul>
+    </li>
+</li>

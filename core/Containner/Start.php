@@ -21,8 +21,6 @@ class Start
 
         $obj = new $clas();
         
-        $obj->veiw = new \stdClass();
-
         if($param != null)
         {
             $obj->$action($param);

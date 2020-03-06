@@ -2,10 +2,11 @@
 
 namespace App\Controllers;
 
+use Exception;
+
 class BaseController
 {
     protected $view;
-    protected $action;
 
     public function __construct()
     {
@@ -13,26 +14,33 @@ class BaseController
     }
 
 
-    public function render($action, $layoute = true)
+    public function render($view_path, $layoute = true)
     {
-        $this->action = $action;
-        if(($layoute == true) && (file_exists('../app/Views/layout.phtml')))
+        if(($layoute == true) && (file_exists('../app/Views/layout/layout.phtml')))
         {
-            include_once '../app/Views/layout.phtml';
+            require_once  '../app/Views/layout/layout.phtml';
+            
         }
         else
         {
-            $this->content();
+            $this->content($view_path);
         }
         
     }
 
 
-    public function content()
+    public function content($path_view)
     {
-        $atual = get_class($this);
-        $singleClassName = strtolower(str_replace("App\\Controllers\\", "", $atual));
-        include_once '../app/Views/'.$singleClassName.'/'.$this->action.'.phtml';
+        $view = '../app/Views/'.$path_view.'.phtml';
+        
+        if(file_exists($view))
+        {
+            require_once $view;
+        }
+        else
+        {
+            throw new Exception("View indefinida<br/>\n");
+        }
     }
 
 }

@@ -1,22 +1,28 @@
 <?php
 
-    $routes = __DIR__.'/routes.php';
-    if(file_exists($routes))
-    {   
-        $arrayRoutes = require_once $routes;
+    try{
 
-        if(is_array($arrayRoutes))
-        {
-            $routeObject = new \Core\Route\Route($arrayRoutes);
+        $routes = __DIR__.'/routes.php';
+        if(file_exists($routes))
+        {   
+            $arrayRoutes = require_once $routes;
+
+            if(is_array($arrayRoutes))
+            {
+                $routeObject = new \Core\Route\Route($arrayRoutes);
+
+            }
+            else
+            {
+                die("Erro: defina o array de rotas!");
+            }
 
         }
         else
         {
-            die("Erro: defina o array de rotas!");
+            die("File not fund routes.php");
         }
 
-    }
-    else
-    {
-        die("File not fund routes.php");
+    }catch(\Exception $e){
+        echo"Erro: ". $e->getMessage().'<br/>'.PHP_EOL;
     }

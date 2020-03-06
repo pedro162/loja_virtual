@@ -10,6 +10,15 @@ class Produto
     private $descricao;
     private $estoque;
     private $preco;
+    private $fabricante;
+    private $caracteristicas;
+
+    public function __construct(string $nome, int $estoque, float $preco)
+    {
+        $this->setPreco($preco);
+        $this->setEstoque($estoque);
+        $this->setDescricao($nome);
+    }
 
 
     public function setDescricao(string $descricao):bool
@@ -79,6 +88,40 @@ class Produto
         }
 
         return $this->preco;
+    }
+
+
+    public function setFabricante(Fabricante $newFabricante)
+    {
+        $this->fabricante = $newFabricante;
+    }
+
+    public function getFabricante():Fabricante
+    {
+        if(empty($this->fabricante))
+        {
+            throw new InvalidArgumentException("Fabricante indefinido<br/>\n");
+        }
+
+        return $this->fabricante;
+    }
+
+    public function addCaracteristica(String $nome, String $valor):bool
+    {
+        $this->caracteristicas[] = new Caracteristica($nome, $valor);
+        
+        return true;
+    }
+
+    public function getCaracteristicas():array
+    {
+        if(empty($this->caracteristicas))
+        {
+            throw new Exception("Caracteristicas indefinidas<br/>\n");
+        }
+
+        return $this->caracteristicas;
+
     }
 
 
