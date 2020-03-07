@@ -31,6 +31,8 @@ body{
 nav ul li a{
     color: #fff;
 }
+
+
 .login ul li a:hover{
     color: #fff;
     border: 2px solid #fff;
@@ -190,4 +192,16 @@ nav ul li a{
     background: #2F4F4F;
     width: 70%;
     margin-bottom: 50px;
+}
+
+#login a{
+    color: #2F4F4F;
+    margin-left: 25px;
+    text-align: right;
+}
+
+#login .rodape{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
