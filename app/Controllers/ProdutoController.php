@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 use App\Controllers\BaseController;
-use App\Models\Cesta;
 use App\Models\Produto;
 use App\Models\Fabricante;
 
@@ -10,7 +9,6 @@ class ProdutoController extends BaseController
 {
     public function show($request)
     {
-        $cesta = new Cesta();
 
         $fabricante = new Fabricante("pedro", "rua sao sebastiao", 141413131);
 
@@ -25,12 +23,6 @@ class ProdutoController extends BaseController
         $othe_product->addCaracteristica('cor', 'preto');
         $othe_product->addCaracteristica('peoso', '2.4');
         $othe_product->addCaracteristica('grao', 'médio');
-
-        $cesta->addItem($produto);
-        $cesta->addItem($othe_product);
-
-        
-        $this->view->cesta = $cesta;
 
         $this->view->produto = $produto->getFabricante()->getNome();
         $this->view->produto_descricao = $produto->getDescricao();

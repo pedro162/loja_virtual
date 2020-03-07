@@ -2,6 +2,15 @@
     border: none;
     box-sizing: border-box;
 }
+
+body{
+    background-color: #ccc;
+}
+
+.corpo{
+    
+    height: 100%;
+}
 /*Cor de fundo da navbar*/
 .navbar-dad{
     display: flex;
@@ -87,6 +96,8 @@ nav ul li a{
     color: #fff;
 }
 
+
+
 @media(max-width:500px){
     .navbar-dad{
         
@@ -145,4 +156,38 @@ nav ul li a{
         
     }
 
+}
+
+
+/*Estilo formulario login*/
+
+#login{
+    width: 50%;
+    margin: 100px auto auto auto;
+    padding: 50px 50px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 3px 3px 6px #000;
+
+}
+
+#login button{
+    background-color: #2F4F4F;
+}
+
+.bem-vindo{
+    margin: auto;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #2F4F4F;
+    margin-top: 20px;
+}
+
+#login hr{
+    border: none;
+    height: 2px;
+    background: #2F4F4F;
+    width: 70%;
+    margin-bottom: 50px;
 }

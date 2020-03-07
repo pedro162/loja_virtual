@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/bootstrap-3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../styles/more_styles/menu_header_site/style_menu.css">
+    <link rel="stylesheet" href="../styles/more_styles/menu_header_site/loja_styles.css">
     <script src="../styles/bootstrap-3/js/bootstrap.min.js"></script>
     <script src="../jquery/jquery.js"></script>
-    <title>Document</title>
+    <script src="../js/valida_login.js"></script>
+    <title>Minha-Loja.com</title>
 </head>
 <body>
     <nav class="navbar">
@@ -27,7 +28,8 @@
                 </div>
                 <div class="login">
                     <ul class="nav navbar-nav">
-                        <li><a href="#" class="link">Seu login <span class="caret"></span></a></li>
+                        <li><a href="#" class="btn"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></span></a></li>
+                        <li><a href="/home/login" class="link">Seu login <span class="caret"></span></a></li>
                         <li><a href="#" class="link">Devoluções <span class="caret"></span></a></li>
                     </ul>
                 </div>
@@ -48,8 +50,8 @@
             </div>
         </div>
     </nav>
-    <div class="container">
-        <p>conteudo:</p>
+    <div class="container corpo">
+
      <?php echo $this->content($view_path); ?>
 
     </div>

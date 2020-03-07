@@ -8,6 +8,11 @@ class HomeController extends BaseController
 {
     public function index()
     {
-        echo "Instanciei meu controller e chamei meu metodo<br/>\n";
+        $this->render('home/home', true);
+    }
+
+    public function login()
+    {
+        $this->render('login/login', true);
     }
 }

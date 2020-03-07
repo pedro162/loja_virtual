@@ -5,7 +5,7 @@ namespace App\Models;
 use \Exception;
 use InvalidArgumentException;
 
-class Produto
+class Produto extends BaseModel
 {
     private $descricao;
     private $estoque;
@@ -15,6 +15,8 @@ class Produto
 
     public function __construct(string $nome, int $estoque, float $preco)
     {
+        var_dump(BaseModel::open());
+
         $this->setPreco($preco);
         $this->setEstoque($estoque);
         $this->setDescricao($nome);
