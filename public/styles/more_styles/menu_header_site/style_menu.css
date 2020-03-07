@@ -87,4 +87,62 @@ nav ul li a{
     color: #fff;
 }
 
+@media(max-width:500px){
+    .navbar-dad{
+        
+    }
 
+    #logo{
+        
+    }
+    /*Muda cor da lista header*/
+
+    nav ul li a{
+        
+    }
+    .login ul li a:hover{
+        
+    }
+
+
+    /*alinha os elementos da div do menu header*/
+    .alinha-header{
+        
+        
+    }
+
+    .navbar-search, .login{
+        
+    }
+    .navbar-search{
+        
+    }
+
+    .div-search{
+        
+    }
+
+    #input-search{
+        
+    }
+
+    #form-header{
+        
+    }
+
+
+    /*submenu*/
+    .submenu{
+        
+    }
+
+    /*submenu esquerdo*/
+    .submenu_esquerdo ul li a{
+        
+    }
+
+    .submenu_esquerdo ul li a:hover{
+        
+    }
+
+}
