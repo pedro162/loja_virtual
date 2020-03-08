@@ -15,4 +15,9 @@ class HomeController extends BaseController
     {
         $this->render('login/login', true);
     }
+
+    public function cadastro()
+    {
+        $this->render('login/cadastro', true);
+    }
 }

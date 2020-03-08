@@ -16,3 +16,18 @@
     });
   }, false);
 })();
+
+
+$(document).ready(function(){
+  $('.cnpj').hide();
+  $('#cadastro #id_cpf').on('click', function(){
+    $('.cnpj').hide();
+    $('.cpf').show();
+  })
+
+  $('#cadastro #id_cnpj').on('click', function(){
+    $('.cpf').hide();
+    $('.cnpj').show();
+  })
+
+})

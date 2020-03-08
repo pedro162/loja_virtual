@@ -163,7 +163,7 @@ nav ul li a{
 
 /*Estilo formulario login*/
 
-#login{
+#login, #cadastro{
     width: 50%;
     margin: 100px auto auto auto;
     padding: 50px 50px;
@@ -204,4 +204,14 @@ nav ul li a{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+/*---------- cadastro cliente -------*/
+
+label[for='id_cnpj']{
+    margin-left: 10px;
+}
+
+#cadastro .opcao_pessoa{
+    margin-bottom: 50px;
 }
