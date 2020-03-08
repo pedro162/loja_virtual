@@ -215,3 +215,10 @@ label[for='id_cnpj']{
 #cadastro .opcao_pessoa{
     margin-bottom: 50px;
 }
+#cadastro .linha{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
