@@ -6,7 +6,6 @@ $(document).ready(function(){
             type: 'POST',
             dataType: 'json',
             success: function(retorno){
-                console.log('oi')
                 console.log(retorno)
                 
                 //PagSeguroDirectPayment.setSessionId(retorno.id);

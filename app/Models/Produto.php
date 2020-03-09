@@ -15,8 +15,6 @@ class Produto extends BaseModel
 
     public function __construct(string $nome, int $estoque, float $preco)
     {
-        var_dump(BaseModel::open());
-
         $this->setPreco($preco);
         $this->setEstoque($estoque);
         $this->setDescricao($nome);
