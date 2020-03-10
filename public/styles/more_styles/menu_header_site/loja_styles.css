@@ -172,6 +172,12 @@ nav ul li a{
     box-shadow: 3px 3px 6px #000;
 
 }
+#cadastro{
+    width: auto;
+}
+#cadastro legend{
+    text-align: center;
+}
 
 #login button{
     background-color: #2F4F4F;

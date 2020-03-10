@@ -12,20 +12,20 @@ class Sessoes
 
     }
 
-    public  static function encerrarSessao($item)
+    public  static function removeItemSessao($item)
     {
         session_start();
         unset($_SESSION[$item]);
     }
 
-    public static function addItemSessao($item)
+    public static function addItemSessao($identificador ,$item)
     {
-        if(empty($item))
+        if((empty($item)) || (empty($identificador)))
         {
             throw new Exception("Item inválido<br/>\n");
         }
 
-        $_SESSION[] = $item;
+        $_SESSION[$identificador] = $item;
     }
 
 }
