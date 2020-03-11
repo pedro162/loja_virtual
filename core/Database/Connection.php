@@ -11,14 +11,14 @@ final class Connection
 
     public static function open($file)
     {
-        if(!file_exists(__DIR__.'/../../'.$file.'.ini'))
+        if(!file_exists(__DIR__.'/../../'.$file.'.php'))
         {
             throw new Exception("Arquivo {$file}.ini não encontrado<br/>\n");
             
         }
         
-        $file_connection = parse_ini_file(__DIR__."/../../{$file}.ini");
-
+        $file_connection = require_once(__DIR__."/../../{$file}.php");
+        
 
         $user = isset($file_connection['user'])     ? $file_connection['user']      : null;
         $pass = isset($file_connection['password']) ? $file_connection['password']  : null;
@@ -43,6 +43,11 @@ final class Connection
                 throw new Exception("Driver inválido<br/>\n");
             break;
 
+        }
+
+        if($conn == null)
+        {
+            throw new Exception("Falha na Conexao <br/>\n");
         }
 
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

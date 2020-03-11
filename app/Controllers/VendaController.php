@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Cliente;
 use App\Models\Produto;
 
 class VendaController
@@ -15,7 +16,7 @@ class VendaController
 
     public function iniciarCompra()
     {
-        # code...
+        $cliente = new Cliente
     }
 
     public function cancelarCompra()

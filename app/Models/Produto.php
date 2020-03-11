@@ -13,6 +13,8 @@ class Produto extends BaseModel
     private $fabricante;
     private $caracteristicas;
 
+    private $table = 'Produto';
+
     public function __construct(string $nome, int $estoque, float $preco)
     {
         $this->setPreco($preco);
