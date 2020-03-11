@@ -17,10 +17,9 @@ abstract class BaseModel
         {
             self::$conn = Connection::open('connection');
         }
-        return self::$conn;
     }
 
-    protected function select(array $elementos, String $filtro = '', $ordem = 'asc'):string
+    public function select(array $elementos, String $filtro = '', $ordem = 'asc'):string
     {
         # code...
         //select ite[0], item[1]

@@ -9,6 +9,8 @@ class Cliente extends BaseModel
 
     public function __construct()
     {
-       var_dump(self::open());
+       self::open();
     }
+
+    
 }
