@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\Fabricante;
 
 class HomeController extends BaseController
 {

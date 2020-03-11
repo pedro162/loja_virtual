@@ -18,7 +18,7 @@ class Sessoes
         unset($_SESSION[$item]);
     }
 
-    public static function addItemSessao($identificador ,$item)
+    public static function addItemSessao($identificador, $item)
     {
         if((empty($item)) || (empty($identificador)))
         {

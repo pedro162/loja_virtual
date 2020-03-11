@@ -4,17 +4,12 @@ namespace App\Models;
 
 use Exception;
 
-class Fabricante
+class Fabricante extends Pessoa
 {
-    private $nome;
-    private $endereco;
-    private $documento;
-
-    public function __construct(string $nome, string $endereco, int $document)
+    
+    public function __construct()
     {
-        $this->nome = $nome;
-        $this->endereco = $endereco;
-        $this->documento = $document;
+        
     }
 
 
