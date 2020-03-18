@@ -5,7 +5,7 @@ use \App\Models\BaseModel;
 
 class Cliente extends BaseModel
 {
-    private $table = 'Cliente';
+    protected $table = 'Cliente';
 
     public function __construct()
     {

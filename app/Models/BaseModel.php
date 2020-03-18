@@ -19,10 +19,9 @@ abstract class BaseModel
         }
     }
 
-    public function select(array $elementos, String $filtro = '', $ordem = 'asc'):string
+    //ao informar o filtro, o operador tambem deve ser invormado
+    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc'):string //$filtro array assiciativo ['key'=>'value']
     {
-        # code...
-        //select ite[0], item[1]
         $sql = "SELECT ";
         foreach($this->satinizar($elementos) as $key => $value)
         {
@@ -30,8 +29,29 @@ abstract class BaseModel
         }
 
         $sql = substr($sql, 0, -2);
+
+        if(count($filtro) > 0)
+        {
+            $sql .= " where ";
+
+            $result = $this->satinizar($filtro);
+            foreach($result as $key => $value)
+            {
+                $sql.= $key.' '.$operador.' '.$value.' AND ';
+            }
+            $sql = substr($sql, 0, -4);
+            
+        }
+
+        $sql .= ' FROM '.$this->table.' ORDER BY id'.$this->table.' '.$ordem;
         return $sql;
 
+    }
+
+
+    protected function delete(Int $id, Int $limit = 1)
+    {
+        $sql = 'DELETE FROM '.$this->table.' where
     }
 
 

@@ -37,13 +37,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Logradouro` (
   `cep` VARCHAR(10) NULL,
   `endereco` VARCHAR(200) NULL,
   `complemento` VARCHAR(45) NULL,
-  `Fornecedor_idFornecedor` INT NOT NULL,
-  PRIMARY KEY (`idLogradouro`, `Fornecedor_idFornecedor`),
-  CONSTRAINT `fk_Logradouro_Fornecedor1`
-    FOREIGN KEY (`Fornecedor_idFornecedor`)
-    REFERENCES `mydb`.`Fornecedor` (`idFornecedor`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `Fornecedor_idFornecedor` INT NOT NULL)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -56,13 +50,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Cliente` (
   `nomeCliente` VARCHAR(100) NULL,
   `cpf` VARCHAR(45) NULL,
   `dtNascimento` DATE NULL,
-  `Logradouro_idLogradouro` INT NOT NULL,
-  PRIMARY KEY (`idCliente`, `Logradouro_idLogradouro`),
-  CONSTRAINT `fk_Cliente_Logradouro1`
-    FOREIGN KEY (`Logradouro_idLogradouro`)
-    REFERENCES `mydb`.`Logradouro` (`idLogradouro`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `Logradouro_idLogradouro` INT NOT NULL)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -85,8 +73,7 @@ ENGINE = MyISAM;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`UF` (
   `idUF` INT NOT NULL,
-  `País` VARCHAR(45) NULL,
-  PRIMARY KEY (`idUF`, `País`))
+  `País` VARCHAR(45) NULL)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -100,18 +87,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Cidade` (
   `uf` VARCHAR(2) NULL,
   `UF_idUF` INT NOT NULL,
   `UF_País` VARCHAR(45) NOT NULL,
-  `Logradouro_idLogradouro` INT NOT NULL,
-  PRIMARY KEY (`idCidade`, `UF_idUF`, `UF_País`, `Logradouro_idLogradouro`),
-  CONSTRAINT `fk_Cidade_UF1`
-    FOREIGN KEY (`UF_idUF` , `UF_País`)
-    REFERENCES `mydb`.`UF` (`idUF` , `País`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Cidade_Logradouro1`
-    FOREIGN KEY (`Logradouro_idLogradouro`)
-    REFERENCES `mydb`.`Logradouro` (`idLogradouro`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `Logradouro_idLogradouro` INT NOT NULL)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -124,18 +100,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Compra` (
   `Produto_idProduto` INT NOT NULL,
   `dataCompra` DATE NULL,
   `valorCompra` DECIMAL(15,2) NULL,
-  `desconto` DECIMAL(15,2) NULL,
-  PRIMARY KEY (`Cliente_idCliente`, `Produto_idProduto`),
-  CONSTRAINT `fk_Cliente_has_Produto_Cliente`
-    FOREIGN KEY (`Cliente_idCliente`)
-    REFERENCES `mydb`.`Cliente` (`idCliente`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Cliente_has_Produto_Produto1`
-    FOREIGN KEY (`Produto_idProduto`)
-    REFERENCES `mydb`.`Produto` (`idProduto`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `desconto` DECIMAL(15,2) NULL)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -148,8 +113,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Fornecimento` (
   `Fornecedor_idFornecedor` INT NOT NULL,
   `dataFornecimento` DATETIME NULL,
   `qtdFornecida` INT NULL,
-  `valorUnitario` DECIMAL(15,2) NULL,
-  PRIMARY KEY (`Produto_idProduto`, `Fornecedor_idFornecedor`))
+  `valorUnitario` DECIMAL(15,2) NULL)
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 

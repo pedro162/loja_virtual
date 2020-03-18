@@ -11,7 +11,8 @@ class ProdutoController extends BaseController
     public function show()
     {
         $cliente = new Cliente();
-        $string = $cliente->select(['nome', 'nascimento','cpf']);
+        $string = $cliente->select(['nome', 'nascimento','cpf'], ['nome'=>'%Pedro%'], 'like');
+        $cliente->select()
         echo $string;
         //$this->render('produtos/produto', true);
     }
