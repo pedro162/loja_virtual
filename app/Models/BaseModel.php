@@ -20,15 +20,18 @@ abstract class BaseModel
     }
 
     //ao informar o filtro, o operador tambem deve ser invormado
-    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc'):string //$filtro array assiciativo ['key'=>'value']
+    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc'):string
     {
+
         $sql = "SELECT ";
-        foreach($this->satinizar($elementos) as $key => $value)
+        foreach($elementos as $key => $value)
         {
-            $sql .= $value.', ';
+                    $sql .= $value.', ';
         }
 
         $sql = substr($sql, 0, -2);
+
+        $sql .= ' FROM '.$this->table;
 
         if(count($filtro) > 0)
         {
@@ -43,15 +46,93 @@ abstract class BaseModel
             
         }
 
-        $sql .= ' FROM '.$this->table.' ORDER BY id'.$this->table.' '.$ordem;
-        return $sql;
+        $sql .= ' ORDER BY id'.$this->table.' '.$ordem;
+
+        $result = self::$conn->query($sql);
+        var_dump($result->fetchAll());
+        if($result)
+        {
+            $arrayObj = $result->fetchAll();
+            return $arrayObj;
+        }
+
+        throw new Exception("Falha ao excluir registro<br/>\n");
+
 
     }
 
 
-    protected function delete(Int $id, Int $limit = 1)
+    public function delete(Int $id, Int $limit = 1):bool
     {
-        $sql = 'DELETE FROM '.$this->table.' where
+        $sql = 'DELETE FROM '.$this->table.' WHERE id'.$this->table.'='.$id.' limit '.$limit;
+
+        $result = self::$conn->query($sql);
+        if($result)
+        {
+            return true;
+        }
+
+        throw new Exception("Falha ao excluir registro<br/>\n");
+    }
+
+
+    public function insert(array $elementos)
+    {
+        $sql = "INSERT INTO {$this->table} (";
+
+        $keys = '';
+        $values = '';
+
+        foreach ($this->satinizar($elementos) as $key => $value)
+        {
+            $keys .= $key.', ';
+            $values .= $value.', ';
+        }
+
+
+        $keys = substr($keys, 0, -2);
+        $values  = substr($values, 0, -2);
+
+        $sql .="{$keys}) VALUES ({$values})";
+
+        $result = self::$conn->query($sql);
+
+        if($result)
+        {
+            return true;
+        }
+
+        throw new Exception("Falha ao cadastrar registro<br/>\n");
+
+
+    }
+
+
+
+
+    public function update(array $elementos, int $id)
+    {
+        //update nome table set campo = valor and novocampo = novovalor
+        $sql = "UPDATE {$this->table} SET ";
+
+        foreach ($this->satinizar($elementos) as $key => $value)
+        {
+           $sql .= $key.'='.$value.", ";
+        }
+
+        $sql = substr($sql, 0, -2);
+
+        $sql .= " where id{$this->table}={$id}";
+
+        $result = self::$conn->query($sql);
+
+        if($result)
+        {
+            return true;
+        }
+
+        throw new Exception("Falha ao atualizar registro<br/>\n");
+
     }
 
 
@@ -66,13 +147,16 @@ abstract class BaseModel
 
         if(is_array($elemento))
         {
+            if(count($elemento) == 0)
+            {
+                throw new Exception("Parametro inválido!<br/>\n");
+            }
+
             $newElemento = [];
             foreach($elemento as $key => $value)
             {
                 $key = trim($key);
                 $key = htmlspecialchars($key);
-                $key = self::$conn->quote($key);
-                $key = strtr($key, ['_'=>'\_', '%'=> '\%']);
 
                 $value = trim($value);
                 $value = htmlspecialchars($value);
