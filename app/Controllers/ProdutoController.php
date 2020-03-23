@@ -19,11 +19,11 @@ class ProdutoController extends BaseController
 
         //$insert = $cliente->insert(['nomeCliente' => 'Pedro aguiar Ferreira', 'dtNascimento'=> '1996-03-02', 'cpf'=>'61224450370']);
         //echo "Inserido com sucesso<br/>";
-        $update = $cliente->update(['nomeCliente' => 'Jose Pedro aguiar Ferreira', 'dtNascimento'=> '2020-03-02'], 3);
-        if($update === true)
+        //$update = $cliente->update(['nomeCliente' => 'Jose Pedro aguiar Ferreira', 'dtNascimento'=> '2020-03-02'], 3);
+       /* if($update === true)
         {
         	echo "Atualizou<br/>\n";
-        }
+        }*/
         /*
         	echo "<pre>";
         	var_dump($string);

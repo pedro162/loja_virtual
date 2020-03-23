@@ -20,7 +20,7 @@ abstract class BaseModel
     }
 
     //ao informar o filtro, o operador tambem deve ser invormado
-    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc'):string
+    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc'):array
     {
 
         $sql = "SELECT ";
@@ -49,7 +49,6 @@ abstract class BaseModel
         $sql .= ' ORDER BY id'.$this->table.' '.$ordem;
 
         $result = self::$conn->query($sql);
-        var_dump($result->fetchAll());
         if($result)
         {
             $arrayObj = $result->fetchAll();
