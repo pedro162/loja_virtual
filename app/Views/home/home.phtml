@@ -1,12 +1,20 @@
 
 <div class="container-fluid">
-	<div class="row">
-	<?php foreach ($this->view->produtos as $key => $value){ ?>
-	    <div class="col-xs-6 col-md-3">
-	    	<?= $value->nomeProduto?>
-	    	<?= $value->textoPromorcional?>
-	    </div>
+	<?php for ($i = 0, $produtos =$this->view->produtos; !($i == count($produtos)); $i++){ ?>
+		<div class="row">
+			<?php 
+				for ($j=0; !($j == count($produtos[$i])); $j++) { 
+					
+			?>
+			    <div class="col-xs-6 col-md-3">
+			    	<?= $produtos[$i][$j]->nomeProduto?><br>
+			    	<?= $produtos[$i][$j]->textoPromorcional?>
+			    </div>
+
+		    <?php
+				}
+		     ?>
+	    </div><hr>
   	<?php } ?>
-  	</div>
 </div>
 
