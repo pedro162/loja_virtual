@@ -42,4 +42,9 @@ class ProdutoController extends BaseController
         //echo $update."<br/>";
         //$this->render('produtos/produto', true);
     }
+
+    public function cadastrar()
+    {
+        $this->render('produtos/cadastrar');
+    }
 }

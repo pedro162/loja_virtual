@@ -1,0 +1,33 @@
+<form method="post" action="/home/email">
+	<fieldset class=""><legend>Novo produto</legend>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="form-group">
+					<label for="idNome">Nome</label>
+					<input type="text" name="nome" id="idNome" class="form-control" placeholder="Nome do produto">
+				</div>
+				<div class="form-group">
+					<label for="idSescricao">Descricao</label>
+					<input type="text" name="descricao" id="idSescricao" class="form-control" placeholder="Descricão do produto">
+				</div>
+				<div class="form-group">
+					<label for="idPreco">Preco</label>
+					<input name="preco" type="text" id="idPreco" class="form-control"/>
+				</div>
+				<div class="form-group">
+					<label for="idTexto">Texto promorcional:</label>
+					<textarea class="form-control" name="texto" rows="6" id="idTexto"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="idMsg">Imgem do produto: </label>
+					<input type="file" name="imgProduto">
+				</div>
+			</div>	
+			<div class="col-md-4">
+				Aqui vai aparecer a imagem 
+			</div>	
+		</div>
+		<input type="submit" class="btn btn-success" value="Enviar" />
+	</fieldset>
+
+</form>

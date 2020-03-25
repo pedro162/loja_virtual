@@ -18,9 +18,19 @@ class Produto extends BaseModel
     public function __construct()
     {
         self::open();
-        //$this->setPreco($preco);
-        //$this->setEstoque($estoque);
-        //$this->setDescricao($nome);
+    }
+
+
+
+    public function addProduto()
+    {
+        # code...
+    }
+
+
+    public function salvarProduto($resquest)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
+    {
+        # code...
     }
 
 
