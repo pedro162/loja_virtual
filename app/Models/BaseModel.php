@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use \Core\Database\Connection;
+use \Core\Database\Transaction;
 use Exception;
 use InvalidArgumentException;
 use \PDO;
 
-abstract class BaseModel
+abstract class BaseModel extends Transaction
 {
     protected static $conn;
 
@@ -17,6 +18,15 @@ abstract class BaseModel
         {
             self::$conn = Connection::open('connection');
         }
+    }
+    
+    protected static function getConn()
+    {
+        if(empty(self::$conn))
+        {
+            throw new Exception("Não existe conexão aberta<br/>");
+        }
+        return self::$conn;
     }
 
     //ao informar o filtro, o operador tambem deve ser invormado
