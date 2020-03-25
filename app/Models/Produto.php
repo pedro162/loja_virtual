@@ -7,8 +7,8 @@ use InvalidArgumentException;
 
 class Produto extends BaseModel
 {
-    private $descricao;
-    private $estoque;
+    private $nomeProduto;
+    private $textoPromorcional;
     private $preco;
     private $fabricante;
     private $caracteristicas;
@@ -34,28 +34,89 @@ class Produto extends BaseModel
     }
 
 
-    public function setDescricao(string $descricao):bool
+    public function listarProdutos():array
     {
-        if(!((is_string($descricao)) && (strlen($descricao) >= 4)))
+        $resultSelect = $this->select(['nomeProduto','textoPromorcional', 'idProduto']);
+
+        $gridProdutos = [];
+
+        if((count($resultSelect) % 2) ==0)
+        {
+           for ($i=0; !($i == count($resultSelect)); $i+=4) {
+
+                $subArray = [];
+
+                $sentinela = 0;
+                while (!($sentinela == 4)) {
+                    $subArray[] = $resultSelect[$i + $sentinela];
+                    $sentinela ++;
+                }
+                $gridProdutos[] = $subArray;
+            } 
+        }
+        else{
+           for ($i=0; !($i == count($resultSelect)); $i+=3) {
+
+                $subArray = [];
+
+                $sentinela = 0;
+                while (!($sentinela == 3)) {
+                    $subArray[] = $resultSelect[$i + $sentinela];
+                    $sentinela ++;
+                }
+                $gridProdutos[] = $subArray;
+            } 
+        }
+        
+        return $gridProdutos;
+    }
+
+
+    public function setNomeProduto(string $nomeProduto):bool
+    {
+        if(!((is_string($nomeProduto)) && (strlen($nomeProduto) >= 4)))
         {
             throw new Exception("Descricao inválida<br/>\n");
         }
 
-        $this->descricao = $descricao;
+        $this->nomeProduto = $nomeProduto;
 
         return true;
     }
 
 
 
-    public function getDescricao():string
+    public function getNomeProduto():string
     {
-        if(empty($this->descricao))
+        if(empty($this->nomeProduto))
         {
             throw new InvalidArgumentException("Descrição não definida<br/>");
         }
 
-        return $this->descricao;
+        return $this->nomeProduto;
+    }
+
+
+    public function setTextoPromorcional(String $texto):bool
+    {
+       if(strlen($texto < 6))
+       {
+            throw new Exception("Texto promorcional muto curto<br/>\n");
+       }
+
+       $this->textoPromorcional = $texto;
+       return true;
+    }
+
+
+    public function getTextoPromorcional():string
+    {
+        if(empty($this->textoPromorcional))
+        {
+            throw new InvalidArgumentException("Descrição não definida<br/>");
+        }
+
+        return $this->textoPromorcional;
     }
 
 
