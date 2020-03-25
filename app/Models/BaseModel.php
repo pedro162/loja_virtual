@@ -61,7 +61,7 @@ abstract class BaseModel extends Transaction
         $result = self::$conn->query($sql);
         if($result)
         {
-            $arrayObj = $result->fetchAll();
+            $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
             return $arrayObj;
         }
 
