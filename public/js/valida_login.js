@@ -39,6 +39,7 @@ $(document).ready(function(){
 
           alert("Imgem com formato inváldo");
           $(this).val('');
+          $('#img').removeAttr('src');
           return false;
         }
 
