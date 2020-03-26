@@ -28,6 +28,14 @@ class BaseController
         
     }
 
+    public function loadMenu(String $path = 'standardMenu')
+    {
+        if((!empty($path)) && (file_exists('../app/Views/layout/'.$path.'.phtml')))
+        {
+            require_once '../app/Views/layout/'.$path.'.phtml';
+        }
+    }
+
 
     public function content($path_view)
     {

@@ -230,7 +230,7 @@ label[for='id_cnpj']{
     justify-content: space-between;
 }
 
-form .btn{
+form .btn-success{
     background-color: #8B008B;
     border-radius: 0px 20px 0px 20px;
     color: #fff;
@@ -238,11 +238,15 @@ form .btn{
 
 
 
-form .btn:hover{
+form .btn-success:hover{
     background-color: #8B008B;
     color: #fff;
     font-weight: bolder;
     box-shadow: 2px 2px 4px #000;
 }
+
+form .btn-success:active{
+    background-color: #8B008B;
+    }
 
 
