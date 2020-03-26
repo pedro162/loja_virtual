@@ -20,11 +20,13 @@ class HomeController extends BaseController
 
     public function login()
     {
+        $this->setMenu();
         $this->render('login/login', true);
     }
 
     public function cadastro()
     {
+        $this->setMenu();
         $this->render('login/cadastro', true);
     }
 }
