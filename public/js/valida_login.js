@@ -30,4 +30,29 @@ $(document).ready(function(){
     $('.cnpj').show();
   })
 
+
+
+  
+    $('#upload').change(function(){
+      
+        if(($(this)[0].files[0].type != 'image/jpeg') && ($(this)[0].files[0].type != 'image/png') && ($(this)[0].files[0].type != 'image/jpg')){
+
+          alert("Imgem com formato inváldo");
+          $(this).val('');
+          return false;
+        }
+
+        const file = $(this)[0].files[0]
+
+        const fileReader = new FileReader();
+
+        fileReader.onloadend = function(){
+            $('#img').attr('src', fileReader.result).css('width', '353px').css('height', '332px')
+        }
+        fileReader.readAsDataURL(file);
+    })
+  
+
+  
+
 })
