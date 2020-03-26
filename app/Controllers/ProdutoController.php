@@ -15,6 +15,7 @@ class ProdutoController extends BaseController
 
     public function cadastrar()
     {
+    	$this->setMenu('adminMenu');
         $this->render('produtos/cadastrar');
     }
 }

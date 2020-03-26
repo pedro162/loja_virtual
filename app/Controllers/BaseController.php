@@ -7,6 +7,7 @@ use Exception;
 class BaseController
 {
     protected $view;
+    protected $menu;
 
     public function __construct()
     {
@@ -28,12 +29,17 @@ class BaseController
         
     }
 
-    public function loadMenu(String $path = 'standardMenu')
+    public function setMenu(String $path = 'standardMenu')
     {
         if((!empty($path)) && (file_exists('../app/Views/layout/'.$path.'.phtml')))
         {
-            require_once '../app/Views/layout/'.$path.'.phtml';
+            $this->menu = '../app/Views/layout/'.$path.'.phtml';
         }
+    }
+
+    public function loadMenu()
+    {
+        require_once $this->menu;
     }
 
 

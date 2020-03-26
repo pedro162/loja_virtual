@@ -14,6 +14,7 @@ class HomeController extends BaseController
         $produto = new Produto();
         
         $this->view->produtos = $produto->listarProdutos();
+        $this->setMenu();
         $this->render('home/home', true);
     }
 
