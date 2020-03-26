@@ -1,22 +1,48 @@
 <form method="post" action="/home/email">
-	<fieldset class=""><legend>Novo produto</legend>
+	<fieldset class=""><legend>Lançar produto</legend>
 		<div class="row">
 			<div class="col-md-8">
-				<div class="form-group">
-					<label for="idNome">Nome</label>
-					<input type="text" name="nome" id="idNome" class="form-control" placeholder="Nome do produto">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="idNome">Nome</label>
+							<input type="text" name="nome" id="idNome" class="form-control" placeholder="Nome do produto">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="idNf">Nº NF</label>
+							<input type="number" name="nf" id="idNf" class="form-control">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="idTot">Total nota</label>
+							<input type="number" name="totNota" id="idTot" class="form-control">
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="idSescricao">Descricao</label>
-					<input type="text" name="descricao" id="idSescricao" class="form-control" placeholder="Descricão do produto">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="idSescricao">Descricao</label>
+							<input type="text" name="descricao" id="idSescricao" class="form-control" placeholder="Descricão do produto">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="idFornecedor">Fornecedor: </label>
+							<input type="text" name="nf" id="idFornecedor" placeholder="Nome do fornecedor" class="form-control">
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="idPreco">Preco</label>
-					<input name="preco" type="text" id="idPreco" class="form-control"/>
-				</div>
-				<div class="form-group">
-					<label for="idTexto">Texto promorcional:</label>
-					<textarea class="form-control" name="texto" rows="6" id="idTexto"></textarea>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="idTexto">Texto promorcional:</label>
+							<textarea class="form-control" name="texto" rows="6" id="idTexto"></textarea>
+						</div>
+					</div>
 				</div>
 				<div class="form-group">
 					<label for="idMsg">Imgem do produto: </label>
