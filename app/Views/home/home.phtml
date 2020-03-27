@@ -1,4 +1,5 @@
-<!--<div class="container-fluid">
+<div class="container-fluid">
+
 	<div id="demo" class="carousel slide" data-ride="carousel">
 
 		  
@@ -30,7 +31,7 @@
 		</a>
 
 	</div>
-</div><br>-->
+</div><br>
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-2 col-md-2">
@@ -67,7 +68,7 @@
 				    			<h3><?= $produtos[$i][$j]->getNomeProduto();?></h3>
 					        	<p><?= $produtos[$i][$j]->getTextoPromorcional();?></p>
 					        	<p>
-					        		<strong><sup><small>R$</small></sup>500<sup><small>00</small></sup></strong>
+					        		<strong><sup><small>R$</small></sup><?= $produtos[$i][$j]->getPreco();?><sup><small>00</small></sup></strong>
 					        	</p>
 				    		</div>
 				    		<div class="">

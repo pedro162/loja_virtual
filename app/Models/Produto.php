@@ -36,7 +36,7 @@ class Produto extends BaseModel
 
     public function listarProdutos():array
     {
-        $resultSelect = $this->select(['nomeProduto','textoPromorcional', 'idProduto']);
+        $resultSelect = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco']);
 
         $gridProdutos = [];
 
