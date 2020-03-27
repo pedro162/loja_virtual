@@ -32,6 +32,10 @@ class Route
         {
             $array_request['get'] = $_GET;
         }
+        if(count($_FILES) > 0)
+        {
+            $array_request['file'] = $_FILES;
+        }
 
         if(count($array_request) > 0)
         {

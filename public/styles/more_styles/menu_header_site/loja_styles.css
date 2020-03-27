@@ -247,6 +247,10 @@ form .btn-success:hover{
 
 form .btn-success:active{
     background-color: #8B008B;
-    }
+}
+
+.produto{
+    cursor: pointer;
+}
 
 

@@ -1,4 +1,4 @@
-<form method="post" action="/home/email" enctype="multipart/form-data">
+<form method="post" action="/produto/salvar" enctype="multipart/form-data">
 	<fieldset class=""><legend>Lançar produto</legend>
 		<div class="row">
 			<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
@@ -57,6 +57,14 @@
 						<div class="form-group">
 							<label for="idTexto">Texto promorcional:</label>
 							<textarea class="form-control" name="texto" rows="6" id="idTexto"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="form-group form-check">
+							<label class="form-check-label" for="idSobrescrever">Sobrescrever imagem no destino?</label>
+							<input class="form-check-input" type="checkbox" name="sobrescrever" id="idSobrescrever"></input>
 						</div>
 					</div>
 				</div>
