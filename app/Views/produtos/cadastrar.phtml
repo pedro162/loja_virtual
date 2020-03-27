@@ -1,79 +1,81 @@
-<form method="post" action="/produto/salvar" enctype="multipart/form-data">
-	<fieldset class=""><legend>Lançar produto</legend>
-		<div class="row">
-			<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-				<div class="row">
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-						<div class="form-group">
-							<label for="idNome">Nome</label>
-							<input type="text" name="nome" id="idNome" class="form-control" placeholder="Nome do produto">
-						</div>
-					</div>
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-						<div class="form-group">
-							<label for="idNf">Nº NF</label>
-							<input type="number" name="nf" id="idNf" class="form-control">
-						</div>
-					</div>
-					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-						<div class="form-group">
-							<label for="idTot">Total nota</label>
-							<input type="number" name="totNota" id="idTot" class="form-control">
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-						<div class="form-group">
-							<label for="idSescricao">Descricao</label>
-							<input type="text" name="descricao" id="idSescricao" class="form-control" placeholder="Descricão do produto">
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-66">
-						<div class="form-group">
-							<label for="idFornecedor">Fornecedor: </label>
-							<input type="text" name="nf" id="idFornecedor" placeholder="Nome do fornecedor" class="form-control">
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-						<div class="form-group">
-							<label for="idCodigo">Código do produto</label>
-							<input type="text" name="codigo" id="idCodigo" class="form-control" placeholder="Código do produto">
-						</div>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-						<div class="form-group">
+<div class="container">
+	<form method="post" action="/produto/salvar" enctype="multipart/form-data">
+		<fieldset class=""><legend>Lançar produto</legend>
+			<div class="row">
+				<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+					<div class="row">
+						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 							<div class="form-group">
-								<label for="idMsg">Imgem do produto: </label>
-								<input type="file" class="form-control" id="upload" name="imgProduto">
+								<label for="idNome">Nome</label>
+								<input type="text" name="nome" id="idNome" class="form-control" placeholder="Nome do produto">
+							</div>
+						</div>
+						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							<div class="form-group">
+								<label for="idNf">Nº NF</label>
+								<input type="number" name="nf" id="idNf" class="form-control">
+							</div>
+						</div>
+						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							<div class="form-group">
+								<label for="idTot">Total nota</label>
+								<input type="number" name="totNota" id="idTot" class="form-control">
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<div class="form-group">
-							<label for="idTexto">Texto promorcional:</label>
-							<textarea class="form-control" name="texto" rows="6" id="idTexto"></textarea>
+					<div class="row">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="form-group">
+								<label for="idSescricao">Descricao</label>
+								<input type="text" name="descricao" id="idSescricao" class="form-control" placeholder="Descricão do produto">
+							</div>
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-66">
+							<div class="form-group">
+								<label for="idFornecedor">Fornecedor: </label>
+								<input type="text" name="nf" id="idFornecedor" placeholder="Nome do fornecedor" class="form-control">
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<div class="form-group form-check">
-							<label class="form-check-label" for="idSobrescrever">Sobrescrever imagem no destino?</label>
-							<input class="form-check-input" type="checkbox" name="sobrescrever" id="idSobrescrever"></input>
+					<div class="row">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="form-group">
+								<label for="idCodigo">Código do produto</label>
+								<input type="text" name="codigo" id="idCodigo" class="form-control" placeholder="Código do produto">
+							</div>
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="form-group">
+								<div class="form-group">
+									<label for="idMsg">Imgem do produto: </label>
+									<input type="file" class="form-control" id="upload" name="imgProduto">
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>	
-			<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="containerImg">
-				<img id="img"/>
-			</div>	
-		</div>
-		<button type="submit" class="btn btn-lg btn-success">Lançar</button> 
-	</fieldset>
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group">
+								<label for="idTexto">Texto promorcional:</label>
+								<textarea class="form-control" name="texto" rows="6" id="idTexto"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group form-check">
+								<label class="form-check-label" for="idSobrescrever">Sobrescrever imagem no destino?</label>
+								<input class="form-check-input" type="checkbox" name="sobrescrever" id="idSobrescrever"></input>
+							</div>
+						</div>
+					</div>
+				</div>	
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="containerImg">
+					<img id="img"/>
+				</div>	
+			</div>
+			<button type="submit" class="btn btn-lg btn-success">Lançar</button> 
+		</fieldset>
 
-</form>
+	</form>
+</div>

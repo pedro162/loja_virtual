@@ -256,7 +256,7 @@ form .btn-success:active{
     cursor: pointer;
 }
 
-.teste{
+.produto-item{
     height: 425px;
 }
 
@@ -265,6 +265,10 @@ form .btn-success:active{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+}
+
+.thumbnail{
+    padding: 20px 3px;
 }
 
 
