@@ -4,7 +4,7 @@
 }
 
 body{
-    background-color: #ccc;
+    background-color: #fff;
 }
 
 .corpo{
@@ -181,7 +181,9 @@ nav ul li a{
 #cadastro legend{
     text-align: center;
 }
-
+*{
+    box-sizing: border-box;
+}
 #login button{
     background-color: #8B008B;
 }
@@ -249,8 +251,22 @@ form .btn-success:active{
     background-color: #8B008B;
 }
 
+/*------------- produtos-------------*/
 .produto{
     cursor: pointer;
 }
+
+.teste{
+    height: 425px;
+}
+
+.curtir-produto{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
 
 

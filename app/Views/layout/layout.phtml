@@ -16,12 +16,14 @@
     <title>Minha-Loja.com</title>
 </head>
 <body>
-    <?php echo $this->loadMenu(); ?>
-    
-    <div class="container corpo">
+    <header>
+        <?php echo $this->loadMenu(); ?>
+    </header>
+    <section class="">
+        <?php echo $this->content($view_path); ?>
+    </section>
+    <footer>
 
-     <?php echo $this->content($view_path); ?>
-
-    </div>
+    </footer>
 </body>
 </html>

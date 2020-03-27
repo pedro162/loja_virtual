@@ -42,12 +42,12 @@ class Produto extends BaseModel
 
         if((count($resultSelect) % 2) ==0)
         {
-           for ($i=0; !($i == count($resultSelect)); $i+=4) {
+           for ($i=0; !($i == count($resultSelect)); $i+=6) {
 
                 $subArray = [];
 
                 $sentinela = 0;
-                while (!($sentinela == 4)) {
+                while (!($sentinela == 6)) {
                     $subArray[] = $resultSelect[$i + $sentinela];
                     $sentinela ++;
                 }
