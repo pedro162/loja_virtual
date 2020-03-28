@@ -74,6 +74,10 @@ $(document).ready(function(){
                 list += '</ul><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
                 console.log(list);
                 $('.modal-body').html(list);
+
+                let buttonAdd = '<button type="button" class="btn btn-primary  button-modal">Adicionar ao carrinho</button>';
+                let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
+                $('.modal-footer').html(buttonAdd+buttonMoreDetals).find('.btn-success, .button-modal').css('background-color', '#8B008B');
             }
             
         });

@@ -52,6 +52,8 @@
 			<?php 
 				for ($j=0; !($j == count($produtos[$i])); $j++) { 
 					
+					$preco = explode('.', $produtos[$i][$j]->getPreco());
+					
 			?>
 			    <div class="col-xs-6 col-md-2 card-produto">
 			    	<div class="card produto-item">
@@ -64,7 +66,7 @@
 				    			<h3><?= $produtos[$i][$j]->getNomeProduto();?></h3>
 					        	<p><?= $produtos[$i][$j]->getTextoPromorcional();?></p>
 					        	<p>
-					        		<strong><sup><small>R$</small></sup><?= $produtos[$i][$j]->getPreco();?><sup><small>00</small></sup></strong>
+					        		<strong><sup><small>R$</small></sup><?= $preco[0]?><sup><small><?= $preco[1]?></small></sup></strong>
 					        	</p>
 				    		</div>
 				    	</div>
