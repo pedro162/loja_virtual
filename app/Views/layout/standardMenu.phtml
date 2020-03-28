@@ -1,20 +1,22 @@
-<nav class="navbar">
-    <div class="container-fluid container-md navbar-dad">
+<div class="container-fluid container-md" id="menu-principal">
+    <nav class="navbar">
         <div class="alinha-header">
             <div class="navbar-search">
                 <button type="button" class="btn btn-default" id="button_menu">
-                    <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                    <span><i class="fas fa-bars"></i></span>
                 </button>
                 <div class=""><img src="minha_loja.png" id='logo' alt="Minha loja.com"></div>
                 <form class="navbar-form " id="form-header">
                     <div class="form-group div-search">
                         <input type="text" id="input-search" class="form-control" placeholder="Search">
                     </div>
-                    <button type="submit" class="btn btn-default">Buscar</button>
+                    <div class="form-group">
+                         <button type="submit" class="btn btn-light">Buscar</button>
+                    </div>
                 </form>
             </div>
             <div class="login">
-                <ul class="nav navbar-nav nav-tabs">
+                <ul class="nav nav-tabs">
                     <li><a href="#" class="btn"> <span style="font-size: 13px; color: #ffff;"><i class="fas fa-cart-plus fa-2x"></i></i></span></a></li>
                     <li><a href="/home/login" class="link">Seu login <span class="caret"></span></a></li>
                     <li><a href="#" class="link">Devoluções <span class="caret"></span></a></li>
@@ -22,18 +24,13 @@
             </div>
         </div>
         <div class="submenu">
-            <div class="submenu_esquerdo">
-                <ul class="nav navbar-nav list-inline">
-                    <li><a href="#"> Mais Vendidos</a></li>
-                    <li><a href="#">Mais Desejados</a></li>
-                    <li><a href="#">Lançamentos</a></li>
-                    <li><a href="#">Ofertas do Dia</a></li>
-                    <li><a href="#">Atendimento ao Cliente</a></li>
-                </ul>
-            </div>
-            <div class="submenu_direito">
-                <ul class="nav navbar-nav"></ul>
-            </div>
+            <ul class="nav nav-tabs" id="lista-submenu">
+                <li class="nav-item"><a href="#" class="nav-link"> Mais Vendidos</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Mais Desejados</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Lançamentos</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Ofertas do Dia</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Atendimento ao Cliente</a></li>
+            </ul>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>

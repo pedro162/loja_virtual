@@ -12,16 +12,17 @@ body{
     height: 100%;
 }
 /*Cor de fundo da navbar*/
-.navbar-dad{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+#menu-principal{
     background-color: #8B008B;
     color: #fff;
     height: 100px;
     
 }
 
+/*muda o alinhameno padrao da classe do bootstrapp*/
+#menu-principal .navbar{
+    justify-content: center;
+}
 
 #logo{
     margin: 0px 10px;
@@ -52,7 +53,7 @@ nav ul li a{
     
 }
 
- .navbar-search, .login{
+.navbar-search, .login{
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -86,81 +87,24 @@ nav ul li a{
 .submenu{
     display: flex;
     flex-direction: row;
-    padding: 10px 0;
+    justify-content: center;
 }
 
-/*submenu esquerdo*/
-.submenu_esquerdo ul li a{
+#lista-submenu{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.submenu ul li a{
     padding: 2px 10px;
-    border-radius: 2px;
-}
 
-.submenu_esquerdo ul li a:hover{
+}
+.submenu ul li a:hover{
     background-color: rgb(163, 81, 163);
     color: #fff;
+    
 }
 
-
-
-@media(max-width:500px){
-    .navbar-dad{
-        
-    }
-
-    #logo{
-        
-    }
-    /*Muda cor da lista header*/
-
-    nav ul li a{
-        
-    }
-    .login ul li a:hover{
-        
-    }
-
-
-    /*alinha os elementos da div do menu header*/
-    .alinha-header{
-        
-        
-    }
-
-    .navbar-search, .login{
-        
-    }
-    .navbar-search{
-        
-    }
-
-    .div-search{
-        
-    }
-
-    #input-search{
-        
-    }
-
-    #form-header{
-        
-    }
-
-
-    /*submenu*/
-    .submenu{
-        
-    }
-
-    /*submenu esquerdo*/
-    .submenu_esquerdo ul li a{
-        
-    }
-
-    .submenu_esquerdo ul li a:hover{
-        
-    }
-
-}
 
 
 /*Estilo formulario login*/
@@ -180,9 +124,6 @@ nav ul li a{
 }
 #cadastro legend{
     text-align: center;
-}
-*{
-    box-sizing: border-box;
 }
 #login button{
     background-color: #8B008B;
@@ -247,17 +188,23 @@ form .btn-success:hover{
     box-shadow: 2px 2px 4px #000;
 }
 
-form .btn-success:active{
-    background-color: #8B008B;
-}
+
 
 /*------------- produtos-------------*/
+#card{
+    padding: 4px 6px;
+}
 .produto{
     cursor: pointer;
+    margin: auto;
 }
 
 .produto-item{
-    height: 425px;
+    height: 100%;
+}
+.produto-item a{
+    text-decoration: none;
+    color: #000;
 }
 
 .curtir-produto{
@@ -267,10 +214,33 @@ form .btn-success:active{
     align-items: center;
 }
 
-.thumbnail{
-    padding: 20px 3px;
+.child-card-footer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
+.curt-lista{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    list-style: none;
+    margin-left: -30px;
+    margin-top: 5px;
+}
+
+/*menu de opcoes de pesquisa à esquerda*/
+#opcoes-pesquisa{
+    box-shadow: 2px 2px 4px #ccc;
+    position: fixed;
+    width: 15%;
+
+}
+
+#opcoes-pesquisa div{
+    padding: 20px;
+
+}
 
 
 

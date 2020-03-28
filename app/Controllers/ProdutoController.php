@@ -11,7 +11,10 @@ class ProdutoController extends BaseController
 {
     public function show()
     {
-        
+        $produto = new Produto();
+        $this->view->produtos = $produto->listarProdutos();
+        $this->setMenu();
+        $this->render('produtos/relacionados', true);
     }
 
     public function cadastrar()
@@ -19,6 +22,15 @@ class ProdutoController extends BaseController
     	$this->setMenu('adminMenu');
         $this->render('produtos/cadastrar');
     }
+
+
+    public function detals($request)
+    {
+        echo"<pre>";
+        var_dump($request);
+        echo "</pre>";
+    }
+
 
     public function salvar($request)
     {

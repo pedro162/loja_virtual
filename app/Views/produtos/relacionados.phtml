@@ -26,9 +26,9 @@
 	</div>
 </div><br>-->
 <div class="container-fluid">
-	<div class="row"">
+	<div class="row">
 		<div class="col-xs-2 col-md-2">
-			<div class="container">
+			<div class="container" id="opcoes-pesquisa">
 				<div class="row">
 					<p>Departamento</p>
 				</div>
@@ -55,9 +55,9 @@
 			?>
 			    <div class="col-xs-6 col-md-2" id="card">
 			    	<div class="card produto-item">
-			    		<a href="#" class="produto-item">
+			    		<a class="produto-item" href=<?= "/produto/detals?cd=".$produtos[$i][$j]->getIdProduto();?> >
 			    		<div align="center" style="padding-top: 10px">
-			    			<img src="files/imagens/xbox_controller.jpeg" class="produto" style="width: 100px; height: 100px;">
+			    			<img src="../files/imagens/xbox_controller.jpeg" class="produto" style="width: 100px; height: 100px;">
 			    		</div>
 				    	<div class="card-body">
 				    		<div>
@@ -98,4 +98,3 @@
 	</div>
 	
 </div>
-

@@ -12,6 +12,7 @@ class Produto extends BaseModel
     private $preco;
     private $fabricante;
     private $caracteristicas;
+    private $idProduto;
 
     protected $table = 'Produto';
 
@@ -196,6 +197,15 @@ class Produto extends BaseModel
 
         return $this->caracteristicas;
 
+    }
+
+    public function getIdProduto():int
+    {
+        if(empty($this->idProduto))
+        {
+            throw new \Exception("Propriedade indefinida<br/>");
+        }
+        return $this->idProduto;
     }
 
 

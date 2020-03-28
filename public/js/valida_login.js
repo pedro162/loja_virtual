@@ -19,7 +19,7 @@
 
 
 $(document).ready(function(){
-  $('.btn-success').css('background-color', '#8B008B');
+  $('.btn-success, .button-modal').css('background-color', '#8B008B');
 
   $('.cnpj').hide();
   $('#cadastro #id_cpf').on('click', function(){
