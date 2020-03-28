@@ -26,9 +26,18 @@ class ProdutoController extends BaseController
 
     public function detals($request)
     {
-        echo"<pre>";
+       /* echo"<pre>";
         var_dump($request);
-        echo "</pre>";
+        echo "</pre>";*/
+    }
+
+    public function more($request)
+    {
+        
+        $produto = new Produto();
+        $result = $produto->detalheProduto($request['get']['id']);
+        $this->view->result = $result;
+        $this->render('produtos/ajax', false);
     }
 
 

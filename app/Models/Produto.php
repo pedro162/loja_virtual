@@ -35,6 +35,15 @@ class Produto extends BaseModel
     }
 
 
+    public function detalheProduto(Int $id)
+    {
+        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco'], ['idProduto'=>$id], '=');
+        $array[] = $result[0]->getNomeProduto();
+        $array[] = $result[0]->getPreco();
+        return json_encode($array);
+    }
+
+
     public function listarProdutos():array
     {
         $resultSelect = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco']);

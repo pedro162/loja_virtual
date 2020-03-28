@@ -191,7 +191,7 @@ form .btn-success:hover{
 
 
 /*------------- produtos-------------*/
-#card{
+.card-produto{
     padding: 4px 6px;
 }
 .produto{
@@ -231,7 +231,7 @@ form .btn-success:hover{
 
 /*menu de opcoes de pesquisa à esquerda*/
 #opcoes-pesquisa{
-    box-shadow: 2px 2px 4px #ccc;
+    box-shadow: 1px 2px 4px #ccc;
     position: fixed;
     width: 15%;
 
