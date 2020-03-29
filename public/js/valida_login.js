@@ -62,6 +62,22 @@ $(document).ready(function(){
     let idProduto = $(this).parents('.card-produto').find('a').attr('href')
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
+    let carouselModal = $('<div/>').attr('id', 'slid').addClass('carousel').addClass('slide').
+    attr('data-ride', 'carousel').
+    prepend($('<div/>').addClass('carousel-inner').
+        prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
+          .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
+
+        prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+          .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
+
+        prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+          .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
+      ).
+      append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev').prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
+      append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next').prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
+      console.log(carouselModal);
+
     $.ajax({
             url: '/produto/more?id='+idProduto,
             type: 'GET',
@@ -71,9 +87,11 @@ $(document).ready(function(){
                 for (var i = 0; !(i == retorno.length); i++) {
                   list += '<li>'+retorno[i]+'</li>';
                 }
-                list += '</ul><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
-                console.log(list);
+                list += '</ul><br/><strong>Relacionados:</strong><div class="container-fluid"></div>';
+
+                
                 $('.modal-body').html(list);
+                $('.modal-body div.container-fluid').html(carouselModal)
 
                 let buttonAdd = '<button type="button" class="btn btn-primary  button-modal">Adicionar ao carrinho</button>';
                 let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
