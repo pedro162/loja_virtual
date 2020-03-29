@@ -2,11 +2,21 @@
     border: none;
     box-sizing: border-box;
 }
+a{
+    text-decoration: none;
+    color: #000;
+}
+a:hover{
+    color: #000;
+}
 
 body{
     background-color: #fff;
 }
 
+body section{
+    margin-top: 80px; z-index: 1
+}
 .corpo{
     
     height: 100%;
@@ -16,6 +26,7 @@ body{
     background-color: #8B008B;
     color: #fff;
     height: 100px;
+    position: fixed;z-index: 1
     
 }
 
@@ -228,7 +239,9 @@ form .btn-success:hover{
     margin-left: -30px;
     margin-top: 5px;
 }
-
+.button-modal{
+   background-color: #8B008B; 
+}
 /*menu de opcoes de pesquisa à esquerda*/
 #opcoes-pesquisa{
     box-shadow: 1px 2px 4px #ccc;
