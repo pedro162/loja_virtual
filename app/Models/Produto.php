@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Models;
 use \Exception;
 use InvalidArgumentException;
 

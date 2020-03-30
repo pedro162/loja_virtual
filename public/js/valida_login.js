@@ -76,7 +76,7 @@ $(document).ready(function(){
       ).
       append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev').prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
       append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next').prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
-      console.log(carouselModal);
+      //console.log(carouselModal);
 
     $.ajax({
             url: '/produto/more?id='+idProduto,
@@ -93,14 +93,39 @@ $(document).ready(function(){
                 $('.modal-body').html(list);
                 $('.modal-body div.container-fluid').html(carouselModal)
 
-                let buttonAdd = '<button type="button" class="btn btn-primary  button-modal">Adicionar ao carrinho</button>';
+                let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
                 let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
                 $('.modal-footer').html(buttonAdd+buttonMoreDetals).find('.btn-success, .button-modal').css('background-color', '#8B008B');
             }
             
         });
 
+
+
   });
+
+
+
+
+  //---------------------------------------- Carrinho de Compras
+  $('.modal-footer').delegate('.carrinho', "click", function(){
+    let idProduto = $(this).siblings('a').attr('href');
+    idProduto = idProduto.substring(idProduto.indexOf('=')+1);
+
+    $.ajax({
+            url: '/venda/carrinho?id='+idProduto,
+            type: 'GET',
+            dataType: 'json',
+            success: function(retorno){
+              $('#qtdItensCarrinho').html(retorno)
+            }
+            
+        });
+   
+  })
+  /*
+  */
+
   
 
 })

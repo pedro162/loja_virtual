@@ -2,10 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
+
 use App\Models\Cliente;
 use App\Models\Produto;
+use App\Models\Venda;
 
-class VendaController
+class VendaController extends BaseController
 {
     private $carrinho;
 
@@ -16,7 +19,7 @@ class VendaController
 
     public function iniciarCompra()
     {
-        $cliente = new Cliente
+        
     }
 
     public function cancelarCompra()
@@ -26,13 +29,24 @@ class VendaController
 
     public function finalizarCompra()
     {
-        # code...
+        return Venda::carrinho();
     }
 
 
     public function addProduto(Produto $newProduto)
     {
         $this->carrinho[] = $newProduto;
+    }
+
+    public function addCarrinho($request)
+    {
+        if(Venda::addToCarrinho($request['get']['id']) == true)
+        {
+            $this->view->carrinho = json_encode(Venda::qtdItensVenda());
+            $this->render('venda/ajax', false);
+        }
+        
+
     }
 
 

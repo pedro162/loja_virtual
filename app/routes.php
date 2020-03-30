@@ -8,6 +8,10 @@ $routes[] = ['/produto/detals', 'ProdutoController@detals'];
 $routes[] = ['/produto/cadastrar', 'ProdutoController@cadastrar'];
 $routes[] = ['/produto/salvar', 'ProdutoController@salvar'];
 $routes[] = ['/produto/more', 'ProdutoController@more'];
+
+$routes[] = ['/venda/carrinho', 'VendaController@addCarrinho'];
+$routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];
+
 $routes[] = ['/pagar/seguro', 'PagarController@pagar'];
 $routes[] = ['/pagar/finesh', 'PagarController@finesh'];
 

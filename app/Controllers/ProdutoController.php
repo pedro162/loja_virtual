@@ -6,12 +6,14 @@ use App\Models\Produto;
 use App\Models\Fabricante;
 use App\Models\Cliente;
 use Core\Containner\File;
+use App\Models\Venda;
 
 class ProdutoController extends BaseController
 {
     public function show()
     {
         $produto = new Produto();
+
         $this->view->produtos = $produto->listarProdutos();
         $this->setMenu();
         $this->render('produtos/relacionados', true);
