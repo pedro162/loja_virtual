@@ -17,7 +17,7 @@
             </div>
             <div class="login">
                 <ul class="nav nav-tabs">
-                    <li><a href="#" class="btn"> <span style="font-size: 13px; color: #ffff;"><i class="fas fa-cart-plus fa-2x"></i></span><span  id="qtdItensCarrinho"></span></a></li>
+                    <li><a href="#" class="btn"> <span style="font-size: 13px; color: #ffff;"><i class="fas fa-cart-plus fa-2x"></i></span><span  id="qtdItensCarrinho"><?php echo (isset($this->view->qtd)) ? $this->view->qtd : '';?></span></a></li>
                     <li><a href="/home/login" class="link">Seu login <span class="caret"></span></a></li>
                     <li><a href="#" class="link">Devoluções <span class="caret"></span></a></li>
                 </ul>

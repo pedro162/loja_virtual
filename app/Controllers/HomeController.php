@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\Fabricante;
 use App\Models\Produto;
+use App\Models\Venda;
 
 class HomeController extends BaseController
 {
@@ -15,6 +16,7 @@ class HomeController extends BaseController
         
         $this->view->produtos = $produto->listarProdutos();
         $this->setMenu();
+        $this->view->qtd = Venda::qtdItensVenda();// insere o total de itens do carrinho
         $this->render('home/home', true);
     }
 
