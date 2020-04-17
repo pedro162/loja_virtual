@@ -15,11 +15,17 @@ class ProdutoController extends BaseController
         $produto = new Produto();
 
         $this->view->produtos = $produto->listarProdutos();
-        $filtros = [];
-        $filtros['departamento'] = $produto->getDepartamento();
-        $this->view->filtros = $filtros;
         $this->setMenu();
         $this->view->qtd = Venda::qtdItensVenda(); // insere o total de itens do carrinho
+
+        $this->view->optionsLeft =
+        [
+            'Departamento'=>[e,3], 'Preco'=>[e,3],
+            'Mais procurados'=>[e,3],
+            'Cama, Mesa e Banho'=>[e,3],
+            'Condições'=> [e,3]
+        ];
+
         $this->render('produtos/relacionados', true);
     }
 
