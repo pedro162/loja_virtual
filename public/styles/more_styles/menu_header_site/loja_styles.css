@@ -243,10 +243,13 @@ form .btn-success:hover{
    background-color: #8B008B; 
 }
 /*menu de opcoes de pesquisa à esquerda*/
-#opcoes-pesquisa{
+.opcoes-pesquisa{
     box-shadow: 1px 2px 4px #ccc;
     position: fixed;
     width: 15%;
+    padding: 10px 12px;
+    top: 110px;
+    left: 20px;
 
 }
 

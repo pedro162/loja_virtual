@@ -28,22 +28,31 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-2 col-md-2">
-			<div class="container" id="opcoes-pesquisa">
-				<div class="row">
-					<p>Departamento</p>
-				</div>
-				<div class="row">
-					Avaliação dos clientes
-				</div>
-				<div class="row">
-					<p>Marca</p>
-				</div>
-				<div class="row">
-					<p>Preço</p>
-				</div>
-				<div class="row">
-					<p>Condição</p>
-				</div>
+			<div class="container">
+				<?php for ($i = 0, $filtros =$this->view->filtros; !($i == count($this->view->filtros)); $i++){ ?>
+					<div class="row opcoes-pesquisa">
+						<?php 
+						foreach ($filtros as $key => $value)
+						{
+
+						?>
+						<p align="left" style="text-transform: uppercase;"><strong><?=$key?></strong></p>
+						<?php 
+							for ($j=0; !($j == count($value)); $j++)
+							{ 
+							$departamento = $value[$j]->nomeDepartamento;
+						?>
+						<label>
+							<input type="checkbox" name="celulares">
+							<?=$departamento;?>
+						</label>
+						<?php 
+							}
+
+						} 
+						?>
+					</div>
+				<?php } ?>
 			</div>
 		</div>
 		<div class="col-xs-10 col-md-10">

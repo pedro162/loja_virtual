@@ -4,7 +4,8 @@ namespace App\Models;
 
 use App\Models\Models;
 use \Exception;
-use InvalidArgumentException;
+use \InvalidArgumentException;
+use App\Models\Departamento;
 
 class Produto extends BaseModel
 {
@@ -14,6 +15,9 @@ class Produto extends BaseModel
     private $fabricante;
     private $caracteristicas;
     private $idProduto;
+    private $nomeDepartamento;
+    private $idDepartamento;
+    private $estoque;
 
     protected $table = 'Produto';
 
@@ -38,7 +42,7 @@ class Produto extends BaseModel
 
     public function detalheProduto(Int $id)
     {
-        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco'], ['idProduto'=>$id], '=');
+        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento'], ['idProduto'=>$id], '=');
         $array[] = $result[0]->getNomeProduto();
         $array[] = $result[0]->getPreco();
         return json_encode($array);
@@ -47,7 +51,7 @@ class Produto extends BaseModel
 
     public function listarProdutos():array
     {
-        $resultSelect = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco']);
+        $resultSelect = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento']);
 
         $gridProdutos = [];
 
@@ -80,6 +84,16 @@ class Produto extends BaseModel
         }
         
         return $gridProdutos;
+    }
+
+
+    public function getDepartamento():array
+    {
+        $departamento = new Departamento();
+        $restult = $departamento->select(['nomeDepartamento', 'idDepartamento']);
+
+        return $restult;
+        
     }
 
 
