@@ -40,6 +40,18 @@ class Produto extends BaseModel
     }
 
 
+    public function getFiltros():array
+    {
+        return[
+            'Departamento'=>['Games', 'Celulares'],
+            'Preco'=>['1200', '12'],
+            'Mais procurados'=>['Notboocks', 'Maquiagem'],
+            'Cama, Mesa e Banho'=>['Toalha', 'Couxa de cama'],
+            'Condições'=> ['1x', '4x', '5x']
+        ];
+
+    }
+
     public function detalheProduto(Int $id)
     {
         $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento'], ['idProduto'=>$id], '=');

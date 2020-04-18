@@ -36,14 +36,16 @@
 					?>	
 						<div class="row">
 							<div style="display: flex;flex-direction: column;"><strong><?=$key;?></strong>
-								<label>
-									<input type="checkbox" name="celulares">
-									<?=$value[0];?>
-								</label>
-								<label>
-									<input type="checkbox" name="celulares">
-									<?=$value[1];?>
-								</label>
+								<?php for ($i=0; !($i == count($value)) ; $i++) { 
+								?>
+									<label>
+										<input type="checkbox" name="celulares">
+										<?=$value[$i];?>
+									</label>
+
+								<?php }
+
+								?>
 							</div>
 						</div>
 					<?php 
