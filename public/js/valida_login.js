@@ -57,49 +57,61 @@ $(document).ready(function(){
   })
   
 
-  //--------------------------------------------- Butão modal de produtos -----------------------------------------
+  //--------------------------------------------- Modal de produtos -----------------------------------------
   $('.child-card-footer .button-modal').on('click', function(){
     let idProduto = $(this).parents('.card-produto').find('a').attr('href')
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
     let carouselModal = $('<div/>').attr('id', 'slid').addClass('carousel').addClass('slide').
     attr('data-ride', 'carousel').
-    prepend($('<div/>').addClass('carousel-inner').
-        prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
-          .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
+    prepend(
+      $('<div/>').addClass('carousel-inner').
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
+        .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
 
-        prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
-          .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+        .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
 
-        prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
-          .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
-      ).
-      append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev').prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
-      append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next').prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
-      //console.log(carouselModal);
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+        .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
+          ).
+    append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev')
+      .prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
+    append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next')
+      .prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
+      
+    let img = $(this).parents('.card').find('img').attr('src');
 
     $.ajax({
             url: '/produto/more?id='+idProduto,
             type: 'GET',
             dataType: 'json',
             success: function(retorno){
-              let list = '<ul>';
+              let list = '<ul style="list-style:none;">';
                 for (var i = 0; !(i == retorno.length); i++) {
                   list += '<li>'+retorno[i]+'</li>';
                 }
-                list += '</ul><br/><strong>Relacionados:</strong><div class="container-fluid"></div>';
+                list += '</ul>';
 
+                let container = $('<div/>').addClass('container-fluid').append(
+                  $('<div/>').addClass('row mb-5').prepend($('<div/>').addClass('col').html(list)).append($('<div/>').addClass('col').append($('<img/>').attr('src', img)))
+                  ).append(
+                    $('<div/>').addClass('row').prepend($('<div/>').addClass('col').append('<br/><strong>Relacionados:</strong><br/>').append(carouselModal))
+                  );
                 
-                $('.modal-body').html(list);
-                $('.modal-body div.container-fluid').html(carouselModal)
+                $('.modal-body').html(container);
 
                 let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
                 let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
-                $('.modal-footer').html(buttonAdd+buttonMoreDetals).find('.btn-success, .button-modal').css('background-color', '#8B008B');
+
+                let botoesOpcoes = $('<div/>').addClass('row')
+                .append($('<div/>').addClass('col').html(buttonAdd))
+                .append($('<div/>').addClass('col').html(buttonMoreDetals))
+                $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
             },
             beforeSend: function(){
               $('.modal-body').html($('<h4/>').text('Aguarde...'));
-              console.log('Aguarde');
+              
             }
             
         });
@@ -110,9 +122,10 @@ $(document).ready(function(){
 
 
 
-  //---------------------------------------- Carrinho de Compras
+  //---------------------------------------- Carrinho de Compras --------------------------------------------------------
   $('.modal-footer').delegate('.carrinho', "click", function(){
-    let idProduto = $(this).siblings('a').attr('href');
+    let idProduto = $('.modal-footer div.row div.col').find('a').attr('href');
+    
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
     $.ajax({
