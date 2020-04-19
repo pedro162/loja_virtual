@@ -2,31 +2,40 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-2 col-md-2">
-			<div class="row opcoes-pesquisa">
-				<div class="col">
-					<?php 
-						foreach ($this->view->optionsLeft as $key => $value)
-						{
-					?>	
-						<div class="row">
-							<div style="display: flex;flex-direction: column;"><strong><?=$key;?></strong>
-								<?php for ($i=0; !($i == count($value)) ; $i++) { 
-								?>
-									<label>
-										<input type="checkbox" name="celulares">
-										<?=$value[$i];?>
-									</label>
+			<form method="post" action="#">
+				<div class="row opcoes-pesquisa">
+					
+					<div class="col">
+						<?php 
+							foreach ($this->view->optionsLeft as $key => $value)
+							{
+						?>	
+							<div class="row">
+								<div style="display: flex;flex-direction: column;"><strong><?=$key;?></strong>
+									<?php for ($i=0; !($i == count($value)) ; $i++) { 
+									?>
+										<label>
+											<input type="checkbox" name="produtos[]" value="<?= $key.'-'.$value[$i];?>">
+											<?=$value[$i];?>
+										</label>
 
-								<?php }
+									<?php }
 
-								?>
+									?>
+								</div>
 							</div>
+						<?php 
+							}
+						?>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<button type="button" class="btn btn-success" id="filtroLateral"><i class="fas fa-search fa-2x"></i></button>
 						</div>
-					<?php 
-						}
-					?>
+					</div>
+
 				</div>
-			</div>
+			</form>
 		</div>
 		<div class="col-xs-10 col-md-10">
 	<?php for ($i = 0, $produtos =$this->view->produtos; !($i == count($produtos)); $i++){ ?>

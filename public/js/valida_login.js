@@ -59,6 +59,7 @@ $(document).ready(function(){
 
   //--------------------------------------------- Modal de produtos -----------------------------------------
   $('.child-card-footer .button-modal').on('click', function(){
+    //cria e adiciona elementos ao carrocel do modal
     let idProduto = $(this).parents('.card-produto').find('a').attr('href')
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
@@ -79,9 +80,13 @@ $(document).ready(function(){
       .prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
     append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next')
       .prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
+
+    //exibe texto detalhes no head do modal
+    $('.modal-header').html("Detalhes").css('text-align', 'center');
       
     let img = $(this).parents('.card').find('img').attr('src');
 
+    //faz a requizição e exibe detalhes do produto escolhido
     $.ajax({
             url: '/produto/more?id='+idProduto,
             type: 'GET',
@@ -110,7 +115,8 @@ $(document).ready(function(){
                 $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
             },
             beforeSend: function(){
-              $('.modal-body').html($('<h4/>').text('Aguarde...'));
+              $('.modal-body').html(loadImg('load.gif'));
+              $('.modal-footer .btn').hide();
               
             }
             
@@ -121,6 +127,37 @@ $(document).ready(function(){
   });
 
 
+  // -------------------------------- Imagem de load ---------------------
+  function loadImg(nome){
+    let img = $('<div/>').addClass('load').attr('align', 'center').html($('<img/>').attr('src','../files/imagens/'+nome ));
+    return img;
+  }
+
+
+  //---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
+
+  $('#filtroLateral').on('click', function(){
+      let checkeds = new Array();
+
+      $('input[name="produtos[]"]:checked').each(function(){
+        checkeds.push($(this).val());
+      })
+
+
+      $.ajax({
+        type: "POST",
+        url: '/filtro/produtos',
+        data:{'filtros': checkeds},
+        success: function(retorno){
+
+        },
+        beforeSend: function(){
+
+        }
+      });
+
+      console.log(checkeds);
+  });
 
   //---------------------------------------- Carrinho de Compras --------------------------------------------------------
   $('.modal-footer').delegate('.carrinho', "click", function(){

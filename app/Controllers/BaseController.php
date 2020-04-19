@@ -8,6 +8,7 @@ class BaseController
 {
     protected $view;
     protected $menu;
+    protected $footer;
 
     public function __construct()
     {
@@ -40,6 +41,19 @@ class BaseController
     public function loadMenu()
     {
         require_once $this->menu;
+    }
+
+    public function setFooter(String $path = 'standardFooter')
+    {
+        if((!empty($path)) && (file_exists('../app/Views/layout/'.$path.'.phtml')))
+        {
+            $this->menu = '../app/Views/layout/'.$path.'.phtml';
+        }
+    }
+
+    public function loadFooter($value='')
+    {
+       require_once $this->menu;
     }
 
 
