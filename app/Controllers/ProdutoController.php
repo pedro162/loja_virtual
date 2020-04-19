@@ -14,7 +14,7 @@ class ProdutoController extends BaseController
     {
         $produto = new Produto();
 
-        $this->view->produtos = $produto->listarProdutos();
+        $this->view->produtos = $produto->listarProdutos(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento']);
         $this->setMenu();
         $this->view->qtd = Venda::qtdItensVenda(); // insere o total de itens do carrinho
 
@@ -34,6 +34,17 @@ class ProdutoController extends BaseController
        /* echo"<pre>";
         var_dump($request);
         echo "</pre>";*/
+    }
+
+    public function filtro($request)
+    {
+        $filtro = $request['post'];
+
+        $produto = new Produto();
+
+        $result = $produto->listarProdutos(['nomeProduto', 'textoPromorcional']);
+        $this->view->result = $result;
+        $this->render('produtos/ajax', false);
     }
 
     public function more($request)

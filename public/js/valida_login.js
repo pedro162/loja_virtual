@@ -67,13 +67,13 @@ $(document).ready(function(){
     attr('data-ride', 'carousel').
     prepend(
       $('<div/>').addClass('carousel-inner').
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
         .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
 
       prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
         .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
 
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
         .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
           ).
     append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev')
@@ -82,12 +82,12 @@ $(document).ready(function(){
       .prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
 
     //exibe texto detalhes no head do modal
-    $('.modal-header').html("Detalhes").css('text-align', 'center');
+    $('.modal-header h4').html("Detalhes").css('text-align', 'center');
       
     let img = $(this).parents('.card').find('img').attr('src');
 
     //faz a requizição e exibe detalhes do produto escolhido
-    $.ajax({
+    let xhr = $.ajax({
             url: '/produto/more?id='+idProduto,
             type: 'GET',
             dataType: 'json',
@@ -123,6 +123,10 @@ $(document).ready(function(){
         });
 
 
+        $('#closeModal').on('click', function(){
+           xhr.abort();
+        })
+
 
   });
 
@@ -143,21 +147,30 @@ $(document).ready(function(){
         checkeds.push($(this).val());
       })
 
-
-      $.ajax({
+      let xhr = $.ajax({
         type: "POST",
-        url: '/filtro/produtos',
+        url: '/produto/filtro',
         data:{'filtros': checkeds},
         success: function(retorno){
-
+          $('#itens').html('ok').attr('align', '')
         },
         beforeSend: function(){
-
+           getModal('Aguarde', loadImg('load.gif'), '');
         }
       });
 
-      console.log(checkeds);
+      $('#closeModal').on('click', function(){
+           xhr.abort();
+        })
   });
+
+//chama o modal e passa alguns parametros
+
+  function getModal(titulo='Aguarde', body='', footer='') {
+    $('.modal-header h4').html(titulo)
+    $('.modal-body').html(body);
+    $('.modal-footer').html(footer);
+  }
 
   //---------------------------------------- Carrinho de Compras --------------------------------------------------------
   $('.modal-footer').delegate('.carrinho', "click", function(){
@@ -165,7 +178,7 @@ $(document).ready(function(){
     
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
-    $.ajax({
+   let xhr = $.ajax({
             url: '/venda/carrinho?id='+idProduto,
             type: 'GET',
             dataType: 'json',
@@ -174,6 +187,11 @@ $(document).ready(function(){
             }
             
         });
+
+   $('#closeModal').on('click', function(){
+           xhr.abort();
+        })
+
    
   })
   /*
