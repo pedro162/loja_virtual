@@ -18,12 +18,15 @@
 </head>
 <body>
     <header>
-        <?php echo $this->loadMenu(); ?>
+        <?php $this->loadMenu(); ?>
     </header><br>
     <section class="">
-        <?php echo $this->content($view_path); ?>
+        <?php $this->content($view_path); ?>
     </section>
     <footer>
+
+      <?php $this->loadFooter(); ?>
+
     <!-- The Modal -->
     <div class="modal fade" id="myModal">
       <div class="modal-dialog modal-sm modal-lg modal-xl modal-dialog-centered">

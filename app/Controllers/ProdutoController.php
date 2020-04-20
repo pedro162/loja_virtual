@@ -16,8 +16,9 @@ class ProdutoController extends BaseController
 
         $this->view->produtos = $produto->listarProdutos(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento']);
         $this->setMenu();
+        $this->setFooter('footer');
+        
         $this->view->qtd = Venda::qtdItensVenda(); // insere o total de itens do carrinho
-
         $this->view->optionsLeft = $produto->getFiltros();
         $this->render('produtos/relacionados', true);
     }

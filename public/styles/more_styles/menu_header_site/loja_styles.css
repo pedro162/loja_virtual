@@ -29,6 +29,15 @@ body section{
     position: fixed;z-index: 1
     
 }
+footer{
+    background-color: #9400D3;
+    color: #fff;
+}
+
+#copyRith{
+    background-color: #8A2BE2;
+    color: #fff;
+}
 
 /*muda o alinhameno padrao da classe do bootstrapp*/
 #menu-principal .navbar{
@@ -261,5 +270,15 @@ form input:hover, form label:hover{
 
 }
 
+#myModal{
+    color: #000;
+}
 
-
+/*---------------- Midias Sociais -----------*/
+.midias{
+    padding: 5px 14.5px;
+}
+.midiasSociasis:hover{
+    background-color: #ddd;
+    box-shadow: 2px 2px 3px #000;
+}

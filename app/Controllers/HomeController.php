@@ -13,6 +13,7 @@ class HomeController extends BaseController
     public function index()
     {
         $this->setMenu();
+        $this->setFooter();
         $this->view->qtd = Venda::qtdItensVenda();// insere o total de itens do carrinho
         $this->render('home/home', true);
     }

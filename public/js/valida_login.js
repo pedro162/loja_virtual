@@ -103,6 +103,7 @@ $(document).ready(function(){
                   ).append(
                     $('<div/>').addClass('row').prepend($('<div/>').addClass('col').append('<br/><strong>Relacionados:</strong><br/>').append(carouselModal))
                   );
+                  console.log(list)
                 
                 $('.modal-body').html(container);
 
@@ -115,6 +116,7 @@ $(document).ready(function(){
                 $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
             },
             beforeSend: function(){
+              $('.modal-header h4').html("Aguarde").css('text-align', 'center');
               $('.modal-body').html(loadImg('load.gif'));
               $('.modal-footer .btn').hide();
               
@@ -190,11 +192,6 @@ $(document).ready(function(){
             }
             
         });
-
-    //cancela a requisicao se clicad
-   $('#closeModal, #myModal').on('click', function(){
-           xhr.abort();
-        })
 
    
   })
