@@ -46,7 +46,6 @@ class Produto extends BaseModel
             'Departamento'=>['Games', 'Celulares'],
             'Preco'=>['1200', '12'],
             'Mais procurados'=>['Notboocks', 'Maquiagem'],
-            'Cama, Mesa e Banho'=>['Toalha', 'Couxa de cama'],
             'Condições'=> ['1x', '4x', '5x']
         ];
 
@@ -242,6 +241,55 @@ class Produto extends BaseModel
             throw new \Exception("Propriedade indefinida<br/>");
         }
         return $this->idProduto;
+    }
+
+
+    public function listarConsultaPersonalizada(array $parametros):array
+    {   
+        $newParams = [];
+
+        for ($i=0; !($i == count($parametros)); $i++) { 
+           $subArray = explode('-', $parametros[$i]);
+
+           $newParams[] = [$subArray[0] => $subArray[1]];
+        }
+
+        for ($i=0; !($i == count($newParams)); $i++) { 
+           $newParams[$i] = $this->satinizar($newParams[$i]);
+        }
+
+       $sqlPersonalizada = "SELECT P.idProduto, P.nomeProduto, P.preco, P.textoPromorcional, D.idDepartamento DepartProd, D.nomeDepartamento,".
+                             "D.idDepartamento DepartDepart FROM Produto P,".
+                             "Departamento D WHERE P.idDepartamento = D.idDepartamento AND ";
+
+        for ($i=0; !($i == count($newParams)); $i++) { 
+            
+            foreach ($newParams[$i] as $key => $value) {
+
+                switch ($key) {
+                case 'Departamento':
+                   $sqlPersonalizada .= "D.nomeDepartamento = {$value} AND ";
+                    break;
+                case 'Condicoes':
+                   $sqlPersonalizada .= "P.Condicoes = {$value} AND ";
+                    break;
+                case 'Mais procurados':
+                    $sqlPersonalizada .= "P.Maisprocurados = {$value} AND ";
+                    break;
+                case 'Preco':
+                    $sqlPersonalizada .= "P.Preco <= {$value} AND ";
+                    break;
+                }
+               
+            }
+
+            
+        }
+
+        $sqlPersonalizada  = substr($sqlPersonalizada, 0, -4);
+
+        
+        return $this->persolizaConsulta($sqlPersonalizada);
     }
 
 

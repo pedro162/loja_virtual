@@ -193,4 +193,21 @@ abstract class BaseModel extends Transaction
         }
         return false;
     }
+
+
+
+    protected function persolizaConsulta(String $sql)
+    {
+        $result = self::$conn->query($sql);
+
+        $arrayObj = $result->fetchAll();
+
+        if(!$arrayObj)
+        {
+            throw new Exception("Elemento não encontrado<br/>");
+        }
+        
+        return $arrayObj;
+    }
 }
+

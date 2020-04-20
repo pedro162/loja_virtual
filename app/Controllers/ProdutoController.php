@@ -39,9 +39,12 @@ class ProdutoController extends BaseController
 
     public function filtro($request)
     {
-        $filtro = $request['post'];
-
         $produto = new Produto();
+
+        echo "<pre>";
+        var_dump($produto->listarConsultaPersonalizada($request['post']['produtos']));
+        echo "<pre>";
+        die();
 
         $result = $produto->listarProdutos(['nomeProduto', 'textoPromorcional']);
         $this->view->result = $result;
