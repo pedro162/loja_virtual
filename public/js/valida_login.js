@@ -123,7 +123,8 @@ $(document).ready(function(){
         });
 
 
-        $('#closeModal').on('click', function(){
+        //cancela a requisicao se clicad
+        $('#closeModal, #myModal').on('click', function(){
            xhr.abort();
         })
 
@@ -152,16 +153,18 @@ $(document).ready(function(){
         url: '/produto/filtro',
         data:{'filtros': checkeds},
         success: function(retorno){
-          $('#itens').html('ok').attr('align', '')
+          $('#itens').html('ok').attr('align', '');
+          $('#closeModal').trigger('click');
         },
         beforeSend: function(){
            getModal('Aguarde', loadImg('load.gif'), '');
         }
       });
 
-      $('#closeModal').on('click', function(){
+      //cancela a requisicao se clicado
+      $('#closeModal, #myModal').on('click', function(){
            xhr.abort();
-        })
+        });
   });
 
 //chama o modal e passa alguns parametros
@@ -188,7 +191,8 @@ $(document).ready(function(){
             
         });
 
-   $('#closeModal').on('click', function(){
+    //cancela a requisicao se clicad
+   $('#closeModal, #myModal').on('click', function(){
            xhr.abort();
         })
 

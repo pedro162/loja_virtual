@@ -12,9 +12,6 @@ class HomeController extends BaseController
 
     public function index()
     {
-        $produto = new Produto();
-        
-        $this->view->produtos = $produto->listarProdutos();
         $this->setMenu();
         $this->view->qtd = Venda::qtdItensVenda();// insere o total de itens do carrinho
         $this->render('home/home', true);
