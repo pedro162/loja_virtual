@@ -39,6 +39,11 @@ class ProdutoController extends BaseController
 
     public function filtro($request)
     {
+        if(count($request['post']) == 0){
+            
+            throw new \Exception("Consulta inválida<br/>\n");
+        }
+
         $produto = new Produto();
 
         echo "<pre>";

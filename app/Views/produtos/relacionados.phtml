@@ -13,9 +13,29 @@
 							<div class="row">
 								<div style="display: flex;flex-direction: column;"><strong><?=$key;?></strong>
 									<?php for ($i=0; !($i == count($value)) ; $i++) { 
+
+										$typeInput = 'checkbox';
+										$keyProduto = 'Departamento';
+
+										switch ($key) {
+											case 'Preco':
+												$typeInput = 'radio';
+												$keyProduto = 'Preco';
+												break;
+
+											case 'Condições':
+												$typeInput = 'radio';
+
+												$keyProduto = 'Condicoes';
+												break;
+
+											case 'Mais procurados':
+												$keyProduto = 'Procurados';
+												break;
+										}
 									?>
 										<label>
-											<input type="checkbox" name="produtos[]" value="<?= $key.'-'.$value[$i];?>">
+											<input type="<?=$typeInput;?>" name="produtos[<?=$keyProduto?>][]" value="<?= $value[$i];?>">
 											<?=$value[$i];?>
 										</label>
 

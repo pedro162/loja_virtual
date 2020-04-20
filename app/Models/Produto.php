@@ -44,9 +44,9 @@ class Produto extends BaseModel
     {
         return[
             'Departamento'=>['Games', 'Celulares'],
-            'Preco'=>['1200', '12'],
+            'Preco'=>['1200', '12', '155.50'],
             'Mais procurados'=>['Notboocks', 'Maquiagem'],
-            'Condições'=> ['1x', '4x', '5x']
+            'Condições'=> ['1x', '2x', '4x', '5x']
         ];
 
     }
@@ -246,49 +246,89 @@ class Produto extends BaseModel
 
     public function listarConsultaPersonalizada(array $parametros):array
     {   
-        $newParams = [];
+        if(count($parametros)==0){
 
-        for ($i=0; !($i == count($parametros)); $i++) { 
-           $subArray = explode('-', $parametros[$i]);
-
-           $newParams[] = [$subArray[0] => $subArray[1]];
+            throw new Exception("Consulta inválida<br/>\n");
         }
 
-        for ($i=0; !($i == count($newParams)); $i++) { 
-           $newParams[$i] = $this->satinizar($newParams[$i]);
-        }
+        $sentinelaSubarray = false;
 
-       $sqlPersonalizada = "SELECT P.idProduto, P.nomeProduto, P.preco, P.textoPromorcional, D.idDepartamento DepartProd, D.nomeDepartamento,".
-                             "D.idDepartamento DepartDepart FROM Produto P,".
-                             "Departamento D WHERE P.idDepartamento = D.idDepartamento AND ";
+        foreach ($parametros as $key => $value) {
+            if(count($value)>0){
+                for ($i=0; !($i == count($value)); $i++) { 
+                    $key = $this->satinizar($key);
+                    $parametros[$key][$i] = $this->satinizar($value[$i]);
 
-        for ($i=0; !($i == count($newParams)); $i++) { 
+                    $sentinelaSubarray = true;
+                }
+            }
             
-            foreach ($newParams[$i] as $key => $value) {
+        }
+
+        if($sentinelaSubarray == false)
+            throw new Exception("Consulta inválida<br/>\n");
+
+       $sqlPersonalizada = "SELECT P.idProduto, P.idDepartamento, P.nomeProduto, ";
+
+       $codicoes = '';
+
+       $preco = '';
+
+       $departamento = '';
+
+       foreach ($parametros as $key => $value) {
+
+            for ($i=0; !($i == count($value)); $i++) { 
 
                 switch ($key) {
                 case 'Departamento':
-                   $sqlPersonalizada .= "D.nomeDepartamento = {$value} AND ";
+                   $sqlPersonalizada .= "D.nomeDepartamento, ";
+
+                   $departamento .= " D.nomeDepartamento = ".$this->satinizar($value[$i])." or ";
                     break;
+
                 case 'Condicoes':
-                   $sqlPersonalizada .= "P.Condicoes = {$value} AND ";
+                   $sqlPersonalizada .= "P.Condicoes, ";
+
+                   $codicoes .= " P.Condicoes = ".$this->satinizar($value[$i])." AND ";
                     break;
-                case 'Mais procurados':
-                    $sqlPersonalizada .= "P.Maisprocurados = {$value} AND ";
+
+                case 'Procurados':
+                    $sqlPersonalizada .= "P.Maisprocurados, ";
                     break;
+
                 case 'Preco':
-                    $sqlPersonalizada .= "P.Preco <= {$value} AND ";
+                    $sqlPersonalizada .= 'P.preco, ';
+
+                    $preco .= " P.preco <= ".$this->satinizar($value[$i])." AND ";
                     break;
                 }
-               
             }
-
-            
         }
 
-        $sqlPersonalizada  = substr($sqlPersonalizada, 0, -4);
+        $sqlPersonalizada  = substr($sqlPersonalizada, 0, -2);
 
-        
+        $sqlPersonalizada .= " FROM Produto P, Departamento D WHERE (P.idDepartamento = D.idDepartamento)";
+
+
+        if(strlen($departamento) > 3){
+            $departamento  = substr($departamento, 0, -3);
+            $sqlPersonalizada .= ' AND ('.$departamento.')';
+        }
+
+        if(strlen($preco) > 3){
+            $preco  = substr($preco, 0, -4);
+            $sqlPersonalizada .= ' AND ('.$preco.')';
+
+        }
+
+        if(strlen($codicoes) > 3){
+            $codicoes  = substr($codicoes, 0, -4);
+            $sqlPersonalizada .= ' AND ('.$codicoes.')';
+
+        }
+
+        //return [$sqlPersonalizada];
         return $this->persolizaConsulta($sqlPersonalizada);
     }
 
