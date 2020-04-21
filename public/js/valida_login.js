@@ -180,6 +180,8 @@ $(document).ready(function(){
       }
 
 
+      
+
       if(Filtro.length > 0){
           
         let xhr = $.ajax({
@@ -192,9 +194,50 @@ $(document).ready(function(){
 
             parse = $.parseJSON(retorno);
 
+            let col = '';
             for (var i = parse.length - 1; i >= 0; i--) {
-              console.log(parse[i].nomeProduto);
+
+              //console.log('produto '+parse[i].nomeProduto+' preco '+parse[i].preco);
+              col += `
+                  <div class="col-xs-6 col-md-2 card-produto">
+                    <div class="card produto-item">
+                      <a class="produto-item" href="/produto/detals?cd=${parse[i].idProduto}">
+                      <div align="center" style="padding-top: 10px">
+                        <img src="../files/imagens/xbox_controller.jpeg" class="produto" style="width: 100px; height: 100px;">
+                      </div>
+                      <div class="card-body">
+                        <div>
+                          <h3>${parse[i].nomeProduto}</h3>
+                            <p>${parse[i].textoPromorcional}</p>
+                            <p>
+                              <strong><sup><small>R$</small></sup>${parse[i].preco}<sup><small></small></sup></strong>
+                            </p>
+                        </div>
+                      </div>
+                      </a>
+                      <div class="card-footer">
+                        <div class="child-card-footer">
+                          <button type="button" class="btn btn-primary  button-modal" data-toggle="modal" data-target="#myModal">
+                          Mais detalhes
+                        </button>
+                            <ul class="curt-lista">
+                              <li class="">
+                                <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128077;</button>
+                                <span>1</span>
+                              </li>
+                              <li class="">
+                                <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128078;</button>
+                                <span>1</span>
+                              </li>
+                            </ul>
+                          </div>
+                      </div>
+                    </div>
+                  </div>`;
+
             }
+            $('#itens').html($('<div/>').addClass('row').append(col));
+
            // console.log(retorno[$i].nomeProduto);
           },
           beforeSend: function(){

@@ -263,7 +263,7 @@ class Produto extends BaseModel
         if($sentinelaSubarray == false)
             throw new Exception("Consulta inválida<br/>\n");
 
-       $sqlPersonalizada = "SELECT P.idProduto, P.idDepartamento, P.nomeProduto, ";
+       $sqlPersonalizada = "SELECT P.idProduto, P.idDepartamento, P.nomeProduto, P.textoPromorcional, ";
 
        $codicoes = '';
 
