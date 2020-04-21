@@ -144,29 +144,70 @@ $(document).ready(function(){
   //---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
 
   $('#filtroLateral').on('click', function(){
-      let checkeds = new Array();
+      let departamento = new Array();
 
-      $('input[name="produtos[]"]:checked').each(function(){
-        checkeds.push($(this).val());
+      let preco = new Array();;
+
+      let condicoes = new Array();;
+
+      $("input[name='produtos[Departamento][]']:checked").each(function(){
+         departamento.push($(this).val());
       })
 
-      let xhr = $.ajax({
-        type: "POST",
-        url: '/produto/filtro',
-        data:{'filtros': checkeds},
-        success: function(retorno){
-          $('#itens').html('ok').attr('align', '');
-          $('#closeModal').trigger('click');
-        },
-        beforeSend: function(){
-           getModal('Aguarde', loadImg('load.gif'), '');
-        }
-      });
+      $("input[name='produtos[Preco][]']:checked").each(function(){
+          preco.push($(this).val());
+      })
 
-      //cancela a requisicao se clicado
-      $('#closeModal, #myModal').on('click', function(){
-           xhr.abort();
+      $("input[name='produtos[Condicoes][]']:checked").each(function(){
+          condicoes.push($(this).val());
+      })
+
+      let Filtro = new Array();
+
+      if(departamento.length > 0){
+        departamento.unshift('Departamento');
+        Filtro.push(departamento);
+      }
+
+      if(preco.length > 0){
+         preco.unshift('Preco');
+         Filtro.push(preco);
+      }
+
+      if(condicoes.length > 0){
+         condicoes.unshift('Condicoes');
+         Filtro.push(condicoes);
+      }
+
+
+      if(Filtro.length > 0){
+          
+        let xhr = $.ajax({
+          type: "POST",
+          url: '/produto/filtro',
+          data:{'produtos': Filtro},
+          success: function(retorno){
+           // $('#itens').html('ok').attr('align', '');
+            $('#closeModal').trigger('click');
+
+            parse = $.parseJSON(retorno);
+
+            for (var i = parse.length - 1; i >= 0; i--) {
+              console.log(parse[i].nomeProduto);
+            }
+           // console.log(retorno[$i].nomeProduto);
+          },
+          beforeSend: function(){
+             getModal('Aguarde', loadImg('load.gif'), '');
+          }
         });
+
+        //cancela a requisicao se clicado
+        $('#closeModal, #myModal').on('click', function(){
+             xhr.abort();
+          });
+      }
+
   });
 
 //chama o modal e passa alguns parametros

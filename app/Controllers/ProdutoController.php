@@ -40,18 +40,42 @@ class ProdutoController extends BaseController
     public function filtro($request)
     {
         if(count($request['post']) == 0){
-            
-            throw new \Exception("Consulta inválida<br/>\n");
+
+            $this->view->result = 'Consulta inválida';
+            $this->render('produtos/ajax', false);
+            //throw new \Exception("Consulta inválida<br/>\n");
+            return false;
         }
 
+        $superArray = [];
+
+        for ($i=0; !($i == count($request['post']['produtos'])); $i++) { 
+            $resultado = null;
+
+            $chave = null;
+
+            for ($j=0; !($j == count($request['post']['produtos'][$i])); $j++) {
+
+                $chave = $request['post']['produtos'][$i][0];
+                if($j != 0){
+                    $resultado[] = $request['post']['produtos'][$i][$j];
+                }
+                
+            }
+
+            $superArray[$chave] = $resultado;
+            
+        }
+
+        //$this->view->result = json_encode($superArray);
+       // $this->render('produtos/ajax', false);
+       // die();
+
+        
         $produto = new Produto();
 
-        echo "<pre>";
-        var_dump($produto->listarConsultaPersonalizada($request['post']['produtos']));
-        echo "<pre>";
-        die();
+        $result = $produto->listarConsultaPersonalizada($superArray);
 
-        $result = $produto->listarProdutos(['nomeProduto', 'textoPromorcional']);
         $this->view->result = $result;
         $this->render('produtos/ajax', false);
     }

@@ -44,9 +44,8 @@ class Produto extends BaseModel
     {
         return[
             'Departamento'=>['Games', 'Celulares'],
-            'Preco'=>['1200', '12', '155.50'],
-            'Mais procurados'=>['Notboocks', 'Maquiagem'],
-            'Condições'=> ['1x', '2x', '4x', '5x']
+            'Preco'=>['1200', '1000', '155.50'],
+            'Condições'=> ['2x', '4x', '6x', '10x']
         ];
 
     }
@@ -244,7 +243,7 @@ class Produto extends BaseModel
     }
 
 
-    public function listarConsultaPersonalizada(array $parametros):array
+    public function listarConsultaPersonalizada(array $parametros):String
     {   
         if(count($parametros)==0){
 
@@ -255,12 +254,8 @@ class Produto extends BaseModel
 
         foreach ($parametros as $key => $value) {
             if(count($value)>0){
-                for ($i=0; !($i == count($value)); $i++) { 
-                    $key = $this->satinizar($key);
-                    $parametros[$key][$i] = $this->satinizar($value[$i]);
 
-                    $sentinelaSubarray = true;
-                }
+                $sentinelaSubarray = true;
             }
             
         }
@@ -291,10 +286,6 @@ class Produto extends BaseModel
                    $sqlPersonalizada .= "P.Condicoes, ";
 
                    $codicoes .= " P.Condicoes = ".$this->satinizar($value[$i])." AND ";
-                    break;
-
-                case 'Procurados':
-                    $sqlPersonalizada .= "P.Maisprocurados, ";
                     break;
 
                 case 'Preco':
@@ -328,8 +319,8 @@ class Produto extends BaseModel
 
         }
 
-        //return [$sqlPersonalizada];
-        return $this->persolizaConsulta($sqlPersonalizada);
+        //return $sqlPersonalizada;
+        return json_encode ($this->persolizaConsulta($sqlPersonalizada));
     }
 
 
