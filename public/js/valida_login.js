@@ -189,10 +189,9 @@ $(document).ready(function(){
           url: '/produto/filtro',
           data:{'produtos': Filtro},
           success: function(retorno){
-           // $('#itens').html('ok').attr('align', '');
-            $('#closeModal').trigger('click');
-
             parse = $.parseJSON(retorno);
+
+            $('#closeModal').trigger('click');
 
             let col = '';
             for (var i = parse.length - 1; i >= 0; i--) {
@@ -238,8 +237,8 @@ $(document).ready(function(){
             }
             $('#itens').html($('<div/>').addClass('row').append(col));
 
-           // console.log(retorno[$i].nomeProduto);
           },
+
           beforeSend: function(){
              getModal('Aguarde', loadImg('load.gif'), '');
           }
@@ -249,6 +248,9 @@ $(document).ready(function(){
         $('#closeModal, #myModal').on('click', function(){
              xhr.abort();
           });
+      }else{
+         getModal($('<div/>').addClass('alert alert-danger').html('<strong>Atenção</strong>'),
+          '<div class="h1" align="center">Escolha um filtro de pesquisa</div>', '');
       }
 
   });

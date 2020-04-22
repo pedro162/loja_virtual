@@ -100,7 +100,7 @@ class Produto extends BaseModel
     public function getDepartamento():array
     {
         $departamento = new Departamento();
-        $restult = $departamento->select(['nomeDepartamento', 'idDepartamento']);
+        $restult = $departamento->select(['nomeDepartamento', 'idDepartamento'], ['idDepartamento' => $this->idDepartamento]);
 
         return $restult;
         
@@ -243,12 +243,58 @@ class Produto extends BaseModel
     }
 
 
-    public function listarConsultaPersonalizada(array $parametros):String
+    private function parseFiltroAjax(array $request):array
+    {
+        if(!((isset($request['post'])) && (count($request['post']) > 0))){
+
+            throw new \Exception("Consulta inválida<br/>\n");
+            //return false;
+        }
+
+        if(!((isset($request['post']['produtos'])) && (count($request['post']['produtos']) > 0))){
+
+            throw new \Exception("Consulta inválida<br/>\n");
+            //return false;
+        }
+
+        $superArray = [];
+
+        for ($i=0; !($i == count($request['post']['produtos'])); $i++) { 
+            $resultado = null;
+
+            $chave = null;
+
+            for ($j=0; !($j == count($request['post']['produtos'][$i])); $j++) {
+
+                $chave = $request['post']['produtos'][$i][0];
+                if($j != 0){
+                    $resultado[] = $request['post']['produtos'][$i][$j];
+                }
+                
+            }
+
+            $superArray[$chave] = $resultado;
+            
+        }
+
+        return $superArray;
+    }
+
+
+    public function listarConsultaPersonalizada(array $request):String
     {   
-        if(count($parametros)==0){
+        $parametros = $this->parseFiltroAjax($request);
+
+        if((is_array($parametros))&&(count($parametros)==0)){
 
             throw new Exception("Consulta inválida<br/>\n");
+            //return json_encode(['msg','Consulta inválida']);
         }
+        
+        /*
+        if($parametros == false){
+            return json_encode(['msg','Consulta inválida']);
+        }*/
 
         $sentinelaSubarray = false;
 
@@ -302,18 +348,18 @@ class Produto extends BaseModel
         $sqlPersonalizada .= " FROM Produto P, Departamento D WHERE (P.idDepartamento = D.idDepartamento)";
 
 
-        if(strlen($departamento) > 3){
+        if(strlen($departamento) > 0){
             $departamento  = substr($departamento, 0, -3);
             $sqlPersonalizada .= ' AND ('.$departamento.')';
         }
 
-        if(strlen($preco) > 3){
+        if(strlen($preco) > 0){
             $preco  = substr($preco, 0, -4);
             $sqlPersonalizada .= ' AND ('.$preco.')';
 
         }
 
-        if(strlen($codicoes) > 3){
+        if(strlen($codicoes) > 0){
             $codicoes  = substr($codicoes, 0, -4);
             $sqlPersonalizada .= ' AND ('.$codicoes.')';
 
