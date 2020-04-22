@@ -190,7 +190,17 @@ $(document).ready(function(){
           url: '/produto/filtro',
           data:{'produtos': Filtro},
           success: function(retorno){
+
             parse = $.parseJSON(retorno);
+
+            if(parse[0] == 'msg')
+            {
+               getModal($('<div/>').addClass('alert alert-danger').html($('<strong/>').html('Atenção !')),
+                $('<div/>').attr('align', 'center').addClass('h1').css('color', 'red').html(parse[1]+'<br/>Tente outro filtro!')
+                , '');
+
+              return false;
+            }
 
             $('#closeModal').trigger('click');
 

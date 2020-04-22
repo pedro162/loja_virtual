@@ -365,8 +365,13 @@ class Produto extends BaseModel
 
         }
 
+        $result = $this->persolizaConsulta($sqlPersonalizada);
+        if($result == false){
+            return json_encode(['msg', 'Nenhum resultado encontrado!']);
+        }
+
         //return $sqlPersonalizada;
-        return json_encode ($this->persolizaConsulta($sqlPersonalizada));
+        return json_encode ($result);
     }
 
 

@@ -202,9 +202,9 @@ abstract class BaseModel extends Transaction
 
         $arrayObj = $result->fetchAll();
 
-        if(!$arrayObj)
+        if(count($arrayObj) ==0)
         {
-            throw new Exception("Elemento não encontrado<br/>");
+            return false;
         }
         
         return $arrayObj;
