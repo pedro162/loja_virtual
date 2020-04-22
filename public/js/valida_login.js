@@ -114,9 +114,10 @@ $(document).ready(function(){
                 .append($('<div/>').addClass('col').html(buttonAdd))
                 .append($('<div/>').addClass('col').html(buttonMoreDetals))
                 $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
+                $('.modal-header h4').html($('<strong/>').html("Detalhes do produto"))
             },
             beforeSend: function(){
-              $('.modal-header h4').html("Aguarde").css('text-align', 'center');
+              $('.modal-header h4').html($('<strong/>').html("Aguarde..."))
               $('.modal-body').html(loadImg('load.gif'));
               $('.modal-footer .btn').hide();
               
@@ -240,7 +241,7 @@ $(document).ready(function(){
           },
 
           beforeSend: function(){
-             getModal('Aguarde', loadImg('load.gif'), '');
+             getModal('Aguarde...', loadImg('load.gif'), '');
           }
         });
 
@@ -249,8 +250,9 @@ $(document).ready(function(){
              xhr.abort();
           });
       }else{
-         getModal($('<div/>').addClass('alert alert-danger').html('<strong>Atenção</strong>'),
-          '<div class="h1" align="center">Escolha um filtro de pesquisa</div>', '');
+         getModal($('<div/>').addClass('alert alert-danger').html($('<strong/>').html('Atenção !')),
+          $('<div/>').attr('align', 'center').addClass('h1').css('color', 'red').html('Escolha um filtro de pesquisa!')
+          , '');
       }
 
   });
