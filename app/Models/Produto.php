@@ -257,6 +257,7 @@ class Produto extends BaseModel
             //return false;
         }
 
+        /*
         $superArray = [];
 
         for ($i=0; !($i == count($request['post']['produtos'])); $i++) { 
@@ -278,6 +279,8 @@ class Produto extends BaseModel
         }
 
         return $superArray;
+        */
+        return $this->parseRequestAjax($request['post']['produtos']);
     }
 
 

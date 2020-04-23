@@ -209,5 +209,31 @@ abstract class BaseModel extends Transaction
         
         return $arrayObj;
     }
+
+
+
+    protected function parseRequestAjax(array $dados){
+        $superArray = [];
+
+        for ($i=0; !($i == count($dados)); $i++) { 
+            $resultado = null;
+
+            $chave = null;
+
+            for ($j=0; !($j == count($dados[$i])); $j++) {
+
+                $chave = $dados[$i][0];
+                if($j != 0){
+                    $resultado[] = $dados[$i][$j];
+                }
+                
+            }
+
+            $superArray[$chave] = $resultado;
+            
+        }
+
+        return $superArray;
+    }
 }
 
