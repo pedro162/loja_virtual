@@ -312,8 +312,6 @@ class Produto extends BaseModel
         if($sentinelaSubarray == false)
             throw new Exception("Consulta inválida<br/>\n");
 
-       $sqlPersonalizada = "SELECT P.idProduto, P.idDepartamento, P.nomeProduto, P.textoPromorcional, ";
-
        $codicoes = '';
 
        $preco = '';
@@ -326,28 +324,21 @@ class Produto extends BaseModel
 
                 switch ($key) {
                 case 'Departamento':
-                   $sqlPersonalizada .= "D.nomeDepartamento, ";
-
                    $departamento .= " D.nomeDepartamento = ".$this->satinizar($value[$i])." or ";
                     break;
 
                 case 'Condicoes':
-                   $sqlPersonalizada .= "P.Condicoes, ";
-
                    $codicoes .= " P.Condicoes = ".$this->satinizar($value[$i])." AND ";
                     break;
 
                 case 'Preco':
-                    $sqlPersonalizada .= 'P.preco, ';
-
                     $preco .= " P.preco <= ".$this->satinizar($value[$i])." AND ";
                     break;
                 }
             }
         }
-
-        $sqlPersonalizada  = substr($sqlPersonalizada, 0, -2);
-
+        $sqlPersonalizada = "SELECT P.idProduto, P.idDepartamento, P.nomeProduto, P.textoPromorcional,";
+        $sqlPersonalizada .= " D.nomeDepartamento, P.Condicoes, P.preco ";
         $sqlPersonalizada .= " FROM Produto P, Departamento D WHERE (P.idDepartamento = D.idDepartamento)";
 
 

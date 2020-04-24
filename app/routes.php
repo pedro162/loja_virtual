@@ -3,6 +3,8 @@ $routes = [];
 $routes[] = ['/', 'HomeController@index'];
 $routes[] = ['/home/login', 'HomeController@login'];
 $routes[] = ['/home/cadastro', 'HomeController@cadastro'];
+$routes[] = ['/home/admin', 'HomeController@painel'];
+
 $routes[] = ['/produto/show', 'ProdutoController@show'];
 $routes[] = ['/produto/detals', 'ProdutoController@detals'];
 $routes[] = ['/produto/cadastrar', 'ProdutoController@cadastrar'];

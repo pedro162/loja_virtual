@@ -29,4 +29,10 @@ class HomeController extends BaseController
         $this->setMenu();
         $this->render('login/cadastro', true);
     }
+
+    public function painel()
+    {
+        $this->setMenu('adminMenu');
+        $this->render('admin/painel', true);
+    }
 }

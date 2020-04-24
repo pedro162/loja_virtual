@@ -254,6 +254,9 @@ form input:hover, form label:hover{
 .button-modal{
    background-color: #8B008B; 
 }
+.button-modal:hover{
+    background-color: #8B008B;
+}
 /*menu de opcoes de pesquisa à esquerda*/
 .opcoes-pesquisa{
     box-shadow: 1px 2px 4px #ccc;

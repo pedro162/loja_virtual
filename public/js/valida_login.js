@@ -57,9 +57,12 @@ $(document).ready(function(){
   })
   
 
+
+ 
   //--------------------------------------------- Modal de produtos -----------------------------------------
-  $('.child-card-footer .button-modal').on('click', function(){
+  $('.child-card-footer, div#itens').delegate('.button-modal','click',  function(){
     //cria e adiciona elementos ao carrocel do modal
+
     let idProduto = $(this).parents('.card-produto').find('a').attr('href')
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
@@ -103,7 +106,6 @@ $(document).ready(function(){
                   ).append(
                     $('<div/>').addClass('row').prepend($('<div/>').addClass('col').append('<br/><strong>Relacionados:</strong><br/>').append(carouselModal))
                   );
-                  console.log(list)
                 
                 $('.modal-body').html(container);
 
@@ -195,8 +197,8 @@ $(document).ready(function(){
 
             if(parse[0] == 'msg')
             {
-               getModal($('<div/>').addClass('alert alert-danger').html($('<strong/>').html('Atenção !')),
-                $('<div/>').attr('align', 'center').addClass('h1').css('color', 'red').html(parse[1]+'<br/>Tente outro filtro!')
+               getModal($('<div/>').addClass('alert alert-warning').html($('<strong/>').html('Ops !')),
+                $('<div/>').attr('align', 'center').addClass('h4 alert-warning').html(parse[1]+'<br/>Tente outro filtro!')
                 , '');
 
               return false;
@@ -204,11 +206,60 @@ $(document).ready(function(){
 
             $('#closeModal').trigger('click');
 
-            let col = '';
+            //$('#itens').html($('<div/>').addClass('row').html(divProduto));
+            $('#itens').html($('<div/>').addClass('row').attr('id', 'resultFiltro'));
+
             for (var i = parse.length - 1; i >= 0; i--) {
 
               //console.log('produto '+parse[i].nomeProduto+' preco '+parse[i].preco);
-              col += `
+              //let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
+              let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
+
+              let cardItem = $('<div/>').addClass('card produto-item')
+              let a = $('<a/>').addClass('produto-item').attr('href', `/produto/detals?cd=${parse[i].idProduto}`);
+              let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
+
+              let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
+                append($('<h3/>').html(`${parse[i].nomeProduto}`)).
+                append($('<p/>').html(`${parse[i].textoPromorcional}`)).
+                append($('<p/>').append($('<strong/>').html(`<sup><small>R$</small></sup>${parse[i].preco}<sup><small></small></sup>`)))
+                );
+
+              a.append(divImg)
+              a.append(cardBody);
+
+              cardItem.append(a);
+
+
+
+              let cardFooter = $('<div/>').addClass('card-footer');
+
+              let divButton = $('<div/>').addClass('child-card-footer');
+
+              let button = $('<button/>').addClass('btn btn-primary  button-modal').
+              attr('type', 'button').attr('data-toggle','modal').attr('data-target', '#myModal').
+              text('Mais detalhes');
+
+              divButton.append(button);
+
+              cardFooter.append(divButton);
+              cardFooter.append(`<ul class="curt-lista">
+                              <li class="">
+                                <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128077;</button>
+                                <span>1</span>
+                              </li>
+                              <li class="">
+                                <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128078;</button>
+                                <span>1</span>
+                              </li>
+                              </ul>`);
+
+              cardItem.append(cardFooter);
+              divProduto.append(cardItem);
+              $('#resultFiltro').append(divProduto);
+
+              //----------------------------------
+              /*col += `
                   <div class="col-xs-6 col-md-2 card-produto">
                     <div class="card produto-item">
                       <a class="produto-item" href="/produto/detals?cd=${parse[i].idProduto}">
@@ -243,10 +294,10 @@ $(document).ready(function(){
                           </div>
                       </div>
                     </div>
-                  </div>`;
+                  </div>`;*/
 
             }
-            $('#itens').html($('<div/>').addClass('row').append(col));
+            //$('#itens').html($('<div/>').addClass('row').html(divProduto));
 
           },
 
@@ -260,8 +311,8 @@ $(document).ready(function(){
              xhr.abort();
           });
       }else{
-         getModal($('<div/>').addClass('alert alert-danger').html($('<strong/>').html('Atenção !')),
-          $('<div/>').attr('align', 'center').addClass('h1').css('color', 'red').html('Escolha um filtro de pesquisa!')
+         getModal($('<div/>').addClass('alert alert-warning').html($('<strong/>').html('Ops !')),
+          $('<div/>').attr('align', 'center').addClass('h4 alert-warning').html('Escolha um filtro de pesquisa<br/> para continuar!')
           , '');
       }
 
