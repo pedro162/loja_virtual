@@ -307,9 +307,275 @@ $(document).ready(function(){
 
    
   })
-  /*
+
+
+  /*---------------------- GRAFICOS -------------------------------
   */
 
-  
+
+
+  /*------------------------ Disparando funcoes dos gráficos -----------------------*/
+  $('#btnInicio').on('click', function(){
+    $('#dinamic').css('background-color', 'rgba(0, 0, 0, .8)')
+    $('#dinamic').append($('<div/>').addClass('col-md-6').css('margin-rith', '2px').append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda')));
+    $('#dinamic').append($('<div/>').addClass('col-md-6').append($('<div/>').text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual')));
+    $('#dinamic').append($('<div/>').addClass('col-md-6').append($('<div/>').text('Mais vendidos').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos')));
+    $('#dinamic').append($('<div/>').addClass('col-md-6').append($('<div/>').text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr')));
+/*
+borderColor:'rgba(255, 255, 255)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.001)',exercicio
+*/
+
+    let ctx = $('#maisVendidos');
+    let myChart = new Chart(ctx, {
+      type: 'pie',//pie
+      data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [{
+              label: 'My First dataset',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 206, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(153, 102, 255)',
+                  'rgb(255, 159, 64)'
+              ],
+              borderColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 206, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(153, 102, 255)',
+                  'rgb(255, 159, 64)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          layout:{
+             padding: {
+                  left: 50,
+                  right: 0,
+                  top: 0,
+                  bottom: 0
+              },
+              width:'10px'
+          }
+          ,scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true,
+                      fontColor: '#fff'
+                  }
+              }],
+              xAxes:[{
+                ticks: {
+                      barPercentage: 0.2,
+                      fontColor: '#fff'
+                  }
+              }]
+          }
+      }
+  });
+
+    /*--------------- Composicao da margem de lucro ---------------*/
+    let compMarg = $('#compMargemLucr');
+    let margemChar = new Chart(compMarg, {
+      type: 'pie',//pie
+      data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [{
+              label: 'My First dataset',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: [
+                  'rgb(0, 99, 132)',
+                  'rgb(54, 162, 0)',
+                  'rgb(255, 0, 86)',
+                  'rgb(75, 0, 192)',
+                  'rgb(70, 102, 20)',
+                  'rgb(0, 159, 64)'
+              ],
+              borderColor: [
+                  'rgb(0, 99, 132)',
+                  'rgb(54, 162, 0)',
+                  'rgb(255, 0, 86)',
+                  'rgb(75, 0, 192)',
+                  'rgb(70, 102, 20)',
+                  'rgb(0, 159, 64)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          layout:{
+             padding: {
+                  left: 50,
+                  right: 0,
+                  top: 0,
+                  bottom: 0
+              },
+              width:'10px'
+          }
+          ,scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true,
+                      fontColor: '#fff'
+                  }
+              }],
+              xAxes:[{
+                ticks: {
+                      barPercentage: 0.2,
+                      fontColor: '#fff'
+                  }
+              }]
+          }
+      }
+  });
+
+    /*-------------- Exercicio anual ---------*/
+    let excAnual = $('#excAnual');
+    let cahrExAnual = new Chart(excAnual, {
+      type: 'line',//pie
+      data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [{
+              label: '2020',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: 'rgba(255, 255, 255, 0.001)',
+              borderColor:'rgba(0,255,0)',
+              borderWidth: 3
+          },
+          {
+              label: '2019',
+              data: [10, 5, 8, 7, 10, 15],
+              backgroundColor: 'rgba(255, 255, 255, 0.001)',
+              borderColor:'rgba(0,255,255)',
+              borderWidth: 3
+          }]
+      },
+      options: {
+          layout:{
+             padding: {
+                  left: 50,
+                  right: 0,
+                  top: 0,
+                  bottom: 0
+              },
+              width:'10px'
+          }
+          ,scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true,
+                      fontColor: '#fff'
+                  }
+              }],
+              xAxes:[{
+                ticks: {
+                      barPercentage: 0.2,
+                      fontColor: '#fff'
+                  }
+              }]
+          }
+      }
+  });
+
+
+
+    // ------------------ Meta --------
+    let ctxs = $('#metaVenda');
+    let myCharts = new Chart(ctxs, {
+      type: 'bar',//pie
+      data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [
+              {
+                  label: 'Meta',
+                  data: [15, 20.6, 19.85, 13.9, 25.45, 17.87],
+                  borderColor:'rgba(148,0,211)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.001)',
+                  borderWidth: 3,
+                  type: 'line'
+              },
+              {
+              label: 'My First dataset',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 206, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(153, 102, 255)',
+                  'rgb(255, 159, 64)'
+              ],
+              borderColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 206, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(153, 102, 255)',
+                  'rgb(255, 159, 64)'
+              ],
+              borderWidth: 3
+              },
+              {
+              label: 'My Next dataset',
+              data: [10, 19, 5, 9, 8, 11],
+              backgroundColor:[
+                  'rgb(0, 99, 132)',
+                  'rgb(54, 162, 0)',
+                  'rgb(255, 0, 86)',
+                  'rgb(0, 0, 192)',
+                  'rgb(153, 102, 0)',
+                  'rgb(255, 0, 64)'
+
+              ],
+              borderColor:[
+                  'rgb(0, 99, 132)',
+                  'rgb(54, 162, 0)',
+                  'rgb(255, 0, 86)',
+                  'rgb(0, 0, 192)',
+                  'rgb(153, 102, 0)',
+                  'rgb(255, 0, 64)'
+              ],
+              borderWidth: 3
+          }
+          ]
+      },
+      options: {
+          layout:{
+             padding: {
+                  left: 50,
+                  right: 0,
+                  top: 0,
+                  bottom: 0
+              },
+              width:'10px'
+          }
+          ,scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true,
+                      fontColor: '#fff'
+                  }
+              }],
+              xAxes:[{
+                ticks:{
+                  barPercentage: 1,
+                  fontColor: '#fff'
+                }
+                
+              }]
+          }
+        }
+    });
+
+  })
+
+
+
 
 })
