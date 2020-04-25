@@ -285,3 +285,81 @@ form input:hover, form label:hover{
     background-color: #ddd;
     box-shadow: 2px 2px 3px #000;
 }
+
+
+/*-------------------------------------------- Styles views aministrador --------------------------*/
+
+/*body{
+    background-color: rgba(0,250,154);
+}*/
+
+#divImgAdmin{
+    padding: 10px 20px;
+
+}
+
+
+
+#divImgAdmin img{
+    width: 5%;
+    height: 5%;
+    margin-right: 2px;
+}
+
+#subPainel{
+    background-color: rgba(211, 211, 211, 0.8);
+}
+
+#menuSupAdmin{
+    background-color: #D3D3D3;
+    border-radius: 0 20px 0px 0px;
+    color: #9400D3;
+    
+}
+
+#menuSupAdmin div{
+    margin: auto;
+}
+
+.searchInput{
+    border-radius: 10px 0px 0px 10px;
+}
+
+.search{
+    display: flex;
+    flex-direction: row;
+    border: 2px solid #9400D3;
+    border-radius: 10px;
+}
+.search button{
+     border-radius: 0px 10px 10px 0px;
+}
+
+#menuLatral{
+     background-color: #9400D3;
+}
+
+#corpoAdmim{
+    height: 100%;
+    width: 100%;
+    margin-top: -104px;
+}
+
+#corpoAdmim button{
+    background-color: #9400D3;
+    color: #fff;
+}
+#corpoAdmim{
+    color: #fff;
+}
+#corpoAdmim button:hover{
+    background-color: #fff;
+    color: #9400D3;
+}
+
+#corpoAdmim nav{
+    margin-top: 20px;
+}
+#corpoAdmim nav ul li{
+    margin-bottom: 20px;
+}
