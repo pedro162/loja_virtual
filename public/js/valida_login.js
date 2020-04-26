@@ -318,14 +318,18 @@ $(document).ready(function(){
   $('#desemprenho').on('click', function(){
     $('#dinamic').html('');
     $('#dinamic').css('background-color', 'rgba(0, 0, 0, .8)')
-    $('#dinamic').append($('<div/>').addClass('col-md-6').css('margin-rith', '2px').append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda')));
-    $('#dinamic').append($('<div/>').addClass('col-md-6').append($('<div/>').text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual')));
-    $('#dinamic').append($('<div/>').addClass('col-md-6').append($('<div/>').text('Mais vendidos').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos')));
-    $('#dinamic').append($('<div/>').addClass('col-md-6').append($('<div/>').text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr')));
-/*
-borderColor:'rgba(255, 255, 255)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.001)',exercicio
-*/
+    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').css('margin-rith', '2px').append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda')));
+    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual')));
+    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Mais vendidos').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos')));
+    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr')));
+
+
+    let dateInt = $('<div/>').addClass('col-md-12 mt-5 mb-3 h4').css('color', '#fff').html('<span>Venda bruta</span>'+1200.00);
+    let dateEnd = $('<div/>').addClass('col-md-12 h4').css('color', '#fff').html('Venda liquida '+1200.00);
+
+    $('#optionPlus').html('');
+    $('#optionPlus').append($('<div/>').addClass('row').append(dateInt));
+    $('#optionPlus').append($('<div/>').addClass('row').append(dateEnd));
 
     let ctx = $('#maisVendidos');
     let myChart = new Chart(ctx, {
