@@ -43,7 +43,7 @@ class Produto extends BaseModel
     public function getFiltros():array
     {
         return[
-            'Departamento'=>['Games', 'Celulares'],
+            'Categoria'=>['Games', 'Celulares'],
             'Preco'=>['1200', '1000', '155.50'],
             'Condições'=> ['2x', '4x', '6x', '10x']
         ];
@@ -99,8 +99,8 @@ class Produto extends BaseModel
 
     public function getDepartamento():array
     {
-        $departamento = new Departamento();
-        $restult = $departamento->select(['nomeDepartamento', 'idDepartamento'], ['idDepartamento' => $this->idDepartamento]);
+        $departamento = new Categoria();
+        $restult = $departamento->select(['nomeCategoria', 'idCategoria'], ['idCategoria' => $this->idDepartamento]);
 
         return $restult;
         
@@ -316,15 +316,15 @@ class Produto extends BaseModel
 
        $preco = '';
 
-       $departamento = '';
+       $categoria = '';
 
        foreach ($parametros as $key => $value) {
 
             for ($i=0; !($i == count($value)); $i++) { 
 
                 switch ($key) {
-                case 'Departamento':
-                   $departamento .= " D.nomeDepartamento = ".$this->satinizar($value[$i])." or ";
+                case 'Categoria':
+                   $categoria .= " C.nomeCategoria = ".$this->satinizar($value[$i])." AND ";
                     break;
 
                 case 'Condicoes':
@@ -337,14 +337,14 @@ class Produto extends BaseModel
                 }
             }
         }
-        $sqlPersonalizada = "SELECT P.idProduto, P.idDepartamento, P.nomeProduto, P.textoPromorcional,";
-        $sqlPersonalizada .= " D.nomeDepartamento, P.Condicoes, P.preco ";
-        $sqlPersonalizada .= " FROM Produto P, Departamento D WHERE (P.idDepartamento = D.idDepartamento)";
+        $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional,";
+        $sqlPersonalizada .= " P.Condicoes, P.preco ";
+        $sqlPersonalizada .= " FROM Produto P, Categoria C, ProdutoCategoria PC WHERE (P.idProduto = PC.ProdutoIdProduto and C.idCategoria = PC.CategoriaIdCategoria)";
 
 
-        if(strlen($departamento) > 0){
-            $departamento  = substr($departamento, 0, -3);
-            $sqlPersonalizada .= ' AND ('.$departamento.')';
+        if(strlen($categoria) > 0){
+            $categoria  = substr($categoria, 0, -4);
+            $sqlPersonalizada .= ' AND ('.$categoria.')';
         }
 
         if(strlen($preco) > 0){
