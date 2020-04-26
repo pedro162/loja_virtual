@@ -153,7 +153,7 @@ $(document).ready(function(){
 
       let condicoes = new Array();;
 
-      $("input[name='produtos[Departamento][]']:checked").each(function(){
+      $("input[name='produtos[Categoria][]']:checked").each(function(){
          departamento.push($(this).val());
       })
 
@@ -168,7 +168,7 @@ $(document).ready(function(){
       let Filtro = new Array();
 
       if(departamento.length > 0){
-        departamento.unshift('Departamento');
+        departamento.unshift('Categoria');
         Filtro.push(departamento);
       }
 
@@ -192,8 +192,9 @@ $(document).ready(function(){
           url: '/produto/filtro',
           data:{'produtos': Filtro},
           success: function(retorno){
-
+            console.log(retorno);return false;
             parse = $.parseJSON(retorno);
+
 
             if(parse[0] == 'msg')
             {

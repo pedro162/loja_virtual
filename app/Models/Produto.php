@@ -16,7 +16,7 @@ class Produto extends BaseModel
     private $caracteristicas;
     private $idProduto;
     private $nomeDepartamento;
-    private $idDepartamento;
+    private $idCategoria;
     private $estoque;
 
     protected $table = 'Produto';
@@ -52,7 +52,7 @@ class Produto extends BaseModel
 
     public function detalheProduto(Int $id)
     {
-        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento'], ['idProduto'=>$id], '=');
+        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco'], ['idProduto'=>$id], '=');
         $array[] = $result[0]->getNomeProduto();
         $array[] = $result[0]->getPreco();
         return json_encode($array);
@@ -100,7 +100,7 @@ class Produto extends BaseModel
     public function getDepartamento():array
     {
         $departamento = new Categoria();
-        $restult = $departamento->select(['nomeCategoria', 'idCategoria'], ['idCategoria' => $this->idDepartamento]);
+        $restult = $departamento->select(['nomeCategoria', 'idCategoria'], ['idCategoria' => $this->idCategoria]);
 
         return $restult;
         
@@ -312,6 +312,13 @@ class Produto extends BaseModel
         if($sentinelaSubarray == false)
             throw new Exception("Consulta inválida<br/>\n");
 
+
+        $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional,";
+        $sqlPersonalizada .= " P.Condicoes, P.preco ";
+        $sqlPersonalizada .= " FROM  ProdutoCategoria PC inner join Produto P on P.idProduto = PC.ProdutoIdProduto";
+        $sqlPersonalizada .= " inner join Categoria C on C.idCategoria = PC.CategoriaIdCategoria";
+
+
        $codicoes = '';
 
        $preco = '';
@@ -324,7 +331,7 @@ class Produto extends BaseModel
 
                 switch ($key) {
                 case 'Categoria':
-                   $categoria .= " C.nomeCategoria = ".$this->satinizar($value[$i])." AND ";
+                   $categoria .= " C.nomeCategoria = ".$this->satinizar($value[$i])." or ";
                     break;
 
                 case 'Condicoes':
@@ -337,26 +344,29 @@ class Produto extends BaseModel
                 }
             }
         }
-        $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional,";
-        $sqlPersonalizada .= " P.Condicoes, P.preco ";
-        $sqlPersonalizada .= " FROM Produto P, Categoria C, ProdutoCategoria PC WHERE (P.idProduto = PC.ProdutoIdProduto and C.idCategoria = PC.CategoriaIdCategoria)";
+        
 
-
+        $were = ' where ';
         if(strlen($categoria) > 0){
-            $categoria  = substr($categoria, 0, -4);
-            $sqlPersonalizada .= ' AND ('.$categoria.')';
+            $categoria  = substr($categoria, 0, -3);
+            $were .= '('.$categoria.') AND ';
         }
 
         if(strlen($preco) > 0){
             $preco  = substr($preco, 0, -4);
-            $sqlPersonalizada .= ' AND ('.$preco.')';
+            $were .= '('.$preco.') AND ';
 
         }
 
         if(strlen($codicoes) > 0){
             $codicoes  = substr($codicoes, 0, -4);
-            $sqlPersonalizada .= ' AND ('.$codicoes.')';
+            $were .= '('.$codicoes.') AND ';
 
+        }
+
+        if(strlen($were) > 7){
+            $were = substr($were, 0, -4);
+            $sqlPersonalizada .= $were;
         }
 
         $result = $this->persolizaConsulta($sqlPersonalizada);

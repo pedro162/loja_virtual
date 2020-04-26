@@ -17,7 +17,7 @@ class ProdutoController extends BaseController
     {
         $produto = new Produto();
 
-        $this->view->produtos = $produto->listarProdutos(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'idDepartamento']);
+        $this->view->produtos = $produto->listarProdutos(['nomeProduto','textoPromorcional', 'idProduto', 'preco']);
         $this->setMenu();
         $this->setFooter('footer');
         
