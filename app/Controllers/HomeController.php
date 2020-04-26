@@ -27,12 +27,14 @@ class HomeController extends BaseController
     public function cadastro()
     {
         $this->setMenu();
+        $this->setFooter('footer');
         $this->render('login/cadastro', true);
     }
 
     public function painel()
-    {
+    {   
         $this->setMenu('adminMenu');
+        $this->setFooter('footer');
         $this->render('admin/painel', true);
     }
 }

@@ -7,6 +7,9 @@ use App\Models\Fabricante;
 use App\Models\Cliente;
 use Core\Containner\File;
 use App\Models\Venda;
+use App\Models\Categoria;
+use App\Models\Marca;
+
 
 class ProdutoController extends BaseController
 {
@@ -26,6 +29,13 @@ class ProdutoController extends BaseController
     public function cadastrar()
     {
     	$this->setMenu('adminMenu');
+        $this->setFooter('footer');
+
+        $categoria = new Categoria();
+        $marca = new Marca();
+
+        $this->view->categorias = $categoria->listaCategoria();
+        $this->view->marcas = $marca->listaMarca();
         $this->render('produtos/cadastrar');
     }
 

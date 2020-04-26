@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Models;
+use App\Models\BaseModel;
 use \Exception;
 use \InvalidArgumentException;
 use App\Models\Departamento;

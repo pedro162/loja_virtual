@@ -59,13 +59,13 @@ abstract class BaseModel extends Transaction
         $sql .= ' ORDER BY id'.$this->table.' '.$ordem;
 
         $result = self::$conn->query($sql);
-        if($result)
+         $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
+        if($arrayObj)
         {
-            $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
             return $arrayObj;
         }
 
-        throw new Exception("Falha ao excluir registro<br/>\n");
+        throw new Exception("Elemento não encontrado<br/>\n");
 
 
     }

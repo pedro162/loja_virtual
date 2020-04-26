@@ -281,6 +281,26 @@ $(document).ready(function(){
 
   });
 
+
+//------------------------ Menu de opcoes admin ---------------------
+$('#menuAdminHide').on('click', function(){
+  let menu = ['/home/admin', '/produto/cadastrar'];
+  let texto =['Painel administrado', 'Cadastrar produto'];
+
+
+  let rowOptions = $('<div/>').addClass('row').css('color', '#9400D3');
+
+  let lista = $('<ul/>').addClass('nav navbar-nav');
+  for (let i=0; !(i == menu.length); i++) {
+      lista.append($('<li/>').addClass('nav-item').append($('<a/>').css('color', '#9400D3').html(texto[i]).attr('href', menu[i])));
+  }
+  let nav = $('<nav/>').addClass('navbar').append(lista);
+  rowOptions.append(nav).addClass('col-md-4');
+  getModal('Menu de opções', rowOptions);
+})
+
+
+
 //chama o modal e passa alguns parametros
 
   function getModal(titulo='Aguarde', body='', footer='') {
@@ -309,13 +329,39 @@ $(document).ready(function(){
   })
 
 
-  /*---------------------- GRAFICOS -------------------------------
-  */
+
+  $('#btnInicio').on('click', function(){
+
+     $('#dinamic').html('')
+
+  })
+
+  $('#btnEntretas').on('click', function(){
+
+     $('#dinamic').html('')
+     
+  })
+
+  $('#btnPedidos').on('click', function(){
+
+     $('#dinamic').html('')
+     
+  })
+
+  $('#btnConfig').on('click', function(){
+
+     $('#dinamic').html('')
+     
+  })
+
+
+//---------------------- GRAFICOS -------------------------------
+  
 
 
 
   /*------------------------ Disparando funcoes dos gráficos -----------------------*/
-  $('#desemprenho').on('click', function(){
+  $('#btnDesemprenho').on('click', function(){
     $('#dinamic').html('');
     $('#dinamic').css('background-color', 'rgba(0, 0, 0, .8)')
     $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').css('margin-rith', '2px').append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda')));
@@ -324,12 +370,8 @@ $(document).ready(function(){
     $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr')));
 
 
-    let dateInt = $('<div/>').addClass('col-md-12 mt-5 mb-3 h4').css('color', '#fff').html('<span>Venda bruta</span>'+1200.00);
-    let dateEnd = $('<div/>').addClass('col-md-12 h4').css('color', '#fff').html('Venda liquida '+1200.00);
+ 
 
-    $('#optionPlus').html('');
-    $('#optionPlus').append($('<div/>').addClass('row').append(dateInt));
-    $('#optionPlus').append($('<div/>').addClass('row').append(dateEnd));
 
     let ctx = $('#maisVendidos');
     let myChart = new Chart(ctx, {
