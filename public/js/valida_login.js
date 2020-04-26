@@ -192,7 +192,6 @@ $(document).ready(function(){
           url: '/produto/filtro',
           data:{'produtos': Filtro},
           success: function(retorno){
-            console.log(retorno);return false;
             parse = $.parseJSON(retorno);
 
 
