@@ -51,7 +51,7 @@ $(document).ready(function(){
       const fileReader = new FileReader();
 
       fileReader.onloadend = function(){
-          $('#img').attr('src', fileReader.result).css('width', '353px').css('height', '332px')
+          $('#img').attr('src', fileReader.result).css('width', '253px').css('height', '232px')
       }
       fileReader.readAsDataURL(file);
   })
@@ -284,20 +284,34 @@ $(document).ready(function(){
 
 //------------------------ Menu de opcoes admin ---------------------
 $('#menuAdminHide').on('click', function(){
-  let menu = ['/home/admin', '/produto/cadastrar'];
-  let texto =['Painel administrado', 'Cadastrar produto'];
+  let menu = [
+  '/produto/all',
+  '/financeiro',
+  '/venda/logistica'
+
+  ];
+
+  let icon = [
+      '<i class="fas fa-cubes fa-2x" ></i>',
+      '<i class="fas fa-coins fa-2x"></i>',
+      '<i class="fas fa-shipping-fast fa-2x"></i>'
+   ];
+
+  let texto =['<br/>Produto', '<br/>Financeiro', '<br/>Logistica'];
 
 
   let rowOptions = $('<div/>').addClass('row').css('color', '#9400D3');
 
-  let lista = $('<ul/>').addClass('nav navbar-nav');
+  let lista = $('<ul/>').addClass('nav');
   for (let i=0; !(i == menu.length); i++) {
-      lista.append($('<li/>').addClass('nav-item').append($('<a/>').css('color', '#9400D3').html(texto[i]).attr('href', menu[i])));
+      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<a/>').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('href', menu[i])));
   }
   let nav = $('<nav/>').addClass('navbar').append(lista);
-  rowOptions.append(nav).addClass('col-md-4');
-  getModal('Menu de opções', rowOptions);
+  rowOptions.append(nav).addClass('col-md-12');
+  getModal('<strong>Menu de opções</strong>', rowOptions);
 })
+
+/* ---------------- Teste -----------*/
 
 
 
@@ -342,12 +356,6 @@ $('#menuAdminHide').on('click', function(){
      
   })
 
-  $('#btnPedidos').on('click', function(){
-
-     $('#dinamic').html('')
-     
-  })
-
   $('#btnConfig').on('click', function(){
 
      $('#dinamic').html('')
@@ -356,8 +364,6 @@ $('#menuAdminHide').on('click', function(){
 
 
 //---------------------- GRAFICOS -------------------------------
-  
-
 
 
   /*------------------------ Disparando funcoes dos gráficos -----------------------*/

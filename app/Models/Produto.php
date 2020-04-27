@@ -18,6 +18,7 @@ class Produto extends BaseModel
     private $nomeDepartamento;
     private $idCategoria;
     private $estoque;
+    private $codigo;
 
     protected $table = 'Produto';
 
@@ -97,6 +98,26 @@ class Produto extends BaseModel
     }
 
 
+    public function getCodigoProduto():string
+    {
+        if(empty($this->codigo))
+        {
+            throw new InvalidArgumentException("Propriedade não definida<br/>");
+        }
+
+        return $this->codigo;
+    }
+
+    public function setCodigoProduto(String $codigo):bool
+    {
+        if(isset($codigo) && (!empty($codigo))){
+            $this->codigo = $codigo;
+            return true;
+        }
+        
+        throw new InvalidArgumentException("Valor inváldio<br/>");
+    }
+
     public function getDepartamento():array
     {
         $departamento = new Categoria();
@@ -155,7 +176,7 @@ class Produto extends BaseModel
     }
 
 
-    public function setEstoque(int $estoque):bool
+   public function setEstoque(int $estoque):bool
     {
         if(!(is_integer($estoque) && ($estoque > 0)))
         {
@@ -241,6 +262,7 @@ class Produto extends BaseModel
         }
         return $this->idProduto;
     }
+
 
 
     private function parseFiltroAjax(array $request):array

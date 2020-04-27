@@ -252,7 +252,8 @@ form input:hover, form label:hover{
     margin-top: 5px;
 }
 .button-modal{
-   background-color: #8B008B; 
+   background-color: #8B008B;
+   color: #fff;
 }
 .button-modal:hover{
     background-color: #8B008B;
@@ -381,4 +382,17 @@ form input:hover, form label:hover{
     color: #fff;
     text-align: center;
     padding: 4px 0px;
+}
+
+
+/*----------------- Painel de Produtos ------------------------*/
+.standard-background{
+    background-color: #9400D3;
+    margin-top: -104px;
+    height: 100%;
+}
+.standard-background div{
+    padding-top: 4px;
+    background-color: #fff;
+    height: 100%;
 }

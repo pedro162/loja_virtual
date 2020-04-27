@@ -39,12 +39,71 @@ class ProdutoController extends BaseController
         $this->render('produtos/cadastrar');
     }
 
+    public function all($request)
+    {
+        $this->setMenu('adminMenu');
+        $this->setFooter('footer');
+
+         $produto = new Produto();
+         $result = $produto->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque']);
+
+         if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
+            $arrayObjStdClass = [];
+             for ($i=0; !($i == count($result)) ; $i++) { 
+                 $obj = new \stdClass();
+
+                 $obj->nomeProduto          = $result[$i]->getNomeProduto();
+                 $obj->textoPromorcional    = $result[$i]->getTextoPromorcional();
+                 $obj->estoque              = $result[$i]->getEstoque();
+                 $obj->idProduto            = $result[$i]->getIdProduto();
+                 $obj->preco                = $result[$i]->getPreco();
+
+                 $arrayObjStdClass[] = $obj;
+            }
+            $this->view->result = json_encode($arrayObjStdClass);
+            $this->render('produtos/ajax', false);
+
+         }else{
+            $this->view->tableProdutos = $result;
+            $this->render('produtos/tabelaProdutos');
+         }
+
+    }
+
 
     public function detals($request)
     {
        /* echo"<pre>";
         var_dump($request);
         echo "</pre>";*/
+    }
+
+    public function editarProduto($request)
+    {   
+        if(!isset($request['get'], $request['get']['id'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+        if(empty($request['get']['id'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+
+        $this->setMenu('adminMenu');
+        $this->setFooter('footer');
+
+        $produto = new Produto();
+        $categoria = new Categoria();
+        $marca = new Marca();
+
+        $this->view->categorias = $categoria->listaCategoria();
+        $this->view->marcas = $marca->listaMarca();
+
+        $this->view->result = $result = $produto->select(
+            ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque', 'codigo'], ['idProduto'=>$request['get']['id']]
+        )[0];
+        
+        $this->render('produtos/editar');
     }
 
     public function filtro($request)
