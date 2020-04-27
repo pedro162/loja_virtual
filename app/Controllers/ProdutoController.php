@@ -44,9 +44,27 @@ class ProdutoController extends BaseController
         $this->setMenu('adminMenu');
         $this->setFooter('footer');
 
-         $produto = new Produto();
-         $result = $produto->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque']);
 
+        $pagina = 1;
+        $itensPorPagina = 10;
+
+        if(isset($request['get'], $request['get']['pagina'])){
+            $pagina = $request['get']['pagina'];
+        }
+
+         $produto = new Produto();
+
+         $inicio = $produto->inicioPaginador($itensPorPagina, $pagina);
+         $totItens = $produto->countItens();
+
+         $result = $produto->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque']
+            ,[],'=','asc', $inicio, $itensPorPagina);
+
+        $this->view->pagina = $pagina;
+        $this->view->itensPorPagina = $itensPorPagina;
+        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+
+         //muda o tipo de objeto para stdClass caso a requisisao seja via ajax
          if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
             $arrayObjStdClass = [];
              for ($i=0; !($i == count($result)) ; $i++) { 

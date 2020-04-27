@@ -12,6 +12,7 @@ abstract class BaseModel extends Transaction
 {
     protected static $conn;
 
+
     protected static function open()
     {
         if(empty(self::$conn))
@@ -20,6 +21,8 @@ abstract class BaseModel extends Transaction
         }
     }
     
+    
+
     protected static function getConn()
     {
         if(empty(self::$conn))
@@ -29,8 +32,33 @@ abstract class BaseModel extends Transaction
         return self::$conn;
     }
 
+    public function countItens()
+    {
+        $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
+        $consulta = self::$conn->query($sql);
+
+        $result = $consulta->fetchAll();
+        if($result){
+            return $result[0]->totItens;
+        }else{
+            return "Nenhum resultado encontrado<br/>\n";
+        }
+
+
+    }
+
+
+    public function inicioPaginador(Int $qtdresult, Int $paginas):int
+    {
+        $result = ($qtdresult * $paginas) - $qtdresult;
+        return $result;
+       
+    }
+
+
+
     //ao informar o filtro, o operador tambem deve ser invormado
-    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc'):array
+    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc', $litmitInit = null, $limitEnd = null):array
     {
 
         $sql = "SELECT ";
@@ -57,6 +85,10 @@ abstract class BaseModel extends Transaction
         }
 
         $sql .= ' ORDER BY id'.$this->table.' '.$ordem;
+
+        if(!(is_null($litmitInit) && is_null($limitEnd))){
+            $sql .= ' LIMIT '.$litmitInit.','. $limitEnd;
+        }
 
         $result = self::$conn->query($sql);
          $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
