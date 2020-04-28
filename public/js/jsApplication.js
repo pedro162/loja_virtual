@@ -407,9 +407,9 @@ function listaTabelaProdutos(retorno) {
                     .append($('<td/>').html(retorno[0][i].estoque))
                     .append($('<td/>').html(retorno[0][i].preco))
                     .append($('<td/>').html(retorno[0][i].codigo))
-                    .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href',retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
-                                      .append($('<a/>').addClass('btn btn-primary mr-2').attr('href',retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
-                                      .append($('<a/>').addClass('btn btn-danger').attr('href',retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
+                    .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
+                                      .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
+                                      .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
                         )
 
                   )
