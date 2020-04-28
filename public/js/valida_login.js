@@ -367,7 +367,7 @@ $('#menuAdminHide').on('click', function(){
   })
 
 //-----------------------------Botoes da paginaçao da tabela paginacao da tabela de produtos ---------------------------/
-$('#dinamic').delegate('ul li span', 'click', function(){
+$('#dinamic').delegate('ul li a', 'click', function(){
 
   let id = $(this).attr('id');
 
@@ -386,6 +386,7 @@ $('#dinamic').delegate('ul li span', 'click', function(){
 })
 
 
+//cria a tabela de protos e recebe os dados por parametro
 function listaTabelaProdutos(retorno) {
   $('#closeModal').trigger('click');
 
@@ -429,12 +430,16 @@ function listaTabelaProdutos(retorno) {
               let preview = (retorno[1].pagina - 1);
 
               let blockPrev = '';
-              if(retorno[1].pagina == 1){
-                  blockPrev = '';
+              if(Number(retorno[1].pagina) == 1){
+                  blockPrev = 'disabled';
               }
 
               //cria a ul
-              let lista = $('<ul/>').addClass('pagination justify-content-end').append($('<li/>').addClass('page-item').append($('<span/>').attr('id', blockPrev).addClass('page-link '+blockPrev).html('peview')));
+              let lista = $('<ul/>').css('color', '#8B008B').addClass('pagination justify-content-end').append($('<li/>').addClass('page-item').append($('<a/>').on('click',function(event){
+                //desativa o evento click do link
+                  event.preventDefault()
+                }
+              ).attr('herf', '/produto/all?pagina='+preview).attr('id', preview).addClass('page-link '+blockPrev).html('peview')));
 
               //adiciona um id a lista
               lista.attr('id', 'paginacao')
@@ -446,18 +451,24 @@ function listaTabelaProdutos(retorno) {
                   estilo = 'active';
                 }
 
-                let li = $('<li/>').addClass('page-item '+estilo).append($('<span/>').attr('id', (i+1)).addClass('page-link').html((i+1)))
+                let li = $('<li/>').addClass('page-item '+estilo).append($('<a/>').on('click',function(event){//desativa o evento click do link
+                      event.preventDefault()
+                    }
+                  ).attr('herf', '/produto/all?pagina='+(i+1)).attr('id', (i+1)).addClass('page-link').html((i+1)))
                 lista.append(li);
               }
 
               let blockNext = '';
               if(retorno[1].pagina == retorno[1].totPaginas){
-                  blockNext = '';
+                  blockNext = 'disabled';
               }
 
-              let next = (retorno[1].pagina + 1);
+              let next = (Number(retorno[1].pagina) + 1);
               
-              lista.append($('<li/>').addClass('page-item').append($('<span/>').addClass('page-link '+blockNext).attr('id', next).html('next')));
+              lista.append($('<li/>').addClass('page-item').append($('<a/>').on('click',function(event){ //desativa o evento click do link
+                 event.preventDefault()
+               }
+               ).attr('herf', '/produto/visualizar?id='+next).addClass('page-link '+blockNext).attr('id', next).html('next')));
               
               let divLista =$('<div/>').addClass('col-md-12').append($('<nav/>').append(lista));
 
