@@ -57,7 +57,7 @@ class ProdutoController extends BaseController
          $inicio = $produto->inicioPaginador($itensPorPagina, $pagina);
          $totItens = $produto->countItens();
 
-         $result = $produto->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque']
+         $result = $produto->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque','codigo']
             ,[],'=','asc', $inicio, $itensPorPagina);
 
         $this->view->pagina = $pagina;
@@ -75,10 +75,17 @@ class ProdutoController extends BaseController
                  $obj->estoque              = $result[$i]->getEstoque();
                  $obj->idProduto            = $result[$i]->getIdProduto();
                  $obj->preco                = $result[$i]->getPreco();
+                 $obj->codigo               = $result[$i]->getCodigoProduto();
 
                  $arrayObjStdClass[] = $obj;
             }
-            $this->view->result = json_encode($arrayObjStdClass);
+
+            $stdPaginacao = new \stdClass();
+            $stdPaginacao->pagina = $this->view->pagina;
+            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+            $stdPaginacao->totPaginas = $this->view->totPaginas ;
+
+            $this->view->result = json_encode([$arrayObjStdClass, $stdPaginacao]);
             $this->render('produtos/ajax', false);
 
          }else{

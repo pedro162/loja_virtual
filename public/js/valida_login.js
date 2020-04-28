@@ -285,10 +285,13 @@ $(document).ready(function(){
 //------------------------ Menu de opcoes admin ---------------------
 $('#menuAdminHide').on('click', function(){
   let menu = [
+  /*
   '/produto/all',
   '/financeiro',
-  '/venda/logistica'
-
+  '/venda/logistica'*/
+    'produto',
+    'financeiro',
+    'venda'
   ];
 
   let icon = [
@@ -304,7 +307,7 @@ $('#menuAdminHide').on('click', function(){
 
   let lista = $('<ul/>').addClass('nav');
   for (let i=0; !(i == menu.length); i++) {
-      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<a/>').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('href', menu[i])));
+      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<span/>').addClass('btn').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('id', menu[i])/*'.attr('href', menu[i])'*/));
   }
   let nav = $('<nav/>').addClass('navbar').append(lista);
   rowOptions.append(nav).addClass('col-md-12');
@@ -342,6 +345,126 @@ $('#menuAdminHide').on('click', function(){
    
   })
 
+
+/*------------------------------- Faz uma requisizao ajax e lista na tabela de produtos ---------------------------------------------*/
+
+  $('.modal-body').delegate('#produto','click', function(){
+
+   let xhr = $.ajax({
+            url: '/produto/all?rq=ajax',
+            type: 'GET',
+            dataType: 'json',
+            success: function(retorno){
+              listaTabelaProdutos(retorno);
+
+
+
+            }
+            
+        });
+
+
+  })
+
+//-----------------------------Botoes da paginaçao da tabela paginacao da tabela de produtos ---------------------------/
+$('#dinamic').delegate('ul li span', 'click', function(){
+
+  let id = $(this).attr('id');
+
+  let xhr = $.ajax({
+            url: '/produto/all?rq=ajax&pagina='+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(retorno){
+              listaTabelaProdutos(retorno);
+            }
+
+
+          });
+              //fecha o modal com menu
+  //
+})
+
+
+function listaTabelaProdutos(retorno) {
+  $('#closeModal').trigger('click');
+
+              //Cabecalho da tabela
+              let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
+                                        .append($('<th/>').html('Estoque'))
+                                        .append($('<th/>').html('Preço'))
+                                        .append($('<th/>').html('Código'))
+                                        .append($('<th/>').html('Ação'))
+                )
+              
+
+              //Corpo da tabela
+              let tbody = $('<tbody/>');
+              for (let i = 0; !(i == retorno[0].length); i++) {
+
+                tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
+                    .append($('<td/>').html(retorno[0][i].estoque))
+                    .append($('<td/>').html(retorno[0][i].preco))
+                    .append($('<td/>').html(retorno[0][i].codigo))
+                    .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href',retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
+                                      .append($('<a/>').addClass('btn btn-primary mr-2').attr('href',retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
+                                      .append($('<a/>').addClass('btn btn-danger').attr('href',retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
+                        )
+
+                  )
+              }
+
+
+
+              //armazena a tabela numa div de coluna 12
+              let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
+              
+              divTabela.append($('<a/>').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
+
+              divTabela.append($('<table/>').addClass('table table-hover').append(thead).append(tbody));
+              
+
+
+              //inicia a cria cao da lista de navegacao
+              let preview = (retorno[1].pagina - 1);
+
+              let blockPrev = '';
+              if(retorno[1].pagina == 1){
+                  blockPrev = '';
+              }
+
+              //cria a ul
+              let lista = $('<ul/>').addClass('pagination justify-content-end').append($('<li/>').addClass('page-item').append($('<span/>').attr('id', blockPrev).addClass('page-link '+blockPrev).html('peview')));
+
+              //adiciona um id a lista
+              lista.attr('id', 'paginacao')
+              //cria os li e adiciona a ul
+              for (let i = 0; !(i == retorno[1].totPaginas); i++) {
+                let estilo = '';
+
+                if(retorno[1].pagina == (i + 1)){
+                  estilo = 'active';
+                }
+
+                let li = $('<li/>').addClass('page-item '+estilo).append($('<span/>').attr('id', (i+1)).addClass('page-link').html((i+1)))
+                lista.append(li);
+              }
+
+              let blockNext = '';
+              if(retorno[1].pagina == retorno[1].totPaginas){
+                  blockNext = '';
+              }
+
+              let next = (retorno[1].pagina + 1);
+              
+              lista.append($('<li/>').addClass('page-item').append($('<span/>').addClass('page-link '+blockNext).attr('id', next).html('next')));
+              
+              let divLista =$('<div/>').addClass('col-md-12').append($('<nav/>').append(lista));
+
+              $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
+              $('#dinamic').append(divTabela);
+              $('#dinamic').append(divLista);
+}
 
 
   $('#btnInicio').on('click', function(){
