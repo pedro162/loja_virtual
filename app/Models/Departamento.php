@@ -8,7 +8,7 @@ use \InvalidArgumentException;
 
 class Departamento extends BaseModel
 {
-	protected $table = 'Departamento';
+	const TABLE = 'Departamento';
 
     public function __construct()
     {

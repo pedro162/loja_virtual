@@ -9,6 +9,7 @@ use \InvalidArgumentException;
 class Categoria extends BaseModel
 {
 	protected $table = 'Categoria';
+   
 
 	private $nomeCategoria;
 	private $idCategoria;
@@ -28,11 +29,11 @@ class Categoria extends BaseModel
 
     public function getCategoria()
     {
-    	if(empty($this->nomeCategoria)){
+    	if(empty($this->idCategoria)){
     		throw new Exception("Pripriedade não defindida<br/>");
     	}
 
-    	return $this->nomeCategoria;
+    	return $this->idCategori;
     }
 
     public function getIdCategoria()
@@ -43,6 +44,9 @@ class Categoria extends BaseModel
 
     	return $this->idCategoria;
     }
+
+
+ 
 
 
 

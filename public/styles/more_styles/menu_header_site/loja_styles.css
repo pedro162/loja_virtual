@@ -17,6 +17,8 @@ body{
 body section{
     margin-top: 80px; z-index: 1
 }
+
+
 .corpo{
     
     height: 100%;
@@ -194,6 +196,7 @@ label[for='id_cnpj']{
 }
 
 form .btn-success{
+    border: none;
     background-color: #8B008B;
     color: #fff;
 }
@@ -202,6 +205,7 @@ form .btn-success{
 
 form .btn-success:hover{
     background-color: #8B008B;
+    border: none;
     color: #fff;
     font-weight: bolder;
     box-shadow: 2px 2px 4px #000;
@@ -209,6 +213,11 @@ form .btn-success:hover{
 
 form input:hover, form label:hover{
     cursor: pointer;
+}
+
+form .btn-danger:hover{
+    font-weight: bolder;
+    box-shadow: 2px 2px 4px #000;
 }
 
 
@@ -346,14 +355,14 @@ form input:hover, form label:hover{
     margin-top: -104px;
 }
 
-#corpoAdmim button{
+#corpoAdmim .btnIcones{
     background-color: #9400D3;
     color: #fff;
 }
 #corpoAdmim{
     color: #fff;
 }
-#corpoAdmim button:hover{
+#corpoAdmim .btnIcones:hover{
     background-color: #fff;
     color: #9400D3;
 }
@@ -396,3 +405,4 @@ form input:hover, form label:hover{
     background-color: #fff;
     height: 100%;
 }
+

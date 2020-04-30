@@ -14,7 +14,8 @@ use App\Models\Marca;
 class ProdutoController extends BaseController
 {
     public function show($request)
-    {
+    {   
+        
         $pagina = 1;
         $itensPorPagina = 18;
 
@@ -71,7 +72,6 @@ class ProdutoController extends BaseController
 
          $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque','codigo'];
 
-         $result = $produto->paginador($campos, $itensPorPagina, $pagina);
 
         $this->view->pagina = $pagina;
         $this->view->itensPorPagina = $itensPorPagina;
@@ -83,29 +83,19 @@ class ProdutoController extends BaseController
 
          //muda o tipo de objeto para stdClass caso a requisisao seja via ajax
          if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
-            $arrayObjStdClass = [];
-             for ($i=0; !($i == count($result)) ; $i++) { 
-                 $obj = new \stdClass();
 
-                 $obj->nomeProduto          = $result[$i]->getNomeProduto();
-                 $obj->textoPromorcional    = $result[$i]->getTextoPromorcional();
-                 $obj->estoque              = $result[$i]->getEstoque();
-                 $obj->idProduto            = $result[$i]->getIdProduto();
-                 $obj->preco                = $result[$i]->getPreco();
-                 $obj->codigo               = $result[$i]->getCodigoProduto();
-
-                 $arrayObjStdClass[] = $obj;
-            }
+            $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
 
             $stdPaginacao = new \stdClass();
             $stdPaginacao->pagina = $this->view->pagina;
             $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
             $stdPaginacao->totPaginas = $this->view->totPaginas ;
 
-            $this->view->result = json_encode([$arrayObjStdClass, $stdPaginacao]);
+            $this->view->result = json_encode([$result, $stdPaginacao]);
             $this->render('produtos/ajaxPainelAdmin', false);
 
          }else{
+             $result = $produto->paginador($campos, $itensPorPagina, $pagina, null);
             $this->view->tableProdutos = $result;
             $this->render('produtos/tabelaProdutos');
          }
@@ -138,13 +128,19 @@ class ProdutoController extends BaseController
         $this->view->categorias = $categoria->listaCategoria();
         $this->view->marcas = $marca->listaMarca();
 
-        $this->view->result = $result = $produto->select(
-            ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque', 'codigo'], ['idProduto'=>$request['get']['id']]
+        $result = $produto->select(
+            ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque', 'codigo'],
+            ['idProduto'=>$request['get']['id']],'=','asc', null,  null, true
+
         )[0];
+
+        
+        $this->view->result = json_encode($result);
         
         $this->setMenu('adminMenu');
         $this->setFooter('footer');
-        $this->render('produtos/editar');
+        $this->render('produtos/ajaxPainelAdmin', false);
+        //$this->render('produtos/editar');
     }
 
     public function filtro($request)

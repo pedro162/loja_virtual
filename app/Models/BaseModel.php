@@ -4,6 +4,7 @@ namespace App\Models;
 
 use \Core\Database\Connection;
 use \Core\Database\Transaction;
+use \App\Models\InterfaceBaseModel;
 use Exception;
 use InvalidArgumentException;
 use \PDO;
@@ -48,12 +49,12 @@ abstract class BaseModel extends Transaction
     }
 
 
-    public function paginador(array $campos, Int $itensPorPagina, Int $paginas):array
+    public function paginador(array $campos, Int $itensPorPagina, Int $paginas, $std = null):array
     {   
         $inicio = ($itensPorPagina * $paginas) - $itensPorPagina;
 
 
-        $result = $this->select($campos, [],'=','asc', $inicio, $itensPorPagina);
+        $result = $this->select($campos, [],'=','asc', $inicio, $itensPorPagina, $std);
 
         return $result;
        
@@ -62,7 +63,8 @@ abstract class BaseModel extends Transaction
 
 
     //ao informar o filtro, o operador tambem deve ser invormado
-    public function select(array $elementos, array $filtro = [], $operador = '=', $ordem = 'asc', $litmitInit = null, $limitEnd = null):array
+    public function select(array $elementos, array $filtro = [], $operador = '=',
+     $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null):array
     {
 
         $sql = "SELECT ";
@@ -95,7 +97,18 @@ abstract class BaseModel extends Transaction
         }
 
         $result = self::$conn->query($sql);
-         $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
+
+
+        $arrayObj = null;
+
+        if($std != null){
+
+            $arrayObj = $result->fetchAll();
+
+        }else{
+            $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
+        }
+
         if($arrayObj)
         {
             return $arrayObj;
@@ -247,6 +260,23 @@ abstract class BaseModel extends Transaction
     }
 
 
+    /*protected function parseStdClass($obj)
+    {
+        $teste = new \ReflectionClass(get_class($this));
+        $methods = $teste->getMethods();
+        $propriedades = $teste->getProperties();
+
+        $stdclass = new \stdclass();
+
+        for ($i=0; !($i == count($methods)) ; $i++) { 
+            if(substr($methods[$i], 0, 2) == 'get'){
+                $stdclass->methods[$i];
+            }
+            
+        }
+        var_dump();
+    }*/
+
 
     protected function parseRequestAjax(array $dados){
         $superArray = [];
@@ -271,5 +301,8 @@ abstract class BaseModel extends Transaction
 
         return $superArray;
     }
+
+
+
 }
 

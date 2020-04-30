@@ -2,8 +2,8 @@
 
 namespace Core\Database;
 
-use Exception;
-use PDO;
+use \Exception;
+use \PDO;
 
 final class Connection
 {   
