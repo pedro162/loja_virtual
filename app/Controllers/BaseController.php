@@ -16,11 +16,12 @@ class BaseController
     }
 
 
-    public function render($view_path, $layoute = true)
+
+    public function render($view_path, $layoute = true, $fileLayout = 'layout')
     {
-        if(($layoute == true) && (file_exists('../app/Views/layout/layout.phtml')))
+        if(($layoute == true) && (file_exists('../app/Views/layout/'.$fileLayout.'.phtml')))
         {
-            require_once  '../app/Views/layout/layout.phtml';
+            require_once  '../app/Views/layout/'.$fileLayout.'.phtml';
             
         }
         else

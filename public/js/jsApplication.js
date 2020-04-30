@@ -337,13 +337,11 @@ $(document).ready(function(){
 //------------------------ Menu de opcoes admin ---------------------
 $('#menuAdminHide').on('click', function(){
   let menu = [
-  /*
+  
   '/produto/all',
   '/financeiro',
-  '/venda/logistica'*/
-    'produto',
-    'financeiro',
-    'venda'
+  '/venda/logistica'
+    
   ];
 
   let icon = [
@@ -359,7 +357,7 @@ $('#menuAdminHide').on('click', function(){
 
   let lista = $('<ul/>').addClass('nav');
   for (let i=0; !(i == menu.length); i++) {
-      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<span/>').addClass('btn linkTableProutos').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('id', menu[i])/*'.attr('href', menu[i])'*/));
+      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<a/>').addClass('btn link').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('href', menu[i])));
   }
   let nav = $('<nav/>').addClass('navbar').append(lista);
   rowOptions.append(nav).addClass('col-md-12');
@@ -400,14 +398,27 @@ $('#menuAdminHide').on('click', function(){
 
 /*------------------------------- Faz uma requisizao ajax e lista na tabela de produtos ---------------------------------------------*/
 
-  $('body').delegate('.linkTableProutos','click', function(){
-
-   let xhr = $.ajax({
-            url: '/produto/all?rq=ajax',
+  $('body').delegate('.link','click', function(event){
+    event.preventDefault();
+    let rota = $(this).attr('href');
+    let xhr = $.ajax({
+            url: rota,
             type: 'GET',
             dataType: 'json',
             success: function(retorno){
-              listaTabelaProdutos(retorno);
+
+              switch(rota){
+                case '/produto/all':
+                  listaTabelaProdutos(retorno);
+                break;
+                case '/produto/all':
+                  listaTabelaProdutos(retorno);
+                break;
+
+
+              }
+
+              
 
 
 
@@ -438,56 +449,6 @@ $('#dinamic').delegate('ul li a', 'click', function(){
   //
 })
 
-
-//cria a tabela de protos e recebe os dados por parametro
-function listaTabelaProdutos(retorno) {
-
-  $('#closeModal').trigger('click');
-
-  //exibe a barra lateral direita
-   
-  $('#optionPlus').css('display', 'block');
-    //Cabecalho da tabela
-    let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
-                          .append($('<th/>').html('Estoque'))
-                          .append($('<th/>').html('Preço'))
-                          .append($('<th/>').html('Código'))
-                          .append($('<th/>').html('Ação'))
-    )
-
-
-    //Corpo da tabela
-    let tbody = $('<tbody/>');
-    for (let i = 0; !(i == retorno[0].length); i++) {
-
-    tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
-      .append($('<td/>').html(retorno[0][i].estoque))
-      .append($('<td/>').html(retorno[0][i].preco))
-      .append($('<td/>').html(retorno[0][i].codigo))
-      .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
-                        .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/visualizar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
-                        .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/deletar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
-          )
-
-      )
-    }
-
-
-
-    //armazena a tabela numa div de coluna 12
-    let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
-
-    divTabela.append($('<a/>').attr('id', 'cadastrar').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
-
-    divTabela.append($('<table/>').attr('id', 'tableProdutos').addClass('table table-hover').append(thead).append(tbody));
-
-    //retorna um lista de navegacao
-    let retult = pagination(retorno[1].pagina, retorno[1].totPaginas);
-
-    $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
-    $('#dinamic').append(divTabela);
-    $('#dinamic').append(retult);
-}
 
 
 /*-------------------------------Executa os lincks da tabela de visualização dos produtos --------------------------*/
@@ -568,106 +529,6 @@ $('#dinamic').delegate('#cadastrar', 'click', function(event){
   
 
 })
-
-/*---------------------------------------cria o formulario de cadastro de produtos --------------------------------------------------*/
-function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Produto', btnAcao = 'Cadastar', textoPromorcional = null, select = null){ //recebe uma array multdimensional 
-
-  let colInputs = $('<div/>').addClass('col-md-10');
-
-  //cria os elemtnos imputs e adicona ao fieldset
-  for (let i = 0; !(i == componetesFormulario.length); i++) {
-
-    let row = $('<div/>').addClass('row');
-
-    for (let j = 0; !(j == componetesFormulario[i].length); j++) {
-      let nomeElento  = componetesFormulario[i][j][0];
-      let input = componetesFormulario[i][j][1];
-      let text  = componetesFormulario[i][j][2];
-      let value = componetesFormulario[i][j][3]
-      let placehoder = componetesFormulario[i][j][4];
-      let name = componetesFormulario[i][j][5]
-      let requerido = componetesFormulario[i][j][6];
-
-
-      let elento = criaComponenteForm(nomeElento, input, text, value, placehoder, name, requerido);
-      let colElento = $('<div/>').addClass('col-md-'+ ( 12 / componetesFormulario[i].length)).append(elento);
-      
-      row.append(colElento);
-
-    }
-
-    colInputs.append(row);
-    
-  }
-
-  //opcoes para select de marcas
-  let optionsMarca = [
-    [1, 'Sansung'],
-    [2, 'Ios'],
-    [3, 'Motorola']
-  ];
-
-
-  //opcoes para select de categorias
-
-   let optionsCategoria = [
-    [1, 'Esport'],
-    [2, 'Infantil'],
-    [3, 'Adulto']
-  ];
-
-  let selectMarca = criaComponentSelect(optionsMarca, 'Marca'); //craia uma lista de opcoes e a retorna
-  let selectCategoria = criaComponentSelect(optionsCategoria, 'Categoria');
-  
-  //aramazena as listas de opcoes em div para formulario
-  let divSelectMarca = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'marca').html('Marca')).append(selectMarca);
-
-  let divSelectCategoria = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'categoria').html('Categoria')).append(selectCategoria);
-
-
-  let rowSelect = $('<div/>').addClass('row');
-
-  //aramazena cada lista numa coluna
-  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectMarca))
-  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectCategoria))
-
-  colInputs.append(rowSelect);
-
-
-
-  //cria a div para fazer o previw da imagme 
-  let preview = $('<div/>').addClass('col-md-2').append($('<img/>').attr('id', 'img'))
-
-  let filtdSet = $('<fieldset/>').append($('<legend/>').text(tituloFormulario));
-
-  let textAreaPromorcional = $('<textarea/>').attr('name', 'texto').attr('id', 'idTexto');
-  textAreaPromorcional.attr('rows', '4').addClass('form-control');
-  textAreaPromorcional.attr('required', 'required');
-  textAreaPromorcional.html(textoPromorcional);
-
-  let divTextarea = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'idTexto').html('Texto promorcional'));
-  divTextarea.append(textAreaPromorcional);
-
-
-  let rowTextArea = $('<div/>').addClass('row');
-  rowTextArea.append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-12 col-lg-12').append(divTextarea));
-  //armazena a text area na coluna de imputs
-  colInputs.append(rowTextArea);
-
-  colInputs.append($('<button/>').html(btnAcao).addClass('btn btn-lg btn-success'))
-  colInputs.append($('<button/>').html('Cancelar').addClass('btn btn-lg btn-danger ml-2 linkTableProutos'))
-
-  //adicona as colunas de imput e preview ao fidset
-  filtdSet.append($('<div/>').addClass('row').append(colInputs).append(preview));
-
-  let formulario = $('<form/>').css('color', '#000').attr('enctype', 'multipart/form-data').append(filtdSet);
-  formulario.css('padding', '40px 20px 0px 20px')
-
-  let divFormulario = $('<div/>').addClass('col-md-12').append(formulario);
-    
-  return divFormulario;
-  
-}
 
 
 
@@ -1034,6 +895,163 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
     });
 
   })
+
+
+
+/* ------------------------------------------------------------------------- Views -------------------------------------------------------------------------------------------*/
+
+
+
+//cria a tabela de protos e recebe os dados por parametro
+function listaTabelaProdutos(retorno) {
+
+  $('#closeModal').trigger('click');
+
+  //exibe a barra lateral direita
+   
+  $('#optionPlus').css('display', 'block');
+    //Cabecalho da tabela
+    let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
+                          .append($('<th/>').html('Estoque'))
+                          .append($('<th/>').html('Preço'))
+                          .append($('<th/>').html('Código'))
+                          .append($('<th/>').html('Ação'))
+    )
+
+
+    //Corpo da tabela
+    let tbody = $('<tbody/>');
+    for (let i = 0; !(i == retorno[0].length); i++) {
+
+    tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
+      .append($('<td/>').html(retorno[0][i].estoque))
+      .append($('<td/>').html(retorno[0][i].preco))
+      .append($('<td/>').html(retorno[0][i].codigo))
+      .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
+                        .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/visualizar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
+                        .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/deletar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
+          )
+
+      )
+    }
+
+
+
+    //armazena a tabela numa div de coluna 12
+    let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
+
+    divTabela.append($('<a/>').attr('id', 'cadastrar').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
+
+    divTabela.append($('<table/>').attr('id', 'tableProdutos').addClass('table table-hover').append(thead).append(tbody));
+
+    //retorna um lista de navegacao
+    let retult = pagination(retorno[1].pagina, retorno[1].totPaginas);
+
+    $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
+    $('#dinamic').append(divTabela);
+    $('#dinamic').append(retult);
+}
+
+
+/*--------------------------cria o formulario de cadastro de produtos ----------------*/
+function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Produto', btnAcao = 'Cadastar', textoPromorcional = null, select = null){ //recebe uma array multdimensional 
+
+  let colInputs = $('<div/>').addClass('col-md-10');
+
+  //cria os elemtnos imputs e adicona ao fieldset
+  for (let i = 0; !(i == componetesFormulario.length); i++) {
+
+    let row = $('<div/>').addClass('row');
+
+    for (let j = 0; !(j == componetesFormulario[i].length); j++) {
+      let nomeElento  = componetesFormulario[i][j][0];
+      let input = componetesFormulario[i][j][1];
+      let text  = componetesFormulario[i][j][2];
+      let value = componetesFormulario[i][j][3]
+      let placehoder = componetesFormulario[i][j][4];
+      let name = componetesFormulario[i][j][5]
+      let requerido = componetesFormulario[i][j][6];
+
+
+      let elento = criaComponenteForm(nomeElento, input, text, value, placehoder, name, requerido);
+      let colElento = $('<div/>').addClass('col-md-'+ ( 12 / componetesFormulario[i].length)).append(elento);
+      
+      row.append(colElento);
+
+    }
+
+    colInputs.append(row);
+    
+  }
+
+  //opcoes para select de marcas
+  let optionsMarca = [
+    [1, 'Sansung'],
+    [2, 'Ios'],
+    [3, 'Motorola']
+  ];
+
+
+  //opcoes para select de categorias
+
+   let optionsCategoria = [
+    [1, 'Esport'],
+    [2, 'Infantil'],
+    [3, 'Adulto']
+  ];
+
+  let selectMarca = criaComponentSelect(optionsMarca, 'Marca'); //craia uma lista de opcoes e a retorna
+  let selectCategoria = criaComponentSelect(optionsCategoria, 'Categoria');
+  
+  //aramazena as listas de opcoes em div para formulario
+  let divSelectMarca = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'marca').html('Marca')).append(selectMarca);
+
+  let divSelectCategoria = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'categoria').html('Categoria')).append(selectCategoria);
+
+
+  let rowSelect = $('<div/>').addClass('row');
+
+  //aramazena cada lista numa coluna
+  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectMarca))
+  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectCategoria))
+
+  colInputs.append(rowSelect);
+
+
+
+  //cria a div para fazer o previw da imagme 
+  let preview = $('<div/>').addClass('col-md-2').append($('<img/>').attr('id', 'img'))
+
+  let filtdSet = $('<fieldset/>').append($('<legend/>').text(tituloFormulario));
+
+  let textAreaPromorcional = $('<textarea/>').attr('name', 'texto').attr('id', 'idTexto');
+  textAreaPromorcional.attr('rows', '4').addClass('form-control');
+  textAreaPromorcional.attr('required', 'required');
+  textAreaPromorcional.html(textoPromorcional);
+
+  let divTextarea = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'idTexto').html('Texto promorcional'));
+  divTextarea.append(textAreaPromorcional);
+
+
+  let rowTextArea = $('<div/>').addClass('row');
+  rowTextArea.append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-12 col-lg-12').append(divTextarea));
+  //armazena a text area na coluna de imputs
+  colInputs.append(rowTextArea);
+
+  colInputs.append($('<button/>').html(btnAcao).addClass('btn btn-lg btn-success'))
+  colInputs.append($('<a/>').attr('href', '/produto/all').html('Cancelar').addClass('btn btn-lg btn-danger ml-2 link'))
+
+  //adicona as colunas de imput e preview ao fidset
+  filtdSet.append($('<div/>').addClass('row').append(colInputs).append(preview));
+
+  let formulario = $('<form/>').css('color', '#000').attr('enctype', 'multipart/form-data').append(filtdSet);
+  formulario.css('padding', '40px 20px 0px 20px')
+
+  let divFormulario = $('<div/>').addClass('col-md-12').append(formulario);
+    
+  return divFormulario;
+  
+}
 
 
 

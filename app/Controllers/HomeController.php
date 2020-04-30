@@ -35,6 +35,6 @@ class HomeController extends BaseController
     {   
         $this->setMenu('adminMenu');
         $this->setFooter('footer');
-        $this->render('admin/painel', true);
+        $this->render('admin/painel', true, 'layoutAdmin');
     }
 }

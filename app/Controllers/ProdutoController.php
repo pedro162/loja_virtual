@@ -81,8 +81,18 @@ class ProdutoController extends BaseController
         $this->setMenu('adminMenu');
         $this->setFooter('footer');
 
+        $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
+
+            $stdPaginacao = new \stdClass();
+            $stdPaginacao->pagina = $this->view->pagina;
+            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+            $stdPaginacao->totPaginas = $this->view->totPaginas ;
+
+            $this->view->result = json_encode([$result, $stdPaginacao]);
+            $this->render('produtos/ajaxPainelAdmin', false);
+
          //muda o tipo de objeto para stdClass caso a requisisao seja via ajax
-         if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
+         /*if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
 
             $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
 
@@ -98,7 +108,7 @@ class ProdutoController extends BaseController
              $result = $produto->paginador($campos, $itensPorPagina, $pagina, null);
             $this->view->tableProdutos = $result;
             $this->render('produtos/tabelaProdutos');
-         }
+         }*/
 
     }
 
