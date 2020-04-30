@@ -36,7 +36,7 @@ $(document).ready(function(){
 
 // ------------------------------ Preview de imagens upload ---------------------
   
-  $('#upload').change(function(){
+  $('#dinamic').delegate('#imagem','change',function(){
     
       if(($(this)[0].files[0].type != 'image/jpeg') && ($(this)[0].files[0].type != 'image/png') && ($(this)[0].files[0].type != 'image/jpg')){
 
@@ -147,116 +147,118 @@ $(document).ready(function(){
   //---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
 
   $('#filtroLateral').on('click', function(){
-      let departamento = new Array();
+    let departamento = new Array();
 
-      let preco = new Array();;
+    let preco = new Array();;
 
-      let condicoes = new Array();;
+    let condicoes = new Array();;
 
-      $("input[name='produtos[Categoria][]']:checked").each(function(){
-         departamento.push($(this).val());
-      })
+    $("input[name='produtos[Categoria][]']:checked").each(function(){
+       departamento.push($(this).val());
+    })
 
-      $("input[name='produtos[Preco][]']:checked").each(function(){
-          preco.push($(this).val());
-      })
+    $("input[name='produtos[Preco][]']:checked").each(function(){
+        preco.push($(this).val());
+    })
 
-      $("input[name='produtos[Condicoes][]']:checked").each(function(){
-          condicoes.push($(this).val());
-      })
+    $("input[name='produtos[Condicoes][]']:checked").each(function(){
+        condicoes.push($(this).val());
+    })
 
-      let Filtro = new Array();
+    let Filtro = new Array();
 
-      if(departamento.length > 0){
-        departamento.unshift('Categoria');
-        Filtro.push(departamento);
-      }
+    if(departamento.length > 0){
+      departamento.unshift('Categoria');
+      Filtro.push(departamento);
+    }
 
-      if(preco.length > 0){
-         preco.unshift('Preco');
-         Filtro.push(preco);
-      }
+    if(preco.length > 0){
+       preco.unshift('Preco');
+       Filtro.push(preco);
+    }
 
-      if(condicoes.length > 0){
-         condicoes.unshift('Condicoes');
-         Filtro.push(condicoes);
-      }
+    if(condicoes.length > 0){
+       condicoes.unshift('Condicoes');
+       Filtro.push(condicoes);
+    }
 
 
       
 
-      if(Filtro.length > 0){
-          
-        let xhr = $.ajax({
-          type: "POST",
-          url: '/produto/filtro',
-          data:{'produtos': Filtro},
-          success: function(retorno){
-            parse = $.parseJSON(retorno);
+    if(Filtro.length > 0){
+        
+      let xhr = $.ajax({
+        type: "POST",
+        url: '/produto/filtro',
+        data:{'produtos': Filtro},
+        success: function(retorno){
+        parse = $.parseJSON(retorno);
 
 
-            if(parse[0] == 'msg')
-            {
-               getModal($('<div/>').addClass('alert alert-warning').html($('<strong/>').html('Ops !')),
-                $('<div/>').attr('align', 'center').addClass('h4 alert-warning').html(parse[1]+'<br/>Tente outro filtro!')
-                , '');
+        if(parse[0] == 'msg')
+        {
+           getModal($('<div/>').addClass('alert alert-warning').html($('<strong/>').html('Ops !')),
+            $('<div/>').attr('align', 'center').addClass('h4 alert-warning').html(parse[1]+'<br/>Tente outro filtro!')
+            , '');
 
-              return false;
-            }
+          return false;
+        }
 
-            $('#closeModal').trigger('click');
+        $('#closeModal').trigger('click');
 
-            //$('#itens').html($('<div/>').addClass('row').html(divProduto));
-            $('#itens').html($('<div/>').addClass('row').attr('id', 'resultFiltro'));
+        //$('#itens').html($('<div/>').addClass('row').html(divProduto));
+        $('#itens').html($('<div/>').addClass('row').attr('id', 'resultFiltro'));
 
-            for (var i = parse.length - 1; i >= 0; i--) {
+        for (var i = parse.length - 1; i >= 0; i--) {
 
-              //console.log('produto '+parse[i].nomeProduto+' preco '+parse[i].preco);
-              //let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
-              let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
+          //console.log('produto '+parse[i].nomeProduto+' preco '+parse[i].preco);
+          //let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
+          let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
 
-              let cardItem = $('<div/>').addClass('card produto-item')
-              let a = $('<a/>').addClass('produto-item').attr('href', `/produto/detals?cd=${parse[i].idProduto}`);
-              let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
+          let cardItem = $('<div/>').addClass('card produto-item')
+          let a = $('<a/>').addClass('produto-item').attr('href', `/produto/detals?cd=${parse[i].idProduto}`);
+          let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
 
-              let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
-                append($('<h3/>').html(`${parse[i].nomeProduto}`)).
-                append($('<p/>').html(`${parse[i].textoPromorcional}`)).
-                append($('<p/>').append($('<strong/>').html(`<sup><small>R$</small></sup>${parse[i].preco}<sup><small></small></sup>`)))
-                );
+          let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
+            append($('<h3/>').html(`${parse[i].nomeProduto}`)).
+            append($('<p/>').html(`${parse[i].textoPromorcional}`)).
+            append($('<p/>').append($('<strong/>').html(`<sup><small>R$</small></sup>${parse[i].preco}<sup><small></small></sup>`)))
+            );
 
-              a.append(divImg)
-              a.append(cardBody);
+          a.append(divImg)
+          a.append(cardBody);
 
-              cardItem.append(a);
+          cardItem.append(a);
+
+          let cardFooter = $('<div/>').addClass('card-footer');
+
+          let divButton = $('<div/>').addClass('child-card-footer');
+
+          let button = $('<button/>').addClass('btn btn-primary  button-modal').
+          attr('type', 'button').attr('data-toggle','modal').attr('data-target', '#myModal').
+          text('Mais detalhes');
+
+          divButton.append(button);
+
+          cardFooter.append(divButton);
+          cardFooter.append(`<ul class="curt-lista">
+                          <li class="">
+                            <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128077;</button>
+                            <span>1</span>
+                          </li>
+                          <li class="">
+                            <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128078;</button>
+                            <span>1</span>
+                          </li>
+                          </ul>`);
+
+          cardItem.append(cardFooter);
+          divProduto.append(cardItem);
 
 
 
-              let cardFooter = $('<div/>').addClass('card-footer');
-
-              let divButton = $('<div/>').addClass('child-card-footer');
-
-              let button = $('<button/>').addClass('btn btn-primary  button-modal').
-              attr('type', 'button').attr('data-toggle','modal').attr('data-target', '#myModal').
-              text('Mais detalhes');
-
-              divButton.append(button);
-
-              cardFooter.append(divButton);
-              cardFooter.append(`<ul class="curt-lista">
-                              <li class="">
-                                <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128077;</button>
-                                <span>1</span>
-                              </li>
-                              <li class="">
-                                <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128078;</button>
-                                <span>1</span>
-                              </li>
-                              </ul>`);
-
-              cardItem.append(cardFooter);
-              divProduto.append(cardItem);
-              $('#resultFiltro').append(divProduto);
+          $('#resultFiltro').append(divProduto);
+         // $('#resultFiltro').append(pagination());
 
              
             }
@@ -280,7 +282,57 @@ $(document).ready(function(){
       }
 
   });
+  
+  function pagination(pagina, totPaginas) {
+    //inicia a cria cao da lista de navegacao
+    let preview = (pagina - 1);
 
+    let blockPrev = '';
+    if(Number(pagina) == 1){
+        blockPrev = 'disabled';
+    }
+
+    //cria a ul
+    let lista = $('<ul/>').css('color', '#8B008B').addClass('pagination justify-content-end').append($('<li/>').addClass('page-item').append($('<a/>').on('click',function(event){
+      //desativa o evento click do link
+        event.preventDefault()
+      }
+    ).attr('herf', '/produto/all?pagina='+preview).attr('id', preview).addClass('page-link '+blockPrev).html('peview')));
+
+    //adiciona um id a lista
+    lista.attr('id', 'paginacao')
+    //cria os li e adiciona a ul
+    for (let i = 0; !(i == totPaginas); i++) {
+      let estilo = '';
+
+      if(pagina == (i + 1)){
+        estilo = 'active';
+      }
+
+      let li = $('<li/>').addClass('page-item '+estilo).append($('<a/>').on('click',function(event){//desativa o evento click do link
+            event.preventDefault()
+          }
+        ).attr('herf', '/produto/all?pagina='+(i+1)).attr('id', (i+1)).addClass('page-link').html((i+1)))
+      lista.append(li);
+    }
+
+    let blockNext = '';
+    if(pagina == totPaginas){
+        blockNext = 'disabled';
+    }
+
+    let next = (Number(pagina) + 1);
+    
+    lista.append($('<li/>').addClass('page-item').append($('<a/>').on('click',function(event){ //desativa o evento click do link
+       event.preventDefault()
+     }
+     ).attr('herf', '/produto/visualizar?id='+next).addClass('page-link '+blockNext).attr('id', next).html('next')));
+    
+    let divLista =$('<div/>').addClass('col-md-12').append($('<nav/>').append(lista));
+
+    return divLista;
+
+  }
 
 //------------------------ Menu de opcoes admin ---------------------
 $('#menuAdminHide').on('click', function(){
@@ -390,91 +442,235 @@ $('#dinamic').delegate('ul li a', 'click', function(){
 function listaTabelaProdutos(retorno) {
   $('#closeModal').trigger('click');
 
-              //Cabecalho da tabela
-              let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
-                                        .append($('<th/>').html('Estoque'))
-                                        .append($('<th/>').html('Preço'))
-                                        .append($('<th/>').html('Código'))
-                                        .append($('<th/>').html('Ação'))
-                )
-              
-
-              //Corpo da tabela
-              let tbody = $('<tbody/>');
-              for (let i = 0; !(i == retorno[0].length); i++) {
-
-                tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
-                    .append($('<td/>').html(retorno[0][i].estoque))
-                    .append($('<td/>').html(retorno[0][i].preco))
-                    .append($('<td/>').html(retorno[0][i].codigo))
-                    .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
-                                      .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
-                                      .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
-                        )
-
-                  )
-              }
+  //exibe a barra lateral direita
+   
+  $('#optionPlus').css('display', 'block');
+    //Cabecalho da tabela
+    let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
+                          .append($('<th/>').html('Estoque'))
+                          .append($('<th/>').html('Preço'))
+                          .append($('<th/>').html('Código'))
+                          .append($('<th/>').html('Ação'))
+    )
 
 
+    //Corpo da tabela
+    let tbody = $('<tbody/>');
+    for (let i = 0; !(i == retorno[0].length); i++) {
 
-              //armazena a tabela numa div de coluna 12
-              let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
-              
-              divTabela.append($('<a/>').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
+    tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
+      .append($('<td/>').html(retorno[0][i].estoque))
+      .append($('<td/>').html(retorno[0][i].preco))
+      .append($('<td/>').html(retorno[0][i].codigo))
+      .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
+                        .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
+                        .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
+          )
 
-              divTabela.append($('<table/>').addClass('table table-hover').append(thead).append(tbody));
-              
+      )
+    }
 
 
-              //inicia a cria cao da lista de navegacao
-              let preview = (retorno[1].pagina - 1);
 
-              let blockPrev = '';
-              if(Number(retorno[1].pagina) == 1){
-                  blockPrev = 'disabled';
-              }
+    //armazena a tabela numa div de coluna 12
+    let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
 
-              //cria a ul
-              let lista = $('<ul/>').css('color', '#8B008B').addClass('pagination justify-content-end').append($('<li/>').addClass('page-item').append($('<a/>').on('click',function(event){
-                //desativa o evento click do link
-                  event.preventDefault()
-                }
-              ).attr('herf', '/produto/all?pagina='+preview).attr('id', preview).addClass('page-link '+blockPrev).html('peview')));
+    divTabela.append($('<a/>').attr('id', 'cadastrar').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
 
-              //adiciona um id a lista
-              lista.attr('id', 'paginacao')
-              //cria os li e adiciona a ul
-              for (let i = 0; !(i == retorno[1].totPaginas); i++) {
-                let estilo = '';
+    divTabela.append($('<table/>').addClass('table table-hover').append(thead).append(tbody));
 
-                if(retorno[1].pagina == (i + 1)){
-                  estilo = 'active';
-                }
+    //retorna um lista de navegacao
+    let retult = pagination(retorno[1].pagina, retorno[1].totPaginas);
 
-                let li = $('<li/>').addClass('page-item '+estilo).append($('<a/>').on('click',function(event){//desativa o evento click do link
-                      event.preventDefault()
-                    }
-                  ).attr('herf', '/produto/all?pagina='+(i+1)).attr('id', (i+1)).addClass('page-link').html((i+1)))
-                lista.append(li);
-              }
+    $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
+    $('#dinamic').append(divTabela);
+    $('#dinamic').append(retult);
+}
 
-              let blockNext = '';
-              if(retorno[1].pagina == retorno[1].totPaginas){
-                  blockNext = 'disabled';
-              }
+//---------------------------------------------chama a view de cadastrar produto---------------------------------------------------
+$('#dinamic').delegate('#cadastrar', 'click', function(event){
+  event.preventDefault();
+  $('#dinamic').html('');
 
-              let next = (Number(retorno[1].pagina) + 1);
-              
-              lista.append($('<li/>').addClass('page-item').append($('<a/>').on('click',function(event){ //desativa o evento click do link
-                 event.preventDefault()
-               }
-               ).attr('herf', '/produto/visualizar?id='+next).addClass('page-link '+blockNext).attr('id', next).html('next')));
-              
-              let divLista =$('<div/>').addClass('col-md-12').append($('<nav/>').append(lista));
+  //let formulario = $('<form/>').attr('enctype', 'multipart/form-data');
+  let componetesFormulario =  [
+    [
+      ['Nome', 'input', 'text','','Nome do produto', true],
+      ['NF', 'input', 'text','','Nº NF', true],
+      ['Quantidade' ,'input', 'text','','Nome do produto', true]
+    ],
+    [
+      ['Descricao', 'input', 'text','','Descricão do produto', true],
+      ['Fornecedor' ,'input', 'text','','Nome do fornecedor', true]
+    ],
+    [
+      ['Codigo', 'input', 'text','','Código do produto', true],
+      ['Imagem' ,'input', 'file','','', true]
+    ]
 
-              $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
-              $('#dinamic').append(divTabela);
-              $('#dinamic').append(divLista);
+  ];
+ /// console.log(componetesFormulario[i][j][k]);
+
+
+ 
+
+  
+
+  let colInputs = $('<div/>').addClass('col-md-8');
+
+  //cria os elemtnos imputs e adicona ao fieldset
+  for (let i = 0; !(i == componetesFormulario.length); i++) {
+
+    let row = $('<div/>').addClass('row');
+
+    for (let j = 0; !(j == componetesFormulario[i].length); j++) {
+      let nome  = componetesFormulario[i][j][0];
+      let input = componetesFormulario[i][j][1];
+      let text  = componetesFormulario[i][j][2];
+      let value = componetesFormulario[i][j][3]
+      let placehoder = componetesFormulario[i][j][4];
+      let requerido = componetesFormulario[i][j][5];
+
+      let elento = criaComponenteForm(nome, input, text, value, placehoder ,requerido);
+      let colElento = $('<div/>').addClass('col-md-'+ ( 12 / componetesFormulario[i].length)).append(elento);
+      
+      row.append(colElento);
+
+    }
+
+    colInputs.append(row);
+    
+  }
+
+
+  let optionsMarca = [
+    [1, 'Sansung'],
+    [2, 'Ios'],
+    [3, 'Motorola']
+  ];
+
+   let optionsCategoria = [
+    [1, 'Esport'],
+    [2, 'Infantil'],
+    [3, 'Adulto']
+  ];
+
+  let selectMarca = criaComponentSelect(optionsMarca, 'Marca'); //craia uma lista de opcoes e a retorna
+  let selectCategoria = criaComponentSelect(optionsCategoria, 'Categoria');
+  //-----------------------
+
+  //aramazena as listas de opcoes em div para formulario
+  let divSelectMarca = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'marca').html('Marca')).append(selectMarca);
+
+  let divSelectCategoria = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'categoria').html('Categoria')).append(selectCategoria);
+
+
+  let rowSelect = $('<div/>').addClass('row');
+
+  //aramazena cada lista numa coluna
+  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectMarca))
+  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectCategoria))
+
+  colInputs.append(rowSelect);
+
+  colInputs.append($('<button/>').html('Cadastrar').addClass('btn btn-lg btn-success'))
+
+
+  //cria a div para fazer o previw da imagme 
+  let preview = $('<div/>').addClass('col-md-4').append($('<img/>').attr('id', 'img'))
+
+  let filtdSet = $('<fieldset/>').append($('<legend/>').text('Cadastrar Produto'));
+
+  //adicona as colunas de imput e preview ao fidset
+  filtdSet.append($('<div/>').addClass('row').append(colInputs).append(preview));
+
+  let formulario = $('<form/>').css('color', '#000').attr('enctype', 'multipart/form-data').append(filtdSet);
+  formulario.css('padding', '40px 20px')
+
+  let divFormulario = $('<div/>').addClass('col-md-12').append(formulario);
+    
+  //adiconal ao painel de menuAdminHide
+  $('#dinamic').html(divFormulario);
+
+})
+
+
+
+// ---------------------------- cria elementos select ---------------------------------------------
+
+function criaComponentSelect(values, name){
+
+  let select = $('<select/>').addClass('form-control');
+  let id = name.toLowerCase();
+
+  select.attr('id', id);
+  select.attr('name', id);
+  select.attr('required', 'required');
+
+  for (let i = 0; !(i == values.length); i++) {
+    select.append($('<option/>').val(values[i][0]).html(values[i][1]));
+    
+  }
+
+  return select;
+
+}
+
+//------------------------------- cria alguns componetes inputs de formulario---------------------------------------------
+
+function criaComponenteForm(label, nomeElento, type, value='', placeholder='',required=false){
+
+  let elento = null;
+
+  let formLabel = $('<label/>').css('color', '#000');
+
+  switch(nomeElento){
+    case 'button':
+      elento = $('<button/>').addClass('form-control').attr('placeholder', placeholder);
+    break;
+
+    case 'checkbox':
+      elento = $('<checkbox/>').addClass('form-check-input');
+      formLabel.addClass('form-check-label');
+    break;
+
+    case 'textarea':
+      elento = $('<textarea/>').addClass('form-control').attr('placeholder', placeholder);
+    break;
+
+    case 'file':
+      elento = $('<file/>').addClass('form-control').attr('placeholder', placeholder);
+    break;
+
+    default:
+      elento = $('<input/>').addClass('form-control').attr('placeholder', placeholder);
+    break;
+
+   
+  }
+
+   if(required == true){
+      elento.attr('required', required);
+    }
+
+
+    let idElento = label.toLowerCase();
+
+    elento.attr('type', type);
+    elento.attr('name', idElento);
+    elento.attr('id', idElento);
+    elento.val(value);
+
+
+    formLabel.attr('id', idElento);
+
+    formLabel.html(label);
+
+    let result = $('<div/>').addClass('form-group').append(formLabel).append(elento);
+
+    return result;
+
+
 }
 
 
@@ -509,6 +705,8 @@ function listaTabelaProdutos(retorno) {
     $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Mais vendidos').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos')));
     $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr')));
 
+    //exibe a barra vertial direita
+    $('#optionPlus').css('display', 'block');
 
  
 

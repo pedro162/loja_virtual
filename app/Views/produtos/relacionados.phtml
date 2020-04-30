@@ -110,7 +110,46 @@
 		     ?>
 	    </div><hr style="border: none;">
   	<?php } ?>
+
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="Page navigation example" id="pagination">
+				  <ul class="pagination justify-content-end">
+				  	<?php 
+				  		$previous = $this->view->pagina - 1;
+				  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
+				  	?>
+				    <li class="page-item <?= $blockPrevius ?>">
+				      <a class="page-link" href="/produto/show?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
+				    </li>
+
+				    <?php
+				    	for ($i=0; !($i == $this->view->totPaginas); $i++) {
+
+				    		$estilo = ($this->view->pagina == ($i + 1)) ? 'active' : '';
+				    		
+				    ?>
+						<li class="page-item <?= $estilo ?>">
+							<a class="page-link" href="/produto/show?pagina=<?= $i+1?>">
+							<?= $i+1?>
+							</a>
+						</li>
+				    <?php 
+						}
+
+						$blockNext = ($this->view->pagina  == $this->view->totPaginas) ? 'disabled' : '';
+						$next = $this->view->pagina + 1;
+				    ?>
+
+				    <li class="page-item <?= $blockNext;?>">
+				      <a class="page-link" href="/produto/show?pagina=<?= $next?>"><strong>Next</strong></a>
+				    </li>
+				  </ul>
+				</nav>
+			</div>
 		</div>
+	</div>
+		
 	</div>
 	
 </div>

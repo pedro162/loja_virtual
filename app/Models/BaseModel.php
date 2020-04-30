@@ -48,9 +48,13 @@ abstract class BaseModel extends Transaction
     }
 
 
-    public function inicioPaginador(Int $qtdresult, Int $paginas):int
-    {
-        $result = ($qtdresult * $paginas) - $qtdresult;
+    public function paginador(array $campos, Int $itensPorPagina, Int $paginas):array
+    {   
+        $inicio = ($itensPorPagina * $paginas) - $itensPorPagina;
+
+
+        $result = $this->select($campos, [],'=','asc', $inicio, $itensPorPagina);
+
         return $result;
        
     }

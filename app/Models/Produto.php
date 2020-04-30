@@ -62,7 +62,7 @@ class Produto extends BaseModel
 
     public function listarProdutos(array $campos):array
     {
-        $resultSelect = $this->select($campos);
+        $resultSelect = $campos;
 
         $gridProdutos = [];
 

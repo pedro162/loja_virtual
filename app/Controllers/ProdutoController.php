@@ -13,37 +13,51 @@ use App\Models\Marca;
 
 class ProdutoController extends BaseController
 {
-    public function show()
+    public function show($request)
     {
-        $produto = new Produto();
+        $pagina = 1;
+        $itensPorPagina = 18;
 
-        $this->view->produtos = $produto->listarProdutos(['nomeProduto','textoPromorcional', 'idProduto', 'preco']);
-        $this->setMenu();
-        $this->setFooter('footer');
+        if(isset($request['get'], $request['get']['pagina'])){
+            $pagina = $request['get']['pagina'];
+        }
+
+        $produto = new Produto();
+        $totItens = $produto->countItens();
+
+        $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco'];
+
+        $result = $produto->paginador($campos, $itensPorPagina, $pagina);
+        
+        $this->view->produtos = $produto->listarProdutos($result);
+        
+        $this->view->pagina = $pagina;
+        $this->view->itensPorPagina = $itensPorPagina;
+        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
         
         $this->view->qtd = Venda::qtdItensVenda(); // insere o total de itens do carrinho
         $this->view->optionsLeft = $produto->getFiltros();
+
+        $this->setMenu();
+        $this->setFooter('footer');
         $this->render('produtos/relacionados', true);
     }
 
     public function cadastrar()
     {
-    	$this->setMenu('adminMenu');
-        $this->setFooter('footer');
-
         $categoria = new Categoria();
         $marca = new Marca();
 
         $this->view->categorias = $categoria->listaCategoria();
         $this->view->marcas = $marca->listaMarca();
+
+        $this->setMenu('adminMenu');
+        $this->setFooter('footer');
         $this->render('produtos/cadastrar');
     }
 
     public function all($request)
     {
-        $this->setMenu('adminMenu');
-        $this->setFooter('footer');
-
 
         $pagina = 1;
         $itensPorPagina = 10;
@@ -53,16 +67,19 @@ class ProdutoController extends BaseController
         }
 
          $produto = new Produto();
-
-         $inicio = $produto->inicioPaginador($itensPorPagina, $pagina);
          $totItens = $produto->countItens();
 
-         $result = $produto->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque','codigo']
-            ,[],'=','asc', $inicio, $itensPorPagina);
+         $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque','codigo'];
+
+         $result = $produto->paginador($campos, $itensPorPagina, $pagina);
 
         $this->view->pagina = $pagina;
         $this->view->itensPorPagina = $itensPorPagina;
         $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+
+
+        $this->setMenu('adminMenu');
+        $this->setFooter('footer');
 
          //muda o tipo de objeto para stdClass caso a requisisao seja via ajax
          if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
@@ -86,7 +103,7 @@ class ProdutoController extends BaseController
             $stdPaginacao->totPaginas = $this->view->totPaginas ;
 
             $this->view->result = json_encode([$arrayObjStdClass, $stdPaginacao]);
-            $this->render('produtos/ajax', false);
+            $this->render('produtos/ajaxPainelAdmin', false);
 
          }else{
             $this->view->tableProdutos = $result;
@@ -114,9 +131,6 @@ class ProdutoController extends BaseController
             
         }
 
-        $this->setMenu('adminMenu');
-        $this->setFooter('footer');
-
         $produto = new Produto();
         $categoria = new Categoria();
         $marca = new Marca();
@@ -128,6 +142,8 @@ class ProdutoController extends BaseController
             ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque', 'codigo'], ['idProduto'=>$request['get']['id']]
         )[0];
         
+        $this->setMenu('adminMenu');
+        $this->setFooter('footer');
         $this->render('produtos/editar');
     }
 
