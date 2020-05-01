@@ -12,10 +12,12 @@ a:hover{
 
 body{
     background-color: #fff;
+    color: #000;
 }
 
-body section{
-    margin-top: 80px; z-index: 1
+.bodyLojaVirtual section{
+    margin-top: 80px; z-index: 1;
+    color: #000;
 }
 
 
@@ -352,7 +354,6 @@ form .btn-danger:hover{
 #corpoAdmim{
     height: 100%;
     width: 100%;
-    margin-top: -104px;
 }
 
 #corpoAdmim .btnIcones{
@@ -375,16 +376,16 @@ form .btn-danger:hover{
 }
 
 /*barra latral direita painel*/
-#optionPlus{
-    background-color: #9400D3;
+#areaPainel{
+    background-color: rgba(220,220,220, .3);
+    color: #000;
 }
 
 /*--------------------------- EStilos para Graficos----------*/
-#dinamic div{
-    width: 100%;
-    height: 100%;
-    color: #fff;
-    margin-bottom: 25px;
+
+#dinamic{
+    margin: auto;
+    
 }
 
 .titleChar{

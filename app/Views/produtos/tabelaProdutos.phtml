@@ -1,85 +1,81 @@
-<div class="container-fluid standard-background">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12" style="padding: 20px 40px;">
-				<a href="/produto/cadastrar" class="btn button-modal mb-2">
-					<i class="fas fa-plus-circle fa-2x"></i>
-				</a>
-				 <table class="table table-hover">
-				    <thead>
-				      <tr>
-				        <th>Nome</th>
-				        <th>Estoque</th>
-				        <th>Preço</th>
-				        <th>Codigo</th>
-				        <th>Ação</th>
-				      </tr>
-				    </thead>
-				    <tbody>
-				    	<?php 
-							for ($i=0; !($i == count($this->view->tableProdutos)); $i++) { 
-								# code...
-							
-						?>
-							<tr>
-								<td><?=$this->view->tableProdutos [$i]->getNomeProduto();?></td>
-								<td><?=$this->view->tableProdutos [$i]->getEstoque();?></td>
-								<td><?=$this->view->tableProdutos [$i]->getPreco();?></td>
-								<td><?=$this->view->tableProdutos [$i]->getCodigoProduto();?></td>
-								<td>
-									<a href="/produto/editar?id=<?=$this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn button-modal mr-2">
-										<i class="fas fa-pencil-alt"></i>
-									</a>
-									<a href="/produto/visualizar?id=<?= $this->view->tableProdutos[$i]->getIdProduto() ?>" class="btn btn-primary mr-2">
-										<i class="fas fa-search-plus"></i>
-									</a>
-									<a href="/produto/excluir?id=<?= $this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn btn-danger">
-										<i class="fas fa-trash-alt"></i>
-									</a>
-								</td>
-							</tr>
-
-						<?php 
-							}
-						?>
-				    </tbody>
-				  </table>
-			</div>
-			<div class="col-md-12">
-				<nav aria-label="Page navigation example">
-				  <ul class="pagination justify-content-end">
-				  	<?php 
-				  		$previous = $this->view->pagina - 1;
-				  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
-				  	?>
-				    <li class="page-item <?= $blockPrevius ?>">
-				      <a class="page-link" href="/produto/all?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
-				    </li>
-
-				    <?php
-				    	for ($i=0; !($i == $this->view->totPaginas); $i++) {
-
-				    		$estilo = ($this->view->pagina == ($i + 1)) ? 'active' : '';
-				    		
-				    ?>
-						<li class="page-item <?= $estilo ?>">
-							<a class="page-link" href="/produto/all?pagina=<?= $i+1?>">
-							<?= $i+1?>
+<div class="row">
+	<div class="col-md-12" style="padding: 20px 40px;">
+		<a href="/produto/cadastrar" class="btn button-modal mb-2">
+			<i class="fas fa-plus-circle fa-2x"></i>
+		</a>
+		 <table class="table table-hover">
+		    <thead>
+		      <tr>
+		        <th>Nome</th>
+		        <th>Estoque</th>
+		        <th>Preço</th>
+		        <th>Codigo</th>
+		        <th>Ação</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		    	<?php 
+					for ($i=0; !($i == count($this->view->tableProdutos)); $i++) { 
+						# code...
+					
+				?>
+					<tr>
+						<td><?=$this->view->tableProdutos [$i]->getNomeProduto();?></td>
+						<td><?=$this->view->tableProdutos [$i]->getEstoque();?></td>
+						<td><?=$this->view->tableProdutos [$i]->getPreco();?></td>
+						<td><?=$this->view->tableProdutos [$i]->getCodigoProduto();?></td>
+						<td>
+							<a href="/produto/editar?id=<?=$this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn button-modal mr-2">
+								<i class="fas fa-pencil-alt"></i>
 							</a>
-						</li>
-				    <?php 
-						}
+							<a href="/produto/visualizar?id=<?= $this->view->tableProdutos[$i]->getIdProduto() ?>" class="btn btn-primary mr-2">
+								<i class="fas fa-search-plus"></i>
+							</a>
+							<a href="/produto/excluir?id=<?= $this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn btn-danger">
+								<i class="fas fa-trash-alt"></i>
+							</a>
+						</td>
+					</tr>
 
-						$blockNext = ($this->view->pagina  == $this->view->totPaginas) ? 'disabled' : '';
-						$next = $this->view->pagina + 1;
-				    ?>
+				<?php 
+					}
+				?>
+		    </tbody>
+		  </table>
+	</div>
+	<div class="col-md-12">
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination justify-content-end">
+		  	<?php 
+		  		$previous = $this->view->pagina - 1;
+		  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
+		  	?>
+		    <li class="page-item <?= $blockPrevius ?>">
+		      <a class="page-link" href="/produto/all?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
+		    </li>
 
-				    <li class="page-item <?= $blockNext;?>">
-				      <a class="page-link" href="/produto/all?pagina=<?= $next?>"><strong>Next</strong></a>
-				    </li>
-				  </ul>
-				</nav>
-			</div>
-		</div>
+		    <?php
+		    	for ($i=0; !($i == $this->view->totPaginas); $i++) {
+
+		    		$estilo = ($this->view->pagina == ($i + 1)) ? 'active' : '';
+		    		
+		    ?>
+				<li class="page-item <?= $estilo ?>">
+					<a class="page-link" href="/produto/all?pagina=<?= $i+1?>">
+					<?= $i+1?>
+					</a>
+				</li>
+		    <?php 
+				}
+
+				$blockNext = ($this->view->pagina  == $this->view->totPaginas) ? 'disabled' : '';
+				$next = $this->view->pagina + 1;
+		    ?>
+
+		    <li class="page-item <?= $blockNext;?>">
+		      <a class="page-link" href="/produto/all?pagina=<?= $next?>"><strong>Next</strong></a>
+		    </li>
+		  </ul>
+		</nav>
 	</div>
 </div>

@@ -19,42 +19,42 @@
     <script type="text/javascript" src="../js/bibliotecas/chart.js"></script>
     <title>Minha-Loja.com</title>
 </head>
-<body>
-    <header>
-        <?php $this->loadMenu(); ?>
-    </header><br>
-    <section class="">
-        <?php $this->content($view_path); ?>
-    </section>
-    <footer>
+  <body id="bodyLojaVirtual" style="background-color: #ddd;">
+      <header>
+          <?php $this->loadMenu(); ?>
+      </header><br>
+      <section class="">
+          <?php $this->content($view_path); ?>
+      </section>
+      <footer>
 
-      <?php $this->loadFooter(); ?>
+        <?php $this->loadFooter(); ?>
 
-    <!-- The Modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog modal-sm modal-lg modal-xl modal-dialog-centered">
-        <div class="modal-content">
+      <!-- The Modal -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-sm modal-lg modal-xl modal-dialog-centered">
+          <div class="modal-content">
 
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">Modal Heading</h4>
-            <button type="button" class="close" data-dismiss="modal" id="closeModal">&times;</button>
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Modal Heading</h4>
+              <button type="button" class="close" data-dismiss="modal" id="closeModal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+              Modal body..
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              
+            </div>
+
           </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
-            Modal body..
-          </div>
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            
-          </div>
-
         </div>
       </div>
-    </div>
 
-    </footer>
-</body>
+      </footer>
+  </body>
 </html>

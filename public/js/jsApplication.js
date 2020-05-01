@@ -445,8 +445,6 @@ $('#dinamic').delegate('ul li a', 'click', function(){
 
 
           });
-              //fecha o modal com menu
-  //
 })
 
 
