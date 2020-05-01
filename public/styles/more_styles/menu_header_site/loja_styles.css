@@ -377,7 +377,7 @@ form .btn-danger:hover{
 
 /*barra latral direita painel*/
 #areaPainel{
-    background-color: rgba(220,220,220, .3);
+    background-color: rgba(220,220,220, .5);
     color: #000;
 }
 
@@ -385,6 +385,8 @@ form .btn-danger:hover{
 
 #dinamic{
     margin: auto;
+    background-color: #fff;
+    color: #000;
     
 }
 

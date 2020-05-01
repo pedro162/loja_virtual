@@ -36,7 +36,7 @@ $(document).ready(function(){
 
 // ------------------------------ Preview de imagens upload ---------------------
   
-  $('#dinamic').delegate('#imgproduto','change',function(){
+  $('#dinamic').delegate('#imgproduto, #upload','change',function(){
     
       if(($(this)[0].files[0].type != 'image/jpeg') && ($(this)[0].files[0].type != 'image/png') && ($(this)[0].files[0].type != 'image/jpg')){
 
@@ -632,12 +632,32 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
 
   /*------------------------ Disparando funcoes dos gráficos -----------------------*/
   $('#btnDesemprenho').on('click', function(){
+
+    //inicas os canvas
+    let canvasMeta = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').
+      append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda'))
+
+    let canvasExecAnual = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').append($('<div/>').
+      text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual'))
+
+    let canvasMaisVendidos = $('<div/>').addClass('col-xs-12 mt-3 mb-3 col-sm-12 col-md-6').append($('<div/>').text('Mais vendidos').
+      addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos'))
+
+    let canvasMargem = $('<div/>').addClass('col-xs-12 col-sm-12 mt-3 mb-3 col-md-6').append($('<div/>').
+      text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr'))
+
+    //cria uma div e armazena os canvas
+    let rowCanvas = $('<div/>').addClass('row').css('background-color', 'rgba(0, 0, 0, .8)');
+    rowCanvas.css('padding', 'padding: 20px 40px')
+
+    rowCanvas.append(canvasMeta);
+    rowCanvas.append(canvasExecAnual);
+    rowCanvas.append(canvasMaisVendidos);
+    rowCanvas.append(canvasMargem);
+
+    //isere a dive no corpo do documetno principal
     $('#dinamic').html('');
-    $('#dinamic').css('background-color', 'rgba(0, 0, 0, .8)')
-    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').css('margin-rith', '2px').append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda')));
-    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual')));
-    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Mais vendidos').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos')));
-    $('#dinamic').append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-6').append($('<div/>').text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr')));
+    $('#dinamic').append(rowCanvas);
 
     //exibe a barra vertial direita
     $('#optionPlus').css('display', 'block');
@@ -954,7 +974,7 @@ function listaTabelaProdutos(retorno) {
 /*--------------------------cria o formulario de cadastro de produtos ----------------*/
 function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Produto', btnAcao = 'Cadastar', textoPromorcional = null, select = null){ //recebe uma array multdimensional 
 
-  let colInputs = $('<div/>').addClass('col-md-10');
+  let colInputs = $('<div/>').addClass('col-md-9');
 
   //cria os elemtnos imputs e adicona ao fieldset
   for (let i = 0; !(i == componetesFormulario.length); i++) {
@@ -1018,12 +1038,12 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
 
 
   //cria a div para fazer o previw da imagme 
-  let preview = $('<div/>').addClass('col-md-2').append($('<img/>').attr('id', 'img'))
+  let preview = $('<div/>').addClass('col-md-3').append($('<img/>').attr('id', 'img'))
 
-  let filtdSet = $('<fieldset/>').append($('<legend/>').text(tituloFormulario));
+  let filtdSet = $('<fieldset/>').append($('<legend/>').text(tituloFormulario).addClass('mt-2'));
 
   let textAreaPromorcional = $('<textarea/>').attr('name', 'texto').attr('id', 'idTexto');
-  textAreaPromorcional.attr('rows', '4').addClass('form-control');
+  textAreaPromorcional.attr('rows', '6').addClass('form-control');
   textAreaPromorcional.attr('required', 'required');
   textAreaPromorcional.html(textoPromorcional);
 
@@ -1045,7 +1065,7 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
   let formulario = $('<form/>').css('color', '#000').attr('enctype', 'multipart/form-data').append(filtdSet);
   formulario.css('padding', '40px 20px 0px 20px')
 
-  let divFormulario = $('<div/>').addClass('col-md-12').append(formulario);
+  let divFormulario = $('<div/>').addClass('col-md-12 mt-2 mb-5').append(formulario);
     
   return divFormulario;
   
