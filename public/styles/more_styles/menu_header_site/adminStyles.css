@@ -144,7 +144,7 @@ nav ul li a{
 }
 #cadastro{
     width: auto;
-    /*border-radius: 0px 120px 0px 120px;*/
+    border-radius: 0px 120px 0px 120px;
 }
 #cadastro legend{
     text-align: center;
@@ -217,7 +217,7 @@ form input:hover, form label:hover{
     cursor: pointer;
 }
 
-form .btn-danger:hover{
+form .btn-danger:hover, .btn-primary:hover{
     font-weight: bolder;
     box-shadow: 2px 2px 4px #000;
 }

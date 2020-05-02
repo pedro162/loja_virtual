@@ -59,82 +59,6 @@ $(document).ready(function(){
 
 
  
-  //--------------------------------------------- Modal de produtos -----------------------------------------
-  $('.child-card-footer, div#itens').delegate('.button-modal','click',  function(){
-    //cria e adiciona elementos ao carrocel do modal
-
-    let idProduto = $(this).parents('.card-produto').find('a').attr('href')
-    idProduto = idProduto.substring(idProduto.indexOf('=')+1);
-
-    let carouselModal = $('<div/>').attr('id', 'slid').addClass('carousel').addClass('slide').
-    attr('data-ride', 'carousel').
-    prepend(
-      $('<div/>').addClass('carousel-inner').
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
-        .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
-
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
-        .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
-
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
-        .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
-          ).
-    append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev')
-      .prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
-    append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next')
-      .prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
-
-    //exibe texto detalhes no head do modal
-    $('.modal-header h4').html("Detalhes").css('text-align', 'center');
-      
-    let img = $(this).parents('.card').find('img').attr('src');
-
-    //faz a requizição e exibe detalhes do produto escolhido
-    let xhr = $.ajax({
-            url: '/produto/more?id='+idProduto,
-            type: 'GET',
-            dataType: 'json',
-            success: function(retorno){
-              let list = '<ul style="list-style:none;">';
-                for (var i = 0; !(i == retorno.length); i++) {
-                  list += '<li>'+retorno[i]+'</li>';
-                }
-                list += '</ul>';
-
-                let container = $('<div/>').addClass('container-fluid').append(
-                  $('<div/>').addClass('row mb-5').prepend($('<div/>').addClass('col').html(list)).append($('<div/>').addClass('col').append($('<img/>').attr('src', img)))
-                  ).append(
-                    $('<div/>').addClass('row').prepend($('<div/>').addClass('col').append('<br/><strong>Relacionados:</strong><br/>').append(carouselModal))
-                  );
-                
-                $('.modal-body').html(container);
-
-                let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
-                let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
-
-                let botoesOpcoes = $('<div/>').addClass('row')
-                .append($('<div/>').addClass('col').html(buttonAdd))
-                .append($('<div/>').addClass('col').html(buttonMoreDetals))
-                $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
-                $('.modal-header h4').html($('<strong/>').html("Detalhes do produto"))
-            },
-            beforeSend: function(){
-              $('.modal-header h4').html($('<strong/>').html("Aguarde..."))
-              $('.modal-body').html(loadImg('load.gif'));
-              $('.modal-footer .btn').hide();
-              
-            }
-            
-        });
-
-
-        //cancela a requisicao se clicad
-        $('#closeModal, #myModal').on('click', function(){
-           xhr.abort();
-        })
-
-
-  });
 
 
   // -------------------------------- Imagem de load ---------------------
@@ -144,7 +68,7 @@ $(document).ready(function(){
   }
 
 
-  //---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
+//---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
 
   $('#filtroLateral').on('click', function(){
     let departamento = new Array();
@@ -192,6 +116,7 @@ $(document).ready(function(){
         url: '/produto/filtro',
         data:{'produtos': Filtro},
         success: function(retorno){
+          console.log(retorno); return false;
         parse = $.parseJSON(retorno);
 
 
@@ -282,7 +207,8 @@ $(document).ready(function(){
       }
 
   });
-  
+
+// Faz o sistema de paginação------------------------------------------------------------------------
   function pagination(pagina, totPaginas) {
     //inicia a cria cao da lista de navegacao
     let preview = (pagina - 1);
@@ -404,13 +330,10 @@ $('#menuAdminHide').on('click', function(){
     let xhr = $.ajax({
             url: rota,
             type: 'GET',
-            dataType: 'json',
+            dataType: 'HTML',
             success: function(retorno){
 
               switch(rota){
-                case '/produto/all':
-                  listaTabelaProdutos(retorno);
-                break;
                 case '/produto/all':
                   listaTabelaProdutos(retorno);
                 break;
@@ -430,15 +353,16 @@ $('#menuAdminHide').on('click', function(){
   })
 
 //-----------------------------Botoes da paginaçao da tabela paginacao da tabela de produtos ---------------------------/
-$('#dinamic').delegate('ul li a', 'click', function(){
-
-  let id = $(this).attr('id');
+$('#dinamic').delegate('ul li a', 'click', function(event){
+  event.preventDefault();
+  let url = $(this).attr('href');
 
   let xhr = $.ajax({
-            url: '/produto/all?rq=ajax&pagina='+id,
+            url: url,
             type: 'GET',
-            dataType: 'json',
+            dataType: 'HTML',
             success: function(retorno){
+              console.log(retorno); 
 
               listaTabelaProdutos(retorno);
             }
@@ -452,38 +376,16 @@ $('#dinamic').delegate('ul li a', 'click', function(){
 /*-------------------------------Executa os lincks da tabela de visualização dos produtos --------------------------*/
 $("#dinamic").delegate('#tableProdutos tbody a', 'click', function(event){
   event.preventDefault();
+
   let acao = $(this).attr('href');
 
   let ajax = $.ajax({
     url: acao,
     type: 'GET',
-    dataType: 'json',
+    dataType: 'HTML',
     success:function(retorno){
-
-      
-
-      let componetesFormulario =  [
-        [
-          ['Nome', 'input', 'text',retorno.nomeProduto,'Nome do produto', 'nomeProduto', true],
-          ['NF', 'input', 'number','0000000','Nº NF', 'nf', true],
-          ['Fornecedor' ,'input', 'text', 'nom padrao fornecedor','Nome do fornecedor', 'codFornecedor',true]
-          
-        ],
-        [
-          ['Quantidade' ,'input', 'number',retorno.estoque,'Informe a quantidade', 'estoque', true],
-          ['Valor Unit', 'input', 'number', retorno.preco ,'Descricão do produto', 'preco', true],
-        ],
-        [
-          ['Codigo', 'input', 'text', retorno.codigo,'Código do produto','codProduto', true],
-          ['Imagem' ,'input', 'file', '','', 'imgProduto', true]
-        ]
-
-      ];
-
-      console.log(retorno);
-
-      let formulario = formularioProduto(componetesFormulario, 'Atualizar Produto', 'Atualizar', retorno.textoPromorcional) // cria o formulario e o retorna
-      $('#dinamic').html(formulario);
+      $('#dinamic').html('');
+      $('#dinamic').html(retorno)
 
     }
 
@@ -498,32 +400,30 @@ $("#dinamic").delegate('#tableProdutos tbody a', 'click', function(event){
 
 
 //---------------------------------------------Ctia o formulario de castro de produtos ---------------------------------------------------
+
+
 $('#dinamic').delegate('#cadastrar', 'click', function(event){
   event.preventDefault();
-  $('#dinamic').html('');
-
-  let componetesFormulario =  [
-    [
-      ['Nome', 'input', 'text','','Nome do produto', 'nomeProduto', true],
-      ['Nº NF', 'input', 'number','','Nº NF', 'nf', true],
-      ['Fornecedor' ,'input', 'text','','Nome do fornecedor', 'codFornecedor',true]
-      
-    ],
-    [
-      ['Quantidade' ,'input', 'number','','Quantidade', 'estoque', true],
-      ['Valor Unit', 'input', 'number', '' ,'Valor unitario', 'preco', true],
-    ],
-    [
-      ['Codigo Produto', 'input', 'text','','Código do produto','codProduto', true],
-      ['Imagem' ,'input', 'file','','', 'imgProduto', true]
-    ]
-
-  ];
+  let url = $(this).attr('href');
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'HTML',
+    success: function(retorno){
 
 
-  let formulario = formularioProduto(componetesFormulario) // cria o formulario e o retorna
-  $('#dinamic').html(formulario);
+    //limpa o painel principal
+    $('#dinamic').html('');
+    $('#dinamic').html(retorno)
 
+    }
+
+
+  })
+  
+
+ // componetesFormulario, tituloFormulario ='Cadastar Produto', btnAcao = 'Cadastar',
+ //textoPromorcional = null, optionsMarca = null, optionsCategoria = null
   
 
 })
@@ -550,62 +450,6 @@ function criaComponentSelect(values, name){
 
 }
 
-//------------------------------- cria alguns componetes inputs de formulario---------------------------------------------
-
-function criaComponenteForm(label, nomeElento, type, value='', placeholder='', name = '',required=false){
-
-  let elento = null;
-
-  let formLabel = $('<label/>').css('color', '#000');
-
-  switch(nomeElento){
-    case 'button':
-      elento = $('<button/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-    case 'checkbox':
-      elento = $('<checkbox/>').addClass('form-check-input');
-      formLabel.addClass('form-check-label');
-    break;
-
-    case 'textarea':
-      elento = $('<textarea/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-    case 'file':
-      elento = $('<file/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-    default:
-      elento = $('<input/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-   
-  }
-
-   if(required == true){
-      elento.attr('required', required);
-    }
-
-
-    let idElento = name.toLowerCase();
-
-    elento.attr('type', type);
-    elento.attr('name', name);
-    elento.attr('id', idElento);
-    elento.val(value);
-
-
-    formLabel.attr('id', idElento);
-
-    formLabel.html(label);
-
-    let result = $('<div/>').addClass('form-group').append(formLabel).append(elento);
-
-    return result;
-
-
-}
 
 
   $('#btnInicio').on('click', function(){
@@ -632,8 +476,111 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
 
   /*------------------------ Disparando funcoes dos gráficos -----------------------*/
   $('#btnDesemprenho').on('click', function(){
+      viewDeGraficos();
+   
+  })
 
-    //inicas os canvas
+
+
+/* ------------------------------------------------------------------------- VIEWS DO SISTEMA -------------------------------------------------------------------------------------------*/
+
+
+
+//cria a tabela de protos e recebe os dados por parametro
+function listaTabelaProdutos(retorno) {
+  $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
+  $('#dinamic').append(retorno);
+
+  $('#closeModal').trigger('click');
+
+
+}
+
+
+/*--------------------------------------------------cria o formulario de cadastro de produtos ------------------------------------------*/
+
+
+
+//--------------------------------------------- Modal de produtos -----------------------------------------
+  $('.child-card-footer, div#itens').delegate('.button-modal','click',  function(){
+    //cria e adiciona elementos ao carrocel do modal
+
+    let idProduto = $(this).parents('.card-produto').find('a').attr('href')
+    idProduto = idProduto.substring(idProduto.indexOf('=')+1);
+
+    let carouselModal = $('<div/>').attr('id', 'slid').addClass('carousel').addClass('slide').
+    attr('data-ride', 'carousel').
+    prepend(
+      $('<div/>').addClass('carousel-inner').
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+        .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
+
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
+        .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
+
+      prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
+        .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
+          ).
+    append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev')
+      .prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
+    append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next')
+      .prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
+
+    //exibe texto detalhes no head do modal
+    $('.modal-header h4').html("Detalhes").css('text-align', 'center');
+      
+    let img = $(this).parents('.card').find('img').attr('src');
+
+    //faz a requizição e exibe detalhes do produto escolhido
+    let xhr = $.ajax({
+            url: '/produto/more?id='+idProduto,
+            type: 'GET',
+            dataType: 'json',
+            success: function(retorno){
+              let list = '<ul style="list-style:none;">';
+                for (var i = 0; !(i == retorno.length); i++) {
+                  list += '<li>'+retorno[i]+'</li>';
+                }
+                list += '</ul>';
+
+                let container = $('<div/>').addClass('container-fluid').append(
+                  $('<div/>').addClass('row mb-5').prepend($('<div/>').addClass('col').html(list)).append($('<div/>').addClass('col').append($('<img/>').attr('src', img)))
+                  ).append(
+                    $('<div/>').addClass('row').prepend($('<div/>').addClass('col').append('<br/><strong>Relacionados:</strong><br/>').append(carouselModal))
+                  );
+                
+                $('.modal-body').html(container);
+
+                let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
+                let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
+
+                let botoesOpcoes = $('<div/>').addClass('row')
+                .append($('<div/>').addClass('col').html(buttonAdd))
+                .append($('<div/>').addClass('col').html(buttonMoreDetals))
+                $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
+                $('.modal-header h4').html($('<strong/>').html("Detalhes do produto"))
+            },
+            beforeSend: function(){
+              $('.modal-header h4').html($('<strong/>').html("Aguarde..."))
+              $('.modal-body').html(loadImg('load.gif'));
+              $('.modal-footer .btn').hide();
+              
+            }
+            
+        });
+
+
+        //cancela a requisicao se clicad
+        $('#closeModal, #myModal').on('click', function(){
+           xhr.abort();
+        })
+
+
+  });
+
+ //------------------------ View de graficos ------------------------------ 
+function viewDeGraficos(){
+   //inicas os canvas
     let canvasMeta = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').
       append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda'))
 
@@ -657,6 +604,16 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
 
     //isere a dive no corpo do documetno principal
     $('#dinamic').html('');
+
+    //cria campos de filtro para data
+    //let colPerido = $('<div/>').addClass('col-md-12 mb-3');
+
+    //colPerido.append($('<input/>').attr('type', 'date').css('align', 'right'));
+    //colPerido.append($('<input/>').attr('type', 'date').css('align', 'right'));
+
+    //let optionsPeriodo = $('<div/>').addClass('row').css('align', 'right').append(colPerido);
+
+
     $('#dinamic').append(rowCanvas);
 
     //exibe a barra vertial direita
@@ -669,53 +626,53 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
     let myChart = new Chart(ctx, {
       type: 'pie',//pie
       data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [{
-              label: 'My First dataset',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderWidth: 1
-          }]
+        labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+        datasets: [{
+            label: 'My First dataset',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 206, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ],
+            borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 206, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ],
+            borderWidth: 1
+        }]
       },
       options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
+        layout:{
+           padding: {
+                left: 50,
+                right: 0,
+                top: 0,
+                bottom: 0
+            },
+            width:'10px'
+        }
+        ,scales: {
+            yAxes: [{
                 ticks: {
-                      barPercentage: 0.2,
-                      fontColor: '#fff'
-                  }
-              }]
-          }
+                    beginAtZero: true,
+                    fontColor: '#fff'
+                }
+            }],
+            xAxes:[{
+              ticks: {
+                    barPercentage: 0.2,
+                    fontColor: '#fff'
+                }
+            }]
+        }
       }
   });
 
@@ -724,53 +681,53 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
     let margemChar = new Chart(compMarg, {
       type: 'pie',//pie
       data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [{
-              label: 'My First dataset',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(75, 0, 192)',
-                  'rgb(70, 102, 20)',
-                  'rgb(0, 159, 64)'
-              ],
-              borderColor: [
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(75, 0, 192)',
-                  'rgb(70, 102, 20)',
-                  'rgb(0, 159, 64)'
-              ],
-              borderWidth: 1
-          }]
+        labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+        datasets: [{
+            label: 'My First dataset',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgb(0, 99, 132)',
+                'rgb(54, 162, 0)',
+                'rgb(255, 0, 86)',
+                'rgb(75, 0, 192)',
+                'rgb(70, 102, 20)',
+                'rgb(0, 159, 64)'
+            ],
+            borderColor: [
+                'rgb(0, 99, 132)',
+                'rgb(54, 162, 0)',
+                'rgb(255, 0, 86)',
+                'rgb(75, 0, 192)',
+                'rgb(70, 102, 20)',
+                'rgb(0, 159, 64)'
+            ],
+            borderWidth: 1
+        }]
       },
       options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
+        layout:{
+           padding: {
+                left: 50,
+                right: 0,
+                top: 0,
+                bottom: 0
+            },
+            width:'10px'
+        }
+        ,scales: {
+            yAxes: [{
                 ticks: {
-                      barPercentage: 0.2,
-                      fontColor: '#fff'
-                  }
-              }]
-          }
+                    beginAtZero: true,
+                    fontColor: '#fff'
+                }
+            }],
+            xAxes:[{
+              ticks: {
+                    barPercentage: 0.2,
+                    fontColor: '#fff'
+                }
+            }]
+        }
       }
   });
 
@@ -796,280 +753,128 @@ function criaComponenteForm(label, nomeElento, type, value='', placeholder='', n
           }]
       },
       options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
+        layout:{
+           padding: {
+                left: 50,
+                right: 0,
+                top: 0,
+                bottom: 0
+            },
+            width:'10px'
+        }
+        ,scales: {
+            yAxes: [{
                 ticks: {
-                      barPercentage: 0.2,
-                      fontColor: '#fff'
-                  }
-              }]
-          }
+                    beginAtZero: true,
+                    fontColor: '#fff'
+                }
+            }],
+            xAxes:[{
+              ticks: {
+                    barPercentage: 0.2,
+                    fontColor: '#fff'
+                }
+            }]
+        }
       }
   });
 
 
 
-    // ------------------ Meta --------
-    let ctxs = $('#metaVenda');
-    let myCharts = new Chart(ctxs, {
-      type: 'bar',//pie
-      data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [
-              {
-                  label: 'Meta',
-                  data: [15, 20.6, 19.85, 13.9, 25.45, 17.87],
-                  borderColor:'rgba(148,0,211)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.001)',
-                  borderWidth: 3,
-                  type: 'line'
-              },
-              {
-              label: 'My First dataset',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderWidth: 3
-              },
-              {
-              label: 'My Next dataset',
-              data: [10, 19, 5, 9, 8, 11],
-              backgroundColor:[
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(0, 0, 192)',
-                  'rgb(153, 102, 0)',
-                  'rgb(255, 0, 64)'
+  // ------------------ Meta --------
+  let ctxs = $('#metaVenda');
+  let myCharts = new Chart(ctxs, {
+    type: 'bar',//pie
+    data: {
+        labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+        datasets: [
+            {
+                label: 'Meta',
+                data: [15, 20.6, 19.85, 13.9, 25.45, 17.87],
+                borderColor:'rgba(148,0,211)',
+                backgroundColor: 'rgba(255, 255, 255, 0.001)',
+                borderWidth: 3,
+                type: 'line'
+            },
+            {
+            label: 'My First dataset',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 206, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ],
+            borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 206, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ],
+            borderWidth: 3
+            },
+            {
+            label: 'My Next dataset',
+            data: [10, 19, 5, 9, 8, 11],
+            backgroundColor:[
+                'rgb(0, 99, 132)',
+                'rgb(54, 162, 0)',
+                'rgb(255, 0, 86)',
+                'rgb(0, 0, 192)',
+                'rgb(153, 102, 0)',
+                'rgb(255, 0, 64)'
 
-              ],
-              borderColor:[
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(0, 0, 192)',
-                  'rgb(153, 102, 0)',
-                  'rgb(255, 0, 64)'
-              ],
-              borderWidth: 3
-          }
-          ]
-      },
-      options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
-                ticks:{
-                  barPercentage: 1,
-                  fontColor: '#fff'
-                }
-                
-              }]
-          }
+            ],
+            borderColor:[
+                'rgb(0, 99, 132)',
+                'rgb(54, 162, 0)',
+                'rgb(255, 0, 86)',
+                'rgb(0, 0, 192)',
+                'rgb(153, 102, 0)',
+                'rgb(255, 0, 64)'
+            ],
+            borderWidth: 3
         }
-    });
-
-  })
-
-
-
-/* ------------------------------------------------------------------------- Views -------------------------------------------------------------------------------------------*/
-
-
-
-//cria a tabela de protos e recebe os dados por parametro
-function listaTabelaProdutos(retorno) {
-
-  $('#closeModal').trigger('click');
-
-  //exibe a barra lateral direita
-   
-  $('#optionPlus').css('display', 'block');
-    //Cabecalho da tabela
-    let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
-                          .append($('<th/>').html('Estoque'))
-                          .append($('<th/>').html('Preço'))
-                          .append($('<th/>').html('Código'))
-                          .append($('<th/>').html('Ação'))
-    )
-
-
-    //Corpo da tabela
-    let tbody = $('<tbody/>');
-    for (let i = 0; !(i == retorno[0].length); i++) {
-
-    tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
-      .append($('<td/>').html(retorno[0][i].estoque))
-      .append($('<td/>').html(retorno[0][i].preco))
-      .append($('<td/>').html(retorno[0][i].codigo))
-      .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
-                        .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/visualizar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
-                        .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/deletar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
-          )
-
-      )
-    }
+        ]
+    },
+    options: {
+        layout:{
+           padding: {
+                left: 50,
+                right: 0,
+                top: 0,
+                bottom: 0
+            },
+            width:'10px'
+        }
+        ,scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    fontColor: '#fff'
+                }
+            }],
+            xAxes:[{
+              ticks:{
+                barPercentage: 1,
+                fontColor: '#fff'
+              }
+              
+            }]
+        }
+      }
+  });
 
 
 
-    //armazena a tabela numa div de coluna 12
-    let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
 
-    divTabela.append($('<a/>').attr('id', 'cadastrar').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
-
-    divTabela.append($('<table/>').attr('id', 'tableProdutos').addClass('table table-hover').append(thead).append(tbody));
-
-    //retorna um lista de navegacao
-    let retult = pagination(retorno[1].pagina, retorno[1].totPaginas);
-
-    $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
-    $('#dinamic').append(divTabela);
-    $('#dinamic').append(retult);
 }
 
 
-/*--------------------------cria o formulario de cadastro de produtos ----------------*/
-function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Produto', btnAcao = 'Cadastar', textoPromorcional = null, select = null){ //recebe uma array multdimensional 
-
-  let colInputs = $('<div/>').addClass('col-md-9');
-
-  //cria os elemtnos imputs e adicona ao fieldset
-  for (let i = 0; !(i == componetesFormulario.length); i++) {
-
-    let row = $('<div/>').addClass('row');
-
-    for (let j = 0; !(j == componetesFormulario[i].length); j++) {
-      let nomeElento  = componetesFormulario[i][j][0];
-      let input = componetesFormulario[i][j][1];
-      let text  = componetesFormulario[i][j][2];
-      let value = componetesFormulario[i][j][3]
-      let placehoder = componetesFormulario[i][j][4];
-      let name = componetesFormulario[i][j][5]
-      let requerido = componetesFormulario[i][j][6];
-
-
-      let elento = criaComponenteForm(nomeElento, input, text, value, placehoder, name, requerido);
-      let colElento = $('<div/>').addClass('col-md-'+ ( 12 / componetesFormulario[i].length)).append(elento);
-      
-      row.append(colElento);
-
-    }
-
-    colInputs.append(row);
-    
-  }
-
-  //opcoes para select de marcas
-  let optionsMarca = [
-    [1, 'Sansung'],
-    [2, 'Ios'],
-    [3, 'Motorola']
-  ];
-
-
-  //opcoes para select de categorias
-
-   let optionsCategoria = [
-    [1, 'Esport'],
-    [2, 'Infantil'],
-    [3, 'Adulto']
-  ];
-
-  let selectMarca = criaComponentSelect(optionsMarca, 'Marca'); //craia uma lista de opcoes e a retorna
-  let selectCategoria = criaComponentSelect(optionsCategoria, 'Categoria');
-  
-  //aramazena as listas de opcoes em div para formulario
-  let divSelectMarca = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'marca').html('Marca')).append(selectMarca);
-
-  let divSelectCategoria = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'categoria').html('Categoria')).append(selectCategoria);
-
-
-  let rowSelect = $('<div/>').addClass('row');
-
-  //aramazena cada lista numa coluna
-  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectMarca))
-  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectCategoria))
-
-  colInputs.append(rowSelect);
-
-
-
-  //cria a div para fazer o previw da imagme 
-  let preview = $('<div/>').addClass('col-md-3').append($('<img/>').attr('id', 'img'))
-
-  let filtdSet = $('<fieldset/>').append($('<legend/>').text(tituloFormulario).addClass('mt-2'));
-
-  let textAreaPromorcional = $('<textarea/>').attr('name', 'texto').attr('id', 'idTexto');
-  textAreaPromorcional.attr('rows', '6').addClass('form-control');
-  textAreaPromorcional.attr('required', 'required');
-  textAreaPromorcional.html(textoPromorcional);
-
-  let divTextarea = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'idTexto').html('Texto promorcional'));
-  divTextarea.append(textAreaPromorcional);
-
-
-  let rowTextArea = $('<div/>').addClass('row');
-  rowTextArea.append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-12 col-lg-12').append(divTextarea));
-  //armazena a text area na coluna de imputs
-  colInputs.append(rowTextArea);
-
-  colInputs.append($('<button/>').html(btnAcao).addClass('btn btn-lg btn-success'))
-  colInputs.append($('<a/>').attr('href', '/produto/all').html('Cancelar').addClass('btn btn-lg btn-danger ml-2 link'))
-
-  //adicona as colunas de imput e preview ao fidset
-  filtdSet.append($('<div/>').addClass('row').append(colInputs).append(preview));
-
-  let formulario = $('<form/>').css('color', '#000').attr('enctype', 'multipart/form-data').append(filtdSet);
-  formulario.css('padding', '40px 20px 0px 20px')
-
-  let divFormulario = $('<div/>').addClass('col-md-12 mt-2 mb-5').append(formulario);
-    
-  return divFormulario;
-  
-}
 
 
 
