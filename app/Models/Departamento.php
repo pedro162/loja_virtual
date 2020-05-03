@@ -8,11 +8,12 @@ use \InvalidArgumentException;
 
 class Departamento extends BaseModel
 {
-	const TABLE = 'Departamento';
+	protected $table = 'Departamento';
 
     public function __construct()
     {
-        self::open();
+        //self::open();
+         $this->start();
     }
 
 }

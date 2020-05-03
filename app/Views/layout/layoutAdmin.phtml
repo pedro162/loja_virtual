@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="../styles/bootstrap-4/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles/bootstrap-4/css/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="../styles/more_styles/menu_header_site/loja_styles.css">
+    <link rel="stylesheet" href="../styles/more_styles/menu_header_site/adminStyles.css">
     <link rel="stylesheet" href="../fontawesome/css/all.css">
+    <link rel="manifest" href="../manifest.json">
+        <!-- CODELAB: Add iOS meta tags and icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Weather PWA">
+    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
     
     <script src="../jquery/jquery.min_google.js"></script>
     <script src="../styles/bootstrap-4/js/bootstrap.min.js"></script>
@@ -26,9 +32,9 @@
     <section class="">
       <div class="container-fluid" id="corpoAdmim">
         <div class="row">
-          <div class="col-md-1" id="menuLatral">
-            <nav class ="navbar">
-              <ul class ="nav navbar-nav">
+          <div class="col-md-1 col-sm-1 col-xs-1" id="menuLatral">
+            <nav class ="nav">
+              <ul class ="nav">
                 <li class ="nav-item">
                   <button type="button" class="btn btnIcones"  data-toggle="tooltip" data-placement="right" title="Inicio" id="btnInicio">
                     <i class="fas fa-home fa-3x"></i>
@@ -57,16 +63,16 @@
               </ul>
             </nav>
           </div>
-          <div class="col-md-11" id="areaPainel">
+          <div class="col-md-11 col-sm-11" id="areaPainel">
             <div class="container-fluid">
               <div class="row mt-3 mb-3 ml-1 mr-1">
-                <div class="col-md-9"  id="dinamic">
+                <div class="col-md-9 col-sm-12"  id="dinamic">
 
                   <?php $this->content($view_path); ?>
 
                 </div>
 
-                <div class="col-md-3" id="optionPlus">
+                <div class="col-md-3 col-sm-12" id="optionPlus">
                   <div class="row ml-3 mb-2" style=" background-color: #fff;padding: 5px;" >
                     <div class="col">
                     <div class="row">
@@ -144,8 +150,6 @@
           <div class="modal-body">
             Modal body..
           </div>
-
-          <
           <div class="modal-footer">
             
           </div>

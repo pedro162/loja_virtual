@@ -55,6 +55,63 @@ $(document).ready(function(){
       }
       fileReader.readAsDataURL(file);
   })
+
+
+  //---------------------------- salvar o cadastro de produtos
+
+  $('#dinamic').delegate( '#cadastrarProduto', 'submit', function(event){
+    event.preventDefault();
+
+    let dadosForm = $(this).serialize();
+    let arrayDados = dadosForm.split('&');
+
+    let submitArray = new Array();
+
+    $('#msg').remove();
+
+    let msg = $('<div/>').css('padding', '5px 10px').css('text-align', 'center').addClass('col-md-12 alert alert-warning');
+
+    for (let i = 0; !(i == arrayDados.length); i++) {
+      let subArray = arrayDados[i].split('=');
+      if(subArray.length == 0){
+
+        msg.html('Atenção: erro ao cadastrar.<br/> Recarregue a pagiana e tenten novamente.')
+        return false;
+        
+      }
+
+      //verifica se o campo foi preenchido e 
+      if($.trim(subArray[1]) == ''){
+
+        msg.html(' <strong>Atenção:</strong>erro ao cadastrar.<br/> Preenha os campos corretamente!');
+
+        $(this).prepend($('<div/>').attr('id', 'msg').addClass('row').html(msg));
+        $(this).find('[name='+subArray[0]+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+          $(this).css('box-shadow', '2px 2px 3px green').css('border', '1px solid green');
+        });
+        return false;
+      }
+
+
+      submitArray.push(arrayDados[i]);
+
+    }
+
+    let url = $(this).attr('action');
+    
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: {'produto': submitArray},
+      success: function(retorno){
+        console.log(retorno);
+      }
+
+    })
+
+  })
+
+
   
 
 

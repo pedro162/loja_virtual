@@ -64,9 +64,15 @@
 										<select class="form-control " id="idMarc" name="marca" required="required">
 											<?php 
 											for ($i=0; !($i == count($this->view->marcas)) ; $i++) { 
-												
+
+											$selected = "";
+
+											if($this->view->result->getIdMarca() == $this->view->marcas[$i]->getIdMarca()){
+
+												$selected = "selected=\"selected\"";
+											}
 										?>
-											<option value="<?= $this->view->marcas[$i]->getIdMarca()?>" ><?= $this->view->marcas[$i]->getMarca()?></option>
+											<option <?=$selected?>  value="<?= $this->view->marcas[$i]->getIdMarca()?>" ><?= $this->view->marcas[$i]->getNomeMarca()?></option>
 										<?php 
 											}
 										?>
@@ -79,10 +85,27 @@
 									<label for="idCategoria">Categoria: </label>
 									<select class="form-control " id="idCategoria" name="categoria" multiple size="3" required="required">
 										<?php 
-											for ($i=0; !($i == count($this->view->categorias)) ; $i++) { 
+											for ($i=0; !($i == count($this->view->categorias)) ; $i++) {
+
+											$selected = "";
+
+											if(is_array($this->view->categoriaProduto)
+											 && (count($this->view->categoriaProduto) > 0)){
+													for ($j=0; !($j == count($this->view->categoriaProduto)); $j++) { 
+														
+														if(isset($this->view->categoriaProduto[$j]->idCategoria)&&($this->view->categoriaProduto[$j]->idCategoria == $this->view->categorias[$i]->getIdCategoria())){
+															$selected = "selected=\"selected\"";
+															echo "entrou aqui<br/>".PHP_EOL;
+															break;
+														}
+
+													}
+											}
+
+
 												
 										?>
-											<option value="<?= $this->view->categorias[$i]->getIdCategoria()?>" ><?= $this->view->categorias[$i]->getCategoria()?></option>
+											<option <?=$selected?> value="<?= $this->view->categorias[$i]->getIdCategoria()?>" ><?= $this->view->categorias[$i]->getCategoria()?></option>
 										<?php 
 											}
 										?>
@@ -111,7 +134,7 @@
 						<img id="img"/>
 					</div>	
 				</div>
-				<button type="submit" class="btn btn-lg btn-success">Lançar</button> 
+				<button type="submit" class="btn btn-lg btn-primary">Lançar</button>  <a href="/produto/all" class="btn link btn-lg ml-2 btn-danger">Cancelar</a> 
 			</fieldset>
 
 		</form>

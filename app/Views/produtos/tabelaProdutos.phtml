@@ -1,9 +1,9 @@
 <div class="row">
 	<div class="col-md-12" style="padding: 20px 40px;">
-		<a href="/produto/cadastrar" class="btn button-modal mb-2">
+		<a href="/produto/cadastrar" class="btn btn-success mb-2" id="cadastrar">
 			<i class="fas fa-plus-circle fa-2x"></i>
 		</a>
-		 <table class="table table-hover">
+		 <table class="table table-hover" id="tableProdutos">
 		    <thead>
 		      <tr>
 		        <th>Nome</th>
@@ -25,7 +25,7 @@
 						<td><?=$this->view->tableProdutos [$i]->getPreco();?></td>
 						<td><?=$this->view->tableProdutos [$i]->getCodigoProduto();?></td>
 						<td>
-							<a href="/produto/editar?id=<?=$this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn button-modal mr-2">
+							<a href="/produto/editar?id=<?=$this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn btn-success mr-2">
 								<i class="fas fa-pencil-alt"></i>
 							</a>
 							<a href="/produto/visualizar?id=<?= $this->view->tableProdutos[$i]->getIdProduto() ?>" class="btn btn-primary mr-2">

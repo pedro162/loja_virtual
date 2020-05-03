@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use \Core\Database\Commit;
+use App\Models\ProdutoCategoria;
 use \Exception;
 use \InvalidArgumentException;
 use App\Models\Departamento;
+use App\Models\Marca;
+use App\Models\Categoria;
 
 class Produto extends BaseModel
 {
@@ -19,12 +23,14 @@ class Produto extends BaseModel
     private $idCategoria;
     private $estoque;
     private $codigo;
+    private $idMarca;
 
     protected $table = 'Produto';
 
     public function __construct()
     {
-        self::open();
+        //self::open();
+        $this->start();
     }
 
 
@@ -53,10 +59,23 @@ class Produto extends BaseModel
 
     public function detalheProduto(Int $id)
     {
-        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco'], ['idProduto'=>$id], '=');
+        $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco'], ['idProduto'=>$id], '=','asc', null, null,true);
         $array[] = $result[0]->getNomeProduto();
         $array[] = $result[0]->getPreco();
         return json_encode($array);
+    }
+
+
+    public function getMarca()
+    {
+        $marca = new Marca();
+        $marca->select(['idMarca','nomeMarca'], ['idMarca'=>$this->idMarca], '=','asc', null, null,true);
+        return $this->marca;
+    }
+
+    public function getIdMarca()
+    {
+        return $this->idMarca;
     }
 
 
@@ -118,13 +137,12 @@ class Produto extends BaseModel
         throw new InvalidArgumentException("Valor inváldio<br/>");
     }
 
-    public function getDepartamento():array
-    {
-        $departamento = new Categoria();
-        $restult = $departamento->select(['nomeCategoria', 'idCategoria'], ['idCategoria' => $this->idCategoria]);
+    public function getCategoria()
+    {   
+        $prodCateg = new ProdutoCategoria();
 
-        return $restult;
-        
+        $result = $prodCateg->getCategoria($this->idProduto);
+        return $result;
     }
 
 
@@ -263,6 +281,15 @@ class Produto extends BaseModel
         return $this->idProduto;
     }
 
+    public function setIdProduto(Int $id):int
+    {
+        if($id <= 0)
+        {
+            throw new \Exception("Propriedade indefinida<br/>");
+        }
+        return $this->idProduto = $id;
+    }
+
 
 
     private function parseFiltroAjax(array $request):array
@@ -399,6 +426,9 @@ class Produto extends BaseModel
         //return $sqlPersonalizada;
         return json_encode ($result);
     }
+
+
+    
 
 
 }

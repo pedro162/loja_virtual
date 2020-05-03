@@ -28,7 +28,7 @@ class ProdutoController extends BaseController
 
         $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco'];
 
-        $result = $produto->paginador($campos, $itensPorPagina, $pagina);
+        $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
         
         $this->view->produtos = $produto->listarProdutos($result);
         
@@ -52,9 +52,7 @@ class ProdutoController extends BaseController
         $this->view->categorias = $categoria->listaCategoria();
         $this->view->marcas = $marca->listaMarca();
 
-        $this->setMenu('adminMenu');
-        $this->setFooter('footer');
-        $this->render('produtos/cadastrar');
+        $this->render('produtos/cadastrar', false);
     }
 
     public function all($request)
@@ -78,37 +76,20 @@ class ProdutoController extends BaseController
         $this->view->totPaginas = ceil($totItens / $itensPorPagina);
 
 
-        $this->setMenu('adminMenu');
-        $this->setFooter('footer');
+        //$this->setMenu('adminMenu');
+       // $this->setFooter('footer');
 
         $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
 
-            $stdPaginacao = new \stdClass();
-            $stdPaginacao->pagina = $this->view->pagina;
-            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
-            $stdPaginacao->totPaginas = $this->view->totPaginas ;
+        $stdPaginacao = new \stdClass();
+        $stdPaginacao->pagina = $this->view->pagina;
+        $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+        $stdPaginacao->totPaginas = $this->view->totPaginas ;
 
-            $this->view->result = json_encode([$result, $stdPaginacao]);
-            $this->render('produtos/ajaxPainelAdmin', false);
+        $this->view->tableProdutos = $result;
+        $this->render('produtos/tabelaProdutos', false);
 
-         //muda o tipo de objeto para stdClass caso a requisisao seja via ajax
-         /*if(isset($request['get'], $request['get']['rq']) && ($request['get']['rq'] == 'ajax')){
-
-            $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
-
-            $stdPaginacao = new \stdClass();
-            $stdPaginacao->pagina = $this->view->pagina;
-            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
-            $stdPaginacao->totPaginas = $this->view->totPaginas ;
-
-            $this->view->result = json_encode([$result, $stdPaginacao]);
-            $this->render('produtos/ajaxPainelAdmin', false);
-
-         }else{
-             $result = $produto->paginador($campos, $itensPorPagina, $pagina, null);
-            $this->view->tableProdutos = $result;
-            $this->render('produtos/tabelaProdutos');
-         }*/
+           
 
     }
 
@@ -139,17 +120,20 @@ class ProdutoController extends BaseController
         $this->view->marcas = $marca->listaMarca();
 
         $result = $produto->select(
-            ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque', 'codigo'],
-            ['idProduto'=>$request['get']['id']],'=','asc', null,  null, true
+            ['nomeProduto','textoPromorcional','idMarca' , 'idProduto', 'preco', 'estoque', 'codigo'],
+            ['idProduto'=>$request['get']['id']], '=', 'asc', null, null, true
 
         )[0];
-
         
-        $this->view->result = json_encode($result);
+        $this->view->categoriaProduto = $result->getCategoria();
         
-        $this->setMenu('adminMenu');
-        $this->setFooter('footer');
-        $this->render('produtos/ajaxPainelAdmin', false);
+        //$this->view->result = json_encode($result);
+        
+        //$this->setMenu('adminMenu');
+        //$this->setFooter('footer');
+        $this->view->result = $result;
+        $this->render('produtos/editar', false);
+        //$this->render('produtos/ajaxPainelAdmin', false);
         //$this->render('produtos/editar');
     }
 
@@ -175,6 +159,8 @@ class ProdutoController extends BaseController
 
     public function salvar($request)
     {
+        var_dump($request);
+        return false;
     	set_time_limit(0);
 
     	$fiile = new File($request['file']['imgProduto']['name'], $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);

@@ -197,13 +197,27 @@ label[for='id_cnpj']{
     justify-content: space-between;
 }
 
-form .btn-success{
+.btn-success{
     border: none;
+    background-color: #8B008B;
+    color: #fff;
+    font-weight: bolder;
+}
+.btn-success:hover{
+    font-weight: bolder;
+    box-shadow: 2px 2px 4px #000;
     background-color: #8B008B;
     color: #fff;
 }
 
-
+#cadastrar.btn-success{
+    background-color: #fff;
+    color: #8B008B;
+}
+#cadastrar.btn-success:hover{
+    background-color: #8B008B;
+    color: #fff;
+}
 
 form .btn-success:hover{
     background-color: #8B008B;
@@ -217,7 +231,7 @@ form input:hover, form label:hover{
     cursor: pointer;
 }
 
-form .btn-danger:hover, .btn-primary:hover{
+.btn-danger:hover, .btn-primary:hover, .btn-success:hover{
     font-weight: bolder;
     box-shadow: 2px 2px 4px #000;
 }

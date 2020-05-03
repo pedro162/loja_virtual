@@ -17,23 +17,25 @@ class Categoria extends BaseModel
 
     public function __construct()
     {
-        self::open();
+        //self::open();
+        $this->start();
     }
 
     public function listaCategoria():array
     {
-    	$result = $this->select(['idCategoria','nomeCategoria']);
+    	$result = $this->select(['idCategoria','nomeCategoria'], [], '=',
+     'asc', null, null, true);
     	return $result;
     }
 
 
     public function getCategoria()
     {
-    	if(empty($this->idCategoria)){
+    	if(empty($this->nomeCategoria)){
     		throw new Exception("Pripriedade não defindida<br/>");
     	}
 
-    	return $this->idCategori;
+    	return $this->nomeCategoria;
     }
 
     public function getIdCategoria()
@@ -45,7 +47,7 @@ class Categoria extends BaseModel
     	return $this->idCategoria;
     }
 
-
+    
  
 
 

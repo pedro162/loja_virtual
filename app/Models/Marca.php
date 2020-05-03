@@ -16,17 +16,19 @@ class Marca extends BaseModel
 
     public function __construct()
     {
-        self::open();
+        //self::open();
+        $this->start();
     }
+
 
     public function listaMarca():array
     {
-    	$result = $this->select(['idMarca','nomeMarca']);
+    	$result = $this->select(['idMarca','nomeMarca'], [], '=','asc', null, null, true);
     	return $result;
     }
 
 
-    public function getMarca()
+    public function getNomeMarca()
     {
     	if(empty($this->nomeMarca)){
     		throw new Exception("Pripriedade não defindida<br/>");

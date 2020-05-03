@@ -9,7 +9,8 @@ class Cliente extends BaseModel
 
     public function __construct()
     {
-       self::open();
+       //self::open();
+    	$this->start();
     }
 
     

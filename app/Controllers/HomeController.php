@@ -37,4 +37,10 @@ class HomeController extends BaseController
         $this->setFooter('footer');
         $this->render('produtos/cadastrar', true, 'layoutAdmin');
     }
+
+    public function teste($request){
+        echo "<pre>";
+        var_dump($request);
+        echo "</pre>";
+    }
 }
