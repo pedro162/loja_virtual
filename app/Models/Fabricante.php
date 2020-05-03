@@ -22,6 +22,18 @@ class Fabricante extends Pessoa
         return $this->nome;
     }
     
+    protected function parseCommit()
+    {
+
+    }
+    protected function clear(array $dados)
+    {
+
+    }
+    public function commit(array $dados)
+    {
+        
+    }
 
 
 

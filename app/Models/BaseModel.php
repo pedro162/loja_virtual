@@ -320,6 +320,12 @@ abstract class BaseModel
     }
 
 
+    abstract protected function parseCommit();
+
+    abstract protected function clear(array $dados);
+
+    abstract public function commit(array $dados);
+
 
 
 

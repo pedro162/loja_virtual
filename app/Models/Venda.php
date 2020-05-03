@@ -22,6 +22,19 @@ class Venda extends BaseModel
 		
 	}
 
+	protected function parseCommit()
+	{
+
+	}
+	protected function clear(array $dados)
+	{
+
+	}
+	public function commit(array $dados)
+	{
+		
+	}
+
 	public static function qtdItensVenda()
 	{
 		Sessoes::sessionInit();

@@ -75,10 +75,6 @@ class ProdutoController extends BaseController
         $this->view->itensPorPagina = $itensPorPagina;
         $this->view->totPaginas = ceil($totItens / $itensPorPagina);
 
-
-        //$this->setMenu('adminMenu');
-       // $this->setFooter('footer');
-
         $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
 
         $stdPaginacao = new \stdClass();
@@ -127,14 +123,8 @@ class ProdutoController extends BaseController
         
         $this->view->categoriaProduto = $result->getCategoria();
         
-        //$this->view->result = json_encode($result);
-        
-        //$this->setMenu('adminMenu');
-        //$this->setFooter('footer');
         $this->view->result = $result;
         $this->render('produtos/editar', false);
-        //$this->render('produtos/ajaxPainelAdmin', false);
-        //$this->render('produtos/editar');
     }
 
     public function filtro($request)
@@ -159,14 +149,18 @@ class ProdutoController extends BaseController
 
     public function salvar($request)
     {
-        var_dump($request);
-        return false;
+        /*
     	set_time_limit(0);
 
     	$fiile = new File($request['file']['imgProduto']['name'], $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
     	if($fiile->salvar('imagens') == true)
     	{
     		echo "Imagem salva com sucesso<br/>";
-    	}
+    	}*/
+
+
+        $produto = new Produto();
+        $produto->commit($request['post']['produto']);
+        return false;
     }
 }

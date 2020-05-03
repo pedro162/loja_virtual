@@ -8,4 +8,18 @@ abstract class Pessoa extends BaseModel
     protected $telefone;
     protected $celular;
     protected $email;
+
+    protected function parseCommit()
+    {
+
+    }
+	protected function clear(array $dados)
+	{
+
+	}
+	
+	public function commit(array $dados)
+	{
+
+	}
 } 

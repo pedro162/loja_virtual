@@ -18,7 +18,18 @@ class ProdutoCategoria extends BaseModel
         //self::open();
         $this->start();
     }
+    protected function parseCommit()
+    {
 
+    }
+    protected function clear(array $dados)
+    {
+
+    }
+    public function commit(array $dados)
+    {
+        
+    }
 
     public function getCategoria(Int $id)
     {

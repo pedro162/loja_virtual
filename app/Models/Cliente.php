@@ -13,5 +13,19 @@ class Cliente extends BaseModel
     	$this->start();
     }
 
+    protected function parseCommit()
+    {
+
+    }
+	protected function clear(array $dados)
+	{
+
+	}
+
+	public function commit(array $dados)
+	{
+
+	}
+
     
 }
