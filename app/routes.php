@@ -15,6 +15,8 @@ $routes[] = ['/produto/more', 'ProdutoController@more'];
 $routes[] = ['/produto/filtro', 'ProdutoController@filtro'];
 $routes[] = ['/produto/editar', 'ProdutoController@editarProduto'];
 
+$routes[] = ['/marca/cadastrar', 'MarcaController@cadastrar'];
+
 $routes[] = ['/venda/carrinho', 'VendaController@addCarrinho'];
 $routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];
 

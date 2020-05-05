@@ -17,7 +17,7 @@ final class Connection
             
         }
         
-        $file_connection = require_once(__DIR__."/../../{$file}.php");
+        $file_connection = require(__DIR__."/../../{$file}.php");
         
 
         $user = isset($file_connection['user'])     ? $file_connection['user']      : null;
@@ -28,10 +28,9 @@ final class Connection
         $port = isset($file_connection['port'])     ? $file_connection['port']      : null;
         
         $conn = null;
-
         switch($type)
         {
-            case 'mysql':
+            case "mysql":
                 $port = $port ? $port : '3306';
                 $conn = new PDO("mysql:host={$host};port={$port};dbname={$name};charset=utf8", $user, $pass);
             break;

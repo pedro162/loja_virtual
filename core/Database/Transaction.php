@@ -2,22 +2,32 @@
 
 namespace Core\Database;
 
+use Core\Database\Connection;
+
 abstract class Transaction
 {
 	protected static $conexao;
 
-	public static function startTransaction(\PDO $conn):bool
+	public static function startTransaction(String $database):bool
 	{
-		var_dump($conn);
 		if(empty(self::$conexao))
 		{
-			self::$conexao = $conn;
+			self::$conexao = Connection::open($database);
+
+			self::$conexao->beginTransaction(); // inicia a transação
+
 		}
 		
-		self::$conexao->beginTransaction(); // inicia a transação
 		return true;
 	}
 
+	public static function get()
+	{
+		if(!empty(self::$conexao))
+		{
+			return self::$conexao;
+		}
+	}
 
 	public static function rollback()
 	{

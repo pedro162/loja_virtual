@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use \Core\Database\Commit;
+use \Core\Database\Transaction;
 use App\Models\ProdutoCategoria;
 use \Exception;
 use \InvalidArgumentException;
 use App\Models\Departamento;
 use App\Models\Marca;
 use App\Models\Categoria;
+use App\Models\Fornecedor;
 
 class Produto extends BaseModel
 {
@@ -23,8 +25,9 @@ class Produto extends BaseModel
     private $idCategoria;
     private $estoque;
     private $codigo;
-    private $idMarca;
+    private $marca;
     private $nf;
+    private $fornecedor;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
@@ -32,8 +35,8 @@ class Produto extends BaseModel
 
     public function __construct()
     {
-        //self::open();
-        $this->start();
+        self::open();
+        //$this->start();
     }
 
 
@@ -71,7 +74,7 @@ class Produto extends BaseModel
 
                 case 'marca':
                     $idMarca = (int) $subArray[1];
-                   $this->setIdMarca($idMarca);
+                   $this->setMarca($idMarca);
                    break;
 
                 case 'nf':
@@ -82,8 +85,20 @@ class Produto extends BaseModel
                    $this->setCodigoProduto($subArray[1]);
                    break;
 
-                case 'preco':
+                case 'valorCompra':
                    $this->setPreco($subArray[1]);
+                   break;
+
+                case 'margem':
+                   $this->setPreco($subArray[1]);
+                   break;
+
+                case 'categoria':
+                   $this->setPreco($subArray[1]);
+                   break;
+                case 'fornecedor': // falta criar o metodo ideal
+                    $idFornecedor = (int) $subArray[1];
+                   $this->setFornecedor($idFornecedor);
                    break;
             }
 
@@ -93,12 +108,14 @@ class Produto extends BaseModel
     protected function parseCommit()
     {
         $this->data['nomeProduto']          = $this->getNomeProduto();
-        $this->data['IdMarca']              = $this->getIdMarca();
+        $this->data['IdMarca']              = $this->getMarca()->getIdMarca();
+        $this->data['idFornecedor']         = $this->getFornecedor()->getIdFornecedor();
         $this->data['preco']                = $this->getPreco();
         $this->data['codigo']               = $this->getCodigoProduto();
-        $this->data['nf']                   = $this->getNf();
+        $this->data['idNF']                 = $this->getNf();
         $this->data['estoque']              = $this->getEstoque();
         $this->data['textoPromorcional']    = $this->getTextoPromorcional();
+        $this->data['condicoes']            = $this->getCondicoes();
 
         return $this->data;
     }
@@ -106,12 +123,17 @@ class Produto extends BaseModel
 
     public function commit(array $dados)
     {
+
         $this->clear($dados);
 
         $result = $this->parseCommit();
 
+
+        Transaction::startTransaction(self::getDatabase());
+        
         $this->insert($result);
-        var_dump($result);
+
+        Transaction::close();
     }
 
     public function getFiltros():array
@@ -123,6 +145,30 @@ class Produto extends BaseModel
         ];
 
     }
+
+    public function setFornecedor(Int $id)
+    {
+        $fornecedor = new Fornecedor();
+        $result = $fornecedor->select(['idFornecedor','nomeFornecedor'], ['idFornecedor'=>$id], '=','asc', null, null,true);
+
+        $this->fornecedor = $result[0];
+
+    }
+
+    public function getFornecedor()
+    {
+        if(!isset($this->fornecedor)){
+            throw new Exception("Propriedade indefinida");
+        }
+
+        if(!empty($this->fornecedor)){
+            return $this->fornecedor;
+        }else{
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
+        
+    }
+
 
     public function detalheProduto(Int $id)
     {
@@ -153,37 +199,26 @@ class Produto extends BaseModel
         throw new Exception("Propriedade indefinida<br/>\n");
     }
 
-    public function getMarca()
+    public function setMarca(Int $id)
     {
         $marca = new Marca();
-        $result = $marca->select(['idMarca','nomeMarca'], ['idMarca'=>$this->idMarca], '=','asc', null, null,true);
+        $result = $marca->select(['idMarca','nomeMarca'], ['idMarca'=>$id], '=','asc', null, null,true);
 
-        return $result[0];
+        $this->marca = $result[0];
     }
 
-    public function getIdMarca()
+    public function getMarca()
     {   
-        if(!isset($this->idMarca)){
+        if(!isset($this->marca)){
             throw new Exception("Propriedade indefinida");
         }
 
-        $result = $this->getMarca();
-
-        if($result){
-            return $result->getIdMarca();
+        if(!empty($this->marca)){
+            return $this->marca;
         }else{
             throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
         
-    }
-
-    public function setIdMarca(Int $id)
-    {   
-        if(!isset($id)){
-            throw new Exception("Propriedade inválida<br/>\n");
-        }
-
-        $this->idMarca = $id;
     }
 
 
@@ -478,6 +513,8 @@ class Produto extends BaseModel
             throw new Exception("Consulta inválida<br/>\n");
 
 
+        Transaction::startTransaction(self::getDatabase());
+
         $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional,";
         $sqlPersonalizada .= " P.Condicoes, P.preco ";
         $sqlPersonalizada .= " FROM  ProdutoCategoria PC inner join Produto P on P.idProduto = PC.ProdutoIdProduto";
@@ -535,6 +572,9 @@ class Produto extends BaseModel
         }
 
         $result = $this->persolizaConsulta($sqlPersonalizada);
+
+        Transaction::close();
+
         if($result == false){
             return json_encode(['msg', 'Nenhum resultado encontrado!']);
         }

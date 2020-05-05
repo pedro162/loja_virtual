@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use \Core\Database\Commit;
+use \Core\Database\Transaction;
 use \Exception;
 use \InvalidArgumentException;
 use App\Models\Departamento;
@@ -15,8 +16,8 @@ class ProdutoCategoria extends BaseModel
 
     public function __construct()
     {
-        //self::open();
-        $this->start();
+        self::open();
+        //$this->start();
     }
     protected function parseCommit()
     {
@@ -33,6 +34,8 @@ class ProdutoCategoria extends BaseModel
 
     public function getCategoria(Int $id)
     {
+        Transaction::startTransaction(self::getDatabase());//abre a conexao com a base dea dados
+
     	$sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
 		$sql .=	"from ProdutoCategoria PG inner join Categoria C ";
 		$sql .=	"on C.idCategoria = PG.CategoriaIdCategoria ";
@@ -42,6 +45,7 @@ class ProdutoCategoria extends BaseModel
 
     	$restult = $this->persolizaConsulta($sql, get_class($this));
 
+        Transaction::close(self::getDatabase()); //confirma as operacoes com a base dados
     	return $restult;
     }
 

@@ -33,6 +33,20 @@ $(document).ready(function(){
   })
 
 
+//funcao para atualizar notificacoes
+  $(window).mousemove(function(){
+    let date = new Date();
+    let min = date.getMinutes();
+
+    if((min % 5) == 0){
+
+      // aqui vou criar uma funcao ajax para buscar no banco de dados 
+      //as novas vendas realizadas, sempre que ocorrer uma venada, uma mensagem será gerada.
+      //o admin vai poder clicar nas notificacoes e abrir as mensagens com informaçoes sobre as vendas
+      console.log(`Executa a cada 5 minutos`)
+    }
+    
+  })
 
 // ------------------------------ Preview de imagens upload ---------------------
   
@@ -323,14 +337,16 @@ $('#menuAdminHide').on('click', function(){
   
   '/produto/all',
   '/financeiro',
-  '/venda/logistica'
+  '/venda/logistica',
+  '/marca/cadastrar'
     
   ];
 
   let icon = [
       '<i class="fas fa-cubes fa-2x" ></i>',
       '<i class="fas fa-coins fa-2x"></i>',
-      '<i class="fas fa-shipping-fast fa-2x"></i>'
+      '<i class="fas fa-shipping-fast fa-2x"></i>',
+      '<i class="fas fa-box fa-2x"></i>'
    ];
 
   let texto =['<br/>Produto', '<br/>Financeiro', '<br/>Logistica'];
@@ -394,7 +410,9 @@ $('#menuAdminHide').on('click', function(){
                 case '/produto/all':
                   listaTabelaProdutos(retorno);
                 break;
-
+                case '/marca/cadastrar':
+                  $('#dinamic').html(retorno);
+                break;
 
               }
 

@@ -9,8 +9,8 @@ class Cliente extends BaseModel
 
     public function __construct()
     {
-       //self::open();
-    	$this->start();
+        self::open();
+    	//$this->start();
     }
 
     protected function parseCommit()

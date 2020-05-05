@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use \Core\Database\Commit;
-use \App\Models\InterfaceBaseModel;
+use \Core\Database\Connection;
+use \Core\Database\Transaction;
 use Exception;
 use InvalidArgumentException;
+use \PDO;
 
 abstract class BaseModel
 {
     protected static $conn;
+    protected static $database = 'connection';
 
     public function start()
     {
@@ -19,12 +21,22 @@ abstract class BaseModel
 
     protected static function open()
     {
-        if(empty(self::$conn))
+
+        //self::$database = 'connection';
+        //Transaction::startTransaction('connection');
+        //self::$conn = Transaction::get();
+        /*if(empty(self::$conn))
         {
             self::$conn = Connection::open('connection');
-        }
+        }*/
     }
     
+
+    protected static function getDatabase()
+    {
+        return self::$database;
+    }
+
     
 
     protected static function getConn()
@@ -38,16 +50,21 @@ abstract class BaseModel
 
     public function countItens()
     {
-       /* $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
-        $consulta = self::$conn->query($sql);
+        Transaction::startTransaction(self::$database);
+
+        $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
+        $conn = Transaction::get();
+
+        $consulta = $conn->query($sql);
 
         $result = $consulta->fetchAll();
+
+        Transaction::close();
         if($result){
             return $result[0]->totItens;
         }else{
             return "Nenhum resultado encontrado<br/>\n";
-        }*/
-        return Commit::countItens($this->table);
+        }
 
 
     }
@@ -55,6 +72,7 @@ abstract class BaseModel
 
     public function paginador(array $campos, Int $itensPorPagina, Int $paginas, $class =  null):array
     {   
+
         $inicio = ($itensPorPagina * $paginas) - $itensPorPagina;
 
 
@@ -70,13 +88,11 @@ abstract class BaseModel
     public function select(array $elementos, array $filtro = [], $operador = '=',
      $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null):array
     {
-        if($std != null)
-        $std = get_class($this);
 
-        return Commit::select($this->table,$elementos,$filtro, $operador,
-     $ordem, $litmitInit, $limitEnd, $std);
+        Transaction::startTransaction(self::$database);
 
-        /*$sql = "SELECT ";
+
+        $sql = "SELECT ";
         foreach($elementos as $key => $value)
         {
                     $sql .= $value.', ';
@@ -105,17 +121,20 @@ abstract class BaseModel
             $sql .= ' LIMIT '.$litmitInit.','. $limitEnd;
         }
 
-        $result = self::$conn->query($sql);
+        $conn = Transaction::get();
+
+        $result = $conn->query($sql);
 
 
         $arrayObj = null;
 
         if($std != null){
-
-            $arrayObj = $result->fetchAll();
+            $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
+            Transaction::close();
 
         }else{
-            $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
+            $arrayObj = $result->fetchAll();
+            Transaction::close();
         }
 
         if($arrayObj)
@@ -123,7 +142,7 @@ abstract class BaseModel
             return $arrayObj;
         }
 
-        throw new Exception("Elemento não encontrado<br/>\n");*/
+        throw new Exception("Elemento não encontrado<br/>\n");
 
 
     }
@@ -131,24 +150,24 @@ abstract class BaseModel
 
     public function delete(Int $id, Int $limit = 1):bool
     {
-         return Commit::delete($this->table, $id, $limit);
-        /*
+        
         $sql = 'DELETE FROM '.$this->table.' WHERE id'.$this->table.'='.$id.' limit '.$limit;
 
-        $result = self::$conn->query($sql);
+        $conn = Transaction::get();
+
+        $result = $conn->query($sql);
         if($result)
         {
             return true;
         }
 
-        throw new Exception("Falha ao excluir registro<br/>\n");*/
+        throw new Exception("Falha ao excluir registro<br/>\n");
     }
 
 
     public function insert(array $elementos)
     {
-        return Commit::insert($this->table, $elementos);
-       /* $sql = "INSERT INTO {$this->table} (";
+        $sql = "INSERT INTO {$this->table} (";
 
         $keys = '';
         $values = '';
@@ -165,14 +184,17 @@ abstract class BaseModel
 
         $sql .="{$keys}) VALUES ({$values})";
 
-        $result = self::$conn->query($sql);
+        $conn = Transaction::get();
+
+        $result = $conn->query($sql);
+        //$result = self::$conn->query($sql);
 
         if($result)
         {
             return true;
         }
 
-        throw new Exception("Falha ao cadastrar registro<br/>\n");*/
+        throw new Exception("Falha ao cadastrar registro<br/>\n");
 
 
     }
@@ -183,9 +205,9 @@ abstract class BaseModel
     public function update(array $elementos, int $id)
     {
 
-        return Commit::update($this->table, $elementos, $id);
+        //return Commit::update($this->table, $elementos, $id);
         //update nome table set campo = valor and novocampo = novovalor
-        /*$sql = "UPDATE {$this->table} SET ";
+        $sql = "UPDATE {$this->table} SET ";
 
         foreach ($this->satinizar($elementos) as $key => $value)
         {
@@ -196,22 +218,21 @@ abstract class BaseModel
 
         $sql .= " where id{$this->table}={$id}";
 
-        $result = self::$conn->query($sql);
+        $conn = Transaction::get();
+        $result = $conn->query($sql);
 
         if($result)
         {
             return true;
         }
 
-        throw new Exception("Falha ao atualizar registro<br/>\n");*/
+        throw new Exception("Falha ao atualizar registro<br/>\n");
 
     }
 
 
     protected function satinizar($elemento)
     {
-        return Commit::satinizar($elemento);
-        /*
         if(empty($elemento) || (!isset($elemento)))
         {
             throw new Exception("Parametro inválido<br/>\n");
@@ -234,7 +255,11 @@ abstract class BaseModel
 
                 $value = trim($value);
                 $value = htmlspecialchars($value);
-                $value = self::$conn->quote($value);
+
+                $conn = Transaction::get();
+
+                $value = $conn->quote($value);
+
                 $value = strtr($value, ['_'=>'\_', '%'=> '\%']);
                 
                 $newElemento[$key] = $value;
@@ -246,7 +271,10 @@ abstract class BaseModel
         {
                 $elemento = trim($elemento);
                 $elemento = htmlspecialchars($elemento);
-                $elemento = self::$conn->quote($elemento);
+
+                $conn = Transaction::get();
+                $elemento = $conn->quote($elemento);
+                //$elemento = self::$conn->quote($elemento);
                 $elemento = strtr($elemento, ['_'=>'\_', '%'=> '\%']);
 
                 $newElemento = $elemento;
@@ -256,24 +284,25 @@ abstract class BaseModel
         {
             return $newElemento;
         }
-        return false;*/
+        return false;
     }
 
 
 
     protected function persolizaConsulta(String $sql, $clasRetorno = false)
     {
-        return Commit::persolizaConsulta($sql, $clasRetorno);
-       /* $result = self::$conn->query($sql);
+        $conn = Transaction::get();
+        $result = $conn->query($sql);
 
         $arrayObj = $result->fetchAll();
+
 
         if(count($arrayObj) ==0)
         {
             return false;
         }
         
-        return $arrayObj;*/
+        return $arrayObj;
     }
 
 

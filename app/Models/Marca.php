@@ -17,14 +17,14 @@ class Marca extends BaseModel
 
     public function __construct()
     {
-        //self::open();
-        $this->start();
+        self::open();
+        //$this->start();
     }
 
 
     protected function clear(array $dados)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
     {
-        /*falta implementar corretamente
+        //falta implementar corretamente
         if(!isset($dados)){
             throw new Exception('Parametro inválido<br/>');
         }
@@ -37,48 +37,18 @@ class Marca extends BaseModel
             $subArray = explode('=', $dados[$i]);
            
             switch ($subArray[0]) {
-                case 'nome':
+                case 'nomeMarca':
                    $this->setNomeProduto($subArray[1]);
-                   break;
-                case 'texto':
-                   $this->setTextoPromorcional($subArray[1]);
-                   break;
-
-                case 'quantidade':
-                   $this->setEstoque($subArray[1]);
-                   break;
-
-                case 'marca':
-                    $idMarca = (int) $subArray[1];
-                   $this->setIdMarca($idMarca);
-                   break;
-
-                case 'nf':
-                   $this->setNf($subArray[1]);
-                   break;
-
-                case 'codigo':
-                   $this->setCodigoProduto($subArray[1]);
-                   break;
-
-                case 'preco':
-                   $this->setPreco($subArray[1]);
                    break;
             }
 
-        }*/
+        }
     }
 
-    protected function parseCommit()
+    protected function parseCommit():array
     {
-        /* //falta implemetar
-        $this->data['nomeProduto']          = $this->getNomeMarca();
-        $this->data['IdMarca']              = $this->getIdMarca();
-        $this->data['preco']                = $this->getPreco();
-        $this->data['codigo']               = $this->getCodigoProduto();
-        $this->data['nf']                   = $this->getNf();
-        $this->data['estoque']              = $this->getEstoque();
-        $this->data['textoPromorcional']    = $this->getTextoPromorcional();*/
+         //falta implemetar
+        $this->data['nomeMarca']          = $this->getNomeMarca();
 
         return $this->data;
     }
@@ -86,12 +56,11 @@ class Marca extends BaseModel
 
     public function commit(array $dados)
     {
-       /* $this->clear($dados);
+        $this->clear($dados);
 
         $result = $this->parseCommit();
 
         $this->insert($result);
-        var_dump($result);*/
     }
 
 
@@ -109,6 +78,16 @@ class Marca extends BaseModel
     	}
 
     	return $this->nomeMarca;
+    }
+
+    public function setNomeMarca(String $nome):bool
+    {
+        if(isset($nome) && ((strlen($nome) >= 4) && (strlen($nome) <= 20)))
+        {
+            $this->nomeMarca = $nome;
+            return true;
+        }
+        throw new Exception("Parâmetro inválido<br/>\n");
     }
 
     public function getIdMarca()
