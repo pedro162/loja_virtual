@@ -36,7 +36,6 @@ class Produto extends BaseModel
     public function __construct()
     {
         self::open();
-        //$this->start();
     }
 
 
@@ -129,11 +128,11 @@ class Produto extends BaseModel
         $result = $this->parseCommit();
 
 
-        Transaction::startTransaction(self::getDatabase());
+        //Transaction::startTransaction(self::getDatabase());
         
         $this->insert($result);
 
-        Transaction::close();
+        //Transaction::close();
     }
 
     public function getFiltros():array
@@ -167,6 +166,13 @@ class Produto extends BaseModel
             throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
         
+    }
+
+    public function produtoCategoria()
+    {
+        $produtoCategoria = new ProdutoCategoria();
+        $result = $produtoCategoria->getCategoria($this->idProduto);
+        return $result;
     }
 
 
@@ -513,7 +519,7 @@ class Produto extends BaseModel
             throw new Exception("Consulta inválida<br/>\n");
 
 
-        Transaction::startTransaction(self::getDatabase());
+        //Transaction::startTransaction(self::getDatabase());
 
         $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional,";
         $sqlPersonalizada .= " P.Condicoes, P.preco ";
@@ -573,7 +579,7 @@ class Produto extends BaseModel
 
         $result = $this->persolizaConsulta($sqlPersonalizada);
 
-        Transaction::close();
+        //Transaction::close();
 
         if($result == false){
             return json_encode(['msg', 'Nenhum resultado encontrado!']);

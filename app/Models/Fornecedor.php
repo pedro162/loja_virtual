@@ -61,11 +61,11 @@ class Fornecedor extends BaseModel
         $result = $this->parseCommit();
 
 
-        Transaction::startTransaction(self::getDatabase());
+        //Transaction::startTransaction(self::getDatabase());
         
         $this->insert($result);
 
-        Transaction::close();
+        //Transaction::close();
 	}
 
 	public function setNomeFornecedor(String $nome)

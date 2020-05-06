@@ -32,20 +32,20 @@ class ProdutoCategoria extends BaseModel
         
     }
 
-    public function getCategoria(Int $id)
+    public function getCategoria(Int $idProduto)
     {
-        Transaction::startTransaction(self::getDatabase());//abre a conexao com a base dea dados
+        //Transaction::startTransaction(self::getDatabase());//abre a conexao com a base dea dados
 
     	$sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
 		$sql .=	"from ProdutoCategoria PG inner join Categoria C ";
 		$sql .=	"on C.idCategoria = PG.CategoriaIdCategoria ";
 		$sql .=	"inner join Produto P ";
 		$sql .=	"on P.idProduto = PG.ProdutoIdProduto ";
-		$sql .=	"where P.idProduto = ".$id;
+		$sql .=	"where P.idProduto = ".$idProduto;
 
     	$restult = $this->persolizaConsulta($sql, get_class($this));
 
-        Transaction::close(self::getDatabase()); //confirma as operacoes com a base dados
+       // Transaction::close(self::getDatabase()); //confirma as operacoes com a base dados
     	return $restult;
     }
 
@@ -54,9 +54,21 @@ class ProdutoCategoria extends BaseModel
     	return $this->data;
     }
 
-    public function getProduto()
+    public function getProduto(Int $idCategoria)
     {
+         //Transaction::startTransaction(self::getDatabase());//abre a conexao com a base dea dados
 
+        $sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
+        $sql .= "from ProdutoCategoria PG inner join Categoria C ";
+        $sql .= "on C.idCategoria = PG.CategoriaIdCategoria ";
+        $sql .= "inner join Produto P ";
+        $sql .= "on P.idProduto = PG.ProdutoIdProduto ";
+        $sql .= "where P.idProduto = ".$idCategoria;
+
+        $restult = $this->persolizaConsulta($sql, get_class($this));
+
+       // Transaction::close(self::getDatabase()); //confirma as operacoes com a base dados
+        return $restult;
     }
 
     public function setNomeCategoria($prop, $value){

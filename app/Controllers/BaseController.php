@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Exception;
+use \Core\Database\Transaction;
 
 class BaseController
 {

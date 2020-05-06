@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use \Core\Database\Transaction;
 use App\Models\Produto;
 use App\Models\Fabricante;
 use App\Models\Cliente;
@@ -16,7 +17,8 @@ class ProdutoController extends BaseController
 {
     public function show($request)
     {   
-        
+        Transaction::startTransaction('connection');
+
         $pagina = 1;
         $itensPorPagina = 18;
 
@@ -25,11 +27,16 @@ class ProdutoController extends BaseController
         }
 
         $produto = new Produto();
+
         $totItens = $produto->countItens();
 
         $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco'];
 
         $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
+        //echo "<pre>";
+        //var_dump($result[0]->produtoCategoria());
+        //echo "</pre>";
+        //die();
         
         $this->view->produtos = $produto->listarProdutos($result);
         
@@ -43,10 +50,14 @@ class ProdutoController extends BaseController
         $this->setMenu();
         $this->setFooter('footer');
         $this->render('produtos/relacionados', true);
+
+        Transaction::close();
     }
 
     public function cadastrar()
     {
+        Transaction::startTransaction('connection');
+
         $categoria = new Categoria();
         $marca = new Marca();
 
@@ -54,10 +65,13 @@ class ProdutoController extends BaseController
         $this->view->marcas = $marca->listaMarca();
 
         $this->render('produtos/cadastrar', false);
+
+        Transaction::close();
     }
 
     public function all($request)
     {
+        Transaction::startTransaction('connection');
 
         $pagina = 1;
         $itensPorPagina = 10;
@@ -86,7 +100,7 @@ class ProdutoController extends BaseController
         $this->view->tableProdutos = $result;
         $this->render('produtos/tabelaProdutos', false);
 
-           
+        Transaction::close();
 
     }
 
@@ -105,6 +119,8 @@ class ProdutoController extends BaseController
 
     public function editarProduto($request)
     {   
+        Transaction::startTransaction('connection');
+
         if(!isset($request['get'], $request['get']['id'])){
             throw new \Exception("Propriedade indefinida<br/>");
             
@@ -131,30 +147,41 @@ class ProdutoController extends BaseController
         
         $this->view->result = $result;
         $this->render('produtos/editar', false);
+
+        Transaction::close();
     }
 
     public function filtro($request)
     {
+        Transaction::startTransaction('connection');
+
         $produto = new Produto();
 
         $result = $produto->listarConsultaPersonalizada($request);
 
         $this->view->result = $result;
         $this->render('produtos/ajax', false);
+
+        Transaction::close();
     }
 
     public function more($request)
     {
-        
+        Transaction::startTransaction('connection');
+
         $produto = new Produto();
         $result = $produto->detalheProduto($request['get']['id']);
         $this->view->result = $result;
         $this->render('produtos/ajax', false);
+
+        Transaction::close();
     }
 
 
     public function salvar($request)
     {
+        Transaction::startTransaction('connection');
+
         /*
     	set_time_limit(0);
 
@@ -168,5 +195,7 @@ class ProdutoController extends BaseController
         $produto = new Produto();
         $produto->commit($request['post']['produto']);
         return false;
+
+        Transaction::close();
     }
 }

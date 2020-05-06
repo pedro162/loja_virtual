@@ -50,7 +50,7 @@ abstract class BaseModel
 
     public function countItens()
     {
-        Transaction::startTransaction(self::$database);
+        //Transaction::startTransaction(self::$database);
 
         $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
         $conn = Transaction::get();
@@ -59,7 +59,7 @@ abstract class BaseModel
 
         $result = $consulta->fetchAll();
 
-        Transaction::close();
+        //Transaction::close();
         if($result){
             return $result[0]->totItens;
         }else{
@@ -89,7 +89,7 @@ abstract class BaseModel
      $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null):array
     {
 
-        Transaction::startTransaction(self::$database);
+        //Transaction::startTransaction(self::$database);
 
 
         $sql = "SELECT ";
@@ -130,11 +130,11 @@ abstract class BaseModel
 
         if($std != null){
             $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
-            Transaction::close();
+           // Transaction::close();
 
         }else{
             $arrayObj = $result->fetchAll();
-            Transaction::close();
+            //Transaction::close();
         }
 
         if($arrayObj)
