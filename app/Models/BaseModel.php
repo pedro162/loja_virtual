@@ -19,19 +19,6 @@ abstract class BaseModel
 
     }
 
-    protected static function open()
-    {
-
-        //self::$database = 'connection';
-        //Transaction::startTransaction('connection');
-        //self::$conn = Transaction::get();
-        /*if(empty(self::$conn))
-        {
-            self::$conn = Connection::open('connection');
-        }*/
-    }
-    
-
     protected static function getDatabase()
     {
         return self::$database;
@@ -346,6 +333,23 @@ abstract class BaseModel
         }
 
         return $superArray;
+    }
+
+
+    protected function maxId():int
+    {
+        $id = 'id'.ucfirst($this->table);
+        $sql = "SELECT MAX({$id}) as maxId from {$this->table}";
+
+        $conn = Transaction::get();
+
+        $consulta = $conn->query($sql);
+
+        $result = $consulta->fetchObject();
+        if($result){
+            return $result->maxId;
+        }
+
     }
 
 

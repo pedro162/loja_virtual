@@ -22,23 +22,17 @@ class Produto extends BaseModel
     private $caracteristicas;
     private $idProduto;
     private $nomeDepartamento;
-    private $idCategoria;
+    private $idCategoria = [];
     private $estoque;
     private $codigo;
     private $marca;
     private $nf;
     private $fornecedor;
+    private $idMarca;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
     protected $table = 'Produto';
-
-    public function __construct()
-    {
-        self::open();
-    }
-
-
 
     public function addProduto()
     {
@@ -67,37 +61,13 @@ class Produto extends BaseModel
                    $this->setTextoPromorcional($subArray[1]);
                    break;
 
-                case 'quantidade':
-                   $this->setEstoque($subArray[1]);
-                   break;
-
                 case 'marca':
                     $idMarca = (int) $subArray[1];
-                   $this->setMarca($idMarca);
-                   break;
-
-                case 'nf':
-                   $this->setNf($subArray[1]);
-                   break;
-
-                case 'codigo':
-                   $this->setCodigoProduto($subArray[1]);
-                   break;
-
-                case 'valorCompra':
-                   $this->setPreco($subArray[1]);
-                   break;
-
-                case 'margem':
-                   $this->setPreco($subArray[1]);
+                   $this->setIdMarca($idMarca);
                    break;
 
                 case 'categoria':
-                   $this->setPreco($subArray[1]);
-                   break;
-                case 'fornecedor': // falta criar o metodo ideal
-                    $idFornecedor = (int) $subArray[1];
-                   $this->setFornecedor($idFornecedor);
+                   $this->setIdCategoria($subArray[1]);
                    break;
             }
 
@@ -105,34 +75,40 @@ class Produto extends BaseModel
     }
 
     protected function parseCommit()
-    {
+    {   
+
         $this->data['nomeProduto']          = $this->getNomeProduto();
         $this->data['IdMarca']              = $this->getMarca()->getIdMarca();
-        $this->data['idFornecedor']         = $this->getFornecedor()->getIdFornecedor();
-        $this->data['preco']                = $this->getPreco();
-        $this->data['codigo']               = $this->getCodigoProduto();
-        $this->data['idNF']                 = $this->getNf();
-        $this->data['estoque']              = $this->getEstoque();
         $this->data['textoPromorcional']    = $this->getTextoPromorcional();
-        $this->data['condicoes']            = $this->getCondicoes();
 
         return $this->data;
     }
 
 
-    public function commit(array $dados)
+    public function commit(array $dados):array
     {
 
         $this->clear($dados);
 
         $result = $this->parseCommit();
 
-
-        //Transaction::startTransaction(self::getDatabase());
-        
         $this->insert($result);
 
-        //Transaction::close();
+        $idProdutoInserido = $this->maxId();
+
+        $produtoCategoria = new ProdutoCategoria();
+
+        for ($i = 0; !($i == count($this->getIdCategoria())); $i++) {
+            $subArraiComm = [];
+            $subArraiCommit['idProduto'] = $idProdutoInserido;
+            $subArraiCommit['idCategoria'] = $this->getIdCategoria()[$i];
+            
+
+            $produtoCategoria->commit($subArraiCommit);
+        }
+
+        return ['msg','success','Produto cadastrado com sucesso!'];
+
     }
 
     public function getFiltros():array
@@ -205,25 +181,36 @@ class Produto extends BaseModel
         throw new Exception("Propriedade indefinida<br/>\n");
     }
 
-    public function setMarca(Int $id)
+    public function getMarca()
     {
         $marca = new Marca();
-        $result = $marca->select(['idMarca','nomeMarca'], ['idMarca'=>$id], '=','asc', null, null,true);
+        $result = $marca->select(['idMarca','nomeMarca'], ['idMarca'=>$this->getIdMarca()], '=','asc', null, null,true);
 
-        $this->marca = $result[0];
+        return $result[0];
     }
 
-    public function getMarca()
+    public function setIdMarca(int $idMarca)
     {   
-        if(!isset($this->marca)){
-            throw new Exception("Propriedade indefinida");
+        if($idMarca > 0)
+        {
+            $this->idMarca = $idMarca;
+
+            return true;
+        }
+        throw new Exception('Propriedade inválida<br/>'.PHP_EOL);
+        
+        
+    }
+
+    public function getIdMarca()
+    {   
+        if(isset($this->idMarca) && (!empty($this->idMarca)))
+        {
+            return $this->idMarca;
         }
 
-        if(!empty($this->marca)){
-            return $this->marca;
-        }else{
-            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
-        }
+        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        
         
     }
 
@@ -296,6 +283,33 @@ class Produto extends BaseModel
         return $result;
     }
 
+
+    public function setIdCategoria(Int $id):bool
+    {
+        if(($id > 0) && (!in_array($id, $this->idCategoria))){
+
+            $categoria = new Categoria();
+
+            $result = $categoria->select(['idCategoria','nomeCategoria'], ['idCategoria'=>$id], '=','asc', null, null,true);
+
+            if(count($result) > 0)
+            {
+                $this->idCategoria[] = $result[0]->getIdCategoria();
+            }
+            return true;
+        }
+        throw new Exception("Parâmetro inválido<br/>\n");
+    }
+
+
+    public function getIdCategoria()
+    {   
+        if(count($this->idCategoria) > 0){
+            return $this->idCategoria;
+        }
+        throw new Exception('Propriedade indefinida<br/>');
+    }
+
     
     public function setNomeProduto(string $nomeProduto):bool
     {
@@ -328,7 +342,7 @@ class Produto extends BaseModel
     {
         $texto = trim($texto);
 
-        if(!(isset($texto) && (strlen($texto) >= 6) && (strlen($texto) <= 30))){
+        if(!(isset($texto) && (strlen($texto) >= 6 && strlen($texto) <= 30))){
             throw new Exception("Texto promorcional com formato inválido<br/>\n");
         }
 

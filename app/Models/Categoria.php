@@ -15,12 +15,6 @@ class Categoria extends BaseModel
 	private $idCategoria;
 
 
-    public function __construct()
-    {
-        self::open();
-        //$this->start();
-    }
-
     protected function parseCommit()
     {
 

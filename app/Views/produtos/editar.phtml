@@ -1,5 +1,5 @@
 <div class="row" style="">
-	<div class="col-md-12">
+	<div class="col-md-12"  style="padding: 20px 40px;">
 		<form method="post" class="was-validated" action="/produto/salvar" enctype="multipart/form-data">
 			<fieldset class=""><legend><strong>Lançar produto</strong></legend>
 				<div class="row">
@@ -13,71 +13,11 @@
 							</div>
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="form-group">
-									<label for="idNf">Nº NF</label>
-									<input type="number" name="nf" id="idNf" class="form-control" required="required">
-								</div>
-							</div>
-							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-								<div class="form-group">
-									<label for="idFornecedor">Fornecedor: </label>
-									<select type="text" name="fornecedor" id="idFornecedor" placeholder="Nome do fornecedor" class="form-control" required="required">
-										<option value="1">Fornecedor 1</option>
-										<option value="2">Fornecedor 2</option>
-										<option value="3">Fornecedor 3</option>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-								<div class="form-group">
-									<label for="idQuantidade">Quantidade</label>
-									<input type="number" name="quantidade" id="idQuantidade" class="form-control" required="required">
-								</div>
-							</div>
-							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-								<div class="form-group">
-									<label for="idValor">Valor Unit</label>
-									<input type="number" name="precoCompra" id="idValor" class="form-control" required="required">
-								</div>
-							</div>
-							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-								<div class="form-group">
-									<label for="idMargem">Margem Lucro <strong>%</strong> </label>
-									<input type="number" name="margem" id="idMargem" class="form-control" required="required">
-								</div>
-							</div>
-							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-								<div class="form-group">
-									<label for="">Valor Venda</label>
-									<span type="number" name="" id="" class="form-control" required=""></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-								<div class="form-group">
-									<label for="idCodigo">Código do produto</label>
-									<input value="<?=$this->view->result->getCodigoProduto();?>" type="text" name="codigo" id="idCodigo" class="form-control" placeholder="Código do produto" required="required">
-								</div>
-							</div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-								<div class="form-group">
-									<div class="form-group">
-										<label for="idMsg">Imgem do produto: </label>
-										<input type="file" class="form-control" id="upload" name="imgProduto" required="required">
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-								<div class="form-group">
 									<div class="form-group">
 										<label for="idMarc">Marca: </label>
 										<select class="form-control " id="idMarc" name="marca" required="required">
 											<?php 
-											for ($i=0; !($i == count($this->view->marcas)) ; $i++) { 
+											for ($i=0; !($i == count($this->view->marcas)); $i++) { 
 
 											$selected = "";
 
@@ -94,6 +34,16 @@
 									</div>
 								</div>
 							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<div class="form-group">
+										<label for="idMsg">Imgem do produto: </label>
+										<input type="file" class="form-control" id="upload" name="imgProduto" required="required">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 								<div class="form-group">
 									<label for="idCategoria">Categoria: </label>
@@ -107,7 +57,7 @@
 											 && (count($this->view->categoriaProduto) > 0)){
 													for ($j=0; !($j == count($this->view->categoriaProduto)); $j++) { 
 														
-														if(isset($this->view->categoriaProduto[$j]->idCategoria)&&($this->view->categoriaProduto[$j]->idCategoria == $this->view->categorias[$i]->getIdCategoria())){
+														if($this->view->categoriaProduto[$j]->idCategoria == $this->view->categorias[$i]->getIdCategoria()){
 															$selected = "selected=\"selected\"";
 															echo "entrou aqui<br/>".PHP_EOL;
 															break;
@@ -126,12 +76,10 @@
 									</select>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 								<div class="form-group">
 									<label for="idTexto">Texto promorcional:</label>
-									<textarea class="form-control" name="texto" rows="6" id="idTexto"><?= trim($this->view->result->getTextoPromorcional());?></textarea>
+									<textarea class="form-control" name="texto" rows="2" id="idTexto"><?= trim($this->view->result->getTextoPromorcional());?></textarea>
 								</div>
 							</div>
 						</div>

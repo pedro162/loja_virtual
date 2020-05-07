@@ -10,12 +10,6 @@ class Departamento extends BaseModel
 {
 	protected $table = 'Departamento';
 
-    public function __construct()
-    {
-        self::open();
-        //$this->start();
-    }
-
     protected function parseCommit()
     {
 

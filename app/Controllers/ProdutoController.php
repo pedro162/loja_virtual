@@ -33,10 +33,6 @@ class ProdutoController extends BaseController
         $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco'];
 
         $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
-        //echo "<pre>";
-        //var_dump($result[0]->produtoCategoria());
-        //echo "</pre>";
-        //die();
         
         $this->view->produtos = $produto->listarProdutos($result);
         
@@ -83,7 +79,7 @@ class ProdutoController extends BaseController
          $produto = new Produto();
          $totItens = $produto->countItens();
 
-         $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco', 'estoque','codigo'];
+         $campos = ['nomeProduto','textoPromorcional', 'idProduto'];
 
 
         $this->view->pagina = $pagina;
@@ -137,8 +133,9 @@ class ProdutoController extends BaseController
         $this->view->categorias = $categoria->listaCategoria();
         $this->view->marcas = $marca->listaMarca();
 
+
         $result = $produto->select(
-            ['nomeProduto','textoPromorcional','idMarca' , 'idProduto', 'preco', 'estoque', 'codigo'],
+            ['nomeProduto','textoPromorcional','idMarca' , 'idProduto'],
             ['idProduto'=>$request['get']['id']], '=', 'asc', null, null, true
 
         )[0];
@@ -193,9 +190,12 @@ class ProdutoController extends BaseController
 
 
         $produto = new Produto();
-        $produto->commit($request['post']['produto']);
-        return false;
+        $result = $produto->commit($request['post']['produto']);
+
+        $this->view->result = json_encode($result);
+        $this->render('produtos/ajaxPainelAdmin', false);
 
         Transaction::close();
+        
     }
 }

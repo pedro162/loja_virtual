@@ -8,33 +8,85 @@ use \Core\Database\Transaction;
 use \Exception;
 use \InvalidArgumentException;
 use App\Models\Departamento;
+use App\Models\Produto;
 
 class ProdutoCategoria extends BaseModel
-{
-    protected $table = 'ProdutoCategoria';
-    private $data = [];
+{   
+    protected $ProdutoIdProduto;
+    protected $idProdutoCategoria;
+    protected $CategoriaIdCategoria;
 
-    public function __construct()
-    {
-        self::open();
-        //$this->start();
-    }
+    protected $table = 'ProdutoCategoria';
+    protected $data = [];
+
     protected function parseCommit()
-    {
+    {   
+        if(!empty($this->$idProdutoCategoria) && ($this->$idProdutoCategoria > 0)){
+        }
+
+        $this->data['ProdutoIdProduto']          = $this->ProdutoIdProduto;
+        $this->data['CategoriaIdCategoria']      = $this->CategoriaIdCategoria;
+
+        return $this->data;
 
     }
     protected function clear(array $dados)
     {
+        if(!isset($dados)){
+            throw new Exception('Parametro inválido<br/>');
+        }
+        if(count($dados) == 0){
+            throw new Exception('Parametro inválido<br/>');
+        }
+
+        foreach ($dados as $key => $value) {
+            
+            switch ($key) {
+                case 'idProduto':
+                   $this->setIdProduto($value);
+                   break;
+                case 'idCategoria':
+                   $this->setIdCategoria($value);
+                   break;
+
+            }
+
+        }
+    }
+
+    public function setIdCategoria(Int $id):bool
+    {   
+        if(is_int($id) && ($id > 0)){
+            $this->CategoriaIdCategoria = $id;//faltar validar
+            return true;
+        }
+        throw new Exception("Propriedade inválida<br/>\\n");
+        
+    }
+    
+
+    public function setIdProduto(Int $id):bool
+    {
+        if(is_int($id) && ($id > 0)){
+            $this->ProdutoIdProduto = $id;//faltar validar
+            return true;
+        }
+        throw new Exception("Propriedade inválida<br/>\\n");
 
     }
+
+
     public function commit(array $dados)
     {
+        $this->clear($dados);
+
+        $result = $this->parseCommit();
         
+        $this->insert($result);
     }
 
     public function getCategoria(Int $idProduto)
     {
-        //Transaction::startTransaction(self::getDatabase());//abre a conexao com a base dea dados
 
     	$sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
 		$sql .=	"from ProdutoCategoria PG inner join Categoria C ";
@@ -45,7 +97,6 @@ class ProdutoCategoria extends BaseModel
 
     	$restult = $this->persolizaConsulta($sql, get_class($this));
 
-       // Transaction::close(self::getDatabase()); //confirma as operacoes com a base dados
     	return $restult;
     }
 
@@ -56,7 +107,6 @@ class ProdutoCategoria extends BaseModel
 
     public function getProduto(Int $idCategoria)
     {
-         //Transaction::startTransaction(self::getDatabase());//abre a conexao com a base dea dados
 
         $sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
         $sql .= "from ProdutoCategoria PG inner join Categoria C ";
@@ -67,7 +117,6 @@ class ProdutoCategoria extends BaseModel
 
         $restult = $this->persolizaConsulta($sql, get_class($this));
 
-       // Transaction::close(self::getDatabase()); //confirma as operacoes com a base dados
         return $restult;
     }
 
@@ -76,49 +125,7 @@ class ProdutoCategoria extends BaseModel
     }
 
 
-   	public function __get($prop)
-    {
-    	
-    	if(!array_key_exists($prop, $this->data)){
-    		unset($prop);
-    		throw new Exception('Propriedade indefiida<br/>'.PHP_EOL);
-    	}
-
-		//suposto method
-		$method = 'set'.ucfirst($prop);
-
-		//Se o suposto method existir, ele tem prioridade de executar
-		if(method_exists($this, $method)){
-			return $this->$method();
-		}else{
-			return $this->data[$prop];
-    	}
-
-    }
-
-    public function __set($prop, $value)
-    {
-    	if((!isset($value)) || empty($value)){
-    		unset($prop);
-    		unset($value);
-    	}else{
-
-    		//suposto method
-    		$method = 'set'.ucfirst($prop);
-
-    		//Se o suposto method existir, ele tem prioridade de executar
-    		if(method_exists($this, $method)){
-    			$this->$method($prop, $value);
-    		}else{
-    			$this->data[$prop] = $value;
-    		}
-    	}
-    }
-
-    public function __isset($prop)
-    {
-    	return isset($this->data[$prop]);
-    }
+   	
 
 
 

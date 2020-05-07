@@ -7,9 +7,7 @@
 		    <thead>
 		      <tr>
 		        <th>Nome</th>
-		        <th>Estoque</th>
-		        <th>Preço</th>
-		        <th>Codigo</th>
+		        <th>Texto</th>
 		        <th>Ação</th>
 		      </tr>
 		    </thead>
@@ -21,9 +19,7 @@
 				?>
 					<tr>
 						<td><?=$this->view->tableProdutos [$i]->getNomeProduto();?></td>
-						<td><?=$this->view->tableProdutos [$i]->getEstoque();?></td>
-						<td><?=$this->view->tableProdutos [$i]->getPreco();?></td>
-						<td><?=$this->view->tableProdutos [$i]->getCodigoProduto();?></td>
+						<td><?=$this->view->tableProdutos [$i]->getTextoPromorcional();?></td>
 						<td>
 							<a href="/produto/editar?id=<?=$this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn btn-success mr-2">
 								<i class="fas fa-pencil-alt"></i>

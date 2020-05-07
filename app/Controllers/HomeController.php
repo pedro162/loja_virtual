@@ -43,4 +43,9 @@ class HomeController extends BaseController
         var_dump($request);
         echo "</pre>";
     }
+
+    public function menu()
+    {
+        $this->render('layout/menuOpcoesAdmin', false);
+    }
 }

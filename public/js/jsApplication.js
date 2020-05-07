@@ -97,10 +97,10 @@ $(document).ready(function(){
       //verifica se o campo foi preenchido e 
       if($.trim(subArray[1]) == ''){
 
-        msg.html(' <strong>Atenção:</strong>erro ao cadastrar.<br/> Preenha os campos corretamente!');
+          msg.html(' <strong>Atenção:</strong>erro ao cadastrar.<br/> Preenha os campos corretamente!');
 
-        $(this).prepend($('<div/>').attr('id', 'msg').addClass('row').html(msg));
-        $(this).find('[name='+subArray[0]+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+          $(this).prepend($('<div/>').attr('id', 'msg').addClass('row').html(msg));
+          $(this).find('[name='+subArray[0]+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
           $(this).css('box-shadow', '2px 2px 3px green').css('border', '1px solid green');
         });
         return false;
@@ -117,8 +117,17 @@ $(document).ready(function(){
       type: 'POST',
       url: url,
       data: {'produto': submitArray},
+      dataType: 'json',
       success: function(retorno){
-        console.log(retorno);
+        if(retorno[0] == 'msg'){
+          let msg = $('<div/>').addClass('alert alert-'+retorno[1]+' alert-dismissible fadeshow col-md-12');
+          msg.append($('<button/>').addClass('close').attr('data-dismiss', 'alert').html('&times'))
+          msg.attr('align', 'center').append('<h3>'+retorno[2]+'</h3>');
+          msg.css('box-shadow', '2px 2px 3px #000');
+
+          $('#msg').detach();
+          $('#cadastrarProduto').parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
+        }
       }
 
     })
@@ -333,7 +342,16 @@ $(document).ready(function(){
 
 //------------------------ Menu de opcoes admin ---------------------
 $('#menuAdminHide').on('click', function(){
-  let menu = [
+  $.ajax({
+    url:'/home/menu',
+    type: 'GET',
+    dataType: 'HTML',
+    success:function(retorno){
+      getModal('<strong>Menu de opções</strong>', retorno);
+    }
+  })
+
+  /*let menu = [
   
   '/produto/all',
   '/financeiro',
@@ -360,7 +378,7 @@ $('#menuAdminHide').on('click', function(){
   }
   let nav = $('<nav/>').addClass('navbar').append(lista);
   rowOptions.append(nav).addClass('col-md-12');
-  getModal('<strong>Menu de opções</strong>', rowOptions);
+  getModal('<strong>Menu de opções</strong>', rowOptions);*/
 })
 
 /* ---------------- Teste -----------*/

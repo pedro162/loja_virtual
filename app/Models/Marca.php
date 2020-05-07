@@ -15,12 +15,6 @@ class Marca extends BaseModel
 
     private $data = [];
 
-    public function __construct()
-    {
-        self::open();
-        //$this->start();
-    }
-
 
     protected function clear(array $dados)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
     {
