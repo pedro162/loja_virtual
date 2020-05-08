@@ -50,5 +50,11 @@ class VendaController extends BaseController
     }
 
 
+    public function nova()
+    {
+        
+        $this->render('venda/novaVenda', false);
+    }
+
 
 }

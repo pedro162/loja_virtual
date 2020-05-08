@@ -15,11 +15,13 @@ $routes[] = ['/produto/salvar', 'ProdutoController@salvar'];
 $routes[] = ['/produto/more', 'ProdutoController@more'];
 $routes[] = ['/produto/filtro', 'ProdutoController@filtro'];
 $routes[] = ['/produto/editar', 'ProdutoController@editarProduto'];
+$routes[] = ['/produto/estoque/lancar', 'ProdutoController@lancarEstoque'];
 
 $routes[] = ['/marca/cadastrar', 'MarcaController@cadastrar'];
 
 $routes[] = ['/venda/carrinho', 'VendaController@addCarrinho'];
 $routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];
+$routes[] = ['/venda/nova', 'VendaController@nova'];
 
 //$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
 //$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];

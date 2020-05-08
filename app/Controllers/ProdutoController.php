@@ -198,4 +198,21 @@ class ProdutoController extends BaseController
         Transaction::close();
         
     }
+
+
+    public function lancarEstoque()
+    {
+        Transaction::startTransaction('connection');
+
+        $produto    = new Produto();
+        $result = $produto->select(
+            ['nomeProduto', 'idProduto'],
+            [], '=', 'asc', null, null, true);
+
+        $this->view->produtos = $result;
+        $this->render('produtos/estoqueLancar', false);
+
+        Transaction::close();
+    }
+
 }

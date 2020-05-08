@@ -428,9 +428,22 @@ $('#menuAdminHide').on('click', function(){
                 case '/produto/all':
                   listaTabelaProdutos(retorno);
                 break;
+                
                 case '/marca/cadastrar':
                   $('#dinamic').html(retorno);
                 break;
+
+                case '/venda/nova':
+                  $('#closeModal').trigger('click');
+                  $('#dinamic').html(retorno);
+                break;
+
+                case '/produto/estoque/lancar':
+                  $('#closeModal').trigger('click');
+                  $('#dinamic').html(retorno);
+                break;
+
+
 
               }
 
