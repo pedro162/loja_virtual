@@ -37,7 +37,6 @@ abstract class BaseModel
 
     public function countItens()
     {
-        //Transaction::startTransaction(self::$database);
 
         $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
         $conn = Transaction::get();
@@ -46,7 +45,6 @@ abstract class BaseModel
 
         $result = $consulta->fetchAll();
 
-        //Transaction::close();
         if($result){
             return $result[0]->totItens;
         }else{
@@ -75,8 +73,6 @@ abstract class BaseModel
     public function select(array $elementos, array $filtro = [], $operador = '=',
      $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null):array
     {
-
-        //Transaction::startTransaction(self::$database);
 
 
         $sql = "SELECT ";

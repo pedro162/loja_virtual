@@ -126,9 +126,9 @@ class ProdutoController extends BaseController
             
         }
 
-        $produto = new Produto();
-        $categoria = new Categoria();
-        $marca = new Marca();
+        $produto    = new Produto();
+        $categoria  = new Categoria();
+        $marca      = new Marca();
 
         $this->view->categorias = $categoria->listaCategoria();
         $this->view->marcas = $marca->listaMarca();
