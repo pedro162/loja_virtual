@@ -71,7 +71,7 @@ abstract class BaseModel
 
     //ao informar o filtro, o operador tambem deve ser invormado
     public function select(array $elementos, array $filtro = [], $operador = '=',
-     $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null):array
+     $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null)
     {
 
 
@@ -125,7 +125,7 @@ abstract class BaseModel
             return $arrayObj;
         }
 
-        throw new Exception("Elemento não encontrado<br/>\n");
+        return false;
 
 
     }
@@ -144,11 +144,11 @@ abstract class BaseModel
             return true;
         }
 
-        throw new Exception("Falha ao excluir registro<br/>\n");
+        return fale;
     }
 
 
-    public function insert(array $elementos)
+    public function insert(array $elementos):bool
     {
         $sql = "INSERT INTO {$this->table} (";
 
@@ -177,7 +177,7 @@ abstract class BaseModel
             return true;
         }
 
-        throw new Exception("Falha ao cadastrar registro<br/>\n");
+        return false;
 
 
     }
@@ -185,7 +185,7 @@ abstract class BaseModel
 
 
 
-    public function update(array $elementos, int $id)
+    public function update(array $elementos, int $id):bool
     {
 
         //return Commit::update($this->table, $elementos, $id);
@@ -209,7 +209,7 @@ abstract class BaseModel
             return true;
         }
 
-        throw new Exception("Falha ao atualizar registro<br/>\n");
+        return false;
 
     }
 

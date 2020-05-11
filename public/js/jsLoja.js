@@ -116,6 +116,7 @@ $(document).ready(function(){
         url: '/produto/filtro',
         data:{'produtos': Filtro},
         success: function(retorno){
+          
         parse = $.parseJSON(retorno);
 
 
@@ -146,7 +147,7 @@ $(document).ready(function(){
           let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
             append($('<h3/>').html(`${parse[i].nomeProduto}`)).
             append($('<p/>').html(`${parse[i].textoPromorcional}`)).
-            append($('<p/>').append($('<strong/>').html(`<sup><small>R$</small></sup>${parse[i].preco}<sup><small></small></sup>`)))
+            append($('<p/>').append($('<strong/>').html(`<sup><small>R$</small></sup>0<sup><small></small></sup>`)))
             );
 
           a.append(divImg)

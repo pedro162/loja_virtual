@@ -1,6 +1,6 @@
 <div class="row" style="">
 	<div class="col-md-12"  style="padding: 20px 40px;">
-		<form method="post" class="was-validated" action="/produto/estoque/lancar" enctype="multipart/form-data">
+		<form method="post" id="estoque" class="was-validated" action="/estoque/salvar" enctype="multipart/form-data">
 			<fieldset class=""><legend><strong>Novo estoque</strong></legend>
 				<div class="row mb-4">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -27,7 +27,7 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="idFor">Fornecedor:</label>
-									<select name="produto" id="idFor" class="form-control" placeholder="Nome , Codigo" required="required">
+									<select name="fornecedor" id="idFor" class="form-control" placeholder="Nome , Codigo" required="required">
 										<option>Fornecedor tal</option>
 									</select>
 								</div>
@@ -38,7 +38,7 @@
 							<div class="col-md-3">
 								<div class="form-group">
 									<label for="idValidade">Data validade:</label>
-									<input value="" type="date" name="validade" id="idValidade" class="form-control" equired="required">
+									<input value="" type="date" name="dtValidade" id="idValidade" class="form-control" equired="required">
 								</div>
 							</div>
 							<div class="col-md-3">
@@ -69,7 +69,7 @@
 							</div>
 							<div class="col-md-4">
 								<div class="form-group">
-									<label for="margemPretend">Margem pretendida:</label>
+									<label for="margemPretend">Margem pretendida %:</label>
 									<input value="" type="number" name="margem" id="margemPretend" class="form-control" required="required">
 								</div>
 							</div>
@@ -88,7 +88,7 @@
 						</div>
 					</div>
 				</div>
-				<button type="submit" class="btn btn-lg btn-primary">Lançar</button>  <a href="/produto/all" class="btn link btn-lg ml-2 btn-danger">Cancelar</a> 
+				<button type="submit" class="btn btn-primary">Lançar</button>  <a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a> 
 			</fieldset>
 
 		</form>

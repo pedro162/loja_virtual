@@ -71,45 +71,97 @@ $(document).ready(function(){
   })
 
 
-  //---------------------------- salvar o cadastro de produtos
 
-  $('#dinamic').delegate( '#cadastrarProduto', 'submit', function(event){
+
+
+  //------------------------- LANÇAMENTO DE ESTOQUE --------------------------------------
+
+  $('#dinamic').delegate('form#estoque', 'submit', function(event){
     event.preventDefault();
 
-    let dadosForm = $(this).serialize();
-    let arrayDados = dadosForm.split('&');
+    let submitArray = new Array(); //define um super array para armazenar os valores dos campos
 
-    let submitArray = new Array();
+    $(this).find('input, select, textarea').each(function(){
 
-    $('#msg').remove();
+      let key = $(this).attr('name')
 
-    let msg = $('<div/>').css('padding', '5px 10px').css('text-align', 'center').addClass('col-md-12 alert alert-warning');
+      let value = String($(this).val()); // transforama para string para retirar os espacoes em branco do inicio e final
 
-    for (let i = 0; !(i == arrayDados.length); i++) {
-      let subArray = arrayDados[i].split('=');
-      if(subArray.length == 0){
-
-        msg.html('Atenção: erro ao cadastrar.<br/> Recarregue a pagiana e tenten novamente.')
-        return false;
-        
-      }
+      value = value.trim();
 
       //verifica se o campo foi preenchido e 
-      if($.trim(subArray[1]) == ''){
+      if(value.length == 0){
 
-          msg.html(' <strong>Atenção:</strong>erro ao cadastrar.<br/> Preenha os campos corretamente!');
+        //casso algo não esteja peenchido, exibem uma mensagem
+        message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
 
-          $(this).prepend($('<div/>').attr('id', 'msg').addClass('row').html(msg));
-          $(this).find('[name='+subArray[0]+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
-          $(this).css('box-shadow', '2px 2px 3px green').css('border', '1px solid green');
+        $('#dinamic').find('[name='+key+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+        $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');
+
+          
         });
         return false;
       }
 
+       submitArray.push(key+'='+value);
 
-      submitArray.push(arrayDados[i]);
 
-    }
+    })
+
+    let url = $(this).attr('action');
+    
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: {'estoque': submitArray},
+      dataType: 'json',
+      success: function(retorno){
+
+        message(retorno);
+      }
+
+    })
+
+
+  })
+
+
+
+
+  //---------------------------- CADASTRO DE PRODUTOS -------------------------------
+
+  $('#dinamic').delegate( '#cadastrarProduto', 'submit', function(event){
+    event.preventDefault();
+
+
+    let submitArray = new Array(); //define um super array para armazenar os valores dos campos
+
+    $(this).find('input, select, textarea').each(function(){
+
+      let key = $(this).attr('name')
+
+      let value = String($(this).val()); // transforama para string para retirar os espacoes em branco do inicio e final
+
+      value = value.trim();
+
+      //verifica se o campo foi preenchido e 
+      if(value.length == 0){
+
+        //casso algo não esteja peenchido, exibem uma mensagem
+        message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
+
+        $('#dinamic').find('[name='+key+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+        $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');
+
+          
+        });
+        return false;
+      }
+
+       submitArray.push(key+'='+value);
+
+
+    })
 
     let url = $(this).attr('action');
     
@@ -119,15 +171,7 @@ $(document).ready(function(){
       data: {'produto': submitArray},
       dataType: 'json',
       success: function(retorno){
-        if(retorno[0] == 'msg'){
-          let msg = $('<div/>').addClass('alert alert-'+retorno[1]+' alert-dismissible fadeshow col-md-12');
-          msg.append($('<button/>').addClass('close').attr('data-dismiss', 'alert').html('&times'))
-          msg.attr('align', 'center').append('<h3>'+retorno[2]+'</h3>');
-          msg.css('box-shadow', '2px 2px 3px #000');
-
-          $('#msg').detach();
-          $('#cadastrarProduto').parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
-        }
+        message(retorno);
       }
 
     })
@@ -136,8 +180,19 @@ $(document).ready(function(){
 
 
   
+//------------------------------- FUNCAO PARA APRESENTACAO DE MENSGENS---------
+function message(retorno){
 
+  if(retorno[0] == 'msg'){
+    let msg = $('<div/>').addClass('alert alert-'+retorno[1]+' alert-dismissible fadeshow col-md-12');
+    msg.append($('<button/>').addClass('close').attr('data-dismiss', 'alert').html('&times'))
+    msg.attr('align', 'center').append('<h3>'+retorno[2]+'</h3>');
+    msg.css('box-shadow', '2px 2px 3px #000');
 
+    $('#msg').detach();
+    $('#cadastrarProduto, #estoque').parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
+  }
+}
  
 
 
@@ -147,146 +202,6 @@ $(document).ready(function(){
     return img;
   }
 
-
-//---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
-
-  $('#filtroLateral').on('click', function(){
-    let departamento = new Array();
-
-    let preco = new Array();;
-
-    let condicoes = new Array();;
-
-    $("input[name='produtos[Categoria][]']:checked").each(function(){
-       departamento.push($(this).val());
-    })
-
-    $("input[name='produtos[Preco][]']:checked").each(function(){
-        preco.push($(this).val());
-    })
-
-    $("input[name='produtos[Condicoes][]']:checked").each(function(){
-        condicoes.push($(this).val());
-    })
-
-    let Filtro = new Array();
-
-    if(departamento.length > 0){
-      departamento.unshift('Categoria');
-      Filtro.push(departamento);
-    }
-
-    if(preco.length > 0){
-       preco.unshift('Preco');
-       Filtro.push(preco);
-    }
-
-    if(condicoes.length > 0){
-       condicoes.unshift('Condicoes');
-       Filtro.push(condicoes);
-    }
-
-
-      
-
-    if(Filtro.length > 0){
-        
-      let xhr = $.ajax({
-        type: "POST",
-        url: '/produto/filtro',
-        data:{'produtos': Filtro},
-        success: function(retorno){
-          console.log(retorno); return false;
-        parse = $.parseJSON(retorno);
-
-
-        if(parse[0] == 'msg')
-        {
-           getModal($('<div/>').addClass('alert alert-warning').html($('<strong/>').html('Ops !')),
-            $('<div/>').attr('align', 'center').addClass('h4 alert-warning').html(parse[1]+'<br/>Tente outro filtro!')
-            , '');
-
-          return false;
-        }
-
-        $('#closeModal').trigger('click');
-
-        //$('#itens').html($('<div/>').addClass('row').html(divProduto));
-        $('#itens').html($('<div/>').addClass('row').attr('id', 'resultFiltro'));
-
-        for (var i = parse.length - 1; i >= 0; i--) {
-
-          //console.log('produto '+parse[i].nomeProduto+' preco '+parse[i].preco);
-          //let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
-          let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
-
-          let cardItem = $('<div/>').addClass('card produto-item')
-          let a = $('<a/>').addClass('produto-item').attr('href', `/produto/detals?cd=${parse[i].idProduto}`);
-          let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
-
-          let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
-            append($('<h3/>').html(`${parse[i].nomeProduto}`)).
-            append($('<p/>').html(`${parse[i].textoPromorcional}`)).
-            append($('<p/>').append($('<strong/>').html(`<sup><small>R$</small></sup>${parse[i].preco}<sup><small></small></sup>`)))
-            );
-
-          a.append(divImg)
-          a.append(cardBody);
-
-          cardItem.append(a);
-
-          let cardFooter = $('<div/>').addClass('card-footer');
-
-          let divButton = $('<div/>').addClass('child-card-footer');
-
-          let button = $('<button/>').addClass('btn btn-primary  button-modal').
-          attr('type', 'button').attr('data-toggle','modal').attr('data-target', '#myModal').
-          text('Mais detalhes');
-
-          divButton.append(button);
-
-          cardFooter.append(divButton);
-          cardFooter.append(`<ul class="curt-lista">
-                          <li class="">
-                            <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128077;</button>
-                            <span>1</span>
-                          </li>
-                          <li class="">
-                            <button class="btn btn-xs btn-default" style='font-size:20px;'>&#128078;</button>
-                            <span>1</span>
-                          </li>
-                          </ul>`);
-
-          cardItem.append(cardFooter);
-          divProduto.append(cardItem);
-
-
-
-          $('#resultFiltro').append(divProduto);
-         // $('#resultFiltro').append(pagination());
-
-             
-            }
-            //$('#itens').html($('<div/>').addClass('row').html(divProduto));
-
-          },
-
-          beforeSend: function(){
-             getModal('Aguarde...', loadImg('load.gif'), '');
-          }
-        });
-
-        //cancela a requisicao se clicado
-        $('#closeModal, #myModal').on('click', function(){
-             xhr.abort();
-          });
-      }else{
-         getModal($('<div/>').addClass('alert alert-warning').html($('<strong/>').html('Ops !')),
-          $('<div/>').attr('align', 'center').addClass('h4 alert-warning').html('Escolha um filtro de pesquisa<br/> para continuar!')
-          , '');
-      }
-
-  });
 
 // Faz o sistema de paginação------------------------------------------------------------------------
   function pagination(pagina, totPaginas) {
@@ -438,7 +353,7 @@ $('#menuAdminHide').on('click', function(){
                   $('#dinamic').html(retorno);
                 break;
 
-                case '/produto/estoque/lancar':
+                case '/estoque/lancar':
                   $('#closeModal').trigger('click');
                   $('#dinamic').html(retorno);
                 break;
@@ -468,7 +383,6 @@ $('#dinamic').delegate('ul li a', 'click', function(event){
             type: 'GET',
             dataType: 'HTML',
             success: function(retorno){
-              console.log(retorno); 
 
               listaTabelaProdutos(retorno);
             }
@@ -603,86 +517,6 @@ function listaTabelaProdutos(retorno) {
 }
 
 
-/*--------------------------------------------------cria o formulario de cadastro de produtos ------------------------------------------*/
-
-
-
-//--------------------------------------------- Modal de produtos -----------------------------------------
-  $('.child-card-footer, div#itens').delegate('.button-modal','click',  function(){
-    //cria e adiciona elementos ao carrocel do modal
-
-    let idProduto = $(this).parents('.card-produto').find('a').attr('href')
-    idProduto = idProduto.substring(idProduto.indexOf('=')+1);
-
-    let carouselModal = $('<div/>').attr('id', 'slid').addClass('carousel').addClass('slide').
-    attr('data-ride', 'carousel').
-    prepend(
-      $('<div/>').addClass('carousel-inner').
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
-        .attr('src','../files/imagens/xbox_controller.jpeg').css('width','100px').css('height','100px'))).
-
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item').prepend($('<img/>')
-        .attr('src','../files/imagens/images.png').css('width','100px').css('height','100px'))).
-
-      prepend($('<div/>').attr('align', 'center').addClass('carousel-item active').prepend($('<img/>')
-        .attr('src','../files/imagens/console.jpeg').css('width','100px').css('height','100px')))
-          ).
-    append($('<a/>').addClass('carousel-control-prev').attr('href', '#slid').attr('data-slide', 'prev')
-      .prepend($('<span/>').addClass('carousel-control-prev-icon').css('background-color', '#8B008B'))).
-    append($('<a/>').addClass('carousel-control-next').attr('href', '#slid').attr('data-slide', 'next')
-      .prepend($('<span/>').addClass('carousel-control-next-icon').css('background-color', '#8B008B')));
-
-    //exibe texto detalhes no head do modal
-    $('.modal-header h4').html("Detalhes").css('text-align', 'center');
-      
-    let img = $(this).parents('.card').find('img').attr('src');
-
-    //faz a requizição e exibe detalhes do produto escolhido
-    let xhr = $.ajax({
-            url: '/produto/more?id='+idProduto,
-            type: 'GET',
-            dataType: 'json',
-            success: function(retorno){
-              let list = '<ul style="list-style:none;">';
-                for (var i = 0; !(i == retorno.length); i++) {
-                  list += '<li>'+retorno[i]+'</li>';
-                }
-                list += '</ul>';
-
-                let container = $('<div/>').addClass('container-fluid').append(
-                  $('<div/>').addClass('row mb-5').prepend($('<div/>').addClass('col').html(list)).append($('<div/>').addClass('col').append($('<img/>').attr('src', img)))
-                  ).append(
-                    $('<div/>').addClass('row').prepend($('<div/>').addClass('col').append('<br/><strong>Relacionados:</strong><br/>').append(carouselModal))
-                  );
-                
-                $('.modal-body').html(container);
-
-                let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
-                let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
-
-                let botoesOpcoes = $('<div/>').addClass('row')
-                .append($('<div/>').addClass('col').html(buttonAdd))
-                .append($('<div/>').addClass('col').html(buttonMoreDetals))
-                $('.modal-footer').html(botoesOpcoes).find('.btn-success, .button-modal').css('background-color', '#8B008B');
-                $('.modal-header h4').html($('<strong/>').html("Detalhes do produto"))
-            },
-            beforeSend: function(){
-              $('.modal-header h4').html($('<strong/>').html("Aguarde..."))
-              $('.modal-body').html(loadImg('load.gif'));
-              $('.modal-footer .btn').hide();
-              
-            }
-            
-        });
-
-
-        //cancela a requisicao se clicad
-        $('#closeModal, #myModal').on('click', function(){
-           xhr.abort();
-        })
-
-
-  });
 
  //------------------------ View de graficos ------------------------------ 
 function viewDeGraficos(){
@@ -710,14 +544,6 @@ function viewDeGraficos(){
 
     //isere a dive no corpo do documetno principal
     $('#dinamic').html('');
-
-    //cria campos de filtro para data
-    //let colPerido = $('<div/>').addClass('col-md-12 mb-3');
-
-    //colPerido.append($('<input/>').attr('type', 'date').css('align', 'right'));
-    //colPerido.append($('<input/>').attr('type', 'date').css('align', 'right'));
-
-    //let optionsPeriodo = $('<div/>').addClass('row').css('align', 'right').append(colPerido);
 
 
     $('#dinamic').append(rowCanvas);

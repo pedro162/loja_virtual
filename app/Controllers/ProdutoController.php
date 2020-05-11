@@ -30,7 +30,7 @@ class ProdutoController extends BaseController
 
         $totItens = $produto->countItens();
 
-        $campos = ['nomeProduto','textoPromorcional', 'idProduto', 'preco'];
+        $campos = ['nomeProduto','textoPromorcional', 'idProduto'];
 
         $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
         
@@ -156,7 +156,7 @@ class ProdutoController extends BaseController
 
         $result = $produto->listarConsultaPersonalizada($request);
 
-        $this->view->result = $result;
+        $this->view->result = json_encode($result);
         $this->render('produtos/ajax', false);
 
         Transaction::close();
@@ -177,8 +177,9 @@ class ProdutoController extends BaseController
 
     public function salvar($request)
     {
+        set_time_limit(0);
+        
         Transaction::startTransaction('connection');
-
         /*
     	set_time_limit(0);
 
@@ -187,7 +188,6 @@ class ProdutoController extends BaseController
     	{
     		echo "Imagem salva com sucesso<br/>";
     	}*/
-
 
         $produto = new Produto();
         $result = $produto->commit($request['post']['produto']);

@@ -11,7 +11,6 @@ use \InvalidArgumentException;
 use App\Models\Departamento;
 use App\Models\Marca;
 use App\Models\Categoria;
-use App\Models\Fornecedor;
 
 class Produto extends BaseModel
 {
@@ -67,8 +66,9 @@ class Produto extends BaseModel
                    break;
 
                 case 'categoria':
-                   $this->setIdCategoria($subArray[1]);
-                   break;
+                    $idCategoria = (int) $subArray[1];
+                    $this->setIdCategoria($idCategoria);
+                    break;
             }
 
         }
@@ -535,8 +535,8 @@ class Produto extends BaseModel
 
         //Transaction::startTransaction(self::getDatabase());
 
-        $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional,";
-        $sqlPersonalizada .= " P.Condicoes, P.preco ";
+        $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional ";
+       // $sqlPersonalizada .= ", P.Condicoes, P.preco ";
         $sqlPersonalizada .= " FROM  ProdutoCategoria PC inner join Produto P on P.idProduto = PC.ProdutoIdProduto";
         $sqlPersonalizada .= " inner join Categoria C on C.idCategoria = PC.CategoriaIdCategoria";
 
@@ -555,14 +555,14 @@ class Produto extends BaseModel
                 case 'Categoria':
                    $categoria .= " C.nomeCategoria = ".$this->satinizar($value[$i])." or ";
                     break;
-
-                case 'Condicoes':
+                    //comentados por mudanda na table do banco
+               /* case 'Condicoes':
                    $codicoes .= " P.Condicoes = ".$this->satinizar($value[$i])." AND ";
                     break;
 
                 case 'Preco':
                     $preco .= " P.preco <= ".$this->satinizar($value[$i])." AND ";
-                    break;
+                    break;*/
                 }
             }
         }
