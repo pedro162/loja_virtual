@@ -17,17 +17,18 @@ use \Core\Utilitarios\Utils;
 class Fornecimento extends BaseModel
 {	
 	private $idFornecimento;
-    private $diProduto;
+    private $Produto;
     private $idFornecedor;
     private $dtFornecimento;
     private $dtRecebimento;
     private $dtValidade;
-    private $qtd;
+    private $qtdFornecida;
+    private $qtdVendida;
     private $vlCompra;
     private $vlVenda;
     private $ativo;
     private $quantidade;
-    private $idUsuario; 
+    private $Usuario; 
     private $nf;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
@@ -50,7 +51,7 @@ class Fornecimento extends BaseModel
             switch ($subArray[0]) {
                 case 'produto':
 
-                    $this->setIdProduto($subArray[1]);
+                    $this->setProduto($subArray[1]);
                     break;
 
                 case 'fornecedor':
@@ -75,7 +76,7 @@ class Fornecimento extends BaseModel
 
                 case 'qtd':
 
-                    $this->setQtd($subArray[1]);
+                    $this->setQtdFornecida($subArray[1]);
                     break;
 
                 case 'vlCompra':
@@ -107,12 +108,12 @@ class Fornecimento extends BaseModel
     		$this->data['idFornecimento'] = $this->getIdFornecimento();
     	}
 		
-		$this->data['ProdutoIdProduto'] 			= $this->getIdProduto();
+		$this->data['ProdutoIdProduto'] 			= $this->getProduto()->getIdProduto();
 		$this->data['FornecedorIdFornecedor']		=  1; //apenas para teste
 		$this->data['dtFornecimento']				= $this->getDataFornecimento();
 		$this->data['dtRecebimento']				= $this->getDataRecebimento();	
 		$this->data['dtValidade']					= $this->getDataValidade();
-		$this->data['qtdFornecida']					= $this->getQtd();
+		$this->data['qtdFornecida']					= $this->getQtdFornecida();
 		$this->data['vlCompra']						= $this->getValCompra();
 		$this->data['vlVenda']						= $this->getValVenda();
         $this->data['nf']                           = $this->getNotaFiscal();
@@ -138,7 +139,7 @@ class Fornecimento extends BaseModel
         return ['msg',' warning ','Produto cadastrado com sucesso!'];
     }
 
-    public function setIdProduto(Int $id):bool
+    public function setProduto(Int $id):bool
     {
         if($id >0){
 
@@ -146,7 +147,7 @@ class Fornecimento extends BaseModel
 
             $result = $produto->select(['idProduto','nomeProduto'], ['idProduto'=>$id], '=','asc', null, null,true);
             if($result[0] != false){
-                $this->idProduto = $result[0]->getIdProduto();
+                $this->Produto = $result[0];
                 return true;
             }else{
                 throw new Exception('Parametro invalido<br/>'.PHP_EOL);
@@ -156,15 +157,15 @@ class Fornecimento extends BaseModel
         throw new Exception('Parametro invalido<br/>'.PHP_EOL);
     }
 
-    public function getIdProduto():int
+    public function getProduto():Produto
     {
-        if(isset($this->idProduto) && (!empty($this->idProduto))){
-            return $this->idProduto;
+        if(isset($this->Produto) && (!empty($this->Produto))){
+            return $this->Produto;
         }
         throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
     }
 
-    public function setIdUsuario(int $id):bool
+    public function setUsuario(int $id):bool
     {
         if($id > 0){
 
@@ -172,7 +173,7 @@ class Fornecimento extends BaseModel
 
             $result = $user->select(['idUsuario','nomeUsuario'], ['idUsuario'=>$id], '=','asc', null, null,true);
             if($result[0] != false){
-                $this->idUsuario = $result[0]->getIdUsuario();
+                $this->Usuario = $result[0];
                 return true;
             }else{
                 throw new Exception('Parametro invalido<br/>'.PHP_EOL);
@@ -182,10 +183,10 @@ class Fornecimento extends BaseModel
         throw new Exception('Parametro invalido<br/>'.PHP_EOL);
     }
 
-    public function getIdUsuario():int
+    public function getUsuario():int
     {
-        if(isset($this->idUsuario) && (!empty($this->idUsuario))){
-            return $this->idUsuario;
+        if(isset($this->Usuario) && (!empty($this->Usuario))){
+            return $this->Usuario;
         }
         throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
     }
@@ -238,7 +239,7 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function getIdFornecimento()
+    public function getIdFornecimento():int
     {
         if(isset($this->idFornecimento) && (!empty($this->idFornecimento))){
             return $this->idFornecimento;
@@ -246,6 +247,14 @@ class Fornecimento extends BaseModel
         throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
     }
 
+    public function setIdFornecimento(Int $id):bool
+    {
+        if(isset($id) && ($id > 0)){
+            $this->idFornecimento = $id;
+            return true;
+        }
+        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+    }
 
     public function getDataFornecimento()
     {
@@ -363,23 +372,33 @@ class Fornecimento extends BaseModel
         throw new Exception('Parãmetro inválido<br/>');
     }
 
-
-    public function getQtd():int
+    public function getQtdVendida():int
     {
-    	if(!empty($this->qtd)){
+        if(isset($this->qtdVendida) && ($this->qtdVendida >=0)){
 
-    		return $this->qtd;
-    	}
+            return $this->qtdVendida;
+        }
+
+        throw new Exception('Propriedade não definida<br/>');
+    }
+
+    public function getQtdFornecida():int
+    {
+
+        if(!empty($this->qtdFornecida)){
+
+            return $this->qtdFornecida;
+        }
 
     	throw new Exception('Propriedade não definida<br/>');
     }
 
 
-    public function setQtd(Int $qtd)
+    public function setQtdFornecida(Int $qtd)
     {
         if($qtd > 0)
         {
-            $this->qtd = $qtd;
+            $this->qtdFornecida = $qtd;
             return true;
         }
 
@@ -486,6 +505,21 @@ class Fornecimento extends BaseModel
     }
 
 
+    public function listarConsultaPersonalizada(String $where = null):array
+    {
+
+        $sqlPersonalizada = "SELECT distinct P.nomeProduto, F.dtValidade, F.qtdFornecida, F.qtdVendida ";
+        $sqlPersonalizada .= " FROM  Fornecimento F inner join Produto P on P.idProduto = F.ProdutoIdProduto";
+
+        if($where != null)
+        {
+            $sqlPersonalizada .= $where;
+        }
+
+        $result = $this->persolizaConsulta($sqlPersonalizada);
+
+        return $result;
+    }
     
     
 

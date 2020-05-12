@@ -358,6 +358,10 @@ $('#menuAdminHide').on('click', function(){
                   $('#dinamic').html(retorno);
                 break;
 
+                case '/estoque/all':
+                  $('#closeModal').trigger('click');
+                  $('#dinamic').html(retorno);
+                break;
 
 
               }

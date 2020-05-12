@@ -18,6 +18,7 @@ $routes[] = ['/produto/editar', 'ProdutoController@editarProduto'];
 
 $routes[] = ['/estoque/lancar', 'FornecimentoController@lancarEstoque'];
 $routes[] = ['/estoque/salvar', 'FornecimentoController@salvar'];
+$routes[] = ['/estoque/all', 'FornecimentoController@all'];
 
 $routes[] = ['/marca/cadastrar', 'MarcaController@cadastrar'];
 

@@ -43,4 +43,46 @@ class FornecimentoController extends BaseController
         Transaction::close();
     }
 
+
+    public function all($request)
+    {
+        Transaction::startTransaction('connection');
+
+        $pagina = 1;
+        $itensPorPagina = 10;
+
+        if(isset($request['get'], $request['get']['pagina'])){
+            $pagina = $request['get']['pagina'];
+        }
+
+        $fornecimento = new Fornecimento();
+        $totItens = $fornecimento->countItens();
+
+        $campos = ['idFornecimento' ,'ProdutoIdProduto','dtValidade', 'dtRecebimento', 'qtdFornecida', 'qtdVendida'];
+
+
+        $this->view->pagina = $pagina;
+        $this->view->itensPorPagina = $itensPorPagina;
+        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+
+        $result = $fornecimento->paginador($campos, $itensPorPagina, $pagina, true);
+
+        for ($i=0; !($i == count($result)) ; $i++) { 
+            $result[$i]->setProduto($result[$i]->ProdutoIdProduto);
+        }
+
+        $stdPaginacao = new \stdClass();
+        $stdPaginacao->pagina = $this->view->pagina;
+        $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+        $stdPaginacao->totPaginas = $this->view->totPaginas ;
+
+        $this->view->tableFornecimento = $result;
+
+        $this->render('fornecimento/tabelaEstoque', false);
+
+        Transaction::close();
+
+    }
+
+
 }

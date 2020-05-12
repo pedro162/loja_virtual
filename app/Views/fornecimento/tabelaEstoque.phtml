@@ -2,39 +2,50 @@
 	<div class="col-md-12" style="padding: 20px 40px;">
 		<div class="row">
 			<div class="col-md-11">
-				<h4><strong>Produtos</strong></h4>
+				<h4><strong>Estoque</strong></h4>
 			</div>
 			<div class="col-md-1">
-				<a href="/produto/cadastrar" class="btn btn-success mb-2" id="cadastrar">
+				<a href="/estoque/lancar" class="btn btn-success mb-2" id="cadastrar">
 					<i class="fas fa-plus-circle fa-2x"></i>
 				</a>
 			</div>
 		</div>		
-		<table class="table table-hover" id="tableProdutos">
+		 <table class="table table-hover" id="tableProdutos">
 		    <thead>
 		      <tr>
-		        <th>Nome</th>
-		        <th>Texto</th>
+		        <th>Produto</th>
+		        <th>Dt. Recebida</th>
+		        <th>Dt. Validade</th>
+		        <th>Qtd Fornecida</th>
+		        <th>Qtd Vendida</th>
 		        <th>Ação</th>
 		      </tr>
 		    </thead>
 		    <tbody>
 		    	<?php 
-					for ($i=0; !($i == count($this->view->tableProdutos)); $i++) { 
-						# code...
-					
+					for ($i=0; !($i == count($this->view->tableFornecimento)); $i++) {
+
+						$validade = substr($this->view->tableFornecimento [$i]->getDataValidade(), 0, 10);
+						$validade = explode('-', $validade);
+
+						$dtReceb = substr($this->view->tableFornecimento [$i]->getDataRecebimento(), 0, 10);
+						$dtReceb = explode('-', $dtReceb);
+
 				?>
 					<tr>
-						<td><?=$this->view->tableProdutos [$i]->getNomeProduto();?></td>
-						<td><?=$this->view->tableProdutos [$i]->getTextoPromorcional();?></td>
+						<td><?=$this->view->tableFornecimento [$i]->getProduto()->getNomeProduto();?></td>
+						<td><?= $dtReceb[2].'/'.$dtReceb[1].'/'.$dtReceb[0];?></td>
+						<td><?= $validade[2].'/'.$validade[1].'/'.$validade[0];?></td>
+						<td><?=$this->view->tableFornecimento [$i]->getQtdFornecida();?></td>
+						<td><?=$this->view->tableFornecimento [$i]->getQtdVendida();?></td>
 						<td>
-							<a href="/produto/editar?id=<?=$this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn btn-success mr-2">
+							<a href="/estoque/editar?id=<?=$this->view->tableFornecimento [$i]->getIdFornecimento()?>" class="btn btn-success mr-2">
 								<i class="fas fa-pencil-alt"></i>
 							</a>
-							<a href="/produto/visualizar?id=<?= $this->view->tableProdutos[$i]->getIdProduto() ?>" class="btn btn-primary mr-2">
+							<a href="/estoque/visualizar?id=<?= $this->view->tableFornecimento [$i]->getIdFornecimento()?>" class="btn btn-primary mr-2">
 								<i class="fas fa-search-plus"></i>
 							</a>
-							<a href="/produto/excluir?id=<?= $this->view->tableProdutos [$i]->getIdProduto() ?>" class="btn btn-danger">
+							<a href="/estoque/excluir?id=<?= $this->view->tableFornecimento [$i]->getIdFornecimento()?>" class="btn btn-danger">
 								<i class="fas fa-trash-alt"></i>
 							</a>
 						</td>
