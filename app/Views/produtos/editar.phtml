@@ -1,6 +1,6 @@
 <div class="row" style="">
 	<div class="col-md-12"  style="padding: 20px 40px;">
-		<form method="post" class="was-validated" action="/produto/salvar" enctype="multipart/form-data">
+		<form method="post" class="was-validated" action="/produto/atualizar" enctype="multipart/form-data" id="editarProduto">
 			<input type="hidden" name="prod" value="<?=$this->view->result->getIdProduto();?>">
 			<fieldset class=""><legend><strong>Editar produto</strong></legend>
 				<div class="row">
@@ -97,7 +97,7 @@
 						<img id="img"/>
 					</div>	
 				</div>
-				<button type="submit" class="btn btn-primary">Lançar</button>  <a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a> 
+				<button type="submit" class="btn btn-primary">Atualisar</button>  <a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a> 
 			</fieldset>
 
 		</form>

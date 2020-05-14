@@ -18,7 +18,7 @@ class FornecimentoController extends BaseController
         Transaction::startTransaction('connection');
 
         $fornecimento = new Fornecimento();
-        $result = $fornecimento->commit($request['post']['estoque']);
+        $result = $fornecimento->save($request['post']['estoque']);
         
         $this->view->result = json_encode($result);
         $this->render('produtos/ajaxPainelAdmin', false);
@@ -58,28 +58,35 @@ class FornecimentoController extends BaseController
         $fornecimento = new Fornecimento();
         $totItens = $fornecimento->countItens();
 
-        $campos = ['idFornecimento' ,'ProdutoIdProduto','dtValidade', 'dtRecebimento', 'qtdFornecida', 'qtdVendida'];
+        $this->view->totItens = $totItens;
+        if($totItens == 0){
+            
+           $this->render('fornecimento/tabelaEstoque', false);
+
+        }else{
+
+            $campos = ['idFornecimento' ,'ProdutoIdProduto','dtValidade', 'dtRecebimento', 'qtdFornecida', 'qtdVendida'];
 
 
-        $this->view->pagina = $pagina;
-        $this->view->itensPorPagina = $itensPorPagina;
-        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+            $this->view->pagina = $pagina;
+            $this->view->itensPorPagina = $itensPorPagina;
+            $this->view->totPaginas = ceil($totItens / $itensPorPagina);
 
-        $result = $fornecimento->paginador($campos, $itensPorPagina, $pagina, true);
+            $result = $fornecimento->paginador($campos, $itensPorPagina, $pagina, true);
 
-        for ($i=0; !($i == count($result)) ; $i++) { 
-            $result[$i]->setProduto($result[$i]->ProdutoIdProduto);
+            for ($i=0; !($i == count($result)) ; $i++) { 
+                $result[$i]->setProduto($result[$i]->ProdutoIdProduto);
+            }
+
+            $stdPaginacao = new \stdClass();
+            $stdPaginacao->pagina = $this->view->pagina;
+            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+            $stdPaginacao->totPaginas = $this->view->totPaginas ;
+
+            $this->view->tableFornecimento = $result;
+
+            $this->render('fornecimento/tabelaEstoque', false);
         }
-
-        $stdPaginacao = new \stdClass();
-        $stdPaginacao->pagina = $this->view->pagina;
-        $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
-        $stdPaginacao->totPaginas = $this->view->totPaginas ;
-
-        $this->view->tableFornecimento = $result;
-
-        $this->render('fornecimento/tabelaEstoque', false);
-
         Transaction::close();
 
     }

@@ -30,10 +30,15 @@ class Venda extends BaseModel
 	{
 
 	}
-	public function commit(array $dados)
+	public function save(array $dados)
 	{
 		
 	}
+
+	public function modify(array $dados)
+    {
+        
+    }
 
 	public static function qtdItensVenda()
 	{

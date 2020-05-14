@@ -130,7 +130,7 @@ $(document).ready(function(){
 
   //---------------------------- CADASTRO DE PRODUTOS -------------------------------
 
-  $('#dinamic').delegate( '#cadastrarProduto', 'submit', function(event){
+  $('#dinamic').delegate( '#cadastrarProduto, #editarProduto', 'submit', function(event){
     event.preventDefault();
 
 
@@ -178,7 +178,106 @@ $(document).ready(function(){
 
   })
 
+//---------------------------- CADASTRO DE MARCAS -------------------------------
 
+  $('#dinamic').delegate( '#cadastrarMarca', 'submit', function(event){
+    event.preventDefault();
+
+
+    let submitArray = new Array(); //define um super array para armazenar os valores dos campos
+
+    $(this).find('input, select, textarea').each(function(){
+
+      let key = $(this).attr('name')
+
+      let value = String($(this).val()); // transforama para string para retirar os espacoes em branco do inicio e final
+
+      value = value.trim();
+
+      //verifica se o campo foi preenchido e 
+      if(value.length == 0){
+
+        //casso algo não esteja peenchido, exibem uma mensagem
+        message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
+
+        $('#dinamic').find('[name='+key+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+        $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');
+
+          
+        });
+        return false;
+      }
+
+       submitArray.push(key+'='+value);
+
+
+    })
+
+    let url = $(this).attr('action');
+    
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: {'marca': submitArray},
+      dataType: 'json',
+      success: function(retorno){
+        message(retorno);
+      }
+
+    })
+
+  })
+  
+
+  //---------------------------- CADASTRO DE CATEGORIAS -------------------------------
+
+  $('#dinamic').delegate( '#cadastrarCategoria', 'submit', function(event){
+    event.preventDefault();
+
+
+    let submitArray = new Array(); //define um super array para armazenar os valores dos campos
+
+    $(this).find('input, select, textarea').each(function(){
+
+      let key = $(this).attr('name')
+
+      let value = String($(this).val()); // transforama para string para retirar os espacoes em branco do inicio e final
+
+      value = value.trim();
+
+      //verifica se o campo foi preenchido e 
+      if(value.length == 0){
+
+        //casso algo não esteja peenchido, exibem uma mensagem
+        message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
+
+        $('#dinamic').find('[name='+key+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+        $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');
+
+          
+        });
+        return false;
+      }
+
+       submitArray.push(key+'='+value);
+
+
+    })
+
+    let url = $(this).attr('action');
+    
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: {'categoria': submitArray},
+      dataType: 'json',
+      success: function(retorno){
+        message(retorno);
+      }
+
+    })
+
+  })
   
 //------------------------------- FUNCAO PARA APRESENTACAO DE MENSGENS---------
 function message(retorno){
@@ -190,7 +289,8 @@ function message(retorno){
     msg.css('box-shadow', '2px 2px 3px #000');
 
     $('#msg').detach();
-    $('#cadastrarProduto, #estoque').parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
+    $('#cadastrarProduto, #estoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria').
+    parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
   }
 }
  
@@ -204,7 +304,7 @@ function message(retorno){
 
 
 // Faz o sistema de paginação------------------------------------------------------------------------
-  function pagination(pagina, totPaginas) {
+  function pagination(pagina, totPaginas, rota='/produto/all') {
     //inicia a cria cao da lista de navegacao
     let preview = (pagina - 1);
 
@@ -218,7 +318,7 @@ function message(retorno){
       //desativa o evento click do link
         event.preventDefault()
       }
-    ).attr('herf', '/produto/all?pagina='+preview).attr('id', preview).addClass('page-link '+blockPrev).html('peview')));
+    ).attr('herf', rota+'?pagina='+preview).attr('id', preview).addClass('page-link '+blockPrev).html('peview')));
 
     //adiciona um id a lista
     lista.attr('id', 'paginacao')
@@ -233,7 +333,7 @@ function message(retorno){
       let li = $('<li/>').addClass('page-item '+estilo).append($('<a/>').on('click',function(event){//desativa o evento click do link
             event.preventDefault()
           }
-        ).attr('herf', '/produto/all?pagina='+(i+1)).attr('id', (i+1)).addClass('page-link').html((i+1)))
+        ).attr('herf', rota+'?pagina='+(i+1)).attr('id', (i+1)).addClass('page-link').html((i+1)))
       lista.append(li);
     }
 
@@ -347,6 +447,9 @@ $('#menuAdminHide').on('click', function(){
                 case '/marca/cadastrar':
                   $('#dinamic').html(retorno);
                 break;
+                case '/categoria/cadastrar':
+                  $('#dinamic').html(retorno);
+                break;
 
                 case '/venda/nova':
                   $('#closeModal').trigger('click');
@@ -360,6 +463,10 @@ $('#menuAdminHide').on('click', function(){
 
                 case '/estoque/all':
                   $('#closeModal').trigger('click');
+                  $('#dinamic').html(retorno);
+                break;
+
+                case '/produto/cadastrar':
                   $('#dinamic').html(retorno);
                 break;
 
@@ -381,7 +488,7 @@ $('#menuAdminHide').on('click', function(){
 $('#dinamic').delegate('ul li a', 'click', function(event){
   event.preventDefault();
   let url = $(this).attr('href');
-
+  
   let xhr = $.ajax({
             url: url,
             type: 'GET',

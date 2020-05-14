@@ -124,7 +124,7 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function commit(array $dados)
+    public function save(array $dados)
     {
 
         $this->clear($dados);
@@ -137,6 +137,12 @@ class Fornecimento extends BaseModel
             return ['msg', 'success', 'Estoque lançado com sucesso'];
         }
         return ['msg',' warning ','Produto cadastrado com sucesso!'];
+    }
+
+
+    public function modify(array $dados)
+    {
+        
     }
 
     public function setProduto(Int $id):bool

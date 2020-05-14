@@ -31,8 +31,8 @@ class Marca extends BaseModel
             $subArray = explode('=', $dados[$i]);
            
             switch ($subArray[0]) {
-                case 'nomeMarca':
-                   $this->setNomeProduto($subArray[1]);
+                case 'marca':
+                   $this->setNomeMarca($subArray[1]);
                    break;
             }
 
@@ -42,21 +42,38 @@ class Marca extends BaseModel
     protected function parseCommit():array
     {
          //falta implemetar
-        $this->data['nomeMarca']          = $this->getNomeMarca();
+        $this->data['nomeMarca']= $this->getNomeMarca();
 
         return $this->data;
     }
 
 
-    public function commit(array $dados)
+    public function save(array $dados)
     {
         $this->clear($dados);
 
         $result = $this->parseCommit();
 
-        $this->insert($result);
+        $resultSelect = $this->select(['nomeMarca'], ['nomeMarca' => $this->getNomeMarca()], '=','asc', null, null, true);
+
+        if($resultSelect != false){
+            return ['msg','warning','Atenção: Esta marca já existe!'];
+        }
+
+        $resultInsert = $this->insert($result);
+        if($resultInsert == true){
+            return ['msg','success','Marca cadastrada com sucesso!'];
+        }
+
+        return ['msg','warning','Falha ao cadastrar marca!'];
     }
 
+
+    public function modify(array $dados)
+    {
+        
+    }
+    
 
     public function listaMarca():array
     {

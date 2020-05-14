@@ -1,5 +1,24 @@
 <div class="row">
 	<div class="col-md-12" style="padding: 20px 40px;">
+		<?php
+
+			if($this->view->totItens == 0){
+		 ?>
+		 	<div class="row">
+				<div class="col-md-12 alert alert-warning">
+					<h2 align="center">Comece adicionando novos produtos!</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-11" align="">
+					<a href="/produto/cadastrar" class="btn btn-primary link">Add produto</a>
+					<a href="/estoque/lancar" class="btn link ml-2 btn-danger">Cancelar</a>
+				</div>
+			</div>
+		 <?php
+
+		 	}else{
+		 ?>	
 		<div class="row">
 			<div class="col-md-11">
 				<h4><strong>Estoque</strong></h4>
@@ -9,7 +28,8 @@
 					<i class="fas fa-plus-circle fa-2x"></i>
 				</a>
 			</div>
-		</div>		
+		</div>
+		
 		 <table class="table table-hover" id="tableProdutos">
 		    <thead>
 		      <tr>
@@ -65,7 +85,7 @@
 		  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
 		  	?>
 		    <li class="page-item <?= $blockPrevius ?>">
-		      <a class="page-link" href="/produto/all?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
+		      <a class="page-link" href="/estoque/all?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
 		    </li>
 
 		    <?php
@@ -75,7 +95,7 @@
 		    		
 		    ?>
 				<li class="page-item <?= $estilo ?>">
-					<a class="page-link" href="/produto/all?pagina=<?= $i+1?>">
+					<a class="page-link" href="/estoque/all?pagina=<?= $i+1?>">
 					<?= $i+1?>
 					</a>
 				</li>
@@ -87,9 +107,12 @@
 		    ?>
 
 		    <li class="page-item <?= $blockNext;?>">
-		      <a class="page-link" href="/produto/all?pagina=<?= $next?>"><strong>Next</strong></a>
+		      <a class="page-link" href="/estoque/all?pagina=<?= $next?>"><strong>Next</strong></a>
 		    </li>
 		  </ul>
 		</nav>
 	</div>
+	<?php
+		}
+	 ?>
 </div>

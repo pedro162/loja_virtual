@@ -1,5 +1,31 @@
 <div class="row" style="">
 	<div class="col-md-12"  style="padding: 20px 40px;">
+		<?php
+			if($this->view->produtos == false){
+
+
+		 ?>
+			<div class="row">
+				<div class="col-md-11">
+					<h4><strong>Novo estoque</strong></h4>
+				</div>
+				<div class="col-md-1">
+					<a href="/produto/cadastrar" class="btn btn-success mb-2" id="cadastrar">
+						<i class="fas fa-plus-circle fa-2x"></i>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 alert alert-warning">
+					<h2 align="center">Comece adinionando novos produtos clicando no botão acima!</h2>
+				</div>
+			</div>
+
+		 <?php
+
+			}else{
+
+		  ?>
 		<form method="post" id="estoque" class="was-validated" action="/estoque/salvar" enctype="multipart/form-data">
 			<fieldset class=""><legend><strong>Novo estoque</strong></legend>
 				<div class="row mb-4">
@@ -92,5 +118,10 @@
 			</fieldset>
 
 		</form>
+
+		<?php
+
+			}
+		 ?>
 	</div>
 </div>

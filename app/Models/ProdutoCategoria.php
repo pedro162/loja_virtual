@@ -21,9 +21,6 @@ class ProdutoCategoria extends BaseModel
 
     protected function parseCommit()
     {   
-        if(!empty($this->$idProdutoCategoria) && ($this->$idProdutoCategoria > 0)){
-        }
-
         $this->data['ProdutoIdProduto']          = $this->ProdutoIdProduto;
         $this->data['CategoriaIdCategoria']      = $this->CategoriaIdCategoria;
 
@@ -56,18 +53,23 @@ class ProdutoCategoria extends BaseModel
 
     public function setIdCategoria(Int $id):bool
     {   
-        if(is_int($id) && ($id > 0)){
+        if($id > 0){
             $this->CategoriaIdCategoria = $id;//faltar validar
             return true;
         }
         throw new Exception("Propriedade inválida<br/>\\n");
         
     }
+
+    public function modify(array $dados)
+    {
+        //method abstract
+    }
     
 
     public function setIdProduto(Int $id):bool
     {
-        if(is_int($id) && ($id > 0)){
+        if($id > 0){
             $this->ProdutoIdProduto = $id;//faltar validar
             return true;
         }
@@ -76,14 +78,15 @@ class ProdutoCategoria extends BaseModel
     }
 
 
-    public function commit(array $dados)
+    public function save(array $dados):bool
     {
         $this->clear($dados);
 
         $result = $this->parseCommit();
         
-        $this->insert($result);
+        return $this->insert($result);
     }
+
 
     public function getCategoria(Int $idProduto)
     {

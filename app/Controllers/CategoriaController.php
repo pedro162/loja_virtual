@@ -4,9 +4,9 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use \Core\Database\Transaction;
-use App\Models\Marca;
+use App\Models\Categoria;
 
-class MarcaController extends BaseController
+class CategoriaController extends BaseController
 {
     public function show($request)
     {   
@@ -16,7 +16,7 @@ class MarcaController extends BaseController
 
     public function cadastrar()
     {
-        $this->render('marca/cadastrar', false);
+        $this->render('categoria/cadastrar', false);
     }
 
     public function all($request)
@@ -59,8 +59,8 @@ class MarcaController extends BaseController
     {
        Transaction::startTransaction('connection');
        
-        $marca = new Marca();
-        $result = $marca->save($request['post']['marca']);
+        $categoria = new Categoria();
+        $result = $categoria->save($request['post']['categoria']);
 
         $this->view->result = json_encode($result);
         $this->render('produtos/ajaxPainelAdmin', false);

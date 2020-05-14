@@ -15,12 +15,17 @@ $routes[] = ['/produto/salvar', 'ProdutoController@salvar'];
 $routes[] = ['/produto/more', 'ProdutoController@more'];
 $routes[] = ['/produto/filtro', 'ProdutoController@filtro'];
 $routes[] = ['/produto/editar', 'ProdutoController@editarProduto'];
+$routes[] = ['/produto/atualizar', 'ProdutoController@atualizar'];
 
 $routes[] = ['/estoque/lancar', 'FornecimentoController@lancarEstoque'];
 $routes[] = ['/estoque/salvar', 'FornecimentoController@salvar'];
 $routes[] = ['/estoque/all', 'FornecimentoController@all'];
 
 $routes[] = ['/marca/cadastrar', 'MarcaController@cadastrar'];
+$routes[] = ['/marca/salvar', 'MarcaController@salvar'];
+
+$routes[] = ['/categoria/cadastrar', 'CategoriaController@cadastrar'];
+$routes[] = ['/categoria/salvar', 'CategoriaController@salvar'];
 
 $routes[] = ['/venda/carrinho', 'VendaController@addCarrinho'];
 $routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];

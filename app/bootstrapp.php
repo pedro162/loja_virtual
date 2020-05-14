@@ -24,7 +24,10 @@
         }
 
     }catch(\Exception $e){
+
         echo"Erro: ". $e->getMessage().'<br/>'.PHP_EOL;
         echo"Arquivo: ". $e->getFile().'<br/>'.PHP_EOL;
         echo"Linha: ". $e->getLine().'<br/>'.PHP_EOL;
+
+        return ['msg','arning',$e->getMessage()];
     }

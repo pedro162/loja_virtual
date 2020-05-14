@@ -57,10 +57,25 @@ class ProdutoController extends BaseController
         $categoria = new Categoria();
         $marca = new Marca();
 
-        $this->view->categorias = $categoria->listaCategoria();
-        $this->view->marcas = $marca->listaMarca();
+        $totItensCategoria = $categoria->countItens();
+        $totItensMarca = $marca->countItens();
 
-        $this->render('produtos/cadastrar', false);
+        if(($totItensCategoria > 0) && ($totItensMarca > 0)){
+
+            $this->view->categorias = $categoria->listaCategoria();
+            $this->view->marcas = $marca->listaMarca();
+
+            $this->render('produtos/cadastrar', false);
+
+        }else{
+
+
+            $this->view->categorias = $totItensCategoria;
+            $this->view->marcas = $totItensMarca;
+
+            $this->render('produtos/cadastrar', false);
+            
+        }
 
         Transaction::close();
     }
@@ -76,25 +91,33 @@ class ProdutoController extends BaseController
             $pagina = $request['get']['pagina'];
         }
 
-         $produto = new Produto();
-         $totItens = $produto->countItens();
+        $produto = new Produto();
+        $totItens = $produto->countItens();
 
-         $campos = ['nomeProduto','textoPromorcional', 'idProduto'];
+        if($totItens == 0){
 
+            $this->view->tableProdutos = $totItens;
+            $this->render('produtos/tabelaProdutos', false);
 
-        $this->view->pagina = $pagina;
-        $this->view->itensPorPagina = $itensPorPagina;
-        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+        }else{
 
-        $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
+            $campos = ['nomeProduto','textoPromorcional', 'idProduto'];
 
-        $stdPaginacao = new \stdClass();
-        $stdPaginacao->pagina = $this->view->pagina;
-        $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
-        $stdPaginacao->totPaginas = $this->view->totPaginas ;
+            $this->view->pagina = $pagina;
+            $this->view->itensPorPagina = $itensPorPagina;
+            $this->view->totPaginas = ceil($totItens / $itensPorPagina);
 
-        $this->view->tableProdutos = $result;
-        $this->render('produtos/tabelaProdutos', false);
+            $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
+
+            $stdPaginacao = new \stdClass();
+            $stdPaginacao->pagina = $this->view->pagina;
+            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+            $stdPaginacao->totPaginas = $this->view->totPaginas ;
+
+            $this->view->tableProdutos = $result;
+            $this->render('produtos/tabelaProdutos', false);
+
+        }
 
         Transaction::close();
 
@@ -190,13 +213,38 @@ class ProdutoController extends BaseController
     	}*/
 
         $produto = new Produto();
-        $result = $produto->commit($request['post']['produto']);
+        $result = $produto->save($request['post']['produto']);
 
         $this->view->result = json_encode($result);
         $this->render('produtos/ajaxPainelAdmin', false);
 
         Transaction::close();
         
+    }
+
+    public function atualizar($request)
+    {
+        set_time_limit(0);
+        
+        Transaction::startTransaction('connection');
+        /*
+        set_time_limit(0);
+
+        $fiile = new File($request['file']['imgProduto']['name'], $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
+        if($fiile->salvar('imagens') == true)
+        {
+            echo "Imagem salva com sucesso<br/>";
+        }*/
+
+        $produto = new Produto();
+        $result = $produto->modify($request['post']['produto']);
+
+        $this->view->result = json_encode($result);
+
+        $this->render('produtos/ajaxPainelAdmin', false);
+
+        Transaction::close();
+
     }
 
 

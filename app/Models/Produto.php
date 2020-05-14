@@ -39,7 +39,7 @@ class Produto extends BaseModel
     }
 
 
-    protected function clear(array $dados)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
+    protected function clear(array $dados):bool//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
     {
         if(!isset($dados)){
             throw new Exception('Parametro inválido<br/>');
@@ -66,12 +66,23 @@ class Produto extends BaseModel
                    break;
 
                 case 'categoria':
-                    $idCategoria = (int) $subArray[1];
-                    $this->setIdCategoria($idCategoria);
-                    break;
+
+                    $subArrCateg = explode(',' , $subArray[1]);
+
+                    for ($j=0; !($j == count($subArrCateg)) ; $j++) { 
+                        
+                        $idCategoria = (int) $subArrCateg[$j];
+                        $this->setIdCategoria($idCategoria);
+                    }
+                break;
+                case 'prod':
+                    $this->setIdProduto($subArray[1]);
+                break;
             }
 
         }
+
+        return true;
     }
 
     protected function parseCommit()
@@ -85,12 +96,18 @@ class Produto extends BaseModel
     }
 
 
-    public function commit(array $dados):array
+    public function save(array $dados):array
     {
 
         $this->clear($dados);
 
         $result = $this->parseCommit();
+
+        $resultSelect = $this->select(['nomeProduto'], ['nomeProduto' => $this->getNomeProduto()], '=','asc', null, null, true);
+
+        if($resultSelect != false){
+            return ['msg','warning','Atenção: Este produto já existe!'];
+        }
 
         $this->insert($result);
 
@@ -104,11 +121,42 @@ class Produto extends BaseModel
             $subArraiCommit['idCategoria'] = $this->getIdCategoria()[$i];
             
 
-            $produtoCategoria->commit($subArraiCommit);
+            $res = $produtoCategoria->save($subArraiCommit);
+            if($res === false){
+                throw new Exception("Falha ao cadastrar produto");
+            }
         }
 
         return ['msg','success','Produto cadastrado com sucesso!'];
 
+    }
+
+
+    public function modify(array $dados)
+    {
+        $this->clear($dados);
+
+        $result = $this->parseCommit();
+
+        $this->update($result, $this->getIdProduto());
+
+        $produtoCategoria = new ProdutoCategoria();
+
+        $produtoCategoria->delete('ProdutoIdProduto', '=', $this->getIdProduto());
+
+        for ($i = 0; !($i == count($this->getIdCategoria())); $i++) {
+            $subArraiComm = [];
+            $subArraiCommit['idProduto'] = $this->getIdProduto();
+            $subArraiCommit['idCategoria'] = $this->getIdCategoria()[$i];
+            
+
+            $res = $produtoCategoria->save($subArraiCommit);
+            if($res == false){
+                throw new Exception("Falha ao atualizar produto");
+            }
+        }
+
+        return ['msg','success','Produto atualizado com sucesso!'];
     }
 
     public function getFiltros():array
@@ -452,13 +500,20 @@ class Produto extends BaseModel
         return $this->idProduto;
     }
 
-    public function setIdProduto(Int $id):int
+    public function setIdProduto(Int $id)
     {
         if($id <= 0)
         {
             throw new \Exception("Propriedade indefinida<br/>");
         }
-        return $this->idProduto = $id;
+
+        $result = $this->select(['idProduto'], ['idProduto'=>$id], '=','asc', null, null,true);
+
+        if($result != false){
+            $this->idProduto = $result[0]->getIdProduto();
+            return true;
+        }
+        return false;
     }
 
 

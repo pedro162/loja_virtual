@@ -35,7 +35,7 @@ abstract class BaseModel
         return self::$conn;
     }
 
-    public function countItens()
+    public function countItens():int
     {
 
         $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
@@ -45,24 +45,19 @@ abstract class BaseModel
 
         $result = $consulta->fetchAll();
 
-        if($result){
-            return $result[0]->totItens;
-        }else{
-            return "Nenhum resultado encontrado<br/>\n";
-        }
-
-
+        return $result[0]->totItens;
+        
     }
 
 
-    public function paginador(array $campos, Int $itensPorPagina, Int $paginas, $class =  null):array
+    public function paginador(array $campos, Int $itensPorPagina, Int $paginas, $class =  null)
     {   
 
         $inicio = ($itensPorPagina * $paginas) - $itensPorPagina;
 
 
         $result = $this->select($campos, [],'=','asc', $inicio, $itensPorPagina, $class);
-
+        
         return $result;
        
     }
@@ -131,20 +126,24 @@ abstract class BaseModel
     }
 
 
-    public function delete(Int $id, Int $limit = 1):bool
+    public function delete(String $where , String $comparador ,Int $id, Int $limit = null):bool
     {
         
-        $sql = 'DELETE FROM '.$this->table.' WHERE id'.$this->table.'='.$id.' limit '.$limit;
+        $sql = 'DELETE FROM '.$this->table.' WHERE '.$where.$comparador.$id;
+        if($limit != null){
+            $sql .= ' limit '.$limit;
+        }
 
         $conn = Transaction::get();
 
-        $result = $conn->query($sql);
-        if($result)
+        $result = $conn->exec($sql);
+        if($result > 0)
         {
             return true;
         }
 
-        return fale;
+        throw new Exception("Erro ao excluir registro<br/>\n");
+        
     }
 
 
@@ -202,13 +201,12 @@ abstract class BaseModel
         $sql .= " where id{$this->table}={$id}";
 
         $conn = Transaction::get();
-        $result = $conn->query($sql);
+        $result = $conn->exec($sql);
 
-        if($result)
+        if($result > 0)
         {
             return true;
         }
-
         return false;
 
     }
@@ -280,7 +278,7 @@ abstract class BaseModel
         $arrayObj = $result->fetchAll();
 
 
-        if(count($arrayObj) ==0)
+        if(count($arrayObj) == 0)
         {
             return false;
         }
@@ -353,7 +351,9 @@ abstract class BaseModel
 
     abstract protected function clear(array $dados);
 
-    abstract public function commit(array $dados);
+    abstract public function save(array $dados);
+
+    abstract public function modify(array $dados);
 
 
 

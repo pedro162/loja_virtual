@@ -1,5 +1,32 @@
 <div class="row" style="">
 	<div class="col-md-12"  style="padding: 20px 40px;">
+		<?php
+		
+			if(($this->view->categorias == 0) || ($this->view->marcas == 0)){
+
+
+		 ?>
+		 	<div class="row">
+		 		<div class="col-md-12">
+		 			<h4><strong>Cadastrar produto</strong></h4>
+		 		</div>
+		 	</div>
+			<div class="row">
+				<div class="col-md-12 alert alert-warning">
+					<h2 align="center">Comece adicionando novas marcas e categorias!</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-11" align="">
+					<a href="/marca/cadastrar" class="btn btn-primary link">Add Marcas</a>
+					<a href="/categoria/cadastrar" class="btn btn-primary link">Add Categorias</a>
+					<a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a>
+				</div>
+			</div>
+
+		 <?php
+			}else{
+		 ?>
 		<form method="post" class="was-validated formAjax" action="/produto/salvar" enctype="multipart/form-data" style="" id="cadastrarProduto">
 			<fieldset class=""><legend><strong>Cadastrar produto</strong></legend>
 				<div class="row">
@@ -76,5 +103,9 @@
 				<button type="submit" class="btn btn-primary">Cadastrar</button> <a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a> 
 			</fieldset>
 		</form>
+
+		<?php
+			}
+		?>
 	</div>
 </div>

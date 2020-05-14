@@ -46,13 +46,18 @@ class Fornecedor extends BaseModel
     }
 
 
-    public function commit(array $dados)
+    public function save(array $dados)
     {
         $this->clear($dados);
 
         $result = $this->parseCommit();
 
         $this->insert($result);
+    }
+
+    public function modify(array $dados)
+    {
+        
     }
 
 
