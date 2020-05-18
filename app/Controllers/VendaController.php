@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-
+use \Core\Database\Transaction;
 use App\Models\Cliente;
 use App\Models\Produto;
 use App\Models\Venda;
@@ -17,8 +17,25 @@ class VendaController extends BaseController
         $this->carrinho = [];
     }
 
-    public function iniciarCompra()
-    {
+    public function painel($request)
+    { 
+        Transaction::startTransaction('connection');
+
+        if(!isset($request['post'], $request['post']['cliente'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+        if(empty($request['post']['cliente'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+
+        $cliente = new Cliente();
+        $resultSelect = $cliente->findCliente($request['post']['cliente']);
+        if($resultSelect != false)
+            $this->render('venda/painel', false);
+
+        Transaction::close();
         
     }
 
@@ -42,7 +59,7 @@ class VendaController extends BaseController
     {
         if(Venda::addToCarrinho($request['get']['id']) == true)
         {
-            $this->view->carrinho = json_encode(Venda::qtdItensVenda());
+            $this->view->result = json_encode(Venda::qtdItensVenda());
             $this->render('venda/ajax', false);
         }
         
@@ -52,9 +69,43 @@ class VendaController extends BaseController
 
     public function nova()
     {
-        
         $this->render('venda/novaVenda', false);
     }
 
+
+    public function loadCliente($request)
+    {   
+        Transaction::startTransaction('connection');
+
+        if(!isset($request['post']['loadCliente'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+        if(empty($request['post']['loadCliente'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+
+        $cliente = new Cliente();
+        $result = $cliente->loadCliente($request['post']['loadCliente'], false, true);
+
+        if($result != false){
+
+            $newResult = [];
+
+            for ($i=0; !($i == count($result)); $i++) { 
+                $newResult[] = [$result[$i]->idCliente, $result[$i]->nomeCliente, $result[$i]->cpf];
+               // $newResult[] = $result[$i]->cpf;
+            }
+            $this->view->result = json_encode($newResult);
+            $this->render('venda/ajax', false);
+
+        }else{
+            $this->view->result = json_encode($result);
+            $this->render('venda/ajax', false);
+        }
+        
+        Transaction::close();
+    }
 
 }

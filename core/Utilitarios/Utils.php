@@ -23,6 +23,13 @@ class Utils
 
         return false;
 	}
+
+    public static function formataDateBr(String $date):String
+    {
+        $dtRe = substr($date, 0, 10);
+        $dtRe = explode('-', $date);
+        return $dtRe[2].'/'.$dtRe[1].'/'.$dtRe[0];
+    }
     
 
 }

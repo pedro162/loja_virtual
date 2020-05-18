@@ -66,7 +66,7 @@ abstract class BaseModel
 
     //ao informar o filtro, o operador tambem deve ser invormado
     public function select(array $elementos, array $filtro = [], $operador = '=',
-     $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null)
+     $ordem = 'asc', $litmitInit = null, $limitEnd = null, $std = null, $groupBy = false)
     {
 
 
@@ -84,13 +84,32 @@ abstract class BaseModel
         {
             $sql .= " where ";
 
-            $result = $this->satinizar($filtro);
-            foreach($result as $key => $value)
-            {
-                $sql.= $key.' '.$operador.' '.$value.' AND ';
+
+            if($operador == 'like'){
+
+                $result = $this->satinizar($filtro, true);
+
+                foreach($result as $key => $value)
+                {
+                    $sql.= $key.' '.$operador.' '.$value.' AND ';
+                }
+
+            }else{
+
+                $result = $this->satinizar($filtro, false);
+
+                foreach($result as $key => $value)
+                {
+                    $sql.= $key.' '.$operador.' '.$value.' AND ';
+                }
             }
+
             $sql = substr($sql, 0, -4);
             
+        }
+
+        if($groupBy == true){
+            $sql .= ' GROUP BY nome'.ucfirst($this->table);
         }
 
         $sql .= ' ORDER BY id'.$this->table.' '.$ordem;
@@ -106,7 +125,7 @@ abstract class BaseModel
 
         $arrayObj = null;
 
-        if($std != null){
+        if($std){
             $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
            // Transaction::close();
 
@@ -212,7 +231,7 @@ abstract class BaseModel
     }
 
 
-    protected function satinizar($elemento)
+    protected function satinizar($elemento, $like =false)
     {
         if(empty($elemento) || (!isset($elemento)))
         {
@@ -241,7 +260,11 @@ abstract class BaseModel
 
                 $value = $conn->quote($value);
 
-                $value = strtr($value, ['_'=>'\_', '%'=> '\%']);
+                if($like == true){
+                    $value = strtr($value, ['_'=>'\_']);
+                }else{
+                    $value = strtr($value, ['_'=>'\_', '%'=> '\%']);
+                }
                 
                 $newElemento[$key] = $value;
 

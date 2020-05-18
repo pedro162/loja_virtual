@@ -8,6 +8,7 @@ use App\Models\Produto;
 use App\Models\Fabricante;
 use App\Models\Fornecimento;
 use App\Models\Pessoa;
+use \Core\Utilitarios\Utils;
 
 
 class FornecimentoController extends BaseController
@@ -91,5 +92,57 @@ class FornecimentoController extends BaseController
 
     }
 
+
+    public function editar($request)
+    {   
+         Transaction::startTransaction('connection');
+
+        if(!isset($request['get'], $request['get']['id'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+        if(empty($request['get']['id'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+
+        $fornecimento    = new Fornecimento();
+
+        $result = $fornecimento->select(
+            ['idFornecimento','ProdutoIdProduto','nf' , 'FornecedorIdFornecedor',
+             'dtFornecimento', 'dtRecebimento', 'dtValidade','qtdFornecida', 'vlCompra', 'vlVenda'
+            ],
+            ['idFornecimento'=>$request['get']['id']], '=', 'asc', null, null, true
+
+        )[0];
+
+        $produto    = new Produto();
+        $resultProduto = $produto->select(
+            ['nomeProduto', 'idProduto'],
+            [], '=', 'asc', null, null, true);
+        $this->view->resultProduto = $resultProduto;
+
+        //$this->view->fornecedor = $result->FornecedorIdFornecedor;
+
+        $this->view->result = $result;
+        $this->render('fornecimento/editarEstoque', false);
+
+        Transaction::close();
+    }
+
+
+    public function atualizar($request)
+    {
+        Transaction::startTransaction('connection');
+
+        $fornecimento = new Fornecimento();
+        $result = $fornecimento->modify($request['post']['estoque']);
+        
+        $this->view->result = json_encode($result);
+        $this->render('produtos/ajaxPainelAdmin', false);
+
+        Transaction::close();
+
+    }
 
 }

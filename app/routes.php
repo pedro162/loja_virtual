@@ -20,6 +20,8 @@ $routes[] = ['/produto/atualizar', 'ProdutoController@atualizar'];
 $routes[] = ['/estoque/lancar', 'FornecimentoController@lancarEstoque'];
 $routes[] = ['/estoque/salvar', 'FornecimentoController@salvar'];
 $routes[] = ['/estoque/all', 'FornecimentoController@all'];
+$routes[] = ['/estoque/editar', 'FornecimentoController@editar'];
+$routes[] = ['/estoque/atualizar', 'FornecimentoController@atualizar'];
 
 $routes[] = ['/marca/cadastrar', 'MarcaController@cadastrar'];
 $routes[] = ['/marca/salvar', 'MarcaController@salvar'];
@@ -30,6 +32,8 @@ $routes[] = ['/categoria/salvar', 'CategoriaController@salvar'];
 $routes[] = ['/venda/carrinho', 'VendaController@addCarrinho'];
 $routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];
 $routes[] = ['/venda/nova', 'VendaController@nova'];
+$routes[] = ['/venda/painel', 'VendaController@painel'];
+$routes[] = ['/venda/load/cliente', 'VendaController@loadCliente'];
 
 //$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
 //$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];

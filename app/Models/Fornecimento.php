@@ -94,6 +94,10 @@ class Fornecimento extends BaseModel
                     $this->setMargem($subArray[1]);
                     break;
 
+                case 'fornecimento': // falta criar o metodo ideal
+                    $this->setIdFornecimento($subArray[1]);
+                    break;
+
                 case 'nf': // falta criar o metodo ideal
                     $this->setNotaFiscal($subArray[1]);
                     break;
@@ -107,7 +111,14 @@ class Fornecimento extends BaseModel
     	if(!empty($this->idFornecimento)){
     		$this->data['idFornecimento'] = $this->getIdFornecimento();
     	}
+
+        $dtRece = new \DateTime($this->getDataRecebimento());
+        $dtForne = new \DateTime($this->getDataFornecimento());
 		
+        if($dtRece < $dtForne){
+            throw new Exception('Falha ao no cadastro de fornecimento!<br/>');
+        }
+
 		$this->data['ProdutoIdProduto'] 			= $this->getProduto()->getIdProduto();
 		$this->data['FornecedorIdFornecedor']		=  1; //apenas para teste
 		$this->data['dtFornecimento']				= $this->getDataFornecimento();
@@ -142,7 +153,18 @@ class Fornecimento extends BaseModel
 
     public function modify(array $dados)
     {
-        
+        $this->clear($dados);
+
+        $result = $this->parseCommit();
+
+        $resultUpdate = $this->update($result, $this->getIdFornecimento());
+
+        if($resultUpdate == false){
+
+            return ['msg','warning','Estoque não pôde ser atualizado!'];
+        }
+
+        return ['msg','success','Estoque atualizado com sucesso!'];
     }
 
     public function setProduto(Int $id):bool
@@ -256,8 +278,13 @@ class Fornecimento extends BaseModel
     public function setIdFornecimento(Int $id):bool
     {
         if(isset($id) && ($id > 0)){
-            $this->idFornecimento = $id;
-            return true;
+            $fornecimento = $this->select(['idFornecimento'], ['idFornecimento'=>$id], '=','asc', null, null,true);
+            if($fornecimento != false){
+                $this->idFornecimento = $id;
+                return true;
+            }else{
+                throw new Exception('Propriedade inválida<br/>'.PHP_EOL);
+            }
         }
         throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
     }
@@ -489,7 +516,7 @@ class Fornecimento extends BaseModel
 
     public function setMargem(float $margem)
     {
-        if(isset($margem) && ($margem > 0)){
+        if(isset($margem) && ($margem >= 0)){
 
             $this->margem = $margem;
 

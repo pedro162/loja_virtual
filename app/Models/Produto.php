@@ -138,7 +138,7 @@ class Produto extends BaseModel
 
         $result = $this->parseCommit();
 
-        $this->update($result, $this->getIdProduto());
+        $resultUpdate = $this->update($result, $this->getIdProduto());
 
         $produtoCategoria = new ProdutoCategoria();
 

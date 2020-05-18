@@ -74,9 +74,113 @@ $(document).ready(function(){
 
 
 
+//------------------------------CHAMA O PAINEL VENDA CLIENTE APOS O PREENCHIMENTO DO FORMULARIO -------------------------------
+  $('#dinamic').delegate('form#vendaPainel', 'submit', function(event){
+    event.preventDefault();
+
+    let submitArray = new Array(); //define um super array para armazenar os valores dos campos
+
+    $(this).find('input, select, textarea').each(function(){
+
+      let key = $(this).attr('name')
+
+      let value = String($(this).val()); // transforama para string para retirar os espacoes em branco do inicio e final
+
+      value = value.trim();
+
+      //verifica se o campo foi preenchido e 
+      if(value.length == 0){
+
+        //casso algo não esteja peenchido, exibem uma mensagem
+        message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
+
+        $('#dinamic').find('[name='+key+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+        $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');
+
+          
+        });
+        return false;
+      }
+
+       submitArray.push(key+'='+value);
+
+
+    })
+
+    let url = $(this).attr('action');
+    
+
+    $.ajax({
+      type:'POST',
+      url: url,
+      data: {'cliente': submitArray},
+      dataType:'HTML',
+      success: function(retorno){
+        $('#dinamic').html(retorno);
+      }
+    })
+  });
+//--------------------------------------------- LOAD DINAMICO DE CLIENTE PARA VENDA --------------------
+$('form#vendaPainel #idCod').off('keyup');
+$('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPainel input#idCod', 'keyup', function(){
+
+  let cliente = $(this);
+  $('form#vendaPainel #idCod').val('');
+
+  cliente.autocomplete({
+  minLength: 3,
+  source: function (request, response) {
+      loadCliente(cliente ,request, response);
+    },
+    select:function(event, ui){
+      $('form#vendaPainel #idCod').val(ui.item.teste);
+      console.log(event, ui.item.teste)
+    },
+    autoFocus: true,
+    change:function(request, response){
+      loadCliente(cliente ,request, response);
+    },
+    delay: 1
+
+  });
+});
+
+//------------------------------------ faz requisiçoes ajax e gera o resulta do autocomplete ----------------------------
+function loadCliente(obj, request, func)
+{
+
+  let dados = new Array();
+  if(obj.attr('name')=='loadCod'){
+    dados.push('cod');
+    dados.push(request.term);
+  }else{
+    dados.push(request.term);
+  }
+
+  $.ajax({
+    type:'POST',
+    url: '/venda/load/cliente',
+    data: {'loadCliente': dados},
+    dataType:'json',
+    success: function(retorno){
+      let arrObj = new Array();
+
+      $.each(retorno, function(key, item){
+        arrObj.push({
+          label: item[1],
+          value: item[1],
+          teste: item[0]//crie para teste mas funcionou
+        });
+
+        });
+        func(arrObj);
+
+      }
+    });
+}
   //------------------------- LANÇAMENTO DE ESTOQUE --------------------------------------
 
-  $('#dinamic').delegate('form#estoque', 'submit', function(event){
+  $('#dinamic').delegate('form#estoque, form#editEstoque', 'submit', function(event){
     event.preventDefault();
 
     let submitArray = new Array(); //define um super array para armazenar os valores dos campos
@@ -116,7 +220,6 @@ $(document).ready(function(){
       data: {'estoque': submitArray},
       dataType: 'json',
       success: function(retorno){
-
         message(retorno);
       }
 
@@ -124,7 +227,21 @@ $(document).ready(function(){
 
 
   })
+//--------------------------- EDITAR ESTOQUE ------------------------------------
 
+$('#dinamic').delegate('#tableProdutos tbody a', 'click', function(event){
+  event.preventDefault();
+  let url = $(this).attr('href');
+
+  $.ajax({
+    type: 'GET',
+    url:url,
+    dataType: 'HTML',
+    success: function(retorno){
+      $('#dinamic').html(retorno);
+    }
+  });
+})
 
 
 
@@ -289,7 +406,7 @@ function message(retorno){
     msg.css('box-shadow', '2px 2px 3px #000');
 
     $('#msg').detach();
-    $('#cadastrarProduto, #estoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria').
+    $('#cadastrarProduto, #estoque, #editEstoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria').
     parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
   }
 }
@@ -303,7 +420,7 @@ function message(retorno){
   }
 
 
-// Faz o sistema de paginação------------------------------------------------------------------------
+//-------------- Faz o sistema de paginação------------------------------------------------------------------------
   function pagination(pagina, totPaginas, rota='/produto/all') {
     //inicia a cria cao da lista de navegacao
     let preview = (pagina - 1);
@@ -445,9 +562,11 @@ $('#menuAdminHide').on('click', function(){
                 break;
                 
                 case '/marca/cadastrar':
+                  $('#closeModal').trigger('click');
                   $('#dinamic').html(retorno);
                 break;
                 case '/categoria/cadastrar':
+                  $('#closeModal').trigger('click');
                   $('#dinamic').html(retorno);
                 break;
 

@@ -423,3 +423,25 @@ form input:hover, form label:hover{
     height: 100%;
 }
 
+
+/*--------------------- PAINEL CLIENTE ---------------*/
+#navPanelCliente{
+    background-color: #9400D3;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+#navPanelCliente ul{
+    width: 100%;
+}
+#navPanelCliente ul li{
+    margin: auto;
+    background-color: red;
+    padding: 4px;
+}
+#navPanelCliente ul li a{
+    padding: 10px;
+}

@@ -8,9 +8,9 @@ use \InvalidArgumentException;
 
 class Categoria extends BaseModel
 {
+    private $data = [];
 	protected $table = 'Categoria';
-   
-
+    
 	private $nomeCategoria;
 	private $idCategoria;
 
