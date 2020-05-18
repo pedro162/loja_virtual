@@ -538,20 +538,50 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function listarConsultaPersonalizada(String $where = null):array
+    public function listarConsultaPersonalizada(String $where = null)
     {
 
-        $sqlPersonalizada = "SELECT distinct P.nomeProduto, F.dtValidade, F.qtdFornecida, F.qtdVendida ";
+        $sqlPersonalizada = "SELECT distinct P.nomeProduto, P.idProduto AS idProduto, F.vlVenda as vlVenda, F.dtValidade, F.qtdFornecida AS qtdF, F.qtdVendida ";
         $sqlPersonalizada .= " FROM  Fornecimento F inner join Produto P on P.idProduto = F.ProdutoIdProduto";
 
         if($where != null)
         {
-            $sqlPersonalizada .= $where;
+            $sqlPersonalizada .= ' WHERE '.$where;
         }
 
         $result = $this->persolizaConsulta($sqlPersonalizada);
 
         return $result;
+    }
+
+    public function loadFornecimento($dados, $like = true)
+    {   
+        if(is_array($dados)){
+           if($dados[0]=='cod'){
+                $dados = $dados[1];
+            }else{
+                $dados = $dados[0];//falta terminar de implementar
+            }
+        }
+
+        $length =(int) strlen($dados);
+
+
+        if($length > 0){
+
+            $result =false;
+
+            if($like){
+                $dados = '%'.$dados.'%';
+                $dados = $this->satinizar($dados, true);
+                $result = $this->listarConsultaPersonalizada('P.nomeProduto LIKE '.$dados);
+            }else{
+                $result = $this->listarConsultaPersonalizada();
+            }
+
+            return $result;
+        }
+        throw new Exception('Parâmetro inválido<br/>'.PHP_EOL);
     }
     
     

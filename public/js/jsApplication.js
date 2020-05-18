@@ -116,11 +116,90 @@ $(document).ready(function(){
       data: {'cliente': submitArray},
       dataType:'HTML',
       success: function(retorno){
+        $('#optionPlus').hide();//esconde o menu lateral direito do painel principal
+        $('#dinamic').removeClass('col-md-9').addClass('col-md-12');//ajusta o painel principal para 12 colunas
         $('#dinamic').html(retorno);
       }
     })
   });
+
+
+
+//-------------------------------------- LOAD DINAMICO DE PRODUTOS PAINEL VENDA------------------------------
+
+$('#dinamic').delegate('form#serchProd input[name=loadProduto], form#loadCodProd input#loadCodProd', 'keyup', function(){
+  
+  let produto = $(this);
+  $('form#serchProd #loadCodProd').val('');
+
+  produto.autocomplete({
+  minLength: 3,
+  source: function (request, response) {
+      loadProdutos(produto ,request, response);
+    },
+    select:function(event, ui){
+      $('form#serchProd #loadCodProd').val(ui.item.cod);
+
+      let tr = $('<tr/>');
+      tr.append($('<td/>').text(ui.item.label))
+      tr.append($('<td/>').text(ui.item.vlVen))
+      tr.append($('<td/>').text(ui.item.qtd))
+
+      $('#tableSearch tbody').html(tr);
+    },
+    autoFocus: true,
+    change:function(request, response){
+      loadProdutos(produto ,request, response);
+    },
+    delay: 1
+
+  });
+});
+
+//---------------------------  FAZ A REQUISIÇÃO AJAX E GERA O AUTO COMPLETE DE PRODUTOS -----------------
+function loadProdutos(obj, request, func)
+{
+
+  let dados = new Array();
+  if(obj.attr('name')=='loadCodProd'){
+    dados.push('cod');
+    dados.push(request.term);
+  }else{
+    dados.push(request.term);
+  }
+
+  $.ajax({
+    type:'POST',
+    url: '/venda/load/estoque',
+    data: {'loadEstoque': dados},
+    dataType:'json',
+    success: function(retorno){
+
+      let arrObj = new Array();
+
+      $.each(retorno, function(key, item){
+        arrObj.push({
+          label: item[1],
+          value: item[1],
+          cod: item[0],
+          qtd: item[2],
+          vlVen: item[3]//crie para teste mas funcionou
+        });
+
+        });
+        func(arrObj);
+      }
+    });
+}
+
+
+
+
+
+
+
 //--------------------------------------------- LOAD DINAMICO DE CLIENTE PARA VENDA --------------------
+
 $('form#vendaPainel #idCod').off('keyup');
 $('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPainel input#idCod', 'keyup', function(){
 
@@ -134,7 +213,6 @@ $('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPain
     },
     select:function(event, ui){
       $('form#vendaPainel #idCod').val(ui.item.teste);
-      console.log(event, ui.item.teste)
     },
     autoFocus: true,
     change:function(request, response){
@@ -572,7 +650,8 @@ $('#menuAdminHide').on('click', function(){
 
                 case '/venda/nova':
                   $('#closeModal').trigger('click');
-                  $('#dinamic').html(retorno);
+                  $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+                  $('#dinamic').html(retorno).removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
                 break;
 
                 case '/estoque/lancar':
@@ -719,6 +798,13 @@ function criaComponentSelect(values, name){
      $('#dinamic').html('')
      
   })
+
+  //--------------------- EXIBE O MENU LATERAL DIREITO DO MENU PRINCIPAL ------------------------
+  function menuLateralDireito()
+  {
+    $('#optionPlus').toggle();//exibe o menu lateral direito se estiver oculto
+
+  }
 
 
 //---------------------- GRAFICOS -------------------------------

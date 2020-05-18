@@ -34,6 +34,7 @@ $routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];
 $routes[] = ['/venda/nova', 'VendaController@nova'];
 $routes[] = ['/venda/painel', 'VendaController@painel'];
 $routes[] = ['/venda/load/cliente', 'VendaController@loadCliente'];
+$routes[] = ['/venda/load/estoque', 'VendaController@loadEstoque'];
 
 //$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
 //$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];

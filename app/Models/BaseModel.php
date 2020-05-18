@@ -279,8 +279,12 @@ abstract class BaseModel
                 $conn = Transaction::get();
                 $elemento = $conn->quote($elemento);
                 //$elemento = self::$conn->quote($elemento);
-                $elemento = strtr($elemento, ['_'=>'\_', '%'=> '\%']);
-
+                if($like == true){
+                    $elemento = strtr($elemento, ['_'=>'\_']);
+                }else{
+                    $elemento = strtr($elemento, ['_'=>'\_', '%'=> '\%']);
+                }
+                
                 $newElemento = $elemento;
         }
 
@@ -298,7 +302,15 @@ abstract class BaseModel
         $conn = Transaction::get();
         $result = $conn->query($sql);
 
-        $arrayObj = $result->fetchAll();
+        if($clasRetorno != false){
+
+             $arrayObj = $result->fetchAll(PDO::FETCH_CLASS,  get_class($this));
+
+        }else{
+
+            $arrayObj = $result->fetchAll();
+        }
+
 
 
         if(count($arrayObj) == 0)

@@ -7,6 +7,7 @@ use \Core\Database\Transaction;
 use App\Models\Cliente;
 use App\Models\Produto;
 use App\Models\Venda;
+use App\Models\Fornecimento;
 
 class VendaController extends BaseController
 {
@@ -95,6 +96,42 @@ class VendaController extends BaseController
 
             for ($i=0; !($i == count($result)); $i++) { 
                 $newResult[] = [$result[$i]->idCliente, $result[$i]->nomeCliente, $result[$i]->cpf];
+               // $newResult[] = $result[$i]->cpf;
+            }
+            $this->view->result = json_encode($newResult);
+            $this->render('venda/ajax', false);
+
+        }else{
+            $this->view->result = json_encode($result);
+            $this->render('venda/ajax', false);
+        }
+        
+        Transaction::close();
+    }
+
+
+    public function loadEstoque($request)
+    {
+        Transaction::startTransaction('connection');
+
+        if(!isset($request['post']['loadEstoque'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+        if(empty($request['post']['loadEstoque'])){
+            throw new \Exception("Propriedade indefinida<br/>");
+            
+        }
+
+        $estoque = new Fornecimento();
+        $result = $estoque->loadFornecimento($request['post']['loadEstoque'], true);
+
+        if($result != false){
+
+            $newResult = [];
+
+            for ($i=0; !($i == count($result)); $i++) {
+                $newResult[] = [$result[$i]->idProduto, $result[$i]->nomeProduto, $result[$i]->qtdF, $result[$i]->vlVenda];
                // $newResult[] = $result[$i]->cpf;
             }
             $this->view->result = json_encode($newResult);
