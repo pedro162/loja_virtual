@@ -109,11 +109,20 @@ class Cliente extends BaseModel
 	{
 		$result = $this->clear($dados);
 		if($result){
-			return true;
+			return $result[0];
 		}
 		return false;
 
 	}
+
+    public function getNomeCliente()
+    {
+        if(isset($this->nomeCliente) && (!empty($this->nomeCliente))){
+            return $this->nomeCliente;
+        }
+        throw new Exception("Propriedade não definida.");
+        
+    }
 
     
 

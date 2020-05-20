@@ -541,7 +541,7 @@ class Fornecimento extends BaseModel
     public function listarConsultaPersonalizada(String $where = null)
     {
 
-        $sqlPersonalizada = "SELECT distinct P.nomeProduto, P.idProduto AS idProduto, F.vlVenda as vlVenda, F.dtValidade, F.qtdFornecida AS qtdF, F.qtdVendida ";
+        $sqlPersonalizada = "SELECT distinct P.nomeProduto, P.idProduto AS idProduto, F.vlVenda as vlVenda, F.dtValidade, (F.qtdFornecida - F.qtdVendida) AS qtdRest, F.qtdVendida ";
         $sqlPersonalizada .= " FROM  Fornecimento F inner join Produto P on P.idProduto = F.ProdutoIdProduto";
 
         if($where != null)

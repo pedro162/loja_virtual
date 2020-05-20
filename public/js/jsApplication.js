@@ -141,6 +141,7 @@ $('#dinamic').delegate('form#serchProd input[name=loadProduto], form#loadCodProd
       $('form#serchProd #loadCodProd').val(ui.item.cod);
 
       let tr = $('<tr/>');
+      tr.append($('<td/>').text(ui.item.cod))
       tr.append($('<td/>').text(ui.item.label))
       tr.append($('<td/>').text(ui.item.vlVen))
       tr.append($('<td/>').text(ui.item.qtd))
@@ -157,6 +158,7 @@ $('#dinamic').delegate('form#serchProd input[name=loadProduto], form#loadCodProd
 });
 
 //---------------------------  FAZ A REQUISIÇÃO AJAX E GERA O AUTO COMPLETE DE PRODUTOS -----------------
+
 function loadProdutos(obj, request, func)
 {
 
@@ -192,6 +194,117 @@ function loadProdutos(obj, request, func)
     });
 }
 
+
+
+//---------------------------------- ADICIONA O ITEM NA TABELA DE PEDIDOS DO PAINEL DE VENDAS -------------------------------
+let i = 1;
+$('#dinamic').delegate('form#serchProd', 'submit', function(event){
+  event.preventDefault();
+
+  let qtd = $(this).find('input[name=qtdProduct]').val();
+  let desconto = $(this).find('input[name=descPercent]').val();
+  desconto = desconto.trim();
+
+  if(qtd <= 0){
+    message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
+
+    $('input[name=qtdProduct]').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+    $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');});
+    return false;
+
+  }
+
+  if(desconto.length == 0){
+    desconto = 0;
+
+  }else if(desconto == null){
+    alert('nulo')
+
+  }else if(parseFloat(desconto) < 0){
+    message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
+
+    $('input[name=descPercent]').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
+    $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');});
+
+    return false;
+  }
+
+  
+  let codigo = $(this).find('table tbody tr:first td:eq(0)').text();
+  let prod = $(this).find('table tbody tr:first td:eq(1)').text();
+  let preco = $(this).find('table tbody tr:first td:eq(2)').text();
+
+  if((prod.length == 0) || (preco.length == 0)){
+
+    message(['msg', 'warning', 'Atenção: Adicione os itens corretamente!']);
+    return false;
+  }
+
+  let valDesc = (parseFloat(desconto) / 100) * parseFloat(preco);
+  let precoComDesc = parseFloat(preco) - valDesc;
+  let parsQtdd = Number(qtd);
+
+  let tr = $('<tr/>');
+  tr.append($('<td/>').css('text-align', 'center').html(prod))
+  tr.append($('<td/>').css('text-align', 'center').html(parsQtdd))
+  tr.append($('<td/>').css('text-align', 'center').html(preco))
+  tr.append($('<td/>').css('text-align', 'center').html(valDesc))
+  tr.append($('<td/>').css('text-align', 'center').html(valDesc * parsQtdd))
+  tr.append($('<td/>').css('text-align', 'center').html(precoComDesc))
+  tr.append($('<td/>').css('text-align', 'center').html(precoComDesc * parsQtdd))
+
+  let edit = $('<a/>').attr('href', '/produto/editar?id='+codigo).addClass('btn btn-success mr-2').append($('<i/>').addClass('fas fa-pencil-alt'))
+  let delet = $('<a/>').attr('href', '/produto/excluir?id='+codigo).addClass('btn btn-danger').append($('<i/>').addClass('fas fa-trash-alt'))
+
+  tr.append($('<td/>').append(edit).append(delet))
+
+  $("#trMsg").remove();//remove a mensagem inicial da table de peidito
+
+  $('form#vendaPainelTable').find('table tbody').prepend(tr); //adiciona a tr com os dados
+
+  //calcula o total geral
+  let totalGeral = 0;
+  $('form#vendaPainelTable').find('table tbody tr').each(function(){
+    let val =  $(this).find('td:eq(6)').text();
+
+    totalGeral+=parseFloat(val);
+
+  })
+  $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
+
+
+  //limpa os imputs e a tabela de busca
+  $(this).find('input').val('');
+
+  $(this).find('table tbody tr').remove();
+
+  $('form#serchProd #loadProduto').focus();
+
+  i++;
+
+});
+
+  //------------------ reove item da tabela de pedito------
+  $('#dinamic').delegate('form#vendaPainelTable tbody a.btn-danger', 'click', function(event){
+    event.preventDefault();
+
+    let produto = $(this).parents('tr').find('td:eq(0)').text()
+
+    let comfirm = confirm('Deseja realmete remover o item "'+produto+'" ?');
+    if(comfirm == true){
+      $(this).parents('tr').remove();
+
+      let totalGeral = 0;
+      $('form#vendaPainelTable').find('table tbody tr').each(function(){
+        let val =  $(this).find('td:eq(6)').text();
+
+        totalGeral+=parseFloat(val);
+
+      })
+      $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
+  
+    }
+  });
 
 
 
@@ -298,6 +411,7 @@ function loadCliente(obj, request, func)
       data: {'estoque': submitArray},
       dataType: 'json',
       success: function(retorno){
+        console.log(retorno);
         message(retorno);
       }
 
@@ -484,7 +598,7 @@ function message(retorno){
     msg.css('box-shadow', '2px 2px 3px #000');
 
     $('#msg').detach();
-    $('#cadastrarProduto, #estoque, #editEstoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria').
+    $('#cadastrarProduto, #estoque, #editEstoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria, #serchProd').
     parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
   }
 }

@@ -439,9 +439,37 @@ form input:hover, form label:hover{
 }
 #navPanelCliente ul li{
     margin: auto;
-    background-color: red;
-    padding: 4px;
 }
 #navPanelCliente ul li a{
-    padding: 10px;
+    padding: 5px;
+    text-decoration: none;
+    font-weight: bolder;
 }
+#navPanelCliente ul li a:hover{
+    background-color: #fff;
+    color: #9400D3;
+}
+
+#vendaPainelTable tbody{
+    font-size: 12px;
+}
+#vendaPainelTable tbody a{
+    padding: 1px 4px;
+}
+
+#vendaPainelTable .btn-success{
+    background-color: #fff;
+    color: #8B008B;
+}
+
+
+#vendaPainelTable .btn-success:hover{
+    background-color: #8B008B;
+    color: #fff;
+}
+
+
+#vendaPainelTable table thead th, #serchProd table thead th{
+    text-align: center;
+}
+

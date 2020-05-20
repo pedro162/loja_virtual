@@ -33,8 +33,10 @@ class VendaController extends BaseController
 
         $cliente = new Cliente();
         $resultSelect = $cliente->findCliente($request['post']['cliente']);
-        if($resultSelect != false)
+        if($resultSelect != false){
+            $this->view->cliente = $resultSelect->getNomeCliente();
             $this->render('venda/painel', false);
+        }
 
         Transaction::close();
         
@@ -131,7 +133,7 @@ class VendaController extends BaseController
             $newResult = [];
 
             for ($i=0; !($i == count($result)); $i++) {
-                $newResult[] = [$result[$i]->idProduto, $result[$i]->nomeProduto, $result[$i]->qtdF, $result[$i]->vlVenda];
+                $newResult[] = [$result[$i]->idProduto, $result[$i]->nomeProduto, $result[$i]->qtdRest, $result[$i]->vlVenda];
                // $newResult[] = $result[$i]->cpf;
             }
             $this->view->result = json_encode($newResult);
