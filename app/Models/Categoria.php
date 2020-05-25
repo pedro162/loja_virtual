@@ -9,7 +9,8 @@ use \InvalidArgumentException;
 class Categoria extends BaseModel
 {
     private $data = [];
-	protected $table = 'Categoria';
+    
+    const TABLENAME = 'Categoria';
     
 	private $nomeCategoria;
 	private $idCategoria;

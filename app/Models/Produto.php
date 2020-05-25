@@ -27,16 +27,11 @@ class Produto extends BaseModel
     private $marca;
     private $nf;
     private $fornecedor;
-    private $idMarca;
+    private $IdMarca;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
-    protected $table = 'Produto';
-
-    public function addProduto()
-    {
-        # code...
-    }
+    const TABLENAME = 'Produto';
 
 
     protected function clear(array $dados):bool//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
@@ -87,12 +82,14 @@ class Produto extends BaseModel
 
     protected function parseCommit()
     {   
-
-        $this->data['nomeProduto']          = $this->getNomeProduto();
-        $this->data['IdMarca']              = $this->getMarca()->getIdMarca();
-        $this->data['textoPromorcional']    = $this->getTextoPromorcional();
-
-        return $this->data;
+        $arrayPase = [];
+        for ($i=0; !($i == count($this->columns())) ; $i++) { 
+            $chave = $this->columns()[$i]->Field;
+            if(array_key_exists($chave, $this->data)){
+                $arrayPase[$chave] = $this->data[$chave];
+            }
+        }
+        return $arrayPase;
     }
 
 
@@ -174,22 +171,21 @@ class Produto extends BaseModel
         $fornecedor = new Fornecedor();
         $result = $fornecedor->select(['idFornecedor','nomeFornecedor'], ['idFornecedor'=>$id], '=','asc', null, null,true);
 
-        $this->fornecedor = $result[0];
+        $this->data['fornecedor'] = $result[0];
 
     }
 
     public function getFornecedor()
     {
-        if(!isset($this->fornecedor)){
-            throw new Exception("Propriedade indefinida");
-        }
+        if((!isset($this->fornecedor)) || (empty($this->fornecedor))){
 
-        if(!empty($this->fornecedor)){
-            return $this->fornecedor;
-        }else{
-            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+            if((!isset($this->data['fornecedor'])) || (empty($this->data['fornecedor']))){
+                throw new Exception("Propriedade indefinida");
+            }
+            return $this->data['fornecedor'];
         }
         
+        return $this->fornecedor;
     }
 
     public function produtoCategoria()
@@ -217,16 +213,22 @@ class Produto extends BaseModel
         if((!is_string($nf)) || (!isset($nf)) || (strlen($nf) < 13) || (strlen($nf) > 13)){
             throw new Exception("Nota Fiscal com formato inválido<br/>\n");
         }
-        $this->nf = $nf;
+
+        $this->data['nf'];
         return true;
     }
 
     public function getNf():String
     {
-        if(isset($this->nf) && (!empty($this->nf))){
-            return $this->nf;
+        if((!isset($this->nf)) || (empty($this->nf))){
+
+            if(isset($this->data['nf']) && (!empty($this->data['nf']))){
+                return $this->data['nf'];
+            }
+            
+            throw new Exception("Propriedade indefinida<br/>\n");
         }
-        throw new Exception("Propriedade indefinida<br/>\n");
+        return $this->nf;
     }
 
     public function getMarca()
@@ -241,7 +243,7 @@ class Produto extends BaseModel
     {   
         if($idMarca > 0)
         {
-            $this->idMarca = $idMarca;
+            $this->data['IdMarca'] = $idMarca;
 
             return true;
         }
@@ -252,13 +254,16 @@ class Produto extends BaseModel
 
     public function getIdMarca()
     {   
-        if(isset($this->idMarca) && (!empty($this->idMarca)))
-        {
-            return $this->idMarca;
-        }
+        if((!isset($this->IdMarca)) || (empty($this->IdMarca))){
 
-        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
-        
+            if(isset($this->data['IdMarca']) && (!empty($this->data['IdMarca'])))
+            {
+                return $this->data['IdMarca'];
+            }
+
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
+        return $this->IdMarca;
         
     }
 
@@ -305,10 +310,15 @@ class Produto extends BaseModel
     {
         if(empty($this->codigo) || (!isset($this->codigo)))
         {
-            throw new InvalidArgumentException("Propriedade não definida<br/>");
+            if(empty($this->data['codigo']) || (!isset($this->data['codigo'])))
+            {
+                throw new InvalidArgumentException("Propriedade não definida<br/>");
+            }
+
+            return $this->data['codigo'];
         }
 
-        return $this->codigo;
+        $this->codigo;
     }
 
     public function setCodigoProduto(String $codigo):bool
@@ -316,7 +326,9 @@ class Produto extends BaseModel
         $codigo = trim($codigo);
 
         if(isset($codigo) && (strlen($codigo) >= 4) && (strlen($codigo) <= 8)){
-            $this->codigo = $codigo;
+            
+            $this->data['codigo'] = $codigo;
+
             return true;
         }
         
@@ -333,8 +345,13 @@ class Produto extends BaseModel
 
 
     public function setIdCategoria(Int $id):bool
-    {
-        if(($id > 0) && (!in_array($id, $this->idCategoria))){
+    {   
+
+        if(array_key_exists('idCategoria', $this->data) == false){
+            $this->data['idCategoria'] = [];
+        }
+
+        if(($id > 0) && (!in_array($id, $this->data['idCategoria']))){
 
             $categoria = new Categoria();
 
@@ -342,7 +359,7 @@ class Produto extends BaseModel
 
             if(count($result) > 0)
             {
-                $this->idCategoria[] = $result[0]->getIdCategoria();
+                $this->data['idCategoria'][] = $result[0]->getIdCategoria();
             }
             return true;
         }
@@ -352,8 +369,8 @@ class Produto extends BaseModel
 
     public function getIdCategoria()
     {   
-        if(count($this->idCategoria) > 0){
-            return $this->idCategoria;
+        if(count($this->data['idCategoria']) > 0){
+            return $this->data['idCategoria'];
         }
         throw new Exception('Propriedade indefinida<br/>');
     }
@@ -368,7 +385,7 @@ class Produto extends BaseModel
             throw new Exception("Descricao inválida<br/>\n");
         }
 
-        $this->nomeProduto = $nomeProduto;
+        $this->data['nomeProduto'] = $nomeProduto;
 
         return true;
     }
@@ -379,6 +396,10 @@ class Produto extends BaseModel
     {
         if(empty($this->nomeProduto) || (!isset($this->nomeProduto)))
         {
+            if(isset($this->data['nomeProduto']) && (!empty($this->data['nomeProduto']))){
+                return $this->data['nomeProduto'];
+            }
+
             throw new InvalidArgumentException("Propriedade não definida<br/>");
         }
 
@@ -394,7 +415,7 @@ class Produto extends BaseModel
             throw new Exception("Texto promorcional com formato inválido<br/>\n");
         }
 
-        $this->textoPromorcional = $texto;
+        $this->data['textoPromorcional'] = $texto;
         return true;
     }
 
@@ -403,98 +424,25 @@ class Produto extends BaseModel
     {
         if(empty($this->textoPromorcional) || (!isset($this->textoPromorcional)))
         {
-            throw new InvalidArgumentException("Descrição não definida<br/>");
+            if(empty($this->data['textoPromorcional']) || (!isset($this->data['textoPromorcional'])))
+            {
+                throw new InvalidArgumentException("Descrição não definida<br/>");
+            }
+
+            return $this->data['textoPromorcional'];
         }
 
         return $this->textoPromorcional;
     }
 
 
-   public function setEstoque(int $estoque):bool
-    {   
-
-        if(!(is_integer($estoque) && ($estoque > 0) && isset($estoque)))
-        {
-            throw new Exception("Estoque inválido<br/>\n");
-        }
-
-        $this->estoque = $estoque;
-        return true;
-    }
-
-    public function getEstoque():int
-    {
-        if(empty($this->estoque) || (!isset($this->estoque)) || ($this->estoque < 0))
-        {
-            throw new InvalidArgumentException("Estoque indefinido<br/>");
-        }
-
-        return $this->estoque;
-    }   
-
-
-    public function setPreco(float $preco):bool
-    {   
-        $preco = trim($preco);
-
-        if($preco > 0)
-        {
-            $this->preco = $preco;
-            return true;
-        }
-
-        throw new Exception("Preço inválido<br/>\n");
-
-    }
-
-    public function getPreco():float
-    {
-        if(empty($this->preco) || (!isset($this->preco)) || ($this->preco <= 0))
-        {
-            throw new Exception("Preço indefinido<br/>\n");
-        }
-
-        return $this->preco;
-    }
-
-
-    public function setFabricante(Fabricante $newFabricante)
-    {
-        $this->fabricante = $newFabricante;
-    }
-
-    public function getFabricante():Fabricante
-    {
-        if(empty($this->fabricante))
-        {
-            throw new InvalidArgumentException("Fabricante indefinido<br/>\n");
-        }
-
-        return $this->fabricante;
-    }
-
-    public function addCaracteristica(String $nome, String $valor):bool
-    {
-        $this->caracteristicas[] = new Caracteristica($nome, $valor);
-        
-        return true;
-    }
-
-    public function getCaracteristicas():array
-    {
-        if(empty($this->caracteristicas))
-        {
-            throw new Exception("Caracteristicas indefinidas<br/>\n");
-        }
-
-        return $this->caracteristicas;
-
-    }
-
     public function getIdProduto():int
     {
         if(empty($this->idProduto) || (!isset($this->idProduto)))
         {
+            if(isset($this->data['idProduto']) && (!empty($this->data['idProduto']))){
+                return $this->data['idProduto'];
+            }
             throw new \Exception("Propriedade indefinida<br/>");
         }
         return $this->idProduto;
@@ -510,7 +458,8 @@ class Produto extends BaseModel
         $result = $this->select(['idProduto'], ['idProduto'=>$id], '=','asc', null, null,true);
 
         if($result != false){
-            $this->idProduto = $result[0]->getIdProduto();
+
+            $this->data['idProduto'] = $result[0]->getIdProduto();
             return true;
         }
         return false;
@@ -532,29 +481,7 @@ class Produto extends BaseModel
             //return false;
         }
 
-        /*
-        $superArray = [];
-
-        for ($i=0; !($i == count($request['post']['produtos'])); $i++) { 
-            $resultado = null;
-
-            $chave = null;
-
-            for ($j=0; !($j == count($request['post']['produtos'][$i])); $j++) {
-
-                $chave = $request['post']['produtos'][$i][0];
-                if($j != 0){
-                    $resultado[] = $request['post']['produtos'][$i][$j];
-                }
-                
-            }
-
-            $superArray[$chave] = $resultado;
-            
-        }
-
-        return $superArray;
-        */
+       
         return $this->parseRequestAjax($request['post']['produtos']);
     }
 
@@ -659,6 +586,20 @@ class Produto extends BaseModel
     }
 
 
+    public function __get($prop)
+    {
+        if(method_exists($this, 'get'.ucfirst($prop))){
+
+            return call_user_func([$this,'get'.ucfirst($prop)]);
+        }
+    }
+
+    public function __set($prop, $value)
+    {   
+        if(method_exists($this, 'set'.ucfirst($prop))){ 
+            return call_user_func([$this,'set'.ucfirst($prop)], $value);
+        }
+    }
     
 
 

@@ -6,12 +6,12 @@ use App\Models\BaseModel;
 use \Exception;
 use \InvalidArgumentException;
 
-class Cliente extends BaseModel
+class Pessoa extends BaseModel
 {
 	private $data = [];
-	protected $table = 'Cliente';
-
-	private $nomeCliente;
+    const TABLENAME = 'Pessoa';
+    
+	private $nomePessoa;
 	private $idCliente;
 
 
@@ -33,8 +33,8 @@ class Cliente extends BaseModel
             $subArray = explode('=', $dados[$i]);
            
             switch ($subArray[0]) {
-                case 'loadCliente':
-                	return $this->loadCliente($subArray[1]);
+                case 'loadPessoa':
+                	//return $this->loadPessoa($subArray[1]);
                    	break;
             }
 
@@ -66,7 +66,7 @@ class Cliente extends BaseModel
         
     }
 
-    public function loadCliente($dados, $classCliente = true, $like = true)
+    public function loadPessoa($dados, $classPessoa = true, $like = true)
     {	
         if(is_array($dados)){
     	   if($dados[0]=='cod'){
@@ -82,10 +82,10 @@ class Cliente extends BaseModel
 
     	switch ($length) {
     		case 11:
-    			$filtro = ['cpf', $dados];
+    			$filtro = ['documento', $dados];
     			break;
             default:
-                $filtro = ['nomeCliente', '%'.$dados.'%'];
+                $filtro = ['nomePessoa', '%'.$dados.'%'];
                 break;
     	}
 
@@ -94,9 +94,9 @@ class Cliente extends BaseModel
             $result =false;
 
             if($like){
-                $result = $this->select(['idCliente', 'nomeCliente', 'cpf'], [$filtro[0] => $filtro[1]], 'like', 'asc', null, null, $classCliente, true);
+                $result = $this->select(['idPessoa', 'nomePessoa', 'documento'], [$filtro[0] => $filtro[1]], 'like', 'asc', null, null, $classPessoa, true);
             }else{
-                $result = $this->select(['idCliente', 'nomeCliente', 'cpf'], [$filtro[0] => $filtro[1]], '=', 'asc', 1, 10, $classCliente, true);
+                $result = $this->select(['idPessoa', 'nomePessoa', 'documento'], [$filtro[0] => $filtro[1]], '=', 'asc', 1, 10, $classPessoa, true);
             }
 
     		return $result;
@@ -105,9 +105,9 @@ class Cliente extends BaseModel
     	throw new Exception('Parâmetro inválido<br/>'.PHP_EOL);
     }
 
-	public function findCliente($dados)
+	public function findPessoa(Int $id)
 	{
-		$result = $this->clear($dados);
+		$result = $this->select(['idPessoa', 'nomePessoa', 'documento'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
 		if($result){
 			return $result[0];
 		}
@@ -115,12 +115,27 @@ class Cliente extends BaseModel
 
 	}
 
-    public function getNomeCliente()
+    public function getNomePessoa()
     {
-        if(isset($this->nomeCliente) && (!empty($this->nomeCliente))){
-            return $this->nomeCliente;
+        if(isset($this->nomePessoa) && (!empty($this->nomePessoa))){
+            return $this->nomePessoa;
         }
         throw new Exception("Propriedade não definida.");
+        
+    }
+
+    public function getIdPessoa():int
+    {
+        if((!isset($this->idPessoa)) || ($this->idPessoa <= 0)){
+
+            if(isset($this->data['idPessoa']) && ($this->data['idPessoa'] > 0)){
+                return $this->data['idPessoa'];
+            }
+            throw new Exception("Propriedade não definida.");
+        }
+
+        return $this->idPessoa;
+        
         
     }
 

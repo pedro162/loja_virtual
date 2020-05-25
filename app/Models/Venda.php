@@ -109,6 +109,12 @@ class Venda extends BaseModel
 		return Sessoes::sessionEnde();
 	}
 
+	public function __get($prop)
+	{
+		if(method_exists($this, 'get'.ucfirst($prop))){
+			 return call_user_func([$this,'get'.ucfirst($prop)]);
+		}
+	}
 
 
 

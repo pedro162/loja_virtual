@@ -9,23 +9,7 @@ use InvalidArgumentException;
 use \PDO;
 
 abstract class BaseModel
-{
-    protected static $conn;
-    protected static $database = 'connection';
-
-    public function start()
-    {
-        Commit::start();
-
-    }
-
-    protected static function getDatabase()
-    {
-        return self::$database;
-    }
-
-    
-
+{  
     protected static function getConn()
     {
         if(empty(self::$conn))
@@ -35,10 +19,17 @@ abstract class BaseModel
         return self::$conn;
     }
 
-    public function countItens():int
+    protected function getTable()
     {
+        return constant(get_class($this).'::TABLENAME');
 
-        $sql = "SELECT COUNT(id{$this->table}) totItens FROM {$this->table}";
+    }
+
+    public function countItens(String $where = null):int
+    {
+        
+
+        $sql = "SELECT COUNT(id{$this->getTable()}) totItens FROM {$this->getTable()}";
         $conn = Transaction::get();
 
         $consulta = $conn->query($sql);
@@ -62,6 +53,16 @@ abstract class BaseModel
        
     }
 
+    public function columns()
+    {
+        $sql = 'SHOW COLUMNS FROM '.$this->getTable();
+        $conn = Transaction::get();
+
+        $result = $conn->query($sql);
+        
+        return $result->fetchAll();
+    }
+
 
 
     //ao informar o filtro, o operador tambem deve ser invormado
@@ -78,7 +79,7 @@ abstract class BaseModel
 
         $sql = substr($sql, 0, -2);
 
-        $sql .= ' FROM '.$this->table;
+        $sql .= ' FROM '.$this->getTable();
 
         if(count($filtro) > 0)
         {
@@ -109,10 +110,10 @@ abstract class BaseModel
         }
 
         if($groupBy == true){
-            $sql .= ' GROUP BY nome'.ucfirst($this->table);
+            $sql .= ' GROUP BY nome'.ucfirst($this->getTable());
         }
 
-        $sql .= ' ORDER BY id'.$this->table.' '.$ordem;
+        $sql .= ' ORDER BY id'.$this->getTable().' '.$ordem;
 
         if(!(is_null($litmitInit) && is_null($limitEnd))){
             $sql .= ' LIMIT '.$litmitInit.','. $limitEnd;
@@ -148,7 +149,7 @@ abstract class BaseModel
     public function delete(String $where , String $comparador ,Int $id, Int $limit = null):bool
     {
         
-        $sql = 'DELETE FROM '.$this->table.' WHERE '.$where.$comparador.$id;
+        $sql = 'DELETE FROM '.$this->getTable().' WHERE '.$where.$comparador.$id;
         if($limit != null){
             $sql .= ' limit '.$limit;
         }
@@ -168,7 +169,7 @@ abstract class BaseModel
 
     public function insert(array $elementos):bool
     {
-        $sql = "INSERT INTO {$this->table} (";
+        $sql = "INSERT INTO {$this->getTable()} (";
 
         $keys = '';
         $values = '';
@@ -208,7 +209,7 @@ abstract class BaseModel
 
         //return Commit::update($this->table, $elementos, $id);
         //update nome table set campo = valor and novocampo = novovalor
-        $sql = "UPDATE {$this->table} SET ";
+        $sql = "UPDATE {$this->getTable()} SET ";
 
         foreach ($this->satinizar($elementos) as $key => $value)
         {
@@ -217,7 +218,7 @@ abstract class BaseModel
 
         $sql = substr($sql, 0, -2);
 
-        $sql .= " where id{$this->table}={$id}";
+        $sql .= " where id{$this->getTable()}={$id}";
 
         $conn = Transaction::get();
         $result = $conn->exec($sql);
@@ -367,8 +368,8 @@ abstract class BaseModel
 
     protected function maxId():int
     {
-        $id = 'id'.ucfirst($this->table);
-        $sql = "SELECT MAX({$id}) as maxId from {$this->table}";
+        $id = 'id'.ucfirst($this->getTable());
+        $sql = "SELECT MAX({$id}) as maxId from {$this->getTable()}";
 
         $conn = Transaction::get();
 

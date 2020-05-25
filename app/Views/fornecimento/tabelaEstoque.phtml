@@ -45,15 +45,15 @@
 		    	<?php 
 					for ($i=0; !($i == count($this->view->tableFornecimento)); $i++) {
 
-						$validade = substr($this->view->tableFornecimento [$i]->getDataValidade(), 0, 10);
+						$validade = substr($this->view->tableFornecimento [$i]->getDtValidade(), 0, 10);
 						$validade = explode('-', $validade);
 
-						$dtReceb = substr($this->view->tableFornecimento [$i]->getDataRecebimento(), 0, 10);
+						$dtReceb = substr($this->view->tableFornecimento [$i]->getDtRecebimento(), 0, 10);
 						$dtReceb = explode('-', $dtReceb);
 
 				?>
 					<tr>
-						<td><?=$this->view->tableFornecimento [$i]->getProduto()->getNomeProduto();?></td>
+						<td><?=$this->view->tableFornecimento [$i]->getProdutoNome();?></td>
 						<td><?= $dtReceb[2].'/'.$dtReceb[1].'/'.$dtReceb[0];?></td>
 						<td><?= $validade[2].'/'.$validade[1].'/'.$validade[0];?></td>
 						<td><?=$this->view->tableFornecimento [$i]->getQtdFornecida();?></td>

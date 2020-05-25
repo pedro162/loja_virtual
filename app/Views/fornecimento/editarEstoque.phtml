@@ -41,19 +41,19 @@
 							<div class="col-md-3">
 								<div class="form-group">
 									<label for="idValidade">Data validade:</label>
-									<input value="<?=substr($this->view->result->getDataValidade(), 0, 10);?>" type="date" name="dtValidade" id="idValidade" class="form-control" equired="required">
+									<input value="<?=substr($this->view->result->getDtValidade(), 0, 10);?>" type="date" name="dtValidade" id="idValidade" class="form-control" equired="required">
 								</div>
 							</div>
 							<div class="col-md-3">
 								<div class="form-group">
 									<label for="dtFornecimento">Data fornecimento:</label>
-									<input value="<?=substr($this->view->result->getDataFornecimento(), 0, 10)?>" type="date" name="dtFornecimento" class="form-control"  id="dtFornecimento" required="required">
+									<input value="<?=substr($this->view->result->getDtFornecimento(), 0, 10)?>" type="date" name="dtFornecimento" class="form-control"  id="dtFornecimento" required="required">
 								</div>
 							</div>
 							<div class="col-md-3">
 								<div class="form-group">
 									<label for="dtRecebimento">Data recebimento:</label>
-									<input value="<?= substr($this->view->result->getDataRecebimento(), 0, 10)?>" type="date" name="dtRecebimento" class="form-control" id="dtRecebimento" required="required">
+									<input value="<?= substr($this->view->result->getDtRecebimento(), 0, 10)?>" type="date" name="dtRecebimento" class="form-control" id="dtRecebimento" required="required">
 								</div>
 							</div>
 							<div class="col-md-3">
@@ -86,7 +86,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<label for="idNF">Nota fiscal:</label>
-								<input value="<?=$this->view->result->getNotaFiscal();?>" type="number" name="nf" id="idNF" class="form-control" required="required">
+								<input value="<?=$this->view->result->getNf();?>" type="number" name="nf" id="idNF" class="form-control" required="required">
 							</div>
 						</div>
 					</div>

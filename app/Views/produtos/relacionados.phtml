@@ -61,26 +61,24 @@
 			</form>
 		</div>
 		<div class="col-xs-10 col-md-10" id="itens">
-	<?php for ($i = 0, $produtos =$this->view->produtos; !($i == count($produtos)); $i++){ ?>
 		<div class="row">
-			<?php 
-				for ($j=0; !($j == count($produtos[$i])); $j++) { 
-					
-					//$preco = explode('.', $produtos[$i][$j]->getPreco());
-					
-			?>
+		<?php for ($i = 0, $fornecimento =$this->view->fornecimento; !($i == count($fornecimento)); $i++){
+			$valueVenda = number_format($fornecimento[$i]->getVlVenda(), 2, ',', '.');
+			$valueVenda = explode(',', $valueVenda);
+
+		 ?> 
 			    <div class="col-xs-6 col-md-2 card-produto">
 			    	<div class="card produto-item">
-			    		<a class="produto-item" href=<?= "/produto/detals?cd=".$produtos[$i][$j]->getIdProduto();?> >
+			    		<a class="produto-item" href=<?= "/produto/detals?cd=".$fornecimento[$i]->getProdutoIdProduto();?> >
 			    		<div align="center" style="padding-top: 10px">
 			    			<img src="../files/imagens/xbox_controller.jpeg" class="produto" style="width: 100px; height: 100px;">
 			    		</div>
 				    	<div class="card-body">
 				    		<div>
-				    			<h3><?= $produtos[$i][$j]->getNomeProduto();?></h3>
-					        	<p><?= $produtos[$i][$j]->getTextoPromorcional();?></p>
+				    			<h3><?= $fornecimento[$i]->getProdutoNome();?></h3>
+					        	<p><?= $fornecimento[$i]->getTexto();?></p>
 					        	<p>
-					        		<strong><sup><small>R$</small></sup><?= 0//$preco[0]?><sup><small><?= 0//$preco[1]?></small></sup></strong>
+					        		<strong><sup><small>R$</small></sup><?=$valueVenda[0]?><sup><small><?= $valueVenda[1]?></small></sup></strong>
 					        	</p>
 				    		</div>
 				    	</div>
@@ -104,12 +102,9 @@
 					    </div>
 				    </div>
 			    </div>
-
-		    <?php
-				}
-		     ?>
-	    </div><hr style="border: none;">
+	    
   	<?php } ?>
+  	</div><hr style="border: none;">
 
 		<div class="row">
 			<div class="col-md-12">

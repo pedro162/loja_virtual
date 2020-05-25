@@ -17,8 +17,7 @@ use \Core\Utilitarios\Utils;
 class Fornecimento extends BaseModel
 {	
 	private $idFornecimento;
-    private $Produto;
-    private $idFornecedor;
+    private $FornecedorIdFornecedor;
     private $dtFornecimento;
     private $dtRecebimento;
     private $dtValidade;
@@ -28,12 +27,16 @@ class Fornecimento extends BaseModel
     private $vlVenda;
     private $ativo;
     private $quantidade;
-    private $Usuario; 
+    private $idUsuario; 
     private $nf;
+
+    private $idProduto;
+    private $texto;
+    private $produtoNome;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
-    protected $table = 'Fornecimento';
+    const TABLENAME = 'Fornecimento';
 
 	protected function clear(array $dados)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
     {
@@ -51,27 +54,27 @@ class Fornecimento extends BaseModel
             switch ($subArray[0]) {
                 case 'produto':
 
-                    $this->setProduto($subArray[1]);
+                    $this->setProdutoIdProduto($subArray[1]);
                     break;
 
                 case 'fornecedor':
 
-                    //$this->setIdFornecedor($subArray[1]);
+                    $this->setFornecedorIdFornecedor((int)$subArray[1]);
                     break;
 
                 case 'dtValidade':
 
-                    $this->setDataValidade($subArray[1]);
+                    $this->setDtValidade($subArray[1]);
                     break;
 
                 case 'dtFornecimento':
 
-                    $this->setDataFornecimento($subArray[1]);
+                    $this->setDtFornecimento($subArray[1]);
                     break;
 
                 case 'dtRecebimento':
 
-                    $this->setDataRecebimento($subArray[1]);
+                    $this->setDtRecebimento($subArray[1]);
                     break;
 
                 case 'qtd':
@@ -81,12 +84,12 @@ class Fornecimento extends BaseModel
 
                 case 'vlCompra':
 
-                    $this->setValCompra($subArray[1]);
+                    $this->setVlCompra($subArray[1]);
                     break;
 
                 case 'vlVenda':
 
-                    $this->setValVenda($subArray[1]);
+                    $this->setVlVenda($subArray[1]);
                     break;
 
                 case 'margem':
@@ -99,37 +102,23 @@ class Fornecimento extends BaseModel
                     break;
 
                 case 'nf': // falta criar o metodo ideal
-                    $this->setNotaFiscal($subArray[1]);
+                    $this->setNf($subArray[1]);
                     break;
             }
 
         }
+
+        $this->setUsuario(1);//aqui será inseido o usuario que fez a orepacao
     }
 
     protected function parseCommit()
     {	
-    	if(!empty($this->idFornecimento)){
-    		$this->data['idFornecimento'] = $this->getIdFornecimento();
-    	}
-
-        $dtRece = new \DateTime($this->getDataRecebimento());
-        $dtForne = new \DateTime($this->getDataFornecimento());
+        $dtRece = new \DateTime($this->getDtRecebimento());
+        $dtForne = new \DateTime($this->getDtFornecimento());
 		
         if($dtRece < $dtForne){
             throw new Exception('Falha ao no cadastro de fornecimento!<br/>');
         }
-
-		$this->data['ProdutoIdProduto'] 			= $this->getProduto()->getIdProduto();
-		$this->data['FornecedorIdFornecedor']		=  1; //apenas para teste
-		$this->data['dtFornecimento']				= $this->getDataFornecimento();
-		$this->data['dtRecebimento']				= $this->getDataRecebimento();	
-		$this->data['dtValidade']					= $this->getDataValidade();
-		$this->data['qtdFornecida']					= $this->getQtdFornecida();
-		$this->data['vlCompra']						= $this->getValCompra();
-		$this->data['vlVenda']						= $this->getValVenda();
-        $this->data['nf']                           = $this->getNotaFiscal();
-		$this->data['ativo']						= '1';
-		$this->data['idUsuario']					= '1';
 
         return $this->data;
     }
@@ -167,7 +156,50 @@ class Fornecimento extends BaseModel
         return ['msg','success','Estoque atualizado com sucesso!'];
     }
 
-    public function setProduto(Int $id):bool
+    public function getProdutoIdProduto():int
+    {
+
+        if((!isset($this->idProduto)) || (empty($this->idProduto))){
+
+            if(isset($this->data['ProdutoIdProduto']) && ($this->data['ProdutoIdProduto'] > 0)){
+                return $this->data['ProdutoIdProduto'];
+            }
+            throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
+        }
+        return $this->idProduto;
+        
+    }
+
+    public function getTexto():String
+    {
+
+        if((!isset($this->texto)) || (strlen($this->texto) == 0)){
+
+            if(isset($this->data['textoPromorcional']) && (strlen($this->data['textoPromorcional']) > 0)){
+                return $this->data['textoPromorcional'];
+            }
+            throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
+        }
+        return $this->texto;
+
+    }
+
+    public function getProdutoNome():String
+    {
+        if((!isset($this->produtoNome)) || (strlen($this->produtoNome) == 0)){
+
+            if(isset($this->data['produtoNome']) && (strlen($this->data['produtoNome']) > 0)){
+                return $this->data['produtoNome'];
+            }
+            throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
+        }
+        return $this->produtoNome;
+
+    }
+
+
+
+    public function setProdutoIdProduto(Int $id):bool
     {
         if($id >0){
 
@@ -175,33 +207,28 @@ class Fornecimento extends BaseModel
 
             $result = $produto->select(['idProduto','nomeProduto'], ['idProduto'=>$id], '=','asc', null, null,true);
             if($result[0] != false){
-                $this->Produto = $result[0];
+                $this->data['ProdutoIdProduto'] = $result[0]->getIdProduto();
                 return true;
-            }else{
-                throw new Exception('Parametro invalido<br/>'.PHP_EOL);
             }
         }
 
         throw new Exception('Parametro invalido<br/>'.PHP_EOL);
+
     }
 
-    public function getProduto():Produto
-    {
-        if(isset($this->Produto) && (!empty($this->Produto))){
-            return $this->Produto;
-        }
-        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
-    }
 
     public function setUsuario(int $id):bool
     {
+        $this->data['idUsuario'] = $id;//apenas para teste, deve ser removida
+        return true;//apenas para teste, deve ser removida
+
         if($id > 0){
 
             $user = new User();
 
             $result = $user->select(['idUsuario','nomeUsuario'], ['idUsuario'=>$id], '=','asc', null, null,true);
             if($result[0] != false){
-                $this->Usuario = $result[0];
+                $this->data['idUsuario'] = $result[0]->getIdUsuario();
                 return true;
             }else{
                 throw new Exception('Parametro invalido<br/>'.PHP_EOL);
@@ -213,21 +240,27 @@ class Fornecimento extends BaseModel
 
     public function getUsuario():int
     {
-        if(isset($this->Usuario) && (!empty($this->Usuario))){
-            return $this->Usuario;
+        if((!isset($this->idUsuario)) || ($this->idUsuario <= 0)){
+
+            if(isset($this->data['idUsuario']) && ($this->data['idUsuario'] > 0)){
+                return $this->data['idUsuario'];
+            }
+            throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
         }
-        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        return $this->idUsuario;
     }
 
-    public function setIdFornecedor(int $id):bool
-    {
+    public function setFornecedorIdFornecedor(int $id):bool
+    {   
+         $this->data['FornecedorIdFornecedor'] = $id;return true;
+        //apenas para test falta implementar classe fornecelor
         if($id > 0){
 
             $fornecedor = new Fornecedor();
 
             $result = $fornecedor->select(['idFornecedor','nomeFornecedor'], ['idFornecedor'=>$id], '=','asc', null, null,true);
             if($result[0] != false){
-                $this->idFornecedor = $result[0]->getIdFornecedor();
+                $this->data['FornecedorIdFornecedor'] = $result[0]->getIdFornecedor();
                 return true;
             }else{
                 throw new Exception('Parametro invalido<br/>'.PHP_EOL);
@@ -237,42 +270,61 @@ class Fornecimento extends BaseModel
         throw new Exception('Parametro invalido<br/>'.PHP_EOL);
     }
 
-    public function getIdFornecedor():int
+    public function getFornecedorIdFornecedor():int
     {
-        if(isset($this->idFornecedor) && (!empty($this->idFornecedor))){
-            return $this->idFornecedor;
+        if((!isset($this->FornecedorIdFornecedor)) || ($this->FornecedorIdFornecedor <= 0)){
+
+            if(isset($this->data['FornecedorIdFornecedor']) && ($this->data['FornecedorIdFornecedor'] > 0)){
+                return $this->data['FornecedorIdFornecedor'];
+            }
+
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
-        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        return $this->FornecedorIdFornecedor;
+        
     }
 
 
-    public function setNotaFiscal(String $nota)
+    public function setNf(String $nota)
     {
         if(isset($nota) && (strlen($nota) >=4) && (strlen($nota) <= 40)){
-            $this->nf = $nota;
+            $this->data['nf'] = $nota;
             return true;
         }
         throw new Exception('Parãmetro inválido<br/>'.PHP_EOL);
     }
 
 
-    public function getNotaFiscal()
+    public function getNf()
     {
-        if(isset($this->nf) && (!empty($this->nf))){
+        if((!isset($this->nf)) || (strlen($this->nf) == 0)){
 
-            return $this->nf;
+            if(isset($this->data['nf']) && (strlen($this->data['nf']) > 0)){
+                return $this->data['nf'];
+            }
+
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+            
         }
 
-        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        return $this->nf;
+       
     }
 
 
     public function getIdFornecimento():int
     {
-        if(isset($this->idFornecimento) && (!empty($this->idFornecimento))){
-            return $this->idFornecimento;
+        if((!isset($this->idFornecimento)) || (empty($this->idFornecimento))){
+
+            if(isset($this->data['idFornecimento']) && ($this->data['idFornecimento'] > 0)){
+                return $this->data['idFornecimento'];
+            }
+
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
-        throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+
+        return $this->idFornecimento;
+        
     }
 
     public function setIdFornecimento(Int $id):bool
@@ -280,7 +332,7 @@ class Fornecimento extends BaseModel
         if(isset($id) && ($id > 0)){
             $fornecimento = $this->select(['idFornecimento'], ['idFornecimento'=>$id], '=','asc', null, null,true);
             if($fornecimento != false){
-                $this->idFornecimento = $id;
+                $this->data['idFornecimento'] = $id;
                 return true;
             }else{
                 throw new Exception('Propriedade inválida<br/>'.PHP_EOL);
@@ -289,18 +341,23 @@ class Fornecimento extends BaseModel
         throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
     }
 
-    public function getDataFornecimento()
+    public function getDtFornecimento()
     {
-    	if(!empty($this->dtFornecimento)){
+        if((!isset($this->dtFornecimento)) || (empty($this->dtFornecimento))){
 
-    		return $this->dtFornecimento;
-    	}
+            if(isset($this->data['dtFornecimento']) && (!empty($this->data['dtFornecimento']))){
+                return $this->data['dtFornecimento'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
 
-    	throw new Exception('Propriedade não definida<br/>');
+        return $this->dtFornecimento;
+
     }
 
 
-    public function setDataFornecimento(String $data)
+    public function setDtFornecimento(String $data)
     {
         if(isset($data) && (strlen($data) > 0)){
 
@@ -315,7 +372,7 @@ class Fornecimento extends BaseModel
 
                 if($fornecimento <= $today){
 
-                    $this->dtFornecimento = $fornecimento->format('Y-m-d H:i:s');
+                    $this->data['dtFornecimento'] = $fornecimento->format('Y-m-d H:i:s');
 
                     return true;
                 }
@@ -329,17 +386,23 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function getDataRecebimento()
+    public function getDtRecebimento()
     {
-    	if(!empty($this->dtRecebimento)){
 
-    		return $this->dtRecebimento;
-    	}
+        if((!isset($this->dtRecebimento)) || (empty($this->dtRecebimento))){
 
-    	throw new Exception('Propriedade não definida<br/>');
+            if(isset($this->data['dtRecebimento']) && (!empty($this->data['dtRecebimento']))){
+                return $this->data['dtRecebimento'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
+
+        return $this->dtRecebimento;
+
     }
 
-    public function setDataRecebimento(string $data)
+    public function setDtRecebimento(string $data)
     {
         if(isset($data) && (strlen($data) > 0)){
 
@@ -353,7 +416,7 @@ class Fornecimento extends BaseModel
                 $today = new \DateTime($date->format('Y-m-d'));
 
                 if($receb <= $today){
-                    $this->dtRecebimento = $receb->format('Y-m-d H:i:s');
+                    $this->data['dtRecebimento'] = $receb->format('Y-m-d H:i:s');
                     return true;
                 }
                
@@ -366,18 +429,22 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function getDataValidade()
-    {
-    	if(!empty($this->dtValidade)){
+    public function getDtValidade()
+    { 
+        if((!isset($this->dtValidade)) || (empty($this->dtValidade))){
 
-    		return $this->dtValidade;
-    	}
+            if(isset($this->data['dtValidade']) && (!empty($this->data['dtValidade']))){
+                return $this->data['dtValidade'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
 
-    	throw new Exception('Propriedade não definida<br/>');
+        return $this->dtValidade;
     }
 
 
-    public function setDataValidade(String $data)
+    public function setDtValidade(String $data)
     {
         if(isset($data) && (strlen($data) > 0)){
 
@@ -392,7 +459,7 @@ class Fornecimento extends BaseModel
 
                 if($validade >= $today){
 
-                    $this->dtValidade = $validade->format('Y-m-d H:i:s');
+                    $this->data['dtValidade'] = $validade->format('Y-m-d H:i:s');
 
                     return true;
                 }
@@ -407,23 +474,30 @@ class Fornecimento extends BaseModel
 
     public function getQtdVendida():int
     {
-        if(isset($this->qtdVendida) && ($this->qtdVendida >=0)){
+        if((!isset($this->qtdVendida)) || ($this->qtdVendida < 0)){
 
-            return $this->qtdVendida;
+            if(isset($this->data['qtdVendida']) && ($this->data['qtdVendida'] >= 0)){
+                return $this->data['qtdVendida'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
 
-        throw new Exception('Propriedade não definida<br/>');
+        return $this->qtdVendida;
     }
 
     public function getQtdFornecida():int
     {
+        if((!isset($this->qtdFornecida)) || ($this->qtdFornecida <= 0)){
 
-        if(!empty($this->qtdFornecida)){
-
-            return $this->qtdFornecida;
+            if(isset($this->data['qtdFornecida']) && ($this->data['qtdFornecida'] > 0)){
+                return $this->data['qtdFornecida'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
 
-    	throw new Exception('Propriedade não definida<br/>');
+        return $this->qtdFornecida;
     }
 
 
@@ -431,7 +505,7 @@ class Fornecimento extends BaseModel
     {
         if($qtd > 0)
         {
-            $this->qtdFornecida = $qtd;
+            $this->data['qtdFornecida'] = $qtd;
             return true;
         }
 
@@ -442,21 +516,24 @@ class Fornecimento extends BaseModel
 
     public function getValCompra()
     {
-    	
-    	if(!empty($this->vlCompra)){
+        if((!isset($this->vlCompra)) || ($this->vlCompra <= 0)){
 
-    		return $this->vlCompra;
-    	}
+            if(isset($this->data['vlCompra']) && ($this->data['vlCompra'] > 0)){
+                return $this->data['vlCompra'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
 
-    	throw new Exception('Propriedade não definida<br/>');
+        return $this->vlCompra;
     }
 
-    public function setValCompra(float $val)
+    public function setVlCompra(float $val)
     {
         
         if(isset($val) && ($val > 0)){
             
-            $this->vlCompra = $val;
+            $this->data['vlCompra'] = $val;
 
             return true;
         }
@@ -465,23 +542,26 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function getValVenda()
+    public function getVlVenda()
     {
-    	
-    	if(!empty($this->vlVenda)){
+        if((!isset($this->vlVenda)) || ($this->vlVenda <= 0)){
 
-    		return $this->vlVenda;
-    	}
+            if(isset($this->data['vlVenda']) && ($this->data['vlVenda'] > 0)){
+                return $this->data['vlVenda'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
 
-    	throw new Exception('Propriedade não definida<br/>');
+        return $this->vlVenda;
     }
 
 
-    public function setValVenda(float $val)
+    public function setVlVenda(float $val)
     {
         if(isset($val) && ($val > 0)){
             
-            $this->vlVenda = $val;
+            $this->data['vlVenda'] = $val;
             
             return true;
         }
@@ -491,13 +571,17 @@ class Fornecimento extends BaseModel
 
     public function getAtivo()
     {
-    	
-    	if(!empty($this->ativo)){
 
-    		return $this->ativo;
-    	}
+        if((!isset($this->ativo)) || ($this->ativo < 0) || ($this->ativo > 1) ){
 
-    	throw new Exception('Propriedade não definida<br/>');
+            if(isset($this->data['ativo']) && ($this->data['ativo'] >= 0)  && ($this->data['ativo'] <= 1)){
+                return $this->data['ativo'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+        }
+
+        return $this->ativo;
     }
 
 
@@ -506,7 +590,7 @@ class Fornecimento extends BaseModel
         
         if(isset($ativo) && ($ativo >=0) && ($ativo <= 1)){
 
-            $this->ativo = $ativo;
+            $this->data['ativo'] = $ativo;
 
             return true;
         }
@@ -529,19 +613,23 @@ class Fornecimento extends BaseModel
 
     public function getMargem():float
     {
-        if(isset($this->margem) && ($this->margem > 0)){
+        if((!isset($this->margem)) || ($this->margem < 0)){
 
-            return $this->margem; 
+            if(isset($this->data['margem']) && ($this->data['margem'] > 0)){
+                return $this->data['margem'];
+            }
+            
+            throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
         }
-        
-        throw new Exception('Propriedade não definida<br/>');
+
+        return $this->margem;
     }
 
 
-    public function listarConsultaPersonalizada(String $where = null)
+    public function listarConsultaPersonalizada(String $where = null, Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
     {
 
-        $sqlPersonalizada = "SELECT distinct P.nomeProduto, P.idProduto AS idProduto, F.vlVenda as vlVenda, F.dtValidade, (F.qtdFornecida - F.qtdVendida) AS qtdRest, F.qtdVendida ";
+        $sqlPersonalizada = "SELECT distinct P.nomeProduto As produtoNome, P.textoPromorcional As texto, P.idProduto AS idProduto, F.vlVenda as vlVenda, F.dtValidade, F.dtRecebimento, F.dtRecebimento, F.dtFornecimento , F.nf, F.qtdVendida, F.qtdFornecida, F.idFornecimento";
         $sqlPersonalizada .= " FROM  Fornecimento F inner join Produto P on P.idProduto = F.ProdutoIdProduto";
 
         if($where != null)
@@ -549,7 +637,13 @@ class Fornecimento extends BaseModel
             $sqlPersonalizada .= ' WHERE '.$where;
         }
 
-        $result = $this->persolizaConsulta($sqlPersonalizada);
+        if(($limitInt != NULL) && ($limtEnd != NULL)){
+
+            if(($limitInt >= 0) && ($limtEnd >= 0)){
+                $sqlPersonalizada .= ' LIMIT '.$limitInt.','. $limtEnd; 
+            }
+        } 
+        $result = $this->persolizaConsulta($sqlPersonalizada, $clasRetorno);
 
         return $result;
     }
@@ -574,7 +668,7 @@ class Fornecimento extends BaseModel
             if($like){
                 $dados = '%'.$dados.'%';
                 $dados = $this->satinizar($dados, true);
-                $result = $this->listarConsultaPersonalizada('P.nomeProduto LIKE '.$dados);
+                $result = $this->listarConsultaPersonalizada('P.nomeProduto LIKE '.$dados, NULL, NULL, true);
             }else{
                 $result = $this->listarConsultaPersonalizada();
             }
@@ -584,6 +678,19 @@ class Fornecimento extends BaseModel
         throw new Exception('Parâmetro inválido<br/>'.PHP_EOL);
     }
     
-    
+    public function __get($prop)
+    {
+        if(method_exists($this, 'get'.ucfirst($prop))){
+
+            return call_user_func([$this,'get'.ucfirst($prop)]);
+        }
+    }
+
+    public function __set($prop, $value)
+    {   
+        if(method_exists($this, 'set'.ucfirst($prop))){ 
+            return call_user_func([$this,'set'.ucfirst($prop)], $value);
+        }
+    }
 
 }

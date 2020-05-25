@@ -29,12 +29,13 @@ $routes[] = ['/marca/salvar', 'MarcaController@salvar'];
 $routes[] = ['/categoria/cadastrar', 'CategoriaController@cadastrar'];
 $routes[] = ['/categoria/salvar', 'CategoriaController@salvar'];
 
-$routes[] = ['/venda/carrinho', 'VendaController@addCarrinho'];
-$routes[] = ['/venda/iniciar', 'VendaController@iniciarCompra'];
-$routes[] = ['/venda/nova', 'VendaController@nova'];
-$routes[] = ['/venda/painel', 'VendaController@painel'];
-$routes[] = ['/venda/load/cliente', 'VendaController@loadCliente'];
-$routes[] = ['/venda/load/estoque', 'VendaController@loadEstoque'];
+$routes[] = ['/pedido/carrinho', 'PedidoController@addCarrinho'];
+$routes[] = ['/pedido/iniciar', 'PedidoController@iniciarCompra'];
+$routes[] = ['/pedido/novo', 'PedidoController@novo'];
+$routes[] = ['/pedido/painel', 'PedidoController@painel'];
+$routes[] = ['/pedido/load/pessoa', 'PedidoController@loadPessoa'];
+$routes[] = ['/pedido/load/estoque', 'PedidoController@loadEstoque'];
+$routes[] = ['/pedido/save/pedido', 'PedidoController@savePedido'];
 
 //$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
 //$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];

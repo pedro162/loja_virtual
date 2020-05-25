@@ -48,6 +48,18 @@ $(document).ready(function(){
     
   })
 
+  //-------------- EXIBE OU ESCONDE A NAVEGAÇÃO DO PAINEL VENDA CLIENTE --------------
+  $('#dinamic').delegate('#controlNavPanel', 'click', function(){
+    let i = $(this).find('#ic');
+    if(i.hasClass('fa-plus-circle')){ 
+      i.removeClass('as fa-plus-circle fa-1x').addClass('fas fa-minus')
+     
+    }else{
+       i.addClass('as fa-plus-circle fa-1x').removeClass('fas fa-minus')
+    }
+    $('#navPanelCliente').toggle();
+  })
+
 // ------------------------------ Preview de imagens upload ---------------------
   
   $('#dinamic').delegate('#imgproduto, #upload','change',function(){
@@ -140,11 +152,38 @@ $('#dinamic').delegate('form#serchProd input[name=loadProduto], form#loadCodProd
     select:function(event, ui){
       $('form#serchProd #loadCodProd').val(ui.item.cod);
 
+      if((Number(ui.item.qtd) == 0)){
+
+        if($('#tableSearch').hasClass('table-dark') == true){
+
+          $('#tableSearch').removeClass('table-dark');
+        }
+
+        if($('#tableSearch').hasClass('table-danger') == false){
+
+          $('#tableSearch').addClass('table-danger');
+        }
+
+        
+      }else{
+
+        if($('#tableSearch').hasClass('table-danger') == true){
+
+          $('#tableSearch').removeClass('table-danger');
+        }
+
+        if($('#tableSearch').hasClass('table-dark') == false){
+
+          $('#tableSearch').addClass('table-dark');
+        }
+        
+      }
+
       let tr = $('<tr/>');
-      tr.append($('<td/>').text(ui.item.cod))
+      tr.append($('<td/>').css('text-align', 'center').text(ui.item.cod))
       tr.append($('<td/>').text(ui.item.label))
-      tr.append($('<td/>').text(ui.item.vlVen))
-      tr.append($('<td/>').text(ui.item.qtd))
+      tr.append($('<td/>').css('text-align', 'right').text(formatMoney(ui.item.vlVen)))
+      tr.append($('<td/>').css('text-align', 'center').text(ui.item.qtd));
 
       $('#tableSearch tbody').html(tr);
     },
@@ -172,7 +211,7 @@ function loadProdutos(obj, request, func)
 
   $.ajax({
     type:'POST',
-    url: '/venda/load/estoque',
+    url: '/pedido/load/estoque',
     data: {'loadEstoque': dados},
     dataType:'json',
     success: function(retorno){
@@ -230,9 +269,10 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
   }
 
   
-  let codigo = $(this).find('table tbody tr:first td:eq(0)').text();
-  let prod = $(this).find('table tbody tr:first td:eq(1)').text();
-  let preco = $(this).find('table tbody tr:first td:eq(2)').text();
+  let codigo = String($(this).find('table tbody tr:first td:eq(0)').text());
+  let prod = String($(this).find('table tbody tr:first td:eq(1)').text());
+  let preco = foramtCalcCod($(this).find('table tbody tr:first td:eq(2)').text());
+  let estoque = Number($(this).find('table tbody tr:first td:eq(3)').text());
 
   if((prod.length == 0) || (preco.length == 0)){
 
@@ -240,20 +280,36 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
     return false;
   }
 
-  let valDesc = (parseFloat(desconto) / 100) * parseFloat(preco);
-  let precoComDesc = parseFloat(preco) - valDesc;
+  if(estoque == 0){
+
+    message(['msg', 'warning', 'Atenção: Estoque insuficiente para o produto "'+prod+'" !']);
+    return false;
+  }
+
+
+  desconto = parseFloat(desconto);
+  preco = parseFloat(preco);
+  
+
+  let valDesc = ((desconto / 100) * preco);
+  let precoComDesc = (preco - valDesc);
   let parsQtdd = Number(qtd);
+
+  let subTotal = (precoComDesc * parsQtdd);
+  let totDesconto = (valDesc * parsQtdd);
 
   let tr = $('<tr/>');
   tr.append($('<td/>').css('text-align', 'center').html(prod))
   tr.append($('<td/>').css('text-align', 'center').html(parsQtdd))
-  tr.append($('<td/>').css('text-align', 'center').html(preco))
-  tr.append($('<td/>').css('text-align', 'center').html(valDesc))
-  tr.append($('<td/>').css('text-align', 'center').html(valDesc * parsQtdd))
-  tr.append($('<td/>').css('text-align', 'center').html(precoComDesc))
-  tr.append($('<td/>').css('text-align', 'center').html(precoComDesc * parsQtdd))
+  tr.append($('<td/>').css('text-align', 'center').html(formatMoney(preco)))
+  tr.append($('<td/>').css('text-align', 'center').html(formatMoney(valDesc, 3)))
+  tr.append($('<td/>').css('text-align', 'center').html(formatMoney(totDesconto)))
+  tr.append($('<td/>').css('text-align', 'center').html(formatMoney(precoComDesc)))
+  tr.append($('<td/>').css('text-align', 'center').html(formatMoney(subTotal)))
 
-  let edit = $('<a/>').attr('href', '/produto/editar?id='+codigo).addClass('btn btn-success mr-2').append($('<i/>').addClass('fas fa-pencil-alt'))
+  let edit = $('<a/>').attr('data-target', '#myModal').attr('href', '/produto/editar?id='+codigo).addClass('btn btn-success mr-2').append($('<i/>').addClass('fas fa-pencil-alt'))
+  edit.attr('data-toggle', 'modal');
+
   let delet = $('<a/>').attr('href', '/produto/excluir?id='+codigo).addClass('btn btn-danger').append($('<i/>').addClass('fas fa-trash-alt'))
 
   tr.append($('<td/>').append(edit).append(delet))
@@ -263,15 +319,7 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
   $('form#vendaPainelTable').find('table tbody').prepend(tr); //adiciona a tr com os dados
 
   //calcula o total geral
-  let totalGeral = 0;
-  $('form#vendaPainelTable').find('table tbody tr').each(function(){
-    let val =  $(this).find('td:eq(6)').text();
-
-    totalGeral+=parseFloat(val);
-
-  })
-  $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
-
+   calculaTotalVenda();
 
   //limpa os imputs e a tabela de busca
   $(this).find('input').val('');
@@ -285,29 +333,141 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
 });
 
   //------------------ reove item da tabela de pedito------
-  $('#dinamic').delegate('form#vendaPainelTable tbody a.btn-danger', 'click', function(event){
-    event.preventDefault();
+$('#dinamic').delegate('form#vendaPainelTable tbody a.btn-danger', 'click', function(event){
+  event.preventDefault();
 
-    let produto = $(this).parents('tr').find('td:eq(0)').text()
+  let produto = $(this).parents('tr').find('td:eq(0)').text()
 
-    let comfirm = confirm('Deseja realmete remover o item "'+produto+'" ?');
-    if(comfirm == true){
-      $(this).parents('tr').remove();
+  let comfirm = confirm('Deseja realmete remover o item "'+produto+'" ?');
+  if(comfirm == true){
+    $(this).parents('tr').remove();
 
-      let totalGeral = 0;
-      $('form#vendaPainelTable').find('table tbody tr').each(function(){
-        let val =  $(this).find('td:eq(6)').text();
+    calculaTotalVenda();
 
-        totalGeral+=parseFloat(val);
+  }
+});
 
-      })
-      $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
+function calculaTotalVenda(){
+
+  let totalGeral = 0;
+    $('form#vendaPainelTable').find('table tbody tr').each(function(){
+      let val =  $(this).find('td:eq(6)').text(); 
+      totalGeral+=parseFloat(foramtCalcCod(val));
+
+    })
+
+
+    totalGeral = formatMoney(totalGeral)
+    $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
+}
+
+//------------------ edita o item da tabela de pedito------
+$('#dinamic').delegate('form#vendaPainelTable tbody a.btn-success', 'click', function(event){
+  event.preventDefault();
+
+//recupera a quantidade o desconto e o preco
+  let produto = $(this).parents('tr').find('td:eq(0)').text() 
+  let qtd = $(this).parents('tr').find('td:eq(1)').text()
+  let desconto = parseFloat(foramtCalcCod($(this).parents('tr').find('td:eq(3)').text()))
+  let preco = parseFloat(foramtCalcCod($(this).parents('tr').find('td:eq(2)').text()))
+
+  let percentDesc = parseFloat(((desconto * 100) / preco)).toFixed(2)
+
+//cria o imput de quantidade e sua lable
+  let inputQtd = $('<input/>').attr('type', 'number').attr('name', 'qtdEdit').attr('id', 'qtdEdit')
+  inputQtd.addClass('form-control').val(qtd);
+
+  let labelQtd = $('<label/>').attr('for', 'qtdEdit').html('<strong>Quantidade: </strong>')
+  //forma o grupo input lable
+  let formGroupQtdLabel = $('<div/>').addClass('form-group').append(labelQtd)
+  .append(inputQtd)
+
+//cria o imput de desconto e sua lable
+  let inputDesc = $('<input/>').attr('type', 'text').attr('name', 'qtdDesc').attr('id', 'qtdDesc');
+  inputDesc.addClass('form-control').val(percentDesc);
+
+  let labelDesc = $('<label/>').attr('for', 'qtdDesc').html('<strong>Desconto %: </strong>');
+  //forma o grupo input lable
+  let formGroupDescLabel = $('<div/>').addClass('form-group').append(labelDesc)
+  .append(inputDesc)
+
+  let aplicar = $('<button/>').attr('id', 'aplyModIten').addClass('btn btn-primary').html('<strong>Applicar</strong>')
+  let cancelar = $('<button/>').addClass('btn btn-danger ml-2').html('<strong>Cancelar</strong>');
+  cancelar.attr('data-dismiss', 'modal');
+
+  let divRow = $('<div/>').addClass('row').append($('<div/>').addClass('col-md-6').html(formGroupQtdLabel));
+  divRow.append($('<div/>').addClass('col-md-6').html(formGroupDescLabel));
+  divRow.append($('<div/>').addClass('col-md-12').append(aplicar).append(cancelar));
+
+  //chama o modal e adiciona os elemtnos
+  getModal('<strong>Editar: </strong><span>'+produto+'</span>', divRow);
+
   
+});
+
+//--------------- recalcula o total da compra se aplicado a edicao da quantidade ou desconto --------------
+$('#dinamic').delegate('#aplyModIten', 'click', function(){
+  //falta continar implemtação
+  calculaTotalVenda();
+});
+
+//-------------------- ENVIA O PEDIDO PARA SALVAR -----------------------------
+$('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
+  event.preventDefault();
+
+  let dados = new Array();
+
+  $(this).find('table tbody tr').each(function(){
+
+
+    let cod = $(this).find('td:eq(7) a').attr('href');
+    cod = cod.split('=')[1];
+
+    let qtd = foramtCalcCod($(this).find('td:eq(1)').text());
+    let preco = foramtCalcCod($(this).find('td:eq(2)').text());
+    let precDesc = foramtCalcCod($(this).find('td:eq(3)').text());
+    let totDesc = foramtCalcCod($(this).find('td:eq(4)').text());
+    let precoComDesc = foramtCalcCod($(this).find('td:eq(5)').text());
+    let subtTot = foramtCalcCod($(this).find('td:eq(6)').text());
+
+    dados.push([cod, qtd, preco, precDesc, totDesc, precoComDesc, subtTot]);
+  
+  })
+
+  let sentinela = false;
+  for (let i = 0; !(i == dados.length); i++) {
+
+    for (let j = 0; !(j == dados[i].length); j++) {
+      
+      if((dados[i][j].length == 0) || (dados[i][j] === false)){
+        sentinela = true;
+        break
+      }
     }
-  });
+
+  }  
+
+  if(sentinela == true){
+    message(['msg', 'warning', 'Atenção: Algo errado aconteceu, recarrege a página novamente!']);
+    return false;
+  }
+
+  $.ajax({
+    type:'POST',
+    url: '/pedido/save/pedido',
+    data: {'pedidoPanelVenda': dados},
+    dataType:'HTML',
+    success: function(retorno){
+     console.log(retorno)
+
+      }
+    });
 
 
+  alert('dados enviados');
 
+
+});
 
 
 
@@ -322,14 +482,14 @@ $('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPain
   cliente.autocomplete({
   minLength: 3,
   source: function (request, response) {
-      loadCliente(cliente ,request, response);
+      loadPessoa(cliente ,request, response);
     },
     select:function(event, ui){
       $('form#vendaPainel #idCod').val(ui.item.teste);
     },
     autoFocus: true,
     change:function(request, response){
-      loadCliente(cliente ,request, response);
+      loadPessoa(cliente ,request, response);
     },
     delay: 1
 
@@ -337,7 +497,7 @@ $('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPain
 });
 
 //------------------------------------ faz requisiçoes ajax e gera o resulta do autocomplete ----------------------------
-function loadCliente(obj, request, func)
+function loadPessoa(obj, request, func)
 {
 
   let dados = new Array();
@@ -350,8 +510,8 @@ function loadCliente(obj, request, func)
 
   $.ajax({
     type:'POST',
-    url: '/venda/load/cliente',
-    data: {'loadCliente': dados},
+    url: '/pedido/load/pessoa',
+    data: {'loadPessoa': dados},
     dataType:'json',
     success: function(retorno){
       let arrObj = new Array();
@@ -411,7 +571,6 @@ function loadCliente(obj, request, func)
       data: {'estoque': submitArray},
       dataType: 'json',
       success: function(retorno){
-        console.log(retorno);
         message(retorno);
       }
 
@@ -597,8 +756,8 @@ function message(retorno){
     msg.attr('align', 'center').append('<h3>'+retorno[2]+'</h3>');
     msg.css('box-shadow', '2px 2px 3px #000');
 
-    $('#msg').detach();
-    $('#cadastrarProduto, #estoque, #editEstoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria, #serchProd').
+    $('#dinamic').find('div #msg').remove();
+    $('#cadastrarProduto, #estoque, #editEstoque, #editarProduto, #cadastrarMarca, #cadastrarCategoria, #vendaPainelTable').
     parent().prepend($('<div/>').attr('id', 'msg').addClass('row mb-5').html(msg));
   }
 }
@@ -704,11 +863,7 @@ $('#menuAdminHide').on('click', function(){
   rowOptions.append(nav).addClass('col-md-12');
   getModal('<strong>Menu de opções</strong>', rowOptions);*/
 })
-
-/* ---------------- Teste -----------*/
-
-
-
+  
 //chama o modal e passa alguns parametros
 
   function getModal(titulo='Aguarde', body='', footer='') {
@@ -724,7 +879,7 @@ $('#menuAdminHide').on('click', function(){
     idProduto = idProduto.substring(idProduto.indexOf('=')+1);
 
    let xhr = $.ajax({
-            url: '/venda/carrinho?id='+idProduto,
+            url: '/pedido/carrinho?id='+idProduto,
             type: 'GET',
             dataType: 'json',
             success: function(retorno){
@@ -762,7 +917,7 @@ $('#menuAdminHide').on('click', function(){
                   $('#dinamic').html(retorno);
                 break;
 
-                case '/venda/nova':
+                case '/pedido/novo':
                   $('#closeModal').trigger('click');
                   $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
                   $('#dinamic').html(retorno).removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
@@ -891,6 +1046,67 @@ function criaComponentSelect(values, name){
 
   return select;
 
+}
+
+
+//-------------- FAZ A FORMATAÇÃO PARA DINHEIRO ------------
+function formatMoney(amount, decimalCount = 2, decimal = ',', thousands = '.'){
+  try{
+
+    decimalCount = Math.abs(decimalCount);
+    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+    const negativeSing = amount < 0 ? '-' : '';
+
+    let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+    let j = (i.length > 3) ? i.length % 3 : 0;
+
+    let fomartted = negativeSing;
+    fomartted += (j ? i.substr(0, j) + thousands : '');
+    fomartted += i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands);
+    fomartted += (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : '');
+
+    return fomartted;
+
+
+  }catch(e){
+
+    console.log(e);
+  }
+
+
+}
+
+
+function foramtCalcCod(number)
+{
+  try{
+
+    number = String(number);
+    
+
+    if(number.length == 0){
+      return false;
+    }
+
+    let arrNumber = number.split('.');
+
+    let newNumber = '';
+    for (let i =0; !(i == arrNumber.length); i++) {
+      newNumber+=arrNumber[i]
+    }
+
+
+    newNumber = newNumber.replace(/,/g, '.');
+
+    newNumber = parseFloat(newNumber).toFixed(2);
+
+    return newNumber;
+
+  }catch(e){
+
+    console.log(e);
+  }
 }
 
 

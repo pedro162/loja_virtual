@@ -11,6 +11,7 @@ use Core\Containner\File;
 use App\Models\Venda;
 use App\Models\Categoria;
 use App\Models\Marca;
+use App\Models\Fornecimento;
 
 
 class ProdutoController extends BaseController
@@ -20,7 +21,7 @@ class ProdutoController extends BaseController
         Transaction::startTransaction('connection');
 
         $pagina = 1;
-        $itensPorPagina = 18;
+        $itensPorPagina = 2;
 
         if(isset($request['get'], $request['get']['pagina'])){
             $pagina = $request['get']['pagina'];
@@ -28,13 +29,16 @@ class ProdutoController extends BaseController
 
         $produto = new Produto();
 
-        $totItens = $produto->countItens();
+        $fornecimento = new Fornecimento();
 
-        $campos = ['nomeProduto','textoPromorcional', 'idProduto'];
+        $totItens = (int) $fornecimento->countItens();
 
-        $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
+        $inicio = (int) ($itensPorPagina * $pagina) - $itensPorPagina;
+        $inicio = ($inicio == 0) ? 1: $inicio;
+
+        $result = $fornecimento->listarConsultaPersonalizada(null, $inicio, $itensPorPagina, true);
         
-        $this->view->produtos = $produto->listarProdutos($result);
+        $this->view->fornecimento = $result; 
         
         $this->view->pagina = $pagina;
         $this->view->itensPorPagina = $itensPorPagina;
@@ -108,7 +112,7 @@ class ProdutoController extends BaseController
             $this->view->totPaginas = ceil($totItens / $itensPorPagina);
 
             $result = $produto->paginador($campos, $itensPorPagina, $pagina, true);
-
+            
             $stdPaginacao = new \stdClass();
             $stdPaginacao->pagina = $this->view->pagina;
             $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;

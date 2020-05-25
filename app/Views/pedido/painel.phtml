@@ -2,65 +2,92 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="container-fluid">
-			<nav class="navbar navbar-expand-sm justify-content-center pt-2 pb-2 pl-2 pr-2" id="navPanelCliente">
-			  <ul class="navbar-nav" >
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 1</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 2</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item" style="margin: auto;">
-			      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
-			    </li>
-			    <li class="nav-item dropdown" style="margin: auto;">
-			      <a class="dropdown-toggle link" href="#" id="navbardrop" data-toggle="dropdown">
-			        Dropdown link
-			      </a>
-			      <div class="dropdown-menu" herf="#navbardrop" >
-			        <a class="dropdown-item" href="#">Link 1</a>
-			        <a class="dropdown-item" href="#">Link 2</a>
-			        <a class="dropdown-item" href="#">Link 3</a>
-			      </div>
-			    </li>
-			  </ul>
-			</nav>
-			<div class="row mt-3">
-				<div class="col-md-4">
-					<span><strong>Cliente: </strong> <?=$this->view->cliente?></span>
+			<div class="row">
+				<div class="col-md-1">
+					<button type="button" class="btn btn-success mt-2" id="controlNavPanel">
+						<i class="fas fa-minus" id="ic"></i>
+					</button>
 				</div>
-				<div class="col-md-4">
-					<span><strong>CPF: </strong></span>
-				</div>
-				<div class="col-md-4">
-					<span><strong>Endereço entrega: </strong></span>
+				<div class="col-md-11">
+					<nav class="navbar navbar-expand-sm justify-content-center pt-2 pb-2 pl-2 pr-2" id="navPanelCliente">
+					  <ul class="navbar-nav" >
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 2</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					    </li>
+					    <li class="nav-item dropdown" style="margin: auto;">
+					      <a class="dropdown-toggle link" href="#" id="navbardrop" data-toggle="dropdown">
+					        Dropdown link
+					      </a>
+					      <div class="dropdown-menu" herf="#navbardrop" >
+					        <a class="dropdown-item" href="#">Link 1</a>
+					        <a class="dropdown-item" href="#">Link 2</a>
+					        <a class="dropdown-item" href="#">Link 3</a>
+					      </div>
+					    </li>
+					  </ul>
+					</nav>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 <div class="row" style="padding: 20px 40px;">
-	<div class="col-md-8">
+	<div class="col-md-8" style="border-right: 2px solid #ccc">
 		<form method="post" class="was-validated" action="/venda/produto/search" enctype="multipart/form-data" id="vendaPainelTable">
 			<fieldset class=""><legend><strong>Pedido:</strong></legend>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="row">
+							<div class="col-md-4">
+								<span><strong>Cliente: </strong><br> <?=$this->view->pessoa?></span>
+							</div>
+							<div class="col-md-2">
+								<span><strong>CPF: </strong> 61254689611</span>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label id="entregaLog"><strong>Endereço entrega: </strong></label>
+									<select class="form-control">
+										<?php
+											for ($i=0; !($i == count($this->view->resultLogPessoa)) ; $i++) { 
+												
+										 ?>
+											<option value="<?=$this->view->resultLogPessoa[$i]->getIdLogradouro()?>">
+												<?=$this->view->resultLogPessoa[$i]->getEndereco().' - '.$this->view->resultLogPessoa[$i]->getComplemento();?>
+											</option>
+
+										<?php
+											 }
+
+										?>
+
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="row mb-4">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<div class="row">
@@ -81,10 +108,12 @@
 								    <tbody>
 								    	<tr id="trMsg">
 								    		<td colspan="8">
-								    			<div class="row" style="">
-								    				<div class="col-md-12 alert alert-warning">
-								    					<h3 align="center">Adicione produtos para começar!</h3>
-								    				</div>
+								    			<div class="container-fluid">
+									    			<div class="row" style="">
+									    				<div class="col-md-12 alert alert-warning">
+									    					<h3 align="center">Adicione produtos para começar!</h3>
+									    				</div>
+									    			</div>
 								    			</div>
 								    		</td>
 								    	</tr>
@@ -113,8 +142,8 @@
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<button id="idFilanizar" class="btn btn-primary">Finalizar</button>
-								<a href="/venda/nova"class="btn btn-danger link">Cancelar</a>
+								<button id="idFilanizar" type="submit" class="btn btn-primary">Finalizar</button>
+								<a href="/pedido/novo"class="btn btn-danger link">Cancelar</a>
 							</div>
 						</div>
 					</div>

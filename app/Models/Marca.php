@@ -8,7 +8,7 @@ use \InvalidArgumentException;
 
 class Marca extends BaseModel
 {
-	protected $table = 'Marca';
+    const TABLENAME = 'Marca';
 
 	private $nomeMarca;
 	private $idMarca;

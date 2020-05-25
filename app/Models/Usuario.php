@@ -8,7 +8,7 @@ use \InvalidArgumentException;
 
 class Usuario extends BaseModel
 {
-	protected $table = 'Usuario';
+    const TABLENAME = 'Usuario';
 
 	private $login;
 	private $password;

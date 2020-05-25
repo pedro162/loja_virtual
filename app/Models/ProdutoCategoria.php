@@ -16,7 +16,7 @@ class ProdutoCategoria extends BaseModel
     protected $idProdutoCategoria;
     protected $CategoriaIdCategoria;
 
-    protected $table = 'ProdutoCategoria';
+    const TABLENAME = 'ProdutoCategoria';
     protected $data = [];
 
     protected function parseCommit()

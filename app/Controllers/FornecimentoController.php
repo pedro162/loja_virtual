@@ -57,37 +57,29 @@ class FornecimentoController extends BaseController
         }
 
         $fornecimento = new Fornecimento();
-        $totItens = $fornecimento->countItens();
+        $totItens = (int) $fornecimento->countItens();
 
         $this->view->totItens = $totItens;
-        if($totItens == 0){
-            
-           $this->render('fornecimento/tabelaEstoque', false);
 
-        }else{
-
-            $campos = ['idFornecimento' ,'ProdutoIdProduto','dtValidade', 'dtRecebimento', 'qtdFornecida', 'qtdVendida'];
+        $inicio = (int) ($itensPorPagina * $pagina) - $itensPorPagina;
+        $inicio = ($inicio == 0) ? 1: $inicio;
 
 
-            $this->view->pagina = $pagina;
-            $this->view->itensPorPagina = $itensPorPagina;
-            $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+        $result = $fornecimento->listarConsultaPersonalizada(null, $inicio, $itensPorPagina, true);
+       
+        $this->view->pagina = $pagina;
+        $this->view->itensPorPagina = $itensPorPagina;
+        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
 
-            $result = $fornecimento->paginador($campos, $itensPorPagina, $pagina, true);
+        $stdPaginacao = new \stdClass();
+        $stdPaginacao->pagina = $this->view->pagina;
+        $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+        $stdPaginacao->totPaginas = $this->view->totPaginas ;
 
-            for ($i=0; !($i == count($result)) ; $i++) { 
-                $result[$i]->setProduto($result[$i]->ProdutoIdProduto);
-            }
+        $this->view->tableFornecimento = $result;
 
-            $stdPaginacao = new \stdClass();
-            $stdPaginacao->pagina = $this->view->pagina;
-            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
-            $stdPaginacao->totPaginas = $this->view->totPaginas ;
-
-            $this->view->tableFornecimento = $result;
-
-            $this->render('fornecimento/tabelaEstoque', false);
-        }
+        $this->render('fornecimento/tabelaEstoque', false);
+        
         Transaction::close();
 
     }
@@ -106,7 +98,7 @@ class FornecimentoController extends BaseController
             
         }
 
-        $fornecimento    = new Fornecimento();
+        $fornecimento  = new Fornecimento();
 
         $result = $fornecimento->select(
             ['idFornecimento','ProdutoIdProduto','nf' , 'FornecedorIdFornecedor',
