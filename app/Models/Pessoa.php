@@ -12,7 +12,7 @@ class Pessoa extends BaseModel
     const TABLENAME = 'Pessoa';
     
 	private $nomePessoa;
-	private $idCliente;
+	private $idPessoa;
 
 
     protected function parseCommit()
@@ -139,7 +139,15 @@ class Pessoa extends BaseModel
         
     }
 
-    
+    public function getLogradouro()
+    {
+         $logradPessoa = new LogradouroPessoa();
+         $resultLogPessoa =  $logradPessoa->listarConsultaPersonalizada('P.idPessoa = '.$this->getIdPessoa(), null, null, true);
+         if($resultLogPessoa != false){
+            return $resultLogPessoa;
+         }
+         return false;
+    }
 
     
  

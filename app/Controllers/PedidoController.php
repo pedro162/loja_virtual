@@ -37,13 +37,10 @@ class PedidoController extends BaseController
         $pessoa = new Pessoa();
         $resultSelect = $pessoa->findPessoa($idCliente);
 
-        $logradPessoa = new LogradouroPessoa();
-
         if($resultSelect != false){
             $this->view->pessoa = $resultSelect->getNomePessoa();
-            $idPessoa = $resultSelect->getIdPessoa();
 
-            $resultLogPessoa =  $logradPessoa->listarConsultaPersonalizada('P.idPessoa = '.$idPessoa, null, null, true);
+            $resultLogPessoa =  $resultSelect->getLogradouro();
 
             if($resultLogPessoa){
                 $this->view->resultLogPessoa = $resultLogPessoa;
