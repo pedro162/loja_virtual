@@ -601,44 +601,20 @@ $('#dinamic').delegate('#tableProdutos tbody a', 'click', function(event){
   $('#dinamic').delegate( '#cadastrarProduto, #editarProduto', 'submit', function(event){
     event.preventDefault();
 
-
-    let submitArray = new Array(); //define um super array para armazenar os valores dos campos
-
-    $(this).find('input, select, textarea').each(function(){
-
-      let key = $(this).attr('name')
-
-      let value = String($(this).val()); // transforama para string para retirar os espacoes em branco do inicio e final
-
-      value = value.trim();
-
-      //verifica se o campo foi preenchido e 
-      if(value.length == 0){
-
-        //casso algo não esteja peenchido, exibem uma mensagem
-        message(['msg', 'warning', 'Atenção: Preenha os campos corretamente!']);
-
-        $('#dinamic').find('[name='+key+']').focus().css('border', '1px solid red').css('box-shadow', '2px 2px 3px red').keyup(function(){
-        $(this).css('box-shadow', '0px 0px 0px green').css('border', '1px solid green');
-
-          
-        });
-        return false;
-      }
-
-       submitArray.push(key+'='+value);
-
-
-    })
-
     let url = $(this).attr('action');
-    
+
+    let form = new FormData($(this)[0]);
+
     $.ajax({
       type: 'POST',
       url: url,
-      data: {'produto': submitArray},
-      dataType: 'json',
+      data: form,
+      enctype: 'multipart/form-data',
+      dataType: 'HTML',
+      processData: false,
+      contentType: false,
       success: function(retorno){
+        console.log(retorno); return false;
         message(retorno);
       }
 

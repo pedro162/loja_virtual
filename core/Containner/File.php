@@ -37,15 +37,36 @@ class File
 
 
 
-	public function salvar($path):bool
+	public function salvar($path, $refresh = false):bool
 	{
 		$path = __DIR__.'/../../public/files/'.$path;
 		if(is_dir($path) == true)
-		{
-			move_uploaded_file($this->getNameTemporario(), $path.'/'.$this->getName());
+		{	
+			$result = true;
+
+			$file = $path.'/'.$this->getName();
+
+			if(file_exists($file)){
+
+				if($refresh != false){
+					$result = move_uploaded_file($this->getNameTemporario(), $path.'/'.$this->getName());
+				}else{
+					$result = move_uploaded_file($this->getNameTemporario(), $path.'/'.'copy_'.$this->getName());
+				}
+				
+
+			}else{
+				
+				$result = move_uploaded_file($this->getNameTemporario(), $path.'/'.$this->getName());
+			}
+
+			if($result === false){
+				throw new \Exception("Falha ao salvar imgem<br/>\n");
+			}
+
 			return true;
 		}else{
-			throw new \Exception("Falha ao salvar imgem<br/>\n");
+			throw new \Exception("Diretorio inválido<br/>\n");
 		}
 		
 	}

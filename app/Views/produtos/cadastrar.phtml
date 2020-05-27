@@ -68,7 +68,7 @@
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 								<div class="form-group">
 									<label for="idCategoria">Categoria: </label>
-									<select class="form-control " id="idCategoria" name="categoria" multiple size="3" required="required">
+									<select class="form-control " id="idCategoria" name="categoria[]" multiple size="3" required="required">
 										<?php 
 											for ($i=0; !($i == count($this->view->categorias)) ; $i++) { 
 												

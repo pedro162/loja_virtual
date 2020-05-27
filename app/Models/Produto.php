@@ -11,6 +11,7 @@ use \InvalidArgumentException;
 use App\Models\Departamento;
 use App\Models\Marca;
 use App\Models\Categoria;
+use App\Models\Imagem;
 
 class Produto extends BaseModel
 {
@@ -28,6 +29,7 @@ class Produto extends BaseModel
     private $nf;
     private $fornecedor;
     private $IdMarca;
+    private $imagemProduto;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
@@ -43,35 +45,34 @@ class Produto extends BaseModel
             throw new Exception('Parametro inválido<br/>');
         }
 
-        for ($i=0; !($i == count($dados)) ; $i++) { 
-
-            $subArray = explode('=', $dados[$i]);
+        foreach ($dados as $key => $value) {
            
-            switch ($subArray[0]) {
+            switch ($key) {
                 case 'nome':
-                   $this->setNomeProduto($subArray[1]);
+                   $this->setNomeProduto($value);
                    break;
                 case 'texto':
-                   $this->setTextoPromorcional($subArray[1]);
+                   $this->setTextoPromorcional($value);
                    break;
 
                 case 'marca':
-                    $idMarca = (int) $subArray[1];
-                   $this->setIdMarca($idMarca);
+                    $idMarca = (int) $value;
+                   $this->setIdMarca($value);
                    break;
 
                 case 'categoria':
 
-                    $subArrCateg = explode(',' , $subArray[1]);
-
-                    for ($j=0; !($j == count($subArrCateg)) ; $j++) { 
+                    for ($j=0; !($j == count($value)) ; $j++) { 
                         
-                        $idCategoria = (int) $subArrCateg[$j];
+                        $idCategoria = (int) $value[$j];
                         $this->setIdCategoria($idCategoria);
                     }
                 break;
                 case 'prod':
-                    $this->setIdProduto($subArray[1]);
+                    $this->setIdProduto($value);
+                break;
+                case 'img':
+                    $this->setImagemProduto($value);
                 break;
             }
 
@@ -96,20 +97,36 @@ class Produto extends BaseModel
     public function save(array $dados):array
     {
 
-        $this->clear($dados);
+        $this->clear($dados); //atribui os dados aos gets e sets
 
-        $result = $this->parseCommit();
+        $result = $this->parseCommit(); //retorna os dados já filtrados
 
+        //verifica se o produto já existe
         $resultSelect = $this->select(['nomeProduto'], ['nomeProduto' => $this->getNomeProduto()], '=','asc', null, null, true);
 
         if($resultSelect != false){
-            return ['msg','warning','Atenção: Este produto já existe!'];
+            throw new Exception("Este produto já existe execessao");
         }
 
-        $this->insert($result);
+        $resultInsertProd = $this->insert($result);//salva o produto
+
+        if($resultInsertProd == false){
+            throw new Exception("Falha ao cadastrar produto");
+        }
 
         $idProdutoInserido = $this->maxId();
 
+        //prepara os dados para salvar a imagem do produto
+        $imagem = new Imagem();
+        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$idProdutoInserido, 'usuario'=>1];//prepara o array com dados para a classe de imagem
+        $resultImg = $imagem->save($dataImg);
+
+        if($resultImg == false){
+            throw new Exception("Falha ao cadastrar produto");
+        }
+
+
+        //prepara os dados para salvar a categoria do produto
         $produtoCategoria = new ProdutoCategoria();
 
         for ($i = 0; !($i == count($this->getIdCategoria())); $i++) {
@@ -136,6 +153,14 @@ class Produto extends BaseModel
         $result = $this->parseCommit();
 
         $resultUpdate = $this->update($result, $this->getIdProduto());
+         //prepara os dados para salvar a imagem do produto
+        $imagem = new Imagem();
+        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$this->getIdProduto(), 'usuario'=>1];//prepara o array com dados para a classe de imagem
+        $resultImg = $imagem->save($dataImg);
+
+        if($resultImg == false){
+            throw new Exception("Falha ao cadastrar produto");
+        }
 
         $produtoCategoria = new ProdutoCategoria();
 
@@ -237,6 +262,26 @@ class Produto extends BaseModel
         $result = $marca->select(['idMarca','nomeMarca'], ['idMarca'=>$this->getIdMarca()], '=','asc', null, null,true);
 
         return $result[0];
+    }
+
+
+    public function getImagem()
+    {
+        $img = new Imagem();
+        $result = $img->select(['idImagem','url'], ['ProdutoIdProduto'=>$this->getIdProduto()], '=','asc', null, null,true);
+        
+        return $result;
+
+    }
+
+    public function setImagemProduto(String $img)
+    {
+        $this->imagemProduto = $img;
+    }
+
+    public function getImagemProduto()
+    {
+        return $this->imagemProduto;
     }
 
     public function setIdMarca(int $idMarca)
@@ -492,14 +537,9 @@ class Produto extends BaseModel
 
         if((is_array($parametros))&&(count($parametros)==0)){
 
-            throw new Exception("Consulta inválida<br/>\n");
-            //return json_encode(['msg','Consulta inválida']);
+            throw new Exception("Parametro inválido<br/>\n");
         }
         
-        /*
-        if($parametros == false){
-            return json_encode(['msg','Consulta inválida']);
-        }*/
 
         $sentinelaSubarray = false;
 
@@ -514,8 +554,6 @@ class Produto extends BaseModel
         if($sentinelaSubarray == false)
             throw new Exception("Consulta inválida<br/>\n");
 
-
-        //Transaction::startTransaction(self::getDatabase());
 
         $sqlPersonalizada = "SELECT distinct P.idProduto,P.nomeProduto, P.textoPromorcional ";
        // $sqlPersonalizada .= ", P.Condicoes, P.preco ";
