@@ -17,6 +17,7 @@ class Imagem extends BaseModel
 	private $url;
 	private $dataUpload;
 	private $idUsuario;
+    private $idImagem;
 
 
     protected function parseCommit()
@@ -85,6 +86,15 @@ class Imagem extends BaseModel
 
     public function modify(array $dados)
     {
+        $this->clear($dados);
+
+        $result = $this->parseCommit();
+        $resultUpdate = $this->update($result, $this->getIdImagem());
+
+        if($resultUpdate != false){
+
+            return true;
+        }
         
     }
 
@@ -165,6 +175,30 @@ class Imagem extends BaseModel
         throw new Exception('Parametro inválido<br/>'.PHP_EOL);
     }
  
+
+    public function setIdImagem(Int $id)
+    {
+        if((isset($id))&&($id > 0)){
+            $this->data['idImagem'] = $id;
+            return true;
+        }
+
+        throw new Exception('Parametro inválido<br/>'.PHP_EOL);
+    }
+
+    public function getIdImagem()
+    {
+        if((!isset($this->idImagem)) || ($this->idImagem <= 0)){
+
+            if(isset($this->data['idImagem']) && ($this->data['idImagem'] > 0)){
+                return $this->data['idImagem'];
+            }
+           
+            throw new Exception('Parametro inválido<br/>'.PHP_EOL);
+        }
+        return $this->idImagem;
+
+    }
 
 
 

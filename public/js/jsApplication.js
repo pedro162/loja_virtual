@@ -610,11 +610,10 @@ $('#dinamic').delegate('#tableProdutos tbody a', 'click', function(event){
       url: url,
       data: form,
       enctype: 'multipart/form-data',
-      dataType: 'HTML',
+      dataType: 'json',
       processData: false,
       contentType: false,
       success: function(retorno){
-        console.log(retorno); return false;
         message(retorno);
       }
 

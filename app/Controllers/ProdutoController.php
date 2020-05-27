@@ -200,6 +200,13 @@ class ProdutoController extends BaseController
 
             )[0];
             
+            $imagem = __DIR__.'/../../public/files/imagens/'.$result->getImagem()[0]->getUrl();
+            if(file_exists($imagem)){
+                $this->view->imgProduto = '<img style="width: 253px; height: 232px" id="img" src="../files/imagens/'.$result->getImagem()[0]->getUrl().'" />';
+            }else{
+                $this->view->imgProduto = '<img style="width: 253px; height: 232px" id="img" src=""/>';
+            }
+
             $this->view->categoriaProduto = $result->getCategoria();
             
             $this->view->result = $result;
@@ -307,23 +314,93 @@ class ProdutoController extends BaseController
     public function atualizar($request)
     {
         try{
-
             set_time_limit(0);
             
             Transaction::startTransaction('connection');
-            
-            $extenImg = explode('/', $request['file']['imgProduto']['type'])[1];
-            $nameImg = $request['post']['nome'].'.'.$extenImg;
-            $nameImg = strtolower((str_replace([' ','_'], ['', ''], $nameImg)));
-            $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
-
             $produto = new Produto();
-            $request['post']['img'] = $nameImg;
+
+            $imagem = new Imagem();
+            $urlImagem = $imagem->select(['url'], ['ProdutoIdProduto'=>$request['post']['prod']], '=','asc', null, null,true);
+            if($urlImagem == false){
+                die();//falta implemtar testando
+            }
+
+            //captura a url antes da imagem do produto antes do update
+            $urlImagem = $urlImagem[0]->getUrl();
+            
+
+            $extenImg = null;
+            $nameImg = null;
+            $beforeExtension = null;
+
+            $sentinelaFile = false;
+            if(isset($request['file']['imgProduto']['name']) && (strlen($request['file']['imgProduto']['name']) > 0)){
+
+                $arrNameExtension = explode('/', $request['file']['imgProduto']['type']);
+                $beforeExtension = $arrNameExtension[0]; 
+
+                $extenImg = strtolower($arrNameExtension[1]);
+                $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
+                $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
+
+                $request['post']['img'] = $nameImg;
+                $sentinelaFile = true;
+               
+
+            }else{
+
+                $arrNameExtension = explode('.', $urlImagem);
+                $beforeExtension = $arrNameExtension[0];
+
+                $extenImg = strtolower($arrNameExtension[1]);
+                $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
+                $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
+
+                $request['post']['img'] = $nameImg;
+            }
+                       
             $result = $produto->modify($request['post']);
 
-            if($result != false){
+            $oldImg = __DIR__.'/../../public/files/imagens/'.$urlImagem;
+
+            if(file_exists($oldImg)){
+                $nameProdReplace = strtolower(str_replace([' ','_'], ['', ''], $request['post']['nome']));
+
+                //verifica se mudou o nome do produto e atualiza o nome da imagem
+                if(($beforeExtension != $nameProdReplace) && ($sentinelaFile == false)){
+                    $rename = rename($oldImg, __DIR__.'/../../public/files/imagens/'.$nameImg);
+
+                }else if(($beforeExtension == $nameProdReplace) && ($sentinelaFile != false)){
+
+                    $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
+
+                    $resultUnlink = unlink($oldImg);
+
+                    $fiile->salvar('imagens', true);
+
+                }else if(($beforeExtension != $nameProdReplace) && ($sentinelaFile != false)){
+                    $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
+
+                    $resultUnlink = unlink($oldImg);
+
+                    $fiile->salvar('imagens', true);
+
+                }
+
+
+
+                
+            }else{
+
+                $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
+
+                $resultUnlink = unlink($oldImg);
+
                 $fiile->salvar('imagens', true);
             }
+
+                
+            
 
             $this->view->result = json_encode($result);
 
@@ -335,7 +412,7 @@ class ProdutoController extends BaseController
 
             Transaction::rollback();
 
-            $erro = ['msg','warning', $e->getMessage()];
+            $erro = ['msg','warning', $e->getMessage().' - linha: '.$e->getLine().' - arquivo: '.$e->getFile()];
             $this->view->result = json_encode($erro);
             $this->render('produtos/ajaxPainelAdmin', false);
         }

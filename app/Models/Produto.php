@@ -153,17 +153,16 @@ class Produto extends BaseModel
         $result = $this->parseCommit();
 
         $resultUpdate = $this->update($result, $this->getIdProduto());
-         //prepara os dados para salvar a imagem do produto
-        $imagem = new Imagem();
-        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$this->getIdProduto(), 'usuario'=>1];//prepara o array com dados para a classe de imagem
-        $resultImg = $imagem->save($dataImg);
 
-        if($resultImg == false){
-            throw new Exception("Falha ao cadastrar produto");
-        }
+         //prepara os dados para salvar a imagem do produto
+        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$this->getIdProduto(), 'usuario'=>1];//prepara o array com dados para a classe de imagem 
+
+        $imagem = $this->getImagem()[0];
+        $idImagem = $imagem->getIdImagem();
+        $dataImg = ['url'=>$this->getImagemProduto(), 'usuario'=>1];
+        $resultImg = $imagem->modify($dataImg);
 
         $produtoCategoria = new ProdutoCategoria();
-
         $produtoCategoria->delete('ProdutoIdProduto', '=', $this->getIdProduto());
 
         for ($i = 0; !($i == count($this->getIdCategoria())); $i++) {
@@ -270,7 +269,11 @@ class Produto extends BaseModel
         $img = new Imagem();
         $result = $img->select(['idImagem','url'], ['ProdutoIdProduto'=>$this->getIdProduto()], '=','asc', null, null,true);
         
-        return $result;
+        if($result != false){
+            return $result;
+        }
+        throw new Exception("Imgem não encontrada\n");
+        
 
     }
 

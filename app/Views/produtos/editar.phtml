@@ -27,7 +27,7 @@
 												$selected = "selected=\"selected\"";
 											}
 										?>
-											<option <?=$selected?>  value="<?= $this->view->marcas[$i]->getIdMarca()?>" ><?= $this->view->marcas[$i]->getNomeMarca()?></option>
+											<option <?=$selected?>  value="<?=$this->view->marcas[$i]->getIdMarca()?>" ><?= $this->view->marcas[$i]->getNomeMarca()?></option>
 										<?php 
 											}
 										?>
@@ -39,7 +39,7 @@
 								<div class="form-group">
 									<div class="form-group">
 										<label for="idMsg">Imgem do produto: </label>
-										<input type="file" class="form-control" id="upload" name="imgProduto" required="required">
+										<input type="file" class="form-control" id="upload" name="imgProduto">
 									</div>
 								</div>
 							</div>
@@ -94,7 +94,7 @@
 						</div>
 					</div>	
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="containerImg">
-						<img id="img"/>
+						<?=$this->view->imgProduto?>"
 					</div>	
 				</div>
 				<button type="submit" class="btn btn-primary">Atualisar</button>  <a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a> 
