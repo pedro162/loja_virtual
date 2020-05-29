@@ -77,6 +77,13 @@ class Categoria extends BaseModel
     	return $result;
     }
 
+    public function findCategoriaFromId(Int $id)
+    {
+        $result = $this->select(['idCategoria','nomeCategoria'], ['idCategoria' => $id], '=',
+        'asc', null, null, true);
+        return $result;
+    }
+
 
     public function getCategoria()
     {

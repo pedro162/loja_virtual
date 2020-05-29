@@ -19,7 +19,9 @@ body{
     margin-top: 80px; z-index: 1;
     color: #000;
 }
-
+section{
+    margin-top: 80px;
+}
 
 .corpo{
     

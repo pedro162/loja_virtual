@@ -366,7 +366,7 @@ abstract class BaseModel
     }
 
 
-    protected function maxId():int
+    public function maxId():int
     {
         $id = 'id'.ucfirst($this->getTable());
         $sql = "SELECT MAX({$id}) as maxId from {$this->getTable()}";
@@ -378,6 +378,23 @@ abstract class BaseModel
         $result = $consulta->fetchObject();
         if($result){
             return $result->maxId;
+        }
+
+    }
+
+
+    public function minId():int
+    {
+        $id = 'id'.ucfirst($this->getTable());
+        $sql = "SELECT min({$id}) as minId from {$this->getTable()}";
+
+        $conn = Transaction::get();
+
+        $consulta = $conn->query($sql);
+
+        $result = $consulta->fetchObject();
+        if($result){
+            return $result->minId;
         }
 
     }

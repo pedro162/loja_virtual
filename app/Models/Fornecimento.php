@@ -34,6 +34,11 @@ class Fornecimento extends BaseModel
     private $texto;
     private $produtoNome;
 
+    private $idCategoria;
+    private $nomeCategoria;
+
+    private $url;
+
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
     const TABLENAME = 'Fornecimento';
@@ -196,6 +201,27 @@ class Fornecimento extends BaseModel
         return $this->produtoNome;
 
     }
+
+    public function getNomeCategoria():String
+    {
+        if((!isset($this->nomeCategoria)) || (strlen($this->nomeCategoria) == 0)){
+
+            throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
+        }
+        return $this->nomeCategoria;
+
+    }
+
+    public function getIdCategoria():int
+    {
+        if((!isset($this->idCategoria)) || ($this->idCategoria <= 0)){
+
+            throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
+        }
+        return $this->idCategoria;
+
+    }
+
 
 
 
@@ -625,6 +651,13 @@ class Fornecimento extends BaseModel
         return $this->margem;
     }
 
+    public function getUrl()
+    {
+        if(isset($this->url)){
+            return $this->url;
+        }
+    }
+
 
     public function listarConsultaPersonalizada(String $where = null, Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
     {
@@ -647,6 +680,44 @@ class Fornecimento extends BaseModel
 
         return $result;
     }
+
+    public function getProdutoEndCategoria(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
+    {
+        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, Img.url, C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 GROUP by P.nomeProduto ';
+
+        if(($limitInt != NULL) && ($limtEnd != NULL)){
+
+            if(($limitInt >= 0) && ($limtEnd >= 0)){
+                $sql .= ' LIMIT '.$limitInt.','. $limtEnd; 
+            }
+        }
+
+        $result = $this->persolizaConsulta($sql, $clasRetorno);
+
+        return $result;
+    }
+
+    public function listarCategoriaFornecimento(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
+    {
+        $sql = 'select C.nomeCategoria, C.idCategoria
+                from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto
+                inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto
+                inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria
+                WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0
+                GROUP by C.idCategoria';
+
+        if(($limitInt != NULL) && ($limtEnd != NULL)){
+
+            if(($limitInt >= 0) && ($limtEnd >= 0)){
+                $sql .= ' LIMIT '.$limitInt.','. $limtEnd; 
+            }
+        }
+
+        $result = $this->persolizaConsulta($sql, $clasRetorno);
+
+        return $result;
+    }
+
 
     public function loadFornecimento($dados, $like = true)
     {   

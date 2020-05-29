@@ -15,6 +15,8 @@ class ProdutoCategoria extends BaseModel
     protected $ProdutoIdProduto;
     protected $idProdutoCategoria;
     protected $CategoriaIdCategoria;
+    private $nomeCategoria;
+    private $idCategoria;
 
     const TABLENAME = 'ProdutoCategoria';
     protected $data = [];
@@ -103,6 +105,23 @@ class ProdutoCategoria extends BaseModel
     	return $restult;
     }
 
+    public function getIdCategoria()
+    {
+        if(($this->idCategoria > 0) && (isset($this->idCategoria))){
+             
+            return $this->idCategoria;
+        }
+        throw new Exception("Propriedade não definida<br/>\\n");
+    }
+
+    public function getNomeCategoria()
+    {
+        if(isset($this->nomeCategoria)){
+             
+            return $this->nomeCategoria;
+        }
+        throw new Exception("Propriedade não definida<br/>\\n");
+    }
 
     public function getData(){
     	return $this->data;
@@ -123,6 +142,21 @@ class ProdutoCategoria extends BaseModel
         return $restult;
     }
 
+
+    public function listProductFromCategoria()
+    {
+        $sql = 'select distinct P.idProduto, P.nomeProduto, P.preco';
+        $sql .= 'from ProdutoCategoria as PC right JOIN Produto as P on PC.ProdutoIdProduto = P.idProduto';
+        $sql .= 'INNER JOIn Categoria as C on PC.CategoriaIdCategoria = C.idCategoria';
+
+        $restult = $this->persolizaConsulta($sql, get_class($this));
+
+        return $restult;
+
+    }
+
+
+    
     public function setNomeCategoria($prop, $value){
     	$this->data[$prop] = $value;
     }
