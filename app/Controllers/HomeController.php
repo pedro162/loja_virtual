@@ -33,7 +33,7 @@ class HomeController extends BaseController
             for ($j=0; !($j == count($produotosAndCategorias)) ; $j++) { 
 
                 $idProduto = $produotosAndCategorias[$j]->getProdutoIdProduto();
-                $urlImg = $produotosAndCategorias[$j]->getUrl();
+                $urlImg = $produotosAndCategorias[$j]->getUrl().'-'.$idProduto;
                 $result = $categsProduct->getCategoria($idProduto);
                 if($result){
                     $arrCategProducts[$urlImg] = $result;

@@ -39,7 +39,9 @@ footer{
     background-color: #9400D3;
     color: #fff;
 }
-
+footer h6{
+    margin-left: 15px;
+}
 #copyRith{
     background-color: #8A2BE2;
     color: #fff;
@@ -314,3 +316,7 @@ form .btn-danger:hover{
     height: 100%;
 }
 
+#vitrine-home .card-body .a-img-product:hover{
+    box-shadow: 1px 1px 2px #9400D3;
+
+}

@@ -24,7 +24,7 @@ class ProdutoController extends BaseController
             Transaction::startTransaction('connection');
 
             $pagina = 1;
-            $itensPorPagina = 6;
+            $itensPorPagina = 18;
 
             if(isset($request['get'], $request['get']['pagina'])){
                 $pagina = $request['get']['pagina'];

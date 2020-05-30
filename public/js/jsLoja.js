@@ -32,6 +32,13 @@ $(document).ready(function(){
     $('.cnpj').show();
   })
 
+//---------------- Esconde exibe botoes de ver mais na view home ---------------------------
+
+$('.hidBtn').mouseenter(function(){
+      $(this).siblings('a').show();
+    })
+
+
 
 
 // ------------------------------ Preview de imagens upload ---------------------
