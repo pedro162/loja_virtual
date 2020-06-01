@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Core\PagSeguro\PagSeguro;
 use App\Controllers\BaseController;
+use \Core\Database\Transaction;
 
 class PagarController extends BaseController
 {
@@ -59,4 +60,21 @@ class PagarController extends BaseController
         }
         
     }
+
+    public function texte()
+    {
+        try {
+            Transaction::startTransaction('connection');
+            $this->setMenu();
+            $this->setFooter();
+            
+            $this->render('produtos/detalhes', true);
+            Transaction::close();
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            var_dump($e);
+            
+        }
+    }
+
 }

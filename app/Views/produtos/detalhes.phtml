@@ -1,0 +1,102 @@
+
+<div class="container-fluid" id="detalheProduto" style="">
+	<div class="row">
+		<div class="col-md-5" align="center">
+				<img class="img-produto" src="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>" style="width: 75%; height: 75%;" data-zoom-image="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>"><br><br>
+			<div id="gali">
+			<?php
+				for ($i=0, $imagens = $this->view->imagensProduto;!($i == count($imagens)) ; $i++) { 
+					# code...
+				
+			 ?>
+			 		<a href="#" data-image="../files/imagens/<?=$imagens[$i]->getUrl();?>" data-zoom-image="../files/imagens/<?=$imagens[$i]->getUrl();?>">
+					    <img class="img-produto-opt" src="../files/imagens/<?=$imagens[$i]->getUrl();?>" style="width: 100px; height: 100px;">
+
+					 </a>
+			 		
+			 	
+			 <?php 
+			 	}
+			 ?>
+			 </div>
+		</div>
+		<div class="col-md-5" align="center">
+			<h3>Condiçoes</h3>
+			<h4><strong><?=$this->view->produto->getNomeProduto();?></strong></h4>
+			<p>Classinficação</p>
+			<p><sup>Por: </sup><span><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span> & frete</p>
+			<hr/>
+			<h4>Detalhes do produto</h4>
+			<p>ASIN:</p>
+			<p>Dimensões d produto:</p>
+			<p>Número do modelo</p>
+			<p>Código de barras:</p>
+			<p>Avaliação do clientes:</p>
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
+		</div>
+		<div class="col-md-2" align="center">
+			<p>Quantidade</p>
+			<h3>Add. carrinho</h3>
+			<h3>Comprar agora</h3>
+			<p><a href="#">Selecionar endereço</a></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<hr/>
+			<h5><strong><span>Clientes que visualizaram este item tamberm visualizaram</span></strong></h5>
+
+			<div class="row" style="margin:auto;" align="center">
+				<div class="col-md-1" style="margin: auto;" align="left"><button class="btn btn-primary"><</button></div>
+					<div class="col-md-10">
+						<div class="row">
+							<?php 
+								for ($i=0, $estoque = $this->view->othesFornecimentos; !($i == count($estoque)); $i++) { 
+									
+							?>
+								<a class=" link-produto" href="/estoque/detalhes?cd=<?=$estoque[$i]->getProdutoIdProduto();?>">
+									<img style="width: 200px; height: 200px;" class="card-img-top" src="../files/imagens/<?=$estoque[$i]->getUrl();?>"  alt="<?=$estoque[$i]->getUrl();?>">
+								</a>
+							<?php 
+									
+								}
+							?>
+						</div>
+					</div>
+				<div class="col-md-1" style="margin: auto;" align="right"><button class="btn btn-primary">></button></div>
+			</div>
+			<br>
+			<br>
+			<br>
+			<br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<hr/>
+			<h5><strong><span>Clientes que compraram este item tamberm compraram</span></strong></h5>
+			<br>
+			<br>
+			<br>
+			<br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<hr/>
+			<h5 class=""><strong><span>Perguntas e respostas do cliente</span></strong></h5>
+			<div class="form-group">
+				<input type="text" name="searchResponse" class="form-control" placeholder="Faça uma pergunta e encontre uma resposta.">
+			</div>
+			<br>
+			<br>
+			<br>
+			<br>
+		</div>
+	</div>
+</div>

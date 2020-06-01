@@ -63,7 +63,7 @@ class Pedido extends BaseModel
             return call_user_func([$this,'set'.ucfirst($prop)], $value);
         }
     }
-
+    
 
 
 }

@@ -37,6 +37,8 @@ class BaseController
         if((!empty($path)) && (file_exists('../app/Views/layout/'.$path.'.phtml')))
         {
             $this->menu = '../app/Views/layout/'.$path.'.phtml';
+        }else{
+            die('Não existe mennu');
         }
     }
 

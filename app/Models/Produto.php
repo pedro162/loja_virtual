@@ -93,7 +93,6 @@ class Produto extends BaseModel
         return $arrayPase;
     }
 
-
     public function save(array $dados):array
     {
 
@@ -197,6 +196,21 @@ class Produto extends BaseModel
 
         $this->data['fornecedor'] = $result[0];
 
+    }
+
+
+    public function loadProdutoForId(Int $id)
+    {   
+        if($id > 0){
+            $result = $this->select(['nomeProduto, idProduto, textoPromorcional'],
+             ['idProduto'=>$id], '=','asc', null, null,true);
+            if($result != false){
+                return $result[0];
+            }
+        }
+        throw new Exception("Ṕroduto não encontrado\n");
+        
+        
     }
 
     public function getFornecedor()

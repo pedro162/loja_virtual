@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use App\Models\ProdutoCategoria;
 use \Exception;
 use \InvalidArgumentException;
 
@@ -70,6 +71,18 @@ class Categoria extends BaseModel
         
     }
 
+    public function getProduto()
+    {
+        $produtoCateg = new ProdutoCategoria();
+        $result = $produtoCateg->getProduto((int)$this->idCategoria);
+        return $result;
+        if($result != false){
+            return $result;
+        }
+
+        throw new Exception('Produto não encontrado');
+    }
+
     public function listaCategoria():array
     {
     	$result = $this->select(['idCategoria','nomeCategoria'], [], '=',
@@ -81,7 +94,12 @@ class Categoria extends BaseModel
     {
         $result = $this->select(['idCategoria','nomeCategoria'], ['idCategoria' => $id], '=',
         'asc', null, null, true);
-        return $result;
+
+        if($result != false){
+            return $result[0];
+        }
+        throw new Exception("Categoria não encontrada\n");
+        
     }
 
 

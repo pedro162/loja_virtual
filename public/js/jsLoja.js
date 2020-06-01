@@ -37,8 +37,76 @@ $(document).ready(function(){
 $('.hidBtn').mouseenter(function(){
       $(this).siblings('a').show();
     })
+  
+  //efito zoom na imagem view de detalhes
+  
+    
 
+     
 
+// load ajax da view de detables do produto
+
+$('#containerLoja').delegate('.link-produto', 'click', function(e){
+  e.preventDefault();
+  let url = $(this).attr('href');
+  
+  $.ajax({
+    type: 'GET',
+    url:url,
+    dataType:'HTML',
+    success:function(retorno){
+      $('#containerLoja').html(retorno);
+      $(window).scrollTop('0')//posiciona o scroll no top
+
+      //gera o efeito zoo da imagem.
+      $('.img-produto').elevateZoom({
+            //responsive:true,
+            //zoomType: 'lens',
+            cursor:'crosshair',
+            scrollZoom:true,
+            gallery:'gali',
+            galleryActiveClass: 'active',
+            //zoomWindowPosition: 0,
+            //lensShape:'round',
+            //slensSize:250,
+            zoomWindowPosition: 0,
+            //zoomWindowOffsetX: 10,
+            borderSize: 1,
+            zoomWindowHeight: 500,
+            zoomWindowWidth: 600,
+            tint:true,
+            tintColour:'#f90',
+            tintOpacity:0.5,
+            respond: [
+                  {
+                      range: '600-799',
+                      tintColour: '#F00',
+                      zoomWindowHeight: 100,
+                      zoomWindowWidth: 100
+                  },
+                  {
+                      range: '800-1199',
+                      tintColour: '#00F',
+                      zoomWindowHeight: 200,
+                      zoomWindowWidth: 200
+                  },
+                  {
+                      range: '100-599',
+                      enabled: false,
+                      showLens: false
+                  }
+              ]
+        })
+
+      $(".img-produto-opt").bind("click", function(e) {  
+        var ez =   $('.img-produto-opt').data('elevateZoom'); 
+        $.fancybox(ez.getGalleryList());
+          
+        return false;
+      });
+    }
+  });
+})  
 
 
 // ------------------------------ Preview de imagens upload ---------------------
@@ -148,7 +216,7 @@ $('.hidBtn').mouseenter(function(){
           let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
 
           let cardItem = $('<div/>').addClass('card produto-item')
-          let a = $('<a/>').addClass('produto-item').attr('href', `/produto/detals?cd=${parse[i].idProduto}`);
+          let a = $('<a/>').addClass('produto-item').attr('href', `/estoque/detalhes?cd=${parse[i].idProduto}`);
           let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
 
           let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
@@ -1058,7 +1126,7 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
                 $('.modal-body').html(container);
 
                 let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
-                let buttonMoreDetals = '<a href=/produto/detals?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
+                let buttonMoreDetals = '<a href=/estoque/detalhes?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
 
                 let botoesOpcoes = $('<div/>').addClass('row')
                 .append($('<div/>').addClass('col').html(buttonAdd))

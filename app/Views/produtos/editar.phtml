@@ -58,7 +58,7 @@
 											 && (count($this->view->categoriaProduto) > 0)){
 													for ($j=0; !($j == count($this->view->categoriaProduto)); $j++) { 
 														
-														if($this->view->categoriaProduto[$j]->idCategoria == $this->view->categorias[$i]->getIdCategoria()){
+														if($this->view->categoriaProduto[$j]->getIdCategoria() == $this->view->categorias[$i]->getIdCategoria()){
 															$selected = "selected=\"selected\"";
 															echo "entrou aqui<br/>".PHP_EOL;
 															break;

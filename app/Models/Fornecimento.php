@@ -29,6 +29,7 @@ class Fornecimento extends BaseModel
     private $quantidade;
     private $idUsuario; 
     private $nf;
+    private $estoque;
 
     private $idProduto;
     private $texto;
@@ -681,9 +682,16 @@ class Fornecimento extends BaseModel
         return $result;
     }
 
-    public function getProdutoEndCategoria(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
+    public function getProdutoEndCategoria(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false,Int $idProduto = null)
     {
-        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, Img.url, C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 GROUP by P.nomeProduto ';
+        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, Img.url, C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
+        $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' ';
+
+        if(isset($idProduto) && ($idProduto > 0)){
+            $sql .=' and PG.ProdutoIdproduto = '.$idProduto;
+        }
+        
+        $sql .=' GROUP by P.nomeProduto ';
 
         if(($limitInt != NULL) && ($limtEnd != NULL)){
 
@@ -696,6 +704,56 @@ class Fornecimento extends BaseModel
 
         return $result;
     }
+
+
+    public function loadFornecimentoForIdProduto(Int $idProduto, $clasRetorno = false)
+    {
+        if($idProduto > 0){
+             /*$result = $this->select(['idFornecimento','ProdutoIdProduto', 'FornecedorIdFornecedor', 'dtFornecimento', 'vlVenda'],
+             ['ProdutoIdProduto' => $idProduto], '=','asc', null, null,true);*/
+
+
+             $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, Img.url, F.vlVenda from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
+             $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
+             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' and F.ProdutoIdProduto='.$idProduto;
+
+             $result = $this->persolizaConsulta($sql, $clasRetorno);
+             if($result != false){
+                return $result[0];
+             }
+             throw new Exception("Erro ao carregar produto.\n");
+             
+        }
+        
+    }
+
+    public function loadFornecimentoForIdCategoria(array $inIdCatec, $clasRetorno = false, Int $notProd = null)
+    {
+        if(count($inIdCatec) > 0){
+             
+             $sql = 'select distinct P.nomeProduto As produtoNome, Img.url ,P.idProduto, P.textoPromorcional As texto, F.vlVenda from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
+             $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdproduto = P.idProduto';
+             $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
+             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\'';
+
+             $in = implode(',', $inIdCatec);
+
+             $sql .=' and PC.CategoriaIdCategoria in ('.$in.')';
+
+             if($notProd != null){
+                $sql .= ' and F.ProdutoIdproduto <> '.$notProd;
+             }
+             
+             $result = $this->persolizaConsulta($sql, $clasRetorno);
+             if($result != false){
+                return $result;
+             }
+             throw new Exception("Erro ao carregar produto.\n");
+             
+        }
+        
+    }
+
 
     public function listarCategoriaFornecimento(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
     {
@@ -717,6 +775,7 @@ class Fornecimento extends BaseModel
 
         return $result;
     }
+
 
 
     public function loadFornecimento($dados, $like = true)

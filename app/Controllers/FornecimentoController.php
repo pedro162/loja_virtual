@@ -4,12 +4,13 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use \Core\Database\Transaction;
-use App\Models\Produto;
-use App\Models\Fabricante;
-use App\Models\Fornecimento;
-use App\Models\Pessoa;
+use \App\Models\Produto;
+use \App\Models\Fabricante;
+use \App\Models\Fornecimento;
+use \App\Models\Pessoa;
 use \Core\Utilitarios\Utils;
-
+use \App\Models\ProdutoCategoria;
+use \App\Models\Venda;
 
 class FornecimentoController extends BaseController
 {
@@ -135,6 +136,55 @@ class FornecimentoController extends BaseController
 
         Transaction::close();
 
+    }
+
+
+
+    public function detalhes($request)
+    {
+        try {
+            Transaction::startTransaction('connection');
+            $this->setMenu();
+            $this->setFooter();
+
+            if(!isset($request['get']['cd'])){
+                var_dump('não e');
+            }
+            $idProduto = intval($request['get']['cd']);
+
+            
+
+            $produto = new Produto();
+            $resultProduto = $produto->loadProdutoForId($idProduto);
+
+            $imagensProduto = $resultProduto->getImagem();
+
+            $fornecimento = new Fornecimento();
+            $resultFornce = $fornecimento->loadFornecimentoForIdProduto($idProduto, true);
+
+            $categorias = $resultProduto->produtoCategoria();
+
+            $arrIdCateg = [];
+            for ($i=0; !($i == count($categorias)) ; $i++) { 
+               $idCateg = $categorias[$i]->getIdCategoria();
+
+               $arrIdCateg[] = (int) $idCateg;
+            }
+            $othesFornecimentos = $resultFornce->loadFornecimentoForIdCategoria($arrIdCateg, true,(int) $idProduto);
+            
+            $this->view->imagensProduto = $imagensProduto;
+            $this->view->fornecimento = $resultFornce;
+            $this->view->produto = $resultProduto;
+            $this->view->categoriasProduto = $categorias;
+            $this->view->othesFornecimentos = $othesFornecimentos;
+            $this->render('produtos/detalhes', false);
+            
+            Transaction::close();
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            var_dump($e);
+            
+        }
     }
 
 }

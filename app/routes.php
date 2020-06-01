@@ -9,7 +9,7 @@ $routes[] = ['/home/menu', 'HomeController@menu'];
 
 $routes[] = ['/produto/all', 'ProdutoController@all'];
 $routes[] = ['/produto/show', 'ProdutoController@show'];
-$routes[] = ['/produto/detals', 'ProdutoController@detals'];
+//$routes[] = ['/produto/detalhes', 'ProdutoController@detalhes'];
 $routes[] = ['/produto/cadastrar', 'ProdutoController@cadastrar'];
 $routes[] = ['/produto/salvar', 'ProdutoController@salvar'];
 $routes[] = ['/produto/more', 'ProdutoController@more'];
@@ -22,6 +22,7 @@ $routes[] = ['/estoque/salvar', 'FornecimentoController@salvar'];
 $routes[] = ['/estoque/all', 'FornecimentoController@all'];
 $routes[] = ['/estoque/editar', 'FornecimentoController@editar'];
 $routes[] = ['/estoque/atualizar', 'FornecimentoController@atualizar'];
+$routes[] = ['/estoque/detalhes', 'FornecimentoController@detalhes'];
 
 $routes[] = ['/marca/cadastrar', 'MarcaController@cadastrar'];
 $routes[] = ['/marca/salvar', 'MarcaController@salvar'];

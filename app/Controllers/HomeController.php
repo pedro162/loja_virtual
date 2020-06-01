@@ -69,26 +69,7 @@ class HomeController extends BaseController
                 
             }
 
-            /*$supperArrProdutos = [];
-
-            $totItens = 0;
-
-            while (!($totItens == $tot)) {
-
-                $idRand = rand($min, $max);
-
-                if(array_key_exists($idRand, $supperArrProdutos) == false){
-                    $result =  $fornecimento->listarConsultaPersonalizada('F.idFornecimento = '.$idRand, null, null, true);
-                    if($result != false){
-                        $supperArrProdutos[$idRand] = $result[0];
-                        $totItens ++;
-                    }
-                    
-                }
-                
-
-            }*/
-
+            //grid
             $grid = [4,2,4,1];
 
             $soma = 0;

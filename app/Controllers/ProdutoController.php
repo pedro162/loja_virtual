@@ -165,8 +165,56 @@ class ProdutoController extends BaseController
         
     }
 
-    public function detals($request)
+    public function detalhes($request)
     {
+        try {
+            Transaction::startTransaction('connection');
+            if(!isset($request['get']['cd'])){
+                var_dump('não e');
+            }
+            $idProduto = intval($request['get']['cd']);
+
+            $this->setMenu();
+            $this->setFooter();
+
+            $produto = new Produto();
+            $resultProduto = $produto->loadProdutoForId($idProduto);
+
+            $imagensProduto = $resultProduto->getImagem();
+
+            $fornecimento = new Fornecimento();
+            $resultFornce = $fornecimento->loadFornecimentoForIdProduto($idProduto, true);
+
+            $categorias = $resultProduto->produtoCategoria();
+
+            $superArrFornec = [];
+            for ($i=0; !($i == count($categorias)) ; $i++) { 
+               $idCateg = $categorias[$i]->getIdCategoria();
+
+               $othesFornecimentos = $resultFornce->loadFornecimentoForIdCategoria($idCateg, true);
+               $superArrFornec[] = $othesFornecimentos;
+                echo"<pre>";
+                var_dump($othesFornecimentos);
+                echo "</pre>";
+               
+
+            }
+
+
+
+            $this->view->imagensProduto = $imagensProduto;
+            $this->view->fornecimento = $resultFornce;
+            $this->view->produto = $resultProduto;
+            $this->view->categoriasProduto = $categorias;
+            $this->view->othesFornecimentos = $superArrFornec;
+            $this->render('produtos/detalhes', true);
+            
+            Transaction::close();
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            var_dump($e);
+            
+        }
        /* echo"<pre>";
         var_dump($request);
         echo "</pre>";*/

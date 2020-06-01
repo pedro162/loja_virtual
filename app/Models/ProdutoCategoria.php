@@ -130,12 +130,12 @@ class ProdutoCategoria extends BaseModel
     public function getProduto(Int $idCategoria)
     {
 
-        $sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
-        $sql .= "from ProdutoCategoria PG inner join Categoria C ";
-        $sql .= "on C.idCategoria = PG.CategoriaIdCategoria ";
-        $sql .= "inner join Produto P ";
+        $sql = "select DISTINCT P.nomeProduto, P.idProduto ";
+        $sql .= "from ProdutoCategoria PG inner join Produto P ";
         $sql .= "on P.idProduto = PG.ProdutoIdProduto ";
-        $sql .= "where P.idProduto = ".$idCategoria;
+        $sql .= "inner join Categoria C ";
+        $sql .= "on C.idCategoria = PG.CategoriaIdCategoria ";
+        $sql .= "where C.idCategoria = ".$idCategoria;
 
         $restult = $this->persolizaConsulta($sql, get_class($this));
 
