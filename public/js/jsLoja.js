@@ -46,8 +46,9 @@ $('.hidBtn').mouseenter(function(){
 
 // load ajax da view de detables do produto
 
-$('#containerLoja').delegate('.link-produto', 'click', function(e){
+$('#containerLoja, body').delegate('.link-produto', 'click', function(e){
   e.preventDefault();
+  $('#closeModal').trigger('click');//fecha o modal se estiver aberto
   let url = $(this).attr('href');
   
   $.ajax({
@@ -216,7 +217,7 @@ $('#containerLoja').delegate('.link-produto', 'click', function(e){
           let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
 
           let cardItem = $('<div/>').addClass('card produto-item')
-          let a = $('<a/>').addClass('produto-item').attr('href', `/estoque/detalhes?cd=${parse[i].idProduto}`);
+          let a = $('<a/>').addClass('produto-item link-produto').attr('href', `/estoque/detalhes?cd=${parse[i].idProduto}`);
           let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
 
           let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
@@ -950,7 +951,7 @@ function listaTabelaProdutos(retorno) {
       .append($('<td/>').html(retorno[0][i].codigo))
       .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
                         .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/visualizar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
-                        .append($('<a/>').addClass('btn btn-danger').attr('href','/produto/deletar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
+                        .append($('<a/>').addClass('btn btn-danger').attr('href','/estoque/deletar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
           )
 
       )
@@ -1126,7 +1127,7 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
                 $('.modal-body').html(container);
 
                 let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
-                let buttonMoreDetals = '<a href=/estoque/detalhes?cd='+idProduto+' class="btn btn-primary  button-modal">Mais detalhes</a>';
+                let buttonMoreDetals = '<a href=/estoque/detalhes?cd='+idProduto+' class="btn btn-primary link-produto button-modal">Mais detalhes</a>';
 
                 let botoesOpcoes = $('<div/>').addClass('row')
                 .append($('<div/>').addClass('col').html(buttonAdd))

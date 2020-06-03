@@ -163,12 +163,15 @@ class FornecimentoController extends BaseController
             $resultFornce = $fornecimento->loadFornecimentoForIdProduto($idProduto, true);
 
             $categorias = $resultProduto->produtoCategoria();
-
+            
             $arrIdCateg = [];
             for ($i=0; !($i == count($categorias)) ; $i++) { 
-               $idCateg = $categorias[$i]->getIdCategoria();
 
-               $arrIdCateg[] = (int) $idCateg;
+                if($categorias[$i]->getClassificCateg() == 'primaria'){
+                    $idCateg = $categorias[$i]->getIdCategoria();
+                    $arrIdCateg[] = (int) $idCateg;
+                }
+               
             }
             $othesFornecimentos = $resultFornce->loadFornecimentoForIdCategoria($arrIdCateg, true,(int) $idProduto);
             
@@ -182,7 +185,7 @@ class FornecimentoController extends BaseController
             Transaction::close();
         } catch (\Exception $e) {
             Transaction::rollback();
-            var_dump($e);
+            var_dump($e->getMessage());
             
         }
     }

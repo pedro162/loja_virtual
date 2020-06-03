@@ -684,7 +684,7 @@ class Fornecimento extends BaseModel
 
     public function getProdutoEndCategoria(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false,Int $idProduto = null)
     {
-        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, Img.url, C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
+        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, Img.url,Img.tipo,  C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
         $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' ';
 
         if(isset($idProduto) && ($idProduto > 0)){
@@ -733,8 +733,9 @@ class Fornecimento extends BaseModel
              
              $sql = 'select distinct P.nomeProduto As produtoNome, Img.url ,P.idProduto, P.textoPromorcional As texto, F.vlVenda from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
              $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdproduto = P.idProduto';
-             $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
-             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\'';
+             $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto';
+             $sql .= ' WHERE (F.ativo = 1) and ((F.qtdFornecida - F.qtdVendida) > 0) and (Img.tipo = \'primaria\')';
+             $sql .= ' and (PC.classificCateg <> \'secundaria\') ';
 
              $in = implode(',', $inIdCatec);
 
@@ -761,7 +762,7 @@ class Fornecimento extends BaseModel
                 from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto
                 inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto
                 inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria
-                WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0
+                WHERE (F.ativo = 1) and (F.qtdFornecida - F.qtdVendida) > 0
                 GROUP by C.idCategoria';
 
         if(($limitInt != NULL) && ($limtEnd != NULL)){

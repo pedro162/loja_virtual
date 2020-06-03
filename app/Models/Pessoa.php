@@ -17,6 +17,14 @@ class Pessoa extends BaseModel
 
     protected function parseCommit()
     {
+        $arrayPase = [];
+        for ($i=0; !($i == count($this->columns())) ; $i++) { 
+            $chave = $this->columns()[$i]->Field;
+            if(array_key_exists($chave, $this->data)){
+                $arrayPase[$chave] = $this->data[$chave];
+            }
+        }
+        return $arrayPase;
     }
     protected function clear(array $dados)
     {
@@ -111,7 +119,8 @@ class Pessoa extends BaseModel
 		if($result){
 			return $result[0];
 		}
-		return false;
+		throw new Exception("Cliente inválido\n");
+        
 
 	}
 
@@ -146,7 +155,8 @@ class Pessoa extends BaseModel
          if($resultLogPessoa != false){
             return $resultLogPessoa;
          }
-         return false;
+         throw new Exception("Logradouro não encontrado\n");
+         
     }
 
     

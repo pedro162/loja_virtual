@@ -59,9 +59,11 @@
 								for ($i=0, $estoque = $this->view->othesFornecimentos; !($i == count($estoque)); $i++) { 
 									
 							?>
-								<a class=" link-produto" href="/estoque/detalhes?cd=<?=$estoque[$i]->getProdutoIdProduto();?>">
-									<img style="width: 200px; height: 200px;" class="card-img-top" src="../files/imagens/<?=$estoque[$i]->getUrl();?>"  alt="<?=$estoque[$i]->getUrl();?>">
-								</a>
+								<div class="col py-2 px-2 a-img-product">
+									<a class="link-produto" href="/estoque/detalhes?cd=<?=$estoque[$i]->getProdutoIdProduto();?>">
+										<img style="width: 200px; height: 200px;" class="card-img-top" src="../files/imagens/<?=$estoque[$i]->getUrl();?>"  alt="<?=$estoque[$i]->getUrl();?>">
+									</a>
+								</div>
 							<?php 
 									
 								}

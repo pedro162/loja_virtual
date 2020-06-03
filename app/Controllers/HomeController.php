@@ -28,17 +28,25 @@ class HomeController extends BaseController
 
             $produotosAndCategorias = $fornecimento->getProdutoEndCategoria(null, null, true);
 
+            
+
             $arrCategProducts = [];
 
             for ($j=0; !($j == count($produotosAndCategorias)) ; $j++) { 
 
                 $idProduto = $produotosAndCategorias[$j]->getProdutoIdProduto();
+
                 $urlImg = $produotosAndCategorias[$j]->getUrl().'-'.$idProduto;
+                
+
                 $result = $categsProduct->getCategoria($idProduto);
                 if($result){
                     $arrCategProducts[$urlImg] = $result;
                 }
+
+
             }
+
 
             
             $min = (int) $fornecimento->minId();

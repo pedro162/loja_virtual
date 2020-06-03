@@ -17,6 +17,7 @@ class ProdutoCategoria extends BaseModel
     protected $CategoriaIdCategoria;
     private $nomeCategoria;
     private $idCategoria;
+    private $classificCateg;
 
     const TABLENAME = 'ProdutoCategoria';
     protected $data = [];
@@ -80,6 +81,15 @@ class ProdutoCategoria extends BaseModel
     }
 
 
+    public function getClassificCateg()
+    {
+        if(isset($this->classificCateg) && (strlen($this->classificCateg) > 0)){
+            return $this->classificCateg;
+        }
+        throw new Exception('Propriedade indefinida');
+    }
+
+
     public function save(array $dados):bool
     {
         $this->clear($dados);
@@ -93,7 +103,7 @@ class ProdutoCategoria extends BaseModel
     public function getCategoria(Int $idProduto)
     {
 
-    	$sql = "select DISTINCT C.nomeCategoria, C.idCategoria ";
+    	$sql = "select DISTINCT C.nomeCategoria, C.idCategoria, PG.classificCateg ";
 		$sql .=	"from ProdutoCategoria PG inner join Categoria C ";
 		$sql .=	"on C.idCategoria = PG.CategoriaIdCategoria ";
 		$sql .=	"inner join Produto P ";

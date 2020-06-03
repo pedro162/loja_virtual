@@ -419,7 +419,6 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
 
   $(this).find('table tbody tr').each(function(){
 
-
     let cod = $(this).find('td:eq(7) a').attr('href');
     cod = cod.split('=')[1];
 
@@ -434,6 +433,8 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
   
   })
 
+  let form = new FormData($(this)[0]);
+
   let sentinela = false;
   for (let i = 0; !(i == dados.length); i++) {
 
@@ -445,6 +446,8 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
       }
     }
 
+    form.append('pedidoPanelVenda[]', dados[i]);
+
   }  
 
   if(sentinela == true){
@@ -452,19 +455,19 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
     return false;
   }
 
+
   $.ajax({
     type:'POST',
     url: '/pedido/save/pedido',
-    data: {'pedidoPanelVenda': dados},
-    dataType:'HTML',
+    data: form,
+    processData:false,
+    contentType: false,
+    dataType:'json',
     success: function(retorno){
-     console.log(retorno)
-
+      message(retorno);
       }
     });
 
-
-  alert('dados enviados');
 
 
 });

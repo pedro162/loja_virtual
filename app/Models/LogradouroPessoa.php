@@ -11,6 +11,7 @@ class LogradouroPessoa extends BaseModel
 	private $complemento;
 	private $endereco;
 	private $idLogradouro;
+    private $idLogradouroPessoa;
 
     const TABLENAME = 'LogradouroPessoa';
 
@@ -86,6 +87,20 @@ class LogradouroPessoa extends BaseModel
         return $result;
     }
 
+
+    public function findLogPessoa(Int $id, $clasRetorno = false)
+    {
+        $sql = "SELECT LP.idLogradouroPessoa
+                FROM 
+                LogradouroPessoa LP inner join Logradouro L on LP.LogradouroIdLogradouro = L.idLogradouro
+                INNER JOIN Pessoa P on LP.PessoaIdPessoa = P.idPessoa WHERE L.idLogradouro=".$id;
+                
+        $result = $this->persolizaConsulta($sql, $clasRetorno);
+
+        return $result;
+
+    }
+
     public function getComplemento()
     {
     	if(isset($this->complemento) && (!empty($this->complemento))){
@@ -113,4 +128,21 @@ class LogradouroPessoa extends BaseModel
     	throw new \Exception("Proriedade indefinida");
     }
 
+
+    public function setIdLogradouroPessoa(Int $id)
+    {
+        $this->data['idLogradouroPessoa'] = $id;//falta validar
+    }
+
+    public function getIdLogradouroPessoa()
+    {
+        //falta validar
+        if((!isset($this->idLogradouroPessoa)) || ($this->idLogradouroPessoa <=0)){
+            if(isset($this->idLogradouroPessoa) && ($this->idLogradouroPessoa > 0)){
+                return $this->data['idLogradouroPessoa'];
+            }
+        }
+
+        return $this->idLogradouroPessoa;
+    }
 }

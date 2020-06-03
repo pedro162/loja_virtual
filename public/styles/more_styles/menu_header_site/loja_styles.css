@@ -316,7 +316,7 @@ form .btn-danger:hover{
     height: 100%;
 }
 
-#vitrine-home .card-body .a-img-product:hover{
+#vitrine-home .card-body .a-img-product:hover, #detalheProduto .a-img-product:hover{
     box-shadow: 1px 1px 2px #9400D3;
 
 }
