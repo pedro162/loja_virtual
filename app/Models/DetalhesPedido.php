@@ -71,6 +71,21 @@ class DetalhesPedido extends BaseModel
         $result = $this->parseCommit();
 
         $resultInsert = $this->insert($result);
+
+        $fornecimento = new Fornecimento();
+        $idForn = $this->getFornecimentoIdFornecimento();
+
+        $resultFindForn = $fornecimento->findFornecimentoForId((int)$idForn);
+
+        $saldoEstoque = (int)$resultFindForn->getQtdFornecida() - (int)$resultFindForn->getQtdVendida() ;
+
+        if($saldoEstoque < (int)$this->getQtd()){
+        	throw new Exception("Estoque insuficiente para o produto \"{$resultFindForn->getProdutoNome()}\"");
+        	
+        }
+
+        $resultFindForn->modify(['qtdVend='.((int)$resultFindForn->getQtdVendida() + $this->getQtd())]);
+
         if($resultInsert == true){
             return true;
         }
@@ -322,6 +337,18 @@ class DetalhesPedido extends BaseModel
 
 		throw new Exception("Fornecimento inválido\n");
 		
+	}
+
+	public function getFornecimentoIdFornecimento()
+	{
+		if((!isset($this->FornecimentoIdFornecimento)) || ($this->FornecimentoIdFornecimento <= 0)){
+			if(isset($this->data['FornecimentoIdFornecimento']) && ($this->data['FornecimentoIdFornecimento'] > 0)){
+				return $this->data['FornecimentoIdFornecimento'];
+			}
+		}
+
+		return $this->FornecimentoIdFornecimento;
+
 	}
 
 	public function getData()

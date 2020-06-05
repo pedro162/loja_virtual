@@ -127,6 +127,8 @@ class HomeController extends BaseController
             $this->view->qtd = Venda::qtdItensVenda();// insere o total de itens do carrinho
             $this->render('home/home', true);
 
+            Transaction::close();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -153,9 +155,47 @@ class HomeController extends BaseController
 
     public function painel()
     {   
-        $this->setMenu('adminMenu');
-        $this->setFooter('footer');
-        $this->render('produtos/cadastrar', true, 'layoutAdmin');
+        try {
+
+            Transaction::startTransaction('connection');
+            $fornecimento = new Fornecimento();
+            $resultMonitEst = $fornecimento->monitoraEstoque();
+
+            $this->view->resultMonitEst = $resultMonitEst;
+            $this->setMenu('adminMenu');
+            $this->setFooter('footer');
+            $this->render('admin/home', true, 'layoutAdmin');
+
+            Transaction::close();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage().'-'.$e>getFile();
+        }
+        
+        
+    }
+
+    public function inicoPainel()
+    {
+        try {
+
+            Transaction::startTransaction('connection');
+            $fornecimento = new Fornecimento();
+            $resultMonitEst = $fornecimento->monitoraEstoque();
+
+            $this->view->resultMonitEst = $resultMonitEst;
+            $this->setMenu('adminMenu');
+            $this->setFooter('footer');
+            $this->render('admin/inicio', false);
+
+            Transaction::close();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage().'-'.$e>getFile();
+        }
+
     }
 
     public function teste($request){
@@ -168,4 +208,8 @@ class HomeController extends BaseController
     {
         $this->render('layout/menuOpcoesAdmin', false);
     }
+
+
+
+    
 }

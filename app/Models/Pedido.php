@@ -29,8 +29,13 @@ class Pedido extends BaseModel
     private $dtEntrega;
     private $via;
     private $frete;
-    private $LogradouroIdLogradouro 	;
+    private $LogradouroIdLogradouro;
+    private $idPedido;
 
+    private $nomeDestinatario;
+    private $endereco;
+    private $complemento;
+    private $nomePessoa;
 
     public function __construct()
     {
@@ -145,6 +150,41 @@ class Pedido extends BaseModel
 		throw new Exception("Parâmetro inválido $id \n");
 		
 	}
+
+
+	public function previewPedido(Int $idPedido, $clasRetorno = false)
+	{
+		$sql = "SELECT P.dtPedido, P.nomeDestinatario, P.idPedido, P.frete, L.endereco, L.complemento, PS.nomePessoa
+				FROM Pedido as P inner join LogradouroPessoa as LP
+				on LP.LogradouroIdLogradouro = P.LogradouroIdLogradouro
+				INNER JOIN Logradouro L on L.idLogradouro = LP.LogradouroIdLogradouro
+				INNER join Pessoa as PS on PS.idPessoa = LP.PessoaIdPessoa WHERE P.idPedido = ".$idPedido;
+
+
+		$result = $this->persolizaConsulta($sql, $clasRetorno);
+	    if($result != false){
+	        return $result;
+	    }
+	     throw new Exception("Erro ao carregar pedido.\n");
+
+
+	}
+
+	public function getItensPedido(Int $idPedido, $clasRetorno = false)
+	{
+		$sql = "SELECT P.nomeProduto, P.idProduto, DT.qtd, DT.precoUnitPratic, DT.vlDescontoUnit, DT.dataHoraPedido, DT.FornecimentoIdFornecimento
+				FROM DetalhesPedido as DT INNER JOIN Fornecimento as F on F.idFornecimento = DT.FornecimentoIdFornecimento
+				INNER JOIN Produto as P on P.idProduto = F.ProdutoIdProduto
+				INNER join Pedido as PD on PD.idPedido = DT.PedidoIdPedido
+				WHERE PD.idPedido = ".$idPedido;
+
+		$result = $this->persolizaConsulta($sql, $clasRetorno);
+	    if($result != false){
+	        return $result;
+	    }
+	     throw new Exception("Erro ao carregar itens.\n");
+
+	}
 	
 	public function __get($prop)
     {
@@ -160,6 +200,8 @@ class Pedido extends BaseModel
             return call_user_func([$this,'set'.ucfirst($prop)], $value);
         }
     }
+
+
     
 
 

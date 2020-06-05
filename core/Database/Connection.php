@@ -11,13 +11,13 @@ final class Connection
 
     public static function open($file)
     {
-        if(!file_exists(__DIR__.'/../../'.$file.'.php'))
+        if(!file_exists(__DIR__.'/../../'.$file.'.ini'))
         {
             throw new Exception("Arquivo {$file}.ini não encontrado<br/>\n");
             
         }
         
-        $file_connection = require(__DIR__."/../../{$file}.php");
+        $file_connection = parse_ini_file(__DIR__."/../../{$file}.ini");
         
 
         $user = isset($file_connection['user'])     ? $file_connection['user']      : null;

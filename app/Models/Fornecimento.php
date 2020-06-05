@@ -43,6 +43,7 @@ class Fornecimento extends BaseModel
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
     const TABLENAME = 'Fornecimento';
+    const ESTOQUEBAIXO = 10;
 
 	protected function clear(array $dados)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
     {
@@ -87,6 +88,10 @@ class Fornecimento extends BaseModel
 
                     $this->setQtdFornecida($subArray[1]);
                     break;
+                case 'qtdVend':
+                    $qtd = (int)$subArray[1];
+                    $this->setQtdVendida($qtd);
+                    break;
 
                 case 'vlCompra':
 
@@ -119,12 +124,16 @@ class Fornecimento extends BaseModel
 
     protected function parseCommit()
     {	
-        $dtRece = new \DateTime($this->getDtRecebimento());
-        $dtForne = new \DateTime($this->getDtFornecimento());
-		
-        if($dtRece < $dtForne){
-            throw new Exception('Falha ao no cadastro de fornecimento!<br/>');
+        if(isset($this->data['dtRecebimento']) && (isset($this->data['dtFornecimento']))){
+
+            $dtRece = new \DateTime($this->getDtRecebimento());
+            $dtForne = new \DateTime($this->getDtFornecimento());
+            
+            if($dtRece < $dtForne){
+                throw new Exception('Falha ao no cadastro de fornecimento!<br/>');
+            }
         }
+        
 
         return $this->data;
     }
@@ -154,12 +163,11 @@ class Fornecimento extends BaseModel
 
         $resultUpdate = $this->update($result, $this->getIdFornecimento());
 
-        if($resultUpdate == false){
-
-            return ['msg','warning','Estoque não pôde ser atualizado!'];
+        if($resultUpdate){
+            return ['msg','success','Estoque atualizado com sucesso!'];
         }
-
-        return ['msg','success','Estoque atualizado com sucesso!'];
+        throw new Exception("Estoque não pôde ser atualizado");
+        
     }
 
     public function getProdutoIdProduto():int
@@ -224,6 +232,21 @@ class Fornecimento extends BaseModel
     }
 
 
+    public function findFornecimentoForId(Int $id)
+    {
+        if($id <= 0){
+            throw new Exception("Parametro inválido");
+            
+        }
+
+        $result = $this->select(['idFornecimento','qtdVendida', 'qtdFornecida', 'ProdutoIdproduto as nomeProduto'], ['idFornecimento'=>$id], '=','asc', null, null,true);
+        if($result == false){
+            throw new Exception("Elemento não encontrado");
+            
+        }
+
+        return $result[0];
+    }
 
 
     public function setProdutoIdProduto(Int $id):bool
@@ -513,6 +536,16 @@ class Fornecimento extends BaseModel
         return $this->qtdVendida;
     }
 
+    public function setQtdVendida(Int $qtd):bool
+    {
+        if((isset($qtd)) && ($qtd > 0)){
+
+            $this->data['qtdVendida'] = $qtd;
+            return true;
+        }
+       throw new Exception('Propriedade não definida<br/>'.PHP_EOL);
+    }
+
     public function getQtdFornecida():int
     {
         if((!isset($this->qtdFornecida)) || ($this->qtdFornecida <= 0)){
@@ -731,7 +764,7 @@ class Fornecimento extends BaseModel
     {
         if(count($inIdCatec) > 0){
              
-             $sql = 'select distinct P.nomeProduto As produtoNome, Img.url ,P.idProduto, P.textoPromorcional As texto, F.vlVenda from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
+             $sql = 'SELECT distinct P.nomeProduto As produtoNome, Img.url ,P.idProduto, P.textoPromorcional As texto, F.vlVenda FROM Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
              $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdproduto = P.idProduto';
              $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto';
              $sql .= ' WHERE (F.ativo = 1) and ((F.qtdFornecida - F.qtdVendida) > 0) and (Img.tipo = \'primaria\')';
@@ -758,8 +791,8 @@ class Fornecimento extends BaseModel
 
     public function listarCategoriaFornecimento(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
     {
-        $sql = 'select C.nomeCategoria, C.idCategoria
-                from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto
+        $sql = 'SELECT C.nomeCategoria, C.idCategoria
+                FROM Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto
                 inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto
                 inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria
                 WHERE (F.ativo = 1) and (F.qtdFornecida - F.qtdVendida) > 0
@@ -809,6 +842,30 @@ class Fornecimento extends BaseModel
         throw new Exception('Parâmetro inválido<br/>'.PHP_EOL);
     }
     
+    public function monitoraEstoque()
+    {
+            $where = 'F.ativo=1 and (F.qtdFornecida - F.qtdVendida <= '.self::ESTOQUEBAIXO.')';
+
+            $result = $this->listarConsultaPersonalizada($where,NULL, NULL, true);
+
+            $arrItens = ['qtdItens' =>count($result)];
+
+            $arrItens['itens'] = [];
+            for ($i=0; !($i == count($result)) ; $i++) { 
+                $subArr = [
+                    'idFornecimento'    =>  $result[$i]->getIdFornecimento(),
+                    'qtdFornecida'      =>  $result[$i]->getQtdFornecida(),
+                    'qtdVendida'        =>  $result[$i]->getQtdVendida(),
+                    'idProduto'         =>  $result[$i]->getProdutoIdProduto(),
+                    'produtoNome'       =>  $result[$i]->getProdutoNome()
+
+                        ];
+                $arrItens['itens'][] = $subArr;
+            }
+
+            return $arrItens;
+    }
+
     public function __get($prop)
     {
         if(method_exists($this, 'get'.ucfirst($prop))){

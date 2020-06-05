@@ -462,9 +462,13 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
     data: form,
     processData:false,
     contentType: false,
-    dataType:'json',
+    dataType:'HTML',
     success: function(retorno){
-      message(retorno);
+        $('#dinamic').html('').removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
+        $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+
+        $('#idFilanizar').trigger('click');
+        getModal('', retorno);
       }
     });
 
@@ -1091,6 +1095,17 @@ function foramtCalcCod(number)
 
   $('#btnInicio').on('click', function(){
 
+      $.ajax({
+      type: 'GET',
+      url: '/home/admin/inicio',
+      dataType: 'HTML',
+      success: function(retorno){
+        $('#dinamic').html(retorno);
+      }
+
+    })
+
+      
      $('#dinamic').html('')
 
   })

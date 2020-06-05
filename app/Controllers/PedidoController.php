@@ -156,67 +156,81 @@ class PedidoController extends BaseController
 
     public function savePedido($request)
     {
-        Transaction::startTransaction('connection');
+        try {
 
-        if(!isset($request['post']['pedidoPanelVenda'])
-            || !isset($request['post']['cliente'])
-            || !isset($request['post']['entrega'])){
+            Transaction::startTransaction('connection');
 
-            throw new \Exception("Propriedade indefinida<br/>");
+            if(!isset($request['post']['pedidoPanelVenda'])
+                || !isset($request['post']['cliente'])
+                || !isset($request['post']['entrega'])){
+
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
+            if(empty($request['post']['pedidoPanelVenda']) ||
+               empty($request['post']['cliente']) ||
+               empty($request['post']['entrega'])){
+
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
+
+            $pessoa = new Pessoa();
+            $resultFindPessoa = $pessoa->findPessoa((int)$request['post']['cliente']);
+
+            $logradouroPessoa = new LogradouroPessoa();
+            $logradouro = $logradouroPessoa->findLogPessoa((int)$request['post']['entrega'], true);
+
+            $pedido = new Pedido();
             
-        }
-        if(empty($request['post']['pedidoPanelVenda']) ||
-           empty($request['post']['cliente']) ||
-           empty($request['post']['entrega'])){
+            $arrEstoque = [];
+            for ($i=0, $dados = $request['post']['pedidoPanelVenda']; !($i == count($dados)) ; $i++) { 
 
-            throw new \Exception("Propriedade indefinida<br/>");
+                $item = explode(',', $dados[$i]);
+
+                $estoque = new Fornecimento();
+                $result = $estoque->listarConsultaPersonalizada('P.idProduto = '.$item[0], NULL, NULL, true);
+                
+                //$arrEstoque[] = $result;
+                $detalhesPedido = new DetalhesPedido();
+
+                $resultQtd       = $detalhesPedido->setQtd($result[0], $item[1]);
+                $resultVab       = $detalhesPedido->setValBruto($result[0], $item[2]);
+                $resultDesCunit  = $detalhesPedido->setVlDescontoUnit($result[0], $item[3]);
+                $resultTotDesc   = $detalhesPedido->setTotalDesconto((float)$item[4]);
+                $resultPrecoUnit = $detalhesPedido->setPrecoUnitPratic((float)$item[5]);
+                $resultEstoqueId = $detalhesPedido->setIdEstoque((int)$result[0]->getIdFornecimento());
+
+                $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario(1);//falta implementar corretamente
+                $resultFornec    = $detalhesPedido->setFornecimentoIdFornecimento($result[0]->getIdFornecimento());
+
+                $pedido->addItem($detalhesPedido);
             
-        }
+            }
+            $pedido->setQtdParcelas(1);
+            $pedido->setCliente((int)$request['post']['cliente']);
+            $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
+            $pedido->setUsuario(1);
 
-        $pessoa = new Pessoa();
-        $resultFindPessoa = $pessoa->findPessoa((int)$request['post']['cliente']);
+            $result = $pedido->save([]);
+            if($result){
+                $this->view->dataCliente = $pedido->previewPedido($pedido->maxId(), false);
+                $this->view->dataItens = $pedido->getItensPedido($pedido->maxId(), false);
+                $this->render('pedido/pedido', false);
+            }
 
-        $logradouroPessoa = new LogradouroPessoa();
-        $logradouro = $logradouroPessoa->findLogPessoa((int)$request['post']['entrega'], true);
 
-        $pedido = new Pedido();
-        
-        $arrEstoque = [];
-        for ($i=0, $dados = $request['post']['pedidoPanelVenda']; !($i == count($dados)) ; $i++) { 
+            Transaction::close();
 
-            $item = explode(',', $dados[$i]);
-
-            $estoque = new Fornecimento();
-            $result = $estoque->listarConsultaPersonalizada('P.idProduto = '.$item[0], NULL, NULL, true);
+        } catch (\Exception $e) {
             
-            //$arrEstoque[] = $result;
-            $detalhesPedido = new DetalhesPedido();
+            Transaction::rollback();
 
-            $resultQtd       = $detalhesPedido->setQtd($result[0], $item[1]);
-            $resultVab       = $detalhesPedido->setValBruto($result[0], $item[2]);
-            $resultDesCunit  = $detalhesPedido->setVlDescontoUnit($result[0], $item[3]);
-            $resultTotDesc   = $detalhesPedido->setTotalDesconto((float)$item[4]);
-            $resultPrecoUnit = $detalhesPedido->setPrecoUnitPratic((float)$item[5]);
-            $resultEstoqueId = $detalhesPedido->setIdEstoque((int)$result[0]->getIdFornecimento());
-
-            $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario(1);//falta implementar corretamente
-            $resultFornec    = $detalhesPedido->setFornecimentoIdFornecimento($result[0]->getIdFornecimento());
-
-            $pedido->addItem($detalhesPedido);
-        
-        }
-        $pedido->setQtdParcelas(1);
-        $pedido->setCliente((int)$request['post']['cliente']);
-        $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
-        $pedido->setUsuario(1);
-
-        $result = $pedido->save([]);
-        if($result){
-            $this->view->result = json_encode($result);
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
             $this->render('pedido/ajax', false);
         }
-
-        Transaction::close();
+        
     }
 
 }

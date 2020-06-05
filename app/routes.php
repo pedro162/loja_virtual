@@ -4,6 +4,7 @@ $routes[] = ['/', 'HomeController@index'];
 $routes[] = ['/home/login', 'HomeController@login'];
 $routes[] = ['/home/cadastro', 'HomeController@cadastro'];
 $routes[] = ['/home/admin', 'HomeController@painel'];
+$routes[] = ['/home/admin/inicio', 'HomeController@inicoPainel'];
 $routes[] = ['/home/teste', 'HomeController@teste'];
 $routes[] = ['/home/menu', 'HomeController@menu'];
 

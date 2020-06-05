@@ -27,6 +27,8 @@ abstract class Transaction
 		{
 			return self::$conexao;
 		}
+
+		throw new \Exception("Não existe conexão aberta<br/>\n");
 	}
 
 	public static function rollback()
@@ -36,7 +38,7 @@ abstract class Transaction
 			throw new \Exception("Não existe conexão aberta<br/>\n");
 		}
 
-		self::$conexao->rollback();
+		self::$conexao->rollBack();
 		self::$conexao = null;
 	}
 
