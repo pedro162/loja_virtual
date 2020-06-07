@@ -217,7 +217,7 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
           let divProduto = $('<div/>').addClass('col-xs-6 col-md-2 card-produto');
 
           let cardItem = $('<div/>').addClass('card produto-item')
-          let a = $('<a/>').addClass('produto-item link-produto').attr('href', `/estoque/detalhes?cd=${parse[i].idProduto}`);
+          let a = $('<a/>').addClass('produto-item link-produto').attr('href', `/pedido/produto/detalhes?cd=${parse[i].idProduto}`);
           let divImg = $('<div/>').attr('align', 'center').css('padding-top', '10px').append($('<img/>').css('width', '100px').css('height', '100px').attr('src', '../files/imagens/xbox_controller.jpeg'))
 
           let cardBody = $('<div/>').addClass('card-body').append($('<div/>').
@@ -1127,7 +1127,7 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
                 $('.modal-body').html(container);
 
                 let buttonAdd = '<button type="button" class="btn carrinho btn-primary  button-modal">Adicionar ao carrinho</button>';
-                let buttonMoreDetals = '<a href=/estoque/detalhes?cd='+idProduto+' class="btn btn-primary link-produto button-modal">Mais detalhes</a>';
+                let buttonMoreDetals = '<a href=/pedido/produto/detalhes?cd='+idProduto+' class="btn btn-primary link-produto button-modal">Mais detalhes</a>';
 
                 let botoesOpcoes = $('<div/>').addClass('row')
                 .append($('<div/>').addClass('col').html(buttonAdd))
@@ -1154,9 +1154,45 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
   });
 
 
+//----------------------- CALCULAR FRETE DO PRODUTO ---------------------------
 
+$('body').delegate('#formFretQtd', 'submit', function(e){
+  e.preventDefault();
 
+  let vlP = $('#vlP').text();
+  vlP = vlP.split('.');
 
+  let newVlP = '';
+  for (let i =0; !(i == vlP.length); i++) {
+    newVlP+=vlP[i]
+  }
+
+  newVlP = newVlP.replace(/,/g, '.');console.log(newVlP);
+
+  let form= $(this);
+
+  let formD = new FormData(form[0]);
+  
+  formD.append('vlP', newVlP);
+
+  let xhr = $.ajax({
+            type:'POST',
+            url: '/pedido/produto/frete',
+            data: formD,
+            processData:false,
+            contentType: false,
+            dataType:'HTML',
+            success: function(retorno){
+              form.find('#response').html(retorno);//'Total: R$ '+retorno.valor+'<br/>Dias: '+retorno.entrega
+            },
+            beforeSend: function(){
+              form.find('#response').html('Aguarde...');
+                
+            }
+            
+        });
+
+})
 
 
 })

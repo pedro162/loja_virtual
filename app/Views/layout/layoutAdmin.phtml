@@ -80,50 +80,27 @@
                 </div>
 
                 <div class="col-md-3 col-sm-12" id="optionPlus">
-                  <div class="row ml-3 mb-2" style=" background-color: #fff;padding: 5px;" >
+                  <div class="row ml-3 mb-0" style=" background-color: #fff;padding: 0px 5px 20px 5px;" >
                     <div class="col">
                     <div class="row">
                         <div class="col pt-2">
-                          <h4 align="center">Estoque</h4>
+                          <h4 align="center"><strong>Estoque</strong></h4>
                           <?php
                             if(isset($this->view->resultMonitEst) && (count($this->view->resultMonitEst) > 0)){
 
 
                           ?>
                             <div class="row">
-                              <div class="col">
-                                <h5 class="text-dark"><strong>T. Estoque baixo:</strong> <?=$this->view->resultMonitEst['qtdItens']?></h5>
-                              </div>
-                            </div>
-                            <div class="row" style="height: 200px; overflow-y: auto;">
                               <div class="col ">
-                                <table class="table table-hover bg-warning ">
-                                  <thead>
-                                    <tr>
-                                      <th>Prdoduto</th>
-                                      <th>Estoque</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <?php
-                                      for ($i=0; !($i == count($this->view->resultMonitEst['itens'])) ; $i++) { 
-                                        
-                                    ?>
-                                        <tr>
-                                          <td>
-                                            <a href="/estoque/iten?cd=<?=$this->view->resultMonitEst['itens'][$i]['idFornecimento']?>">
-                                              <strong><?=$this->view->resultMonitEst['itens'][$i]['produtoNome']?></strong>
-                                            </a>
-                                          </td>
-                                          <td align="right"><strong><?=$this->view->resultMonitEst['itens'][$i]['qtdFornecida'] - $this->view->resultMonitEst['itens'][$i]['qtdVendida']?></strong></td>
-                                        </tr>
-                                      
-                                     <?php
-                                          
-                                        }
-                                     ?>
-                                   </tbody>
-                                 </table>
+                                <div class="card alert alert-danger py-5" role="alert">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col" align="center">
+                                        <h5 class="text-dark"><a href="#" class="alert-link"><strong>Itens com estoque baixo:</strong> <?=$this->view->resultMonitEst['qtdItens']?></a></h5>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>  
                             </div>
                           <?php
@@ -133,46 +110,39 @@
                     </div>
                     <div class="row">
                       <div class="col pt-2">
-                        <h4 align="center">Financeiro</h4>
+                        <h4 align="center"><strong>Financeiro</strong></h4>
                        <?php
                             if(isset($this->view->resultMonitEst) && (count($this->view->resultMonitEst) > 0)){
 
 
                           ?>
-                            <div class="row">
-                              <div class="col">
-                                <h5 class="text-dark"></h5>
-                              </div>
-                            </div>
-                            <div class="row" style="height: 200px; overflow-y: auto;">
+                           <div class="row">
                               <div class="col ">
-                                <table class="table table-hover bg-success ">
-                                  <thead>
-                                    <tr>
-                                      <th>Prdoduto</th>
-                                      <th>Estoque</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <?php
-                                      for ($i=0; !($i == count($this->view->resultMonitEst['itens'])) ; $i++) { 
-                                        
-                                    ?>
-                                        <tr>
-                                          <td>
-                                            <a href="/estoque/iten?cd=<?=$this->view->resultMonitEst['itens'][$i]['idFornecimento']?>">
-                                              <strong>***********</strong>
-                                            </a>
-                                          </td>
-                                          <td><strong>***********</strong></td>
-                                        </tr>
-                                      
-                                     <?php
-                                          
-                                        }
-                                     ?>
-                                   </tbody>
-                                 </table>
+                                <div class="card alert alert-primary">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col" align="center">
+                                        <div class="row text-light">
+                                          <div class="col pt-2 px-2" align="center">
+                                            <i class="text-danger fas fa-arrow-alt-circle-down fa-3x"></i>
+                                            <br><span class="text-danger"><strong>R$ 1.800,00</strong></span>
+                                          </div>
+                                          <div class="col pt-2 px-2" align="center" style="margin: auto;">
+                                            <i class="text-success fas fa-arrow-alt-circle-up fa-3x"></i>
+                                            <br><span class="text-success"><strong>R$ 1.200,00</strong></span>
+                                          </div>
+                                        </div>
+                                        <div class="row text-light">
+                                            <div class="col">
+                                              <div class="" align="center" style="margin: auto;">
+                                                <br><span class="text-success"><strong>Saldo: R$ 600,00</strong></span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>  
                             </div>
                           <?php
@@ -182,47 +152,41 @@
                     </div>
                     <div class="row">
                       <div class="col pt-2">
-                        <h4 align="center">Vendas</h4>
+                        <h4 align="center"><strong>Vendas</strong></h4>
                         <?php
                             if(isset($this->view->resultMonitEst) && (count($this->view->resultMonitEst) > 0)){
 
 
                           ?>
                             <div class="row">
-                              <div class="col">
-                                <h5 class="text-dark"><strong></strong></h5>
-                              </div>
-                            </div>
-                            <div class="row" style="height: 200px; overflow-y: auto;">
                               <div class="col ">
-                                <table class="table table-hover bg-primary ">
-                                  <thead>
-                                    <tr>
-                                      <th>Prdoduto</th>
-                                      <th>Estoque</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <?php
-                                      for ($i=0; !($i == count($this->view->resultMonitEst['itens'])) ; $i++) { 
-                                        
-                                    ?>
-                                        <tr>
-                                          <td>
-                                            <a href="/estoque/iten?cd=<?=$this->view->resultMonitEst['itens'][$i]['idFornecimento']?>">
-                                              <strong>***********</strong>
-                                            </a>
-                                          </td>
-                                          <td><strong>***********</strong></td>
-                                        </tr>
-                                      
-                                     <?php
-                                          
-                                        }
-                                     ?>
-                                   </tbody>
-                                 </table>
-                              </div>  
+                                <div class="card alert alert-warning">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col" align="center">
+                                        <div class="row text-light">
+                                          <div class="col pt-2 px-2" align="center">
+                                            <div class="text-secondary" align="center" style="margin: auto;">Loja Fisic.</div>
+                                            <i class="text-secondary fas fa-arrow-alt-circle-up fa-3x"></i>
+                                            <br><span class="text-secondary"><strong>R$ 1.800,00</strong></span>
+                                          </div>
+                                          <div class="col pt-2 px-2" align="center" style="margin: auto;">
+                                            <div class="text-info" align="center" style="margin: auto;">Loja Virt.</div>
+                                            <i class="text-info fas fa-arrow-alt-circle-up fa-3x"></i>
+                                            <br><span class="text-info"><strong>R$ 1.200,00</strong></span>
+                                          </div>
+                                        </div>
+                                        <div class="row text-light">
+                                            <div class="col">
+                                              <div class="" align="center" style="margin: auto;">
+                                                <br><span class="text-dark"><strong>Total: R$ 3.000,00</strong></span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div> 
                             </div>
                           <?php
                             }

@@ -204,7 +204,7 @@ abstract class BaseModel
 
 
 
-    public function update(array $elementos, int $id):bool
+    public function update(array $elementos, int $id, Int $limit = 1):bool
     {
 
         //return Commit::update($this->table, $elementos, $id);
@@ -218,7 +218,7 @@ abstract class BaseModel
 
         $sql = substr($sql, 0, -2);
 
-        $sql .= " where id{$this->getTable()}={$id}";
+        $sql .= " where id{$this->getTable()}={$id} limit {$limit}";
 
         $conn = Transaction::get();
         $result = $conn->exec($sql);

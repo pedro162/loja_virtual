@@ -34,9 +34,10 @@
 
 				<?php 
 				
-					for ($i=0, $categorias = $this->view->categorias; !($i == count($categorias)) ; $i++) { 
+					
 
-						$bloco = $categorias[$i];
+						$bloco = $this->view->categorias;
+
 						for ($j=0; !($j == count($bloco)); $j++) { 
 						//
 							
@@ -56,30 +57,16 @@
 					 			$products = $this->view->arrProdIndexCat[$linha[$h]];//armazena os produtos da categoria
 					 			
 								$totProducts = count($products); 
-								//conta quantos tem dessa categoria
-
-
-								$urlImg = [];
-
-								foreach ($products as $key=> $value){ //verifica de o produto tras essa categoria comssigo
-									for ($k=0; !($k== count($value)) ; $k++) { 
-
-										$result = $value[$k]->getNomeCategoria() == $linha[$h];
-										if($result){
-											$urlImg[] = $key;
-										}
-									}
-								}
-
-					 				$toorLoja = null;
-							  		if(count($linha) == 4 && ($urlImg != null)){//total de fotos
-							  			if(($h==0) && ($i ==0) && ($j ==0)){
-							  				$toorLoja = 'Toor pela loja';
-							  			}
+								
+				 				$toorLoja = null;
+						  		if(count($linha) == 4 ){//total de fotos
+						  			if(($h==0) && ($i ==0) && ($j ==0)){
+						  				$toorLoja = 'Toor pela loja';
+						  			}
 							  			
 							  	?>
 							  	<div class="col-md-3">
-									<div class="card" style="width: 20rem;">
+									<div class="card" style="width: 22rem;">
 									  <div class="card-body">
 									  	<div class="row">
 									  		<div class="col-md-12">
@@ -101,19 +88,24 @@
 										    				break;
 									    			}
 
-									    			if(array_key_exists($sentinela, $urlImg)){
-									    				$urlImgId = explode('-', $urlImg[$sentinela]);
-									    				$img = $urlImgId[0];
-									    				$id = $urlImgId[1];
+									    			if(array_key_exists($sentinela, $products))	{
+									    				$urlIdEst = explode('-', $products[$sentinela]);
+									    				$img = $urlIdEst[0];
+									    				$id = $urlIdEst[1];
+									    				$estoque = (int)$urlIdEst[2];
+
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:10px;">
+									    				<strong>sem estoque</strong></p>':'' 
 									    				
 									    	?>
-										    	<div class="col-md-<?=$cols?> py-2 px-2 a-img-product">
-										    		<a href="/estoque/detalhes?cd=<?=$id?>" class="link-produto" ><img style="width: 100px; height: 100px;" class="card-img-top" src="files/imagens/<?=$img;?>" alt=""></a>
+										    	<div class="col-md-<?=$cols?> py-2 px-2  my-2" style="position: relative;">
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto " ><img style="width: 100px; height: 100px;" class="card-img-top a-img-product"  src="files/imagens/<?=$img;?>" alt=""></a>
+										    			<?= $msg ?>
 										    	</div>
 									    	<?php 
-									    			}
+									    		}	
 									    		$sentinela++;
-									    		}
+									    	}
 									    	?>
 									    </div>
 									  </div>
@@ -124,12 +116,12 @@
 								</div>
 								  
 							    <?php
-							    	}else if((count($linha) == 2)  && ($urlImg != null)){
+							    	}else if(count($linha) == 2){
 
 
 							     ?>
 							 	<div class="col-md-6">
-									<div class="card" style="width: 42rem;">
+									<div class="card" style="width: 46rem;">
 										<div class="card-body">
 											<div class="row">
 												<div class="col-md-12">
@@ -140,7 +132,7 @@
 												<?php									    		
 
 									    		$sentinela =0;
-									 
+									    		
 									    		while (!($sentinela == 4)) {
 
 									    			//configura largura da coluna
@@ -151,16 +143,23 @@
 										    				break;
 									    			}
 
-									    			if(array_key_exists($sentinela, $urlImg)){
-									    				$urlImgId = explode('-', $urlImg[$sentinela]);
-									    				$img = $urlImgId[0];
-									    				$id = $urlImgId[1];
+									    			if(array_key_exists($sentinela, $products))	{
+
+										    			$urlIdEst = explode('-', $products[$sentinela]);
+									    				$img = $urlIdEst[0];
+									    				$id = $urlIdEst[1];
+									    				$estoque = (int)$urlIdEst[2];
+
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:10px;">
+									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
-										    	<div class="col py-2 px-2 a-img-product">
-										    		<a href="/estoque/detalhes?cd=<?=$id?>" class="link-produto" ><img style="width: 100px; height: 100px;" class="card-img-top" src="files/imagens/<?=$img?>" alt="imagem"></a>
+										    	<div class="col py-2 px-2">
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="width: 100px; height: 100px;" class="card-img-top a-img-product" src="files/imagens/<?=$img?>" alt="imagem"></a>
+										    		<?= $msg ?>
 										    	</div>
 									    	<?php 
-									    			}
+									    		}
+
 									    		$sentinela++;
 									    		}
 									    	?>
@@ -171,10 +170,10 @@
 								</div>
 
 							     <?php
-							     	}else if($urlImg !=null){
+							     	}else if(count($linha) == 1){
 							      ?>
 							      <div class="col-md-12">
-									<div class="card" style="width: 86rem;">
+									<div class="card" style="width: 93.5rem;">
 									  <div class="card-body">
 									  	<div class="row">
 									  		<div class="col-md-12">
@@ -196,14 +195,20 @@
 										    				break;
 									    			}
 
-									    			if(array_key_exists($sentinela, $urlImg)){
-									    				$urlImgId = explode('-', $urlImg[$sentinela]);
-									    				$img = $urlImgId[0];
-									    				$id = $urlImgId[1];
+									    			if(array_key_exists($sentinela, $products))	{
+
+										    			$urlIdEst = explode('-', $products[$sentinela]);
+									    				$img = $urlIdEst[0];
+									    				$id = $urlIdEst[1];
+									    				$estoque = (int)$urlIdEst[2];
+
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:10px;">
+									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
 										    	<div class="col" style="position: relative;">
-										    		<a href="/estoque/detalhes?cd=<?=$id?>" class="link-produto" ><img style="width: 105px; height: 100px;" class="card-img-top py-2 px-2 a-img-product hidBtn" src="files/imagens/<?=$img?>" alt=""></a><br>
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="width: 105px; height: 100px;" class="card-img-top py-2 px-2 a-img-product hidBtn" src="files/imagens/<?=$img?>" alt="<?=$img?>"></a><br>
 										    		<a href="#" class="btn btn-primary" style="position: absolute; top: 100px; left: auto; margin:auto;display: none;">Ver mais</a>
+										    		<?= $msg ?>
 										    	</div>
 									    	<?php 
 									    			}
@@ -232,9 +237,6 @@
 						}
 					
 					?>
-				<?php
-					}
-				?>	
 				
 				
 			</div><br>

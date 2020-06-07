@@ -32,6 +32,7 @@ $(document).ready(function(){
     $('.cnpj').show();
   })
 
+  viewDeGraficos();//carrega os graficos
 
 //funcao para atualizar notificacoes
   $(window).mousemove(function(){
@@ -1101,6 +1102,7 @@ function foramtCalcCod(number)
       dataType: 'HTML',
       success: function(retorno){
         $('#dinamic').html(retorno);
+        viewDeGraficos()
       }
 
     })
@@ -1136,6 +1138,17 @@ function foramtCalcCod(number)
   /*------------------------ Disparando funcoes dos gráficos -----------------------*/
   $('#btnDesemprenho').on('click', function(){
       viewDeGraficos();
+
+      $.ajax({
+      type: 'GET',
+      url: '/home/admin/inicio',
+      dataType: 'HTML',
+      success: function(retorno){
+        $('#dinamic').html(retorno);
+        //viewDeGraficos()
+      }
+
+    })
    
   })
 
@@ -1159,40 +1172,7 @@ function listaTabelaProdutos(retorno) {
 
  //------------------------ View de graficos ------------------------------ 
 function viewDeGraficos(){
-   //inicas os canvas
-    let canvasMeta = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').
-      append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda'))
-
-    let canvasExecAnual = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').append($('<div/>').
-      text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual'))
-
-    let canvasMaisVendidos = $('<div/>').addClass('col-xs-12 mt-3 mb-3 col-sm-12 col-md-6').append($('<div/>').text('Mais vendidos').
-      addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos'))
-
-    let canvasMargem = $('<div/>').addClass('col-xs-12 col-sm-12 mt-3 mb-3 col-md-6').append($('<div/>').
-      text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr'))
-
-    //cria uma div e armazena os canvas
-    let rowCanvas = $('<div/>').addClass('row').css('background-color', 'rgba(0, 0, 0, .8)');
-    rowCanvas.css('padding', 'padding: 20px 40px')
-
-    rowCanvas.append(canvasMeta);
-    rowCanvas.append(canvasExecAnual);
-    rowCanvas.append(canvasMaisVendidos);
-    rowCanvas.append(canvasMargem);
-
-    //isere a dive no corpo do documetno principal
-    $('#dinamic').html('');
-
-
-    $('#dinamic').append(rowCanvas);
-
-    //exibe a barra vertial direita
-    $('#optionPlus').css('display', 'block');
-
- 
-
-
+   
     let ctx = $('#maisVendidos');
     let myChart = new Chart(ctx, {
       type: 'pie',//pie
@@ -1223,7 +1203,7 @@ function viewDeGraficos(){
       options: {
         layout:{
            padding: {
-                left: 50,
+                left: 0,
                 right: 0,
                 top: 0,
                 bottom: 0
@@ -1234,13 +1214,13 @@ function viewDeGraficos(){
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }],
             xAxes:[{
               ticks: {
                     barPercentage: 0.2,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }]
         }
@@ -1278,7 +1258,7 @@ function viewDeGraficos(){
       options: {
         layout:{
            padding: {
-                left: 50,
+                left: 0,
                 right: 0,
                 top: 0,
                 bottom: 0
@@ -1289,13 +1269,13 @@ function viewDeGraficos(){
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }],
             xAxes:[{
               ticks: {
                     barPercentage: 0.2,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }]
         }
@@ -1326,7 +1306,7 @@ function viewDeGraficos(){
       options: {
         layout:{
            padding: {
-                left: 50,
+                left: 0,
                 right: 0,
                 top: 0,
                 bottom: 0
@@ -1337,13 +1317,13 @@ function viewDeGraficos(){
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }],
             xAxes:[{
               ticks: {
                     barPercentage: 0.2,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }]
         }
@@ -1415,7 +1395,7 @@ function viewDeGraficos(){
     options: {
         layout:{
            padding: {
-                left: 50,
+                left: 0,
                 right: 0,
                 top: 0,
                 bottom: 0
@@ -1426,13 +1406,13 @@ function viewDeGraficos(){
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    fontColor: '#fff'
+                    fontColor: '#000'
                 }
             }],
             xAxes:[{
               ticks:{
                 barPercentage: 1,
-                fontColor: '#fff'
+                fontColor: '#000'
               }
               
             }]

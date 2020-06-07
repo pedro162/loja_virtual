@@ -20,12 +20,12 @@
 			 ?>
 			 </div>
 		</div>
-		<div class="col-md-5" align="center">
+		<div class="col-md-5" align="left">
 			<h3>Condiçoes</h3>
 			<h4><strong><?=$this->view->produto->getNomeProduto();?></strong></h4>
 			<p>Classinficação</p>
-			<p><sup>Por: </sup><span><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span> & frete</p>
-			<hr/>
+			<p><sup>Por: </sup><span id="vlP"><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span> & frete</p>
+			<hr align="left" width="50%;" />
 			<h4>Detalhes do produto</h4>
 			<p>ASIN:</p>
 			<p>Dimensões d produto:</p>
@@ -40,10 +40,63 @@
 			<br>
 		</div>
 		<div class="col-md-2" align="center">
-			<p>Quantidade</p>
-			<h3>Add. carrinho</h3>
-			<h3>Comprar agora</h3>
-			<p><a href="#">Selecionar endereço</a></p>
+			<div class="row my-4">
+				<div class="col">
+					Compartilhe <a href="" class="mx-1"><i class="fab fa-whatsapp fa-1x"></i></a>
+								<a href="" class="mx-1"><i class="fab fa-twitter fa-1x"></i></a>
+								<a href="" class="mx-1"><i class="fab fa-instagram fa-1x"></i></a>
+								<a href="" class="mx-1"><i class="fab fa-facebook fa-1x"></i></a>
+				</div>
+			</div>
+			<div class="row" style="box-shadow: 1px 1px 2px #000">
+				<div class="col">
+					<form class="py-4" method="post" action="/pedido/produto/frete" id="formFretQtd">
+						<div class="form-group row">
+							<div class="col" align="left">
+								<label for="qtd"><strong>Quantidade</strong></label>
+							</div>
+							<div class="col">
+								<select class="form-control" id="qtd" name="qtd">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col">
+								<button class="btn btn-warning"><strong>Add. Carrinho</strong></button>
+								<button class="btn btn-warning"><strong>Compar Agora</strong></button>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col" align="left">
+								<p><strong>Sua compra é <a href="#" class="text-success">segura</a></strong></p>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-3" align="left">
+								<label for="frete"><strong>Calc. Frete</strong></label>
+							</div>
+							<div class="col-sm-9">
+								<input type="text" placeholder="CEP" name='cep' class="form-control" id="frete"/><br>
+
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col" align="center" id="response">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col" align="center">
+								<button class="btn btn-success" id="calcularFrete"><strong>Calcular</strong></button>
+							</div>
+						</div>
+					</form>
+
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="row">
@@ -56,12 +109,12 @@
 					<div class="col-md-10">
 						<div class="row">
 							<?php 
-								for ($i=0, $estoque = $this->view->othesFornecimentos; !($i == count($estoque)); $i++) { 
+								for ($i=0, $estoque = $this->view->othesFornecimentosPrim; !($i == count($estoque)); $i++) { 
 									
 							?>
-								<div class="col py-2 px-2 a-img-product">
-									<a class="link-produto" href="/estoque/detalhes?cd=<?=$estoque[$i]->getProdutoIdProduto();?>">
-										<img style="width: 200px; height: 200px;" class="card-img-top" src="../files/imagens/<?=$estoque[$i]->getUrl();?>"  alt="<?=$estoque[$i]->getUrl();?>">
+								<div class="col py-2 px-2">
+									<a class="link-produto" href="/pedido/produto/detalhes?cd=<?=$estoque[$i]->getProdutoIdProduto();?>">
+										<img style="width: 200px; height: 200px;" class="card-img-top a-img-product" src="../files/imagens/<?=$estoque[$i]->getUrl();?>"  alt="<?=$estoque[$i]->getUrl();?>">
 									</a>
 								</div>
 							<?php 
@@ -82,10 +135,27 @@
 		<div class="col">
 			<hr/>
 			<h5><strong><span>Clientes que compraram este item tamberm compraram</span></strong></h5>
-			<br>
-			<br>
-			<br>
-			<br>
+			<div class="row" style="margin:auto;" align="center">
+				<div class="col-md-1" style="margin: auto;" align="left"><button class="btn btn-primary"><</button></div>
+					<div class="col-md-10">
+						<div class="row">
+							<?php 
+								for ($i=0, $estoque = $this->view->othesFornecimentosSec; !($i == count($estoque)); $i++) { 
+									
+							?>
+								<div class="col py-2 px-2">
+									<a class="link-produto" href="/pedido/produto/detalhes?cd=<?=$estoque[$i]->getProdutoIdProduto();?>">
+										<img style="width: 200px; height: 200px;" class="card-img-top a-img-product" src="../files/imagens/<?=$estoque[$i]->getUrl();?>"  alt="<?=$estoque[$i]->getUrl();?>">
+									</a>
+								</div>
+							<?php 
+									
+								}
+							?>
+						</div>
+					</div>
+				<div class="col-md-1" style="margin: auto;" align="right"><button class="btn btn-primary">></button></div>
+			</div>
 		</div>
 	</div>
 	<div class="row">

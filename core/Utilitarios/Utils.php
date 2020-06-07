@@ -30,6 +30,18 @@ class Utils
         $dtRe = explode('-', $date);
         return $dtRe[2].'/'.$dtRe[1].'/'.$dtRe[0];
     }
+
+
+    public function calFreteCorreios(array $dadosProduto)
+    {   
+                
+        $url = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?&';
+        $url .= http_build_query($dadosProduto);
+
+        $xml = simplexml_load_file($url);
+        return $xml;
+        
+    }
     
 
 }

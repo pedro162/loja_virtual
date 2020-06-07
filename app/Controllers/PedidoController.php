@@ -11,6 +11,8 @@ use App\Models\Fornecimento;
 use App\Models\LogradouroPessoa;
 use App\Models\Pedido;
 use App\Models\DetalhesPedido;
+use \App\Models\ProdutoCategoria;
+use \Core\Utilitarios\Utils;
 
 class PedidoController extends BaseController
 {
@@ -189,8 +191,8 @@ class PedidoController extends BaseController
                 $item = explode(',', $dados[$i]);
 
                 $estoque = new Fornecimento();
-                $result = $estoque->listarConsultaPersonalizada('P.idProduto = '.$item[0], NULL, NULL, true);
-                
+                $result = $estoque->listarConsultaPersonalizada('F.ativo = 1 and (F.qtdFornecida - F.qtdVendida > 0) and P.idProduto = '.$item[0], NULL, NULL, true);
+
                 //$arrEstoque[] = $result;
                 $detalhesPedido = new DetalhesPedido();
 
@@ -232,5 +234,99 @@ class PedidoController extends BaseController
         }
         
     }
+
+
+
+     public function detalhesOfProduto($request)
+    {
+        try {
+            Transaction::startTransaction('connection');
+            $this->setMenu();
+            $this->setFooter();
+
+            if(!isset($request['get']['cd'])){
+                throw new Exception("Parametro inválido\n");
+                
+            }
+            $idProduto = intval($request['get']['cd']);
+
+            
+
+            $produto = new Produto();
+            $resultProduto = $produto->loadProdutoForId($idProduto);
+
+            $imagensProduto = $resultProduto->getImagem();
+
+            $fornecimento = new Fornecimento();
+            $resultFornce = $fornecimento->loadFornecimentoForIdProduto($idProduto, true);
+
+            $categorias = $resultProduto->produtoCategoria();
+            
+            $arrIdCategPrim = [];
+            $arrIdCategSeg = [];
+            for ($i=0; !($i == count($categorias)) ; $i++) { 
+
+                if($categorias[$i]->getClassificCateg() == 'primaria'){
+                    $idCateg = $categorias[$i]->getIdCategoria();
+                    $arrIdCategPrim[] = (int) $idCateg;
+                }else if($categorias[$i]->getClassificCateg() == 'secundaria'){
+                    $idCateg = $categorias[$i]->getIdCategoria();
+                    $arrIdCategSeg[] = (int) $idCateg;
+                }
+               
+            }
+            $othesFornecimentosPrim = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategPrim, true,(int) $idProduto);
+            $othesFornecimentosSec = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategSeg, true,(int) $idProduto);
+            
+            $this->view->imagensProduto = $imagensProduto;
+            $this->view->fornecimento = $resultFornce;
+            $this->view->produto = $resultProduto;
+            $this->view->categoriasProduto = $categorias;
+            $this->view->othesFornecimentosPrim = $othesFornecimentosPrim;
+            $this->view->othesFornecimentosSec = $othesFornecimentosSec;
+            $this->render('produtos/detalhes', false);
+            
+            Transaction::close();
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            var_dump($e->getMessage());
+            
+        }
+    }
+
+
+    public function calcFrete($request)
+    {
+        $cepO = 65061220;
+
+        $dadosProduto['nCdEmpresa'] = '';
+        $dadosProduto['sDsSenha'] = '';
+        $dadosProduto['nCdServico'] = 41106;
+        $dadosProduto['sCepOrigem'] = $cepO;
+        $dadosProduto['sCepDestino'] = $request['post']['cep'];
+        $dadosProduto['nVlPeso'] = 2;
+        $dadosProduto['nCdFormato'] = 1;
+        $dadosProduto['nVlComprimento'] = 20;
+        $dadosProduto['nVlAltura'] = 6;
+        $dadosProduto['nVlLargura'] = 21;
+        $dadosProduto['nVlDiametro'] = 11;
+        $dadosProduto['sCdMaoPropria'] = 'n';
+        $dadosProduto['nVlValorDeclarado'] = $request['post']['vlP'];
+        $dadosProduto['sCdAvisoRecebimento'] = 'N';
+        $dadosProduto['StrRetorno'] = 'xml';
+        $dadosProduto['nIndicaCalculo'] = 3;
+
+        $frete = new Utils();
+        $result = $frete->calFreteCorreios($dadosProduto);
+
+        $frete = $result->cServico;
+
+        $response = 'Total frete R$ '.$frete->Valor.'<br/>Entrega em até '.$frete->PrazoEntrega.' dias';
+
+        $this->view->result = $response;
+        
+        $this->render('pedido/ajax', false);
+    }
+
 
 }

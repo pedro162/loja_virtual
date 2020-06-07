@@ -115,6 +115,11 @@ class Fornecimento extends BaseModel
                 case 'nf': // falta criar o metodo ideal
                     $this->setNf($subArray[1]);
                     break;
+
+                case 'ativo': // falta criar o metodo ideal
+                    $id = (int)$subArray[1];
+                    $this->setAtivo($id);
+                    break;
             }
 
         }
@@ -141,17 +146,47 @@ class Fornecimento extends BaseModel
 
     public function save(array $dados)
     {
-
+        
         $this->clear($dados);
+
+        //vefica se existe um estoque com qtd >  0 
+        $where = 'F.ativo=1 and (F.qtdFornecida - F.qtdVendida > 0) and P.idProduto = '.$this->getProdutoIdProduto();
+        $stqZero = $this->listarConsultaPersonalizada($where, null, null, true);
+
+        //e desativa o novo estoque
+        if($stqZero){
+            $this->setAtivo(0);
+        }
+
 
         $resultParse = $this->parseCommit();
         
         $result = $this->insert($resultParse);
 
-        if($result == true){
-            return ['msg', 'success', 'Estoque lançado com sucesso'];
+        //busca o estoque  zero e ativo
+        $where = 'F.ativo=1 and (F.qtdFornecida - F.qtdVendida = 0) and P.idProduto = '.$this->getProdutoIdProduto();
+        $stqZero = $this->listarConsultaPersonalizada($where, null, null, true);
+
+        if($stqZero != false){
+           //após lançar o novo estoque e desativa o que estiver ativo e com quantidade zerada.
+            $dados = ['ativo=0'];
+
+            $resultModify = $stqZero[0]->modify($dados);
+
+            if(($result == true) && ($resultModify)){
+                return ['msg', 'success', 'Estoque lançado com sucesso'];
+            }
+            
+        }else{
+
+            if($result == true){
+                return ['msg', 'success', 'Estoque lançado com sucesso'];
+            }
         }
-        return ['msg',' warning ','Produto cadastrado com sucesso!'];
+
+        
+        throw new Exception("Erro ao lançar estoque");
+        
     }
 
 
@@ -717,14 +752,14 @@ class Fornecimento extends BaseModel
 
     public function getProdutoEndCategoria(Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false,Int $idProduto = null)
     {
-        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, Img.url,Img.tipo,  C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
-        $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' ';
+        $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, F.vlVenda, F.idFornecimento, Img.url,Img.tipo,F.qtdFornecida, F.qtdVendida, C.nomeCategoria, C.idCategoria from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto inner join ProdutoCategoria as PG on PG.ProdutoIdproduto = P.idProduto inner join Categoria as C on PG.CategoriaIdCategoria = C.idCategoria inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
+        $sql .=' WHERE F.ativo = 1 and Img.tipo = \'primaria\' and PG.classificCateg = \'primaria\'';
 
         if(isset($idProduto) && ($idProduto > 0)){
             $sql .=' and PG.ProdutoIdproduto = '.$idProduto;
         }
         
-        $sql .=' GROUP by P.nomeProduto ';
+        $sql .=' GROUP by P.idProduto ';
 
         if(($limitInt != NULL) && ($limtEnd != NULL)){
 
@@ -832,7 +867,7 @@ class Fornecimento extends BaseModel
             if($like){
                 $dados = '%'.$dados.'%';
                 $dados = $this->satinizar($dados, true);
-                $result = $this->listarConsultaPersonalizada('P.nomeProduto LIKE '.$dados, NULL, NULL, true);
+                $result = $this->listarConsultaPersonalizada('F.ativo = 1 and P.nomeProduto LIKE '.$dados, NULL, NULL, true);
             }else{
                 $result = $this->listarConsultaPersonalizada();
             }

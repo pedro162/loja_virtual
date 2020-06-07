@@ -1,3 +1,105 @@
-<div class="row">
-	<div class="col">Home admin</div>
+<div class="container-fluid">
+  <div class="row pt-5">
+    <div class="col">
+      <div class="row">
+        <div class="col-sm-7">          
+          <h2><strong>Comparativos</strong></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <form action="#" method="post" class="form">
+        <div class="row">
+          <div class="form-group col">
+            <label for="inicio">Inico</label>
+            <input id="inicio" type="date" name="inico" class="form-control">
+          </div>
+          <div class="form-group col">
+            <label for="fim">Fim</label>
+            <input id="fim" type="date" name="fim" class="form-control">
+          </div>
+          <div class="form-group col" align="bottom">
+             <button type="submit" class="btn btn-primary" style="margin-bottom: -75px;">Buscar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+	<div class="row">
+		<div class="col">
+			<div class="card alert alert-secondary mb-4">
+        <div class="card-body">
+        	<div class="row">
+            <div class="col" align="center">
+            	<div class="titleChar h3 text-dark"><strong>Mais vendidos</strong></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" align="center">
+             <div style="width: 80%; height: 80%;">
+                <canvas id="maisVendidos"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+		</div>
+		<div class="col">
+			<div class="card alert alert-secondary">
+          <div class="card-body">
+          	<div class="row">
+              <div class="col" align="center">
+              	<div class="titleChar h3 text-dark"><strong>Composição da margem</strong></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col" align="center">
+                <div style="width: 80%; height: 80%;">
+                  <canvas id="compMargemLucr"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+		</div>
+	</div>
+
+	<div class="row pb-3">
+		<div class="col">
+			<div class="card alert alert-secondary">
+        <div class="card-body">
+        	<div class="row">
+            <div class="col" align="center">
+            	<div class="titleChar h3 text-dark"><strong>Compartivo do exercicio anual</strong></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" align="center">
+              <div style="width: 80%; height: 80%;">
+                <canvas id="excAnual"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+		</div>
+		<div class="col">
+			<div class="card alert alert-secondary">
+        <div class="card-body">
+        	<div class="row">
+            <div class="col" align="center">
+            	<div class="titleChar h3 text-dark"><strong>Meta</strong></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" align="center">
+              <div style="width: 80%; height: 80%;">
+               <canvas id="metaVenda"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+		</div>
+	</div>
 </div>

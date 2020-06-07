@@ -36,17 +36,15 @@ class HomeController extends BaseController
 
                 $idProduto = $produotosAndCategorias[$j]->getProdutoIdProduto();
 
-                $urlImg = $produotosAndCategorias[$j]->getUrl().'-'.$idProduto;
-                
+                $estoque = $produotosAndCategorias[$j]->getQtdFornecida()- $produotosAndCategorias[$j]->getQtdVendida();
 
-                $result = $categsProduct->getCategoria($idProduto);
-                if($result){
-                    $arrCategProducts[$urlImg] = $result;
-                }
+                $urlImg = $produotosAndCategorias[$j]->getUrl().'-'.$idProduto.'-'.$estoque;
+                
+                $arrCategProducts[$urlImg] = $produotosAndCategorias[$j]->getNomeCategoria();
+                
 
 
             }
-
 
             
             $min = (int) $fornecimento->minId();
@@ -58,24 +56,23 @@ class HomeController extends BaseController
             for ($i=0; !($i == count($categoriaFornecimento) ); $i++) { 
                 
                 foreach ($arrCategProducts as $key => $value) {
-                    for ($j=0; !($j == count($value) ); $j++) {
 
-                        $result = $categoriaFornecimento[$i]->getIdCategoria() == $value[$j]->getIdCategoria();
+                    $result = $value == $categoriaFornecimento[$i]->getNomeCategoria();
 
-                        if($result != false){
-                            if(!array_key_exists($categoriaFornecimento[$i]->getNomeCategoria(), $arrProdIndexCat)){
-                                $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][$key] = $value;
-                            }else{
-                                $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][$key] = $value;
-                            }
-                        }   
-                    }
-                 
+                    if($result != false){
+                        if(!array_key_exists($categoriaFornecimento[$i]->getNomeCategoria(), $arrProdIndexCat)){
+                            $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][] = $key;
+                        }else{
+                            $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][] = $key;
+                        }
+                    }   
                  } 
 
 
                 
             }
+
+            
 
             //grid
             $grid = [4,2,4,1];
@@ -89,17 +86,17 @@ class HomeController extends BaseController
             //determina a quantidade de interaçoes
             $qtdGrid = intval(count($categoriaFornecimento) /$soma);
 
-            $supperArrayCategorias = [];
+            //$supperArrayCategorias = [];
 
             $indiceCategoria = 0;
             $sentinela = 0;
 
-
+            $supArrayCategorias = [];
             while (!($qtdGrid == $sentinela)) {
                 
-                $supArrayCategorias = [];
+                
                 for ($linha=0; !($linha == count($grid)) ; $linha++) { 
-                    $coluna = (int) $grid[$linha];
+                    $coluna = $grid[$linha];
 
                     $subArrCateg = [];
                     
@@ -116,12 +113,11 @@ class HomeController extends BaseController
                     $supArrayCategorias[] = $subArrCateg;
                 }
 
-                $supperArrayCategorias[] = $supArrayCategorias;
 
                 $sentinela ++;
             }
-            
-            $this->view->categorias = $supperArrayCategorias;
+
+            $this->view->categorias = $supArrayCategorias;
             $this->view->arrProdIndexCat = $arrProdIndexCat;
 
             $this->view->qtd = Venda::qtdItensVenda();// insere o total de itens do carrinho
@@ -187,7 +183,7 @@ class HomeController extends BaseController
             $this->view->resultMonitEst = $resultMonitEst;
             $this->setMenu('adminMenu');
             $this->setFooter('footer');
-            $this->render('admin/inicio', false);
+           $this->render('admin/home', false);
 
             Transaction::close();
 
