@@ -13,10 +13,12 @@ use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Fornecimento;
 use App\Models\Imagem;
+use App\Models\Estrela;
 
 
 class ProdutoController extends BaseController
 {
+    const IMG = ['primaria', 'secundaria', 'ternaria','quatenaria'];
     public function show($request)
     {  
         try{
@@ -81,6 +83,7 @@ class ProdutoController extends BaseController
 
                 $this->view->categorias = $categoria->listaCategoria();
                 $this->view->marcas = $marca->listaMarca();
+                $this->view->img = self::IMG;
 
                 $this->render('produtos/cadastrar', false);
 
@@ -169,45 +172,7 @@ class ProdutoController extends BaseController
     {
         try {
             Transaction::startTransaction('connection');
-            if(!isset($request['get']['cd'])){
-                var_dump('não e');
-            }
-            $idProduto = intval($request['get']['cd']);
-
-            $this->setMenu();
-            $this->setFooter();
-
-            $produto = new Produto();
-            $resultProduto = $produto->loadProdutoForId($idProduto);
-
-            $imagensProduto = $resultProduto->getImagem();
-
-            $fornecimento = new Fornecimento();
-            $resultFornce = $fornecimento->loadFornecimentoForIdProduto($idProduto, true);
-
-            $categorias = $resultProduto->produtoCategoria();
-
-            $superArrFornec = [];
-            for ($i=0; !($i == count($categorias)) ; $i++) { 
-               $idCateg = $categorias[$i]->getIdCategoria();
-
-               $othesFornecimentos = $resultFornce->loadFornecimentoForIdCategoria($idCateg, true);
-               $superArrFornec[] = $othesFornecimentos;
-                echo"<pre>";
-                var_dump($othesFornecimentos);
-                echo "</pre>";
-               
-
-            }
-
-
-
-            $this->view->imagensProduto = $imagensProduto;
-            $this->view->fornecimento = $resultFornce;
-            $this->view->produto = $resultProduto;
-            $this->view->categoriasProduto = $categorias;
-            $this->view->othesFornecimentos = $superArrFornec;
-            $this->render('produtos/detalhes', true);
+           
             
             Transaction::close();
         } catch (\Exception $e) {
@@ -215,13 +180,12 @@ class ProdutoController extends BaseController
             var_dump($e);
             
         }
-       /* echo"<pre>";
-        var_dump($request);
-        echo "</pre>";*/
     }
 
     public function editarProduto($request)
     {   
+
+
         try{ 
             Transaction::startTransaction('connection');
 
@@ -237,6 +201,7 @@ class ProdutoController extends BaseController
             $produto    = new Produto();
             $categoria  = new Categoria();
             $marca      = new Marca();
+            $this->view->img = self::IMG;
 
             $this->view->categorias = $categoria->listaCategoria();
             $this->view->marcas = $marca->listaMarca();
@@ -328,18 +293,78 @@ class ProdutoController extends BaseController
         
             Transaction::startTransaction('connection');
 
-            //prepara o arquivo de imagem para salvar
-            $extenImg = explode('/', $request['file']['imgProduto']['type'])[1];
-            $nameImg = $request['post']['nome'].'.'.$extenImg;
-            $nameImg = strtolower((str_replace([' ','_'], ['', ''], $nameImg)));
-            $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
+            if(!isset($request['post'])){
+                throw new \Exception("Preencha o formulario corretament\n");
+                
+            }
+
+
+            $extenImg = null;
+            $nameImg = null;
+            $beforeExtension = null;
+
+            //verifica se as imagens foram enviadas
+            if(isset($request['file']) && (count($request['file']) == 4) ){
+                foreach ($request['file'] as $key => $value) {
+                    if(isset($value['name']) && (strlen($value['name']) > 0)){
+
+                        $arrNameExtension = explode('/', $value['type']);
+                        $beforeExtension = $arrNameExtension[0]; 
+
+                        $extenImg = strtolower($arrNameExtension[1]);
+
+                        if((!isset($request['post']['nome'])) || (strlen($request['post']['nome']) == 0)){
+                            throw new \Exception("Preencha o formulario corretamente\n");
+                            
+                        }
+
+                        $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
+                        $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
+
+                        $request['post']['img'][$key] = $nameImg;
+                    }else{
+                        throw new \Exception("Adicione as imagens\n");
+                        
+                    }
+                }
+            }else{
+                throw new \Exception("Adicione as imagens\n");
+            }
+
 
             $produto = new Produto();
-            $request['post']['img'] = $nameImg;
             $resultPoduto = $produto->save($request['post']);
 
             if($resultPoduto != false){
-                $fiile->salvar('imagens', true);
+                foreach ($request['file'] as $key => $value) {
+
+                    $tipo = null;
+                    switch (trim($key)) {
+                        case 'imgProduto-2':
+                           $tipo = 'secundaria';
+                            break;
+                        case 'imgProduto-3':
+                            $tipo = 'ternaria';
+                            break;
+                        case 'imgProduto-4':
+                            $tipo = 'quartenaria';
+                            break;
+                        default:
+                             $tipo = 'primaria';
+                            break;
+                    }
+
+                    $newNameImg = $tipo.'-'.$nameImg;
+                    var_dump($newNameImg);
+
+
+                   if($tipo != null){
+                        $fiile = new File($newNameImg, $value['size'], $value['tmp_name']);
+
+                        $fiile->salvar('imagens', true);
+                    }
+                    
+                }
             }
             
             $this->view->result = json_encode($resultPoduto);
@@ -373,82 +398,70 @@ class ProdutoController extends BaseController
                 die();//falta implemtar testando
             }
 
-            //captura a url antes da imagem do produto antes do update
-            $urlImagem = $urlImagem[0]->getUrl();
-            
-
             $extenImg = null;
             $nameImg = null;
+
             $beforeExtension = null;
 
-            $sentinelaFile = false;
-            if(isset($request['file']['imgProduto']['name']) && (strlen($request['file']['imgProduto']['name']) > 0)){
+            if(isset($request['file']) && (count($request['file']) == 4) ){
+                foreach ($request['file'] as $key => $value) {
+                    if(isset($value['name']) && (strlen($value['name']) > 0)){
 
-                $arrNameExtension = explode('/', $request['file']['imgProduto']['type']);
-                $beforeExtension = $arrNameExtension[0]; 
+                        $arrNameExtension = explode('/', $value['type']);
+                        $beforeExtension = $arrNameExtension[0]; 
 
-                $extenImg = strtolower($arrNameExtension[1]);
-                $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
-                $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
+                        $extenImg = strtolower($arrNameExtension[1]);
+                        $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
+                        $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
 
-                $request['post']['img'] = $nameImg;
-                $sentinelaFile = true;
-               
-
-            }else{
-
-                $arrNameExtension = explode('.', $urlImagem);
-                $beforeExtension = $arrNameExtension[0];
-
-                $extenImg = strtolower($arrNameExtension[1]);
-                $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
-                $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
-
-                $request['post']['img'] = $nameImg;
-            }
-                       
-            $result = $produto->modify($request['post']);
-
-            $oldImg = __DIR__.'/../../public/files/imagens/'.$urlImagem;
-
-            if(file_exists($oldImg)){
-                $nameProdReplace = strtolower(str_replace([' ','_'], ['', ''], $request['post']['nome']));
-
-                //verifica se mudou o nome do produto e atualiza o nome da imagem
-                if(($beforeExtension != $nameProdReplace) && ($sentinelaFile == false)){
-                    $rename = rename($oldImg, __DIR__.'/../../public/files/imagens/'.$nameImg);
-
-                }else if(($beforeExtension == $nameProdReplace) && ($sentinelaFile != false)){
-
-                    $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
-
-                    $resultUnlink = unlink($oldImg);
-
-                    $fiile->salvar('imagens', true);
-
-                }else if(($beforeExtension != $nameProdReplace) && ($sentinelaFile != false)){
-                    $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
-
-                    $resultUnlink = unlink($oldImg);
-
-                    $fiile->salvar('imagens', true);
-
+                        $request['post']['img'][$key] = $nameImg;
+                    }else{
+                        throw new \Exception("Adicione as imagens\n");
+                        
+                    }
                 }
-
-
-
-                
             }else{
-
-                $fiile = new File($nameImg, $request['file']['imgProduto']['size'], $request['file']['imgProduto']['tmp_name']);
-
-                $resultUnlink = unlink($oldImg);
-
-                $fiile->salvar('imagens', true);
+                throw new \Exception("Adicione as imagens\n");
             }
 
+            foreach ($request['file'] as $key => $value) {
+
+                    $tipo = null;
+                    switch (trim($key)) {
+                        case 'imgProduto-2':
+                           $tipo = 'secundaria';
+                            break;
+                        case 'imgProduto-3':
+                            $tipo = 'ternaria';
+                            break;
+                        case 'imgProduto-4':
+                            $tipo = 'quartenaria';
+                            break;
+                        default:
+                             $tipo = 'primaria';
+                            break;
+                    }
+
+
+                    if($tipo != null){
+
+
+                        $fiile = new File($tipo.'_'.$nameImg, $value['size'], $value['tmp_name']);
+
+                        $resultUnlink = unlink($nameImg);
+
+                        $fiile->salvar('imagens', true);
+                    }
                 
+            }
+
             
+            /*$fiile = new File($tipo.'_'.$nameImg, $value['size'], $value['tmp_name']);
+
+                        $resultUnlink = unlink($nameImg);
+
+                        $fiile->salvar('imagens', true);*/
+
 
             $this->view->result = json_encode($result);
 
@@ -492,6 +505,67 @@ class ProdutoController extends BaseController
             //falta implementar corretamente
             $erro = ['msg','warning', $e->getMessage()];
             $this->view->produtos = json_encode($erro);
+            $this->render('produtos/ajaxPainelAdmin', false);
+        }
+    }
+
+
+    public function votar($request)
+    {
+        try{
+
+            Transaction::startTransaction('connection');
+
+            if((!isset($request['get']['cd'])) || (!isset($request['get']['pt']))){
+                throw new \Exception("Parâmetro inváldio");
+                
+            }
+            $produto = new Produto();
+
+            $pontos = (int)$request['get']['pt']; //pontos voto
+            $id = (int) $request['get']['cd'];  //produto votado
+
+            //busca o  produto
+            $resultFind = $produto->loadProdutoForId((int)$id); //busca o produto 
+            
+            $estrelas = $resultFind->Estrela(); //busca as estelas do produto
+
+            //conta o total dos likes
+            $gostie = 0;
+            $totEstrelas = 0;
+
+            if($estrelas){
+                for ($i=0; !($i == count($estrelas)) ; $i++) { 
+                    $gostie += $estrelas[$i]->getNumEstrela();
+                }
+
+                $totEstrelas = count($estrelas);
+            }
+
+            $estrela = new Estrela();
+            $resultVoto = $estrela->save(['produto'=>(int) $id, 'estrela'=> (int)$pontos]);
+
+            if($resultVoto == true){
+
+                $totVotos = $totEstrelas + 1;
+                $totLikes = $gostie  + $pontos;
+
+                $media = round($totLikes / $totVotos, 1);
+
+                $this->view->result= json_encode([$media, 'Obrigado!']);
+                $this->render('produtos/ajaxPainelAdmin', false);
+            }
+            
+            Transaction::close();
+
+        } catch (\Exception $e) {
+
+            Transaction::rollback();
+
+
+            //falta implementar corretamente
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result= json_encode($erro);
             $this->render('produtos/ajaxPainelAdmin', false);
         }
     }

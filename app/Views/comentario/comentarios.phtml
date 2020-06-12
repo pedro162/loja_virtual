@@ -1,0 +1,45 @@
+<?php 
+	if($this->view->comentarios != false){
+		for ($i=0; !($i == count($this->view->comentarios)) ; $i++) { 
+			$dtCom = $this->view->comentarios[$i]->getDtComentario();
+			$explDt = explode(' ', $dtCom);
+			$hora = $explDt[1];
+			$data = array_reverse(explode('-',$explDt[0]));
+			
+?>
+	<div class="row">
+		<div class="col-sm-1">
+			<img class="rounded-circle"  style="width: 70px; height: 70px;" src="../files/imagens/perfil/<?=$this->view->comentarios[$i]->getImg();?>" align="imagem do usuario"/>
+		</div>
+		<div class="col-sm-11" align="left">
+			<div class="col-sm-11" align="left">
+				<div class="row">
+					<div class="col"><span><strong><?='@'.$this->view->comentarios[$i]->getNomePessoa()?></strong> <?=$hora.'  '.$data[0].'-'.$data[1].'-'.$data[2];?> </span></div>
+				</div>
+				<div class="row">
+					<div class="col text-dark"><p><?="\t".$this->view->comentarios[$i]->getTextoComentario()?></p></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col" align="left;">
+			<hr style="width: 50%; margin-left: 0;" />
+		</div>
+	</div>
+
+<?php
+	# code...
+		}
+
+	}else{
+?>
+	<div class="row">
+		<div class="col">
+			Dexe seu cimentário...
+		</div>
+	</div>
+<?php
+
+	}
+?>

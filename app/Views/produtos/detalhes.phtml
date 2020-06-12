@@ -1,8 +1,8 @@
 
-<div class="container-fluid" id="detalheProduto" style="">
-	<div class="row">
-		<div class="col-md-5" align="center">
-				<img class="img-produto" src="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>" style="width: 75%; height: 75%;" data-zoom-image="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>"><br><br>
+<div class="container-fluid py-3" id="detalheProduto" style="">
+	<div class="row" style="width: 80%; margin:auto;">
+		<div class="col-md-5 mb-5  mt-3" align="center" id="imgP">
+				<img id="<?=$this->view->produto->getIdProduto();?>"  class="img-produto" src="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>" style="width: 75%; height: 75%;" data-zoom-image="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>"><br><br>
 			<div id="gali">
 			<?php
 				for ($i=0, $imagens = $this->view->imagensProduto;!($i == count($imagens)) ; $i++) { 
@@ -19,12 +19,58 @@
 			 	}
 			 ?>
 			 </div>
+			 <div class="row">
+			 	<div class="col" align="left">
+			 		<div class="row">
+			 			<div class="col">
+			 				Deixe seu like
+			 			</div>
+			 		</div>
+			 		<div class="row ">
+			 			<div class="col">
+			 				<div id="barra">
+				 				<span class="bg" style="width:<?=$this->view->percent?>"></span>
+					 			<div class=" estrelas">
+					 				<?php for ($i=0; !($i == 5); $i++):?>
+					 					<span class="star" id="<?=$i?>">
+					 						<span class="starAbsolute"></span>
+					 					</span>
+					 				<?php endfor;?>
+					 			</div>
+					 		</div>
+			 			</div>
+			 		</div>
+			 	</div>
+			 </div>
+	 		<div class="row my-5" style="clear: both;" align="left">
+	 			<div class="col text-success" id="response">
+	 				<div class="row">
+
+	 				</div>
+	 			</div>
+	 		</div>
 		</div>
-		<div class="col-md-5" align="left">
+		<div class="col-md-5  mt-3" align="left" style="clear: both;">
 			<h3>Condiçoes</h3>
 			<h4><strong><?=$this->view->produto->getNomeProduto();?></strong></h4>
-			<p>Classinficação</p>
-			<p><sup>Por: </sup><span id="vlP"><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span> & frete</p>
+			<p>
+				<div class="row">
+		 			<div class="col">
+		 				<div id="barra-detalhes" class="row">
+			 				<span class="bg-detalhes" style="width: <?=$this->view->percent?>"></span>
+				 			<div class=" estrelas-detalhes">
+				 				<?php for ($i=0; !($i == 5); $i++):?>
+				 					<span class="star-detalhes" id="<?=$i?>">
+				 						<span class="starAbsolute-detalhes"></span>
+				 					</span>
+				 				<?php endfor;?>
+				 			</div>
+				 		</div>
+		 			</div>
+		 		</div>
+
+			</p>
+			<p  class="mt-5"><sup>Por: </sup><span id="vlP"><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span> & frete</p>
 			<hr align="left" width="50%;" />
 			<h4>Detalhes do produto</h4>
 			<p>ASIN:</p>
@@ -67,6 +113,10 @@
 						<div class="form-group row">
 							<div class="col">
 								<button class="btn btn-warning"><strong>Add. Carrinho</strong></button>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col">
 								<button class="btn btn-warning"><strong>Compar Agora</strong></button>
 							</div>
 						</div>
@@ -99,13 +149,16 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" style="width: 80%; margin:auto;">
 		<div class="col">
-			<hr/>
-			<h5><strong><span>Clientes que visualizaram este item tamberm visualizaram</span></strong></h5>
-
+			<div class="row">
+				<div class="col">
+					<hr/>
+					<h5><strong><span>Clientes que visualizaram este item tamberm visualizaram</span></strong></h5>
+				</div>
+			</div>
 			<div class="row" style="margin:auto;" align="center">
-				<div class="col-md-1" style="margin: auto;" align="left"><button class="btn btn-primary"><</button></div>
+				<div class="col-md-1" style="margin: auto -15px;" align="left"><button class="btn btn-primary"><</button></div>
 					<div class="col-md-10">
 						<div class="row">
 							<?php 
@@ -123,7 +176,7 @@
 							?>
 						</div>
 					</div>
-				<div class="col-md-1" style="margin: auto;" align="right"><button class="btn btn-primary">></button></div>
+				<div class="col" style="margin: auto -15px;" align="right"><button class="btn btn-primary">></button></div>
 			</div>
 			<br>
 			<br>
@@ -131,12 +184,16 @@
 			<br>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" style="width: 80%; margin:auto;">
 		<div class="col">
-			<hr/>
-			<h5><strong><span>Clientes que compraram este item tamberm compraram</span></strong></h5>
+			<div class="row">
+				<div class="col">
+					<hr/>
+					<h5><strong><span>Clientes que compraram este item tamberm compraram</span></strong></h5>
+				</div>
+			</div>
 			<div class="row" style="margin:auto;" align="center">
-				<div class="col-md-1" style="margin: auto;" align="left"><button class="btn btn-primary"><</button></div>
+				<div class="col-md-1" style="margin: auto -15px;" align="left"><button class="btn btn-primary"><</button></div>
 					<div class="col-md-10">
 						<div class="row">
 							<?php 
@@ -154,21 +211,74 @@
 							?>
 						</div>
 					</div>
-				<div class="col-md-1" style="margin: auto;" align="right"><button class="btn btn-primary">></button></div>
+				<div class="col" style="margin: auto -15px;" align="right"><button class="btn btn-primary">></button></div>
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col">
-			<hr/>
-			<h5 class=""><strong><span>Perguntas e respostas do cliente</span></strong></h5>
-			<div class="form-group">
-				<input type="text" name="searchResponse" class="form-control" placeholder="Faça uma pergunta e encontre uma resposta.">
-			</div>
-			<br>
-			<br>
-			<br>
-			<br>
+	<div class="row mb-3" style="width: 80%; margin:auto;">
+		<div class="col"><hr/></div>
+	</div>
+	<div class="row" style="width: 80%; margin:auto;">
+		<div class="col-ms-1">
+			<img src="../files/imagens/perfil/avatar.png" style="width: 100px; height: 100px;">
+		</div>
+		<div class="col-sm-11" align="left">
+			<form action="/produto/comentar" style="width: 30%;" id="formComentario">
+				<fieldset><legend align="">Deixe seu comentário:</legend>
+					<div class="form-group">
+						<textarea class="form-control" name="comentario" id="textComentario" rows="3" cols="6"></textarea>
+						<input type="hidden" name="produto" value="<?=$this->view->idProduto?>">
+					</div>
+					<div class="form-group" align="right">
+						<button class="btn btn-success"><strong>Comentar</strong></button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	<div class="row pb-5" style="width: 80%; margin:auto;">
+		<div class="col" align="left" id="comentarios">
+			<?php
+				if($this->view->comentarios != false){
+
+
+					for ($i=0, $comentarios = $this->view->comentarios; !($i == count($comentarios) ); $i++) { 
+						$dtCom = $this->view->comentarios[$i]->getDtComentario();
+						$explDt = explode(' ', $dtCom);
+						$hora = $explDt[1];
+						$data = array_reverse(explode('-',$explDt[0]));
+			?>
+				<div class="row listComent">
+					<div class="col-sm-1">
+						<img class="rounded-circle"  style="width: 70px; height: 70px;" src="../files/imagens/perfil/<?=$this->view->comentarios[$i]->getImg();?>" align="imagem do usuario"/>
+					</div>
+					<div class="col-sm-11" align="left">
+						<div class="row">
+							<div class="col"><span><strong><?='@'.$comentarios[$i]->getNomePessoa()?></strong><?= ' '.$hora.'  '.$data[0].'-'.$data[1].'-'.$data[2];?> </span></div>
+						</div>
+						<div class="row">
+							<div class="col text-dark"><span><?="\t\t".$comentarios[$i]->getTextoComentario()?></span></div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col" align="left;">
+						<hr style="width: 30%; margin-left: 0;" />
+					</div>
+				</div>
+			<?php
+					}
+				}else{
+
+			?>
+				<div class="row listComent">
+					<div class="col">
+						Faça um comentário...
+					</div>
+				</div>
+			<?php
+			}
+			?>
 		</div>
 	</div>
 </div>

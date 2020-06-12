@@ -48,6 +48,9 @@ class ProdutoCategoria extends BaseModel
                 case 'idCategoria':
                    $this->setIdCategoria($value);
                    break;
+                case 'classific':
+                   $this->setClassificCateg($value);
+                   break;
 
             }
 
@@ -172,7 +175,14 @@ class ProdutoCategoria extends BaseModel
     }
 
 
-   	
+   	public function setClassificCateg(String $classific)
+    {
+        if(strlen($classific) == 0){
+            throw new Exception("Parametro inválidos\n");
+        }
+
+        $this->data['classificCateg'] = $classific;
+    }
 
 
 

@@ -63,13 +63,15 @@ $(document).ready(function(){
 
 // ------------------------------ Preview de imagens upload ---------------------
   
-  $('#dinamic').delegate('#imgproduto, #upload','change',function(){
-    
+  $('#dinamic').delegate('#imgproduto, .upload','change',function(){
+   
+      let inputFile = $(this);
+
       if(($(this)[0].files[0].type != 'image/jpeg') && ($(this)[0].files[0].type != 'image/png') && ($(this)[0].files[0].type != 'image/jpg')){
 
         alert("Imgem com formato inváldo");
         $(this).val('');
-        $('#img').removeAttr('src');
+        $('.preview[name='+$(this).attr('name')+']').removeAttr('src');
         return false;
       }
 
@@ -78,7 +80,7 @@ $(document).ready(function(){
       const fileReader = new FileReader();
 
       fileReader.onloadend = function(){
-          $('#img').attr('src', fileReader.result).css('width', '253px').css('height', '232px')
+          $('.preview[name='+inputFile.attr('name')+']').attr('src', fileReader.result).css('width', '153px').css('height', '132px')
       }
       fileReader.readAsDataURL(file);
   })
@@ -155,9 +157,9 @@ $('#dinamic').delegate('form#serchProd input[name=loadProduto], form#loadCodProd
 
       if((Number(ui.item.qtd) == 0)){
 
-        if($('#tableSearch').hasClass('table-dark') == true){
+        if($('#tableSearch').hasClass('table-light') == true){
 
-          $('#tableSearch').removeClass('table-dark');
+          $('#tableSearch').removeClass('table-light');
         }
 
         if($('#tableSearch').hasClass('table-danger') == false){
@@ -173,9 +175,9 @@ $('#dinamic').delegate('form#serchProd input[name=loadProduto], form#loadCodProd
           $('#tableSearch').removeClass('table-danger');
         }
 
-        if($('#tableSearch').hasClass('table-dark') == false){
+        if($('#tableSearch').hasClass('table-light') == false){
 
-          $('#tableSearch').addClass('table-dark');
+          $('#tableSearch').addClass('table-light');
         }
         
       }
@@ -317,7 +319,7 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
 
   $("#trMsg").remove();//remove a mensagem inicial da table de peidito
 
-  $('form#vendaPainelTable').find('table tbody').prepend(tr); //adiciona a tr com os dados
+  $('#vendaPainelTable #itensTable').find('tbody').prepend(tr); //adiciona a tr com os dados
 
   //calcula o total geral
    calculaTotalVenda();
@@ -333,8 +335,10 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
 
 });
 
+
+
   //------------------ reove item da tabela de pedito------
-$('#dinamic').delegate('form#vendaPainelTable tbody a.btn-danger', 'click', function(event){
+$('#dinamic').delegate('form#vendaPainelTable #itensTable tbody a.btn-danger', 'click', function(event){
   event.preventDefault();
 
   let produto = $(this).parents('tr').find('td:eq(0)').text()
@@ -351,7 +355,7 @@ $('#dinamic').delegate('form#vendaPainelTable tbody a.btn-danger', 'click', func
 function calculaTotalVenda(){
 
   let totalGeral = 0;
-    $('form#vendaPainelTable').find('table tbody tr').each(function(){
+    $('#vendaPainelTable #itensTable').find('tbody tr').each(function(){
       let val =  $(this).find('td:eq(6)').text(); 
       totalGeral+=parseFloat(foramtCalcCod(val));
 
@@ -362,8 +366,11 @@ function calculaTotalVenda(){
     $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
 }
 
+
+
+
 //------------------ edita o item da tabela de pedito------
-$('#dinamic').delegate('form#vendaPainelTable tbody a.btn-success', 'click', function(event){
+$('#dinamic').delegate('form#vendaPainelTable #itensTable tbody a.btn-success', 'click', function(event){
   event.preventDefault();
 
 //recupera a quantidade o desconto e o preco
@@ -406,11 +413,75 @@ $('#dinamic').delegate('form#vendaPainelTable tbody a.btn-success', 'click', fun
   
 });
 
+
+
+
 //--------------- recalcula o total da compra se aplicado a edicao da quantidade ou desconto --------------
 $('#dinamic').delegate('#aplyModIten', 'click', function(){
   //falta continar implemtação
   calculaTotalVenda();
 });
+
+//------------------ CHAMA O MODAL APRA ADD COBRANÇA AO PEDIDO DE VENDA -------------
+$('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
+  $('#mgCob').remove();//remove a msg da tabela cobranca
+  let idCob = Number($(this).attr('id'));
+
+  let contentor = $('<div/>').addClass('row');
+  let divDif = $('<div/>').addClass('col-md-4 col-sm-6');
+  let divCob = $('<div/>').addClass('col-md-8 col-sm-6');
+
+  divDif.text('R$ '+$('#totGeralVenda').text());//pega o total da compra
+
+  //cria o label do da cobranca
+  divCob.addClass('row').append(
+        $('<div/>').addClass('col').append($('<label/>').attr('for', 'vlImput').text('R$'))
+        .append($('<input/>').attr('type', 'text').attr('id', 'vlImput').attr('name', 'vlParcela').addClass('form-control'))
+      );
+
+  if((idCob == 1) || (idCob == 3)){
+    //cria os inputs de cobranca
+    divCob.append(
+        $('<div/>').addClass('col').append($('<label/>').attr('for','cobInput').text('Qtd parcelas'))
+        .append(
+                $('<select/>').attr('id','cobInput').addClass('form-control').append($('<option/>').val('1').text('1'))
+                .append($('<option/>').val('2').text('2'))
+                .append($('<option/>').val('3').text('3'))
+              )
+      )
+  }
+  contentor.append(divDif)
+  contentor.append(divCob)
+
+  //cria os botoes de ação
+  let add = $('<button/>').addClass('btn btn-primary mr-2').attr('type', 'button').html($('<strong>').text('Add'));
+  let cancel = $('<button/>').addClass('btn btn-danger').attr('type', 'button').html($('<strong>').text('Cancel'));
+  contentor.append(
+      $('<div/>').addClass('col').append(add).append(cancel)
+    )
+
+  getModal('Add Cobrança: '+$(this).text(), contentor);
+
+
+});
+
+$('#dinamic').delegate('#addCob', 'click', function(){
+
+    //cria os botões de ação.
+    let actionEdit = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-pencil-alt'));
+    actionEdit.attr('data-target', '#myModal');
+
+    let actionDelet = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-trash-alt'));
+    actionDelet.attr('data-target', '#myModal');
+
+    $('<tr/>').append()
+})
+
+
+
+
+
+
 
 //-------------------- ENVIA O PEDIDO PARA SALVAR -----------------------------
 $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
@@ -418,7 +489,7 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
 
   let dados = new Array();
 
-  $(this).find('table tbody tr').each(function(){
+  $(this).find('table#itensTable tbody tr').each(function(){
 
     let cod = $(this).find('td:eq(7) a').attr('href');
     cod = cod.split('=')[1];
@@ -465,6 +536,8 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
     contentType: false,
     dataType:'HTML',
     success: function(retorno){
+        getModal('', '');
+        
         $('#dinamic').html('').removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
         $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
 
@@ -504,7 +577,7 @@ $('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPain
   });
 });
 
-//------------------------------------ faz requisiçoes ajax e gera o resulta do autocomplete ----------------------------
+//------------------------------------ FAZ A REQUISIÇÃO AJAX E RETORNA OS DADOS DA PESSOA----------------------------
 function loadPessoa(obj, request, func)
 {
 
@@ -537,6 +610,65 @@ function loadPessoa(obj, request, func)
       }
     });
 }
+
+
+// ------------------------ FAZ A REQUISIÇÃO DE CATEGRORIAS PARA CADASTRO PRODUTO --------------
+
+$('#dinamic').delegate(
+  'form input#idCategoria,form input#idSubCategoria',
+   'keyup', function(){
+
+  let categ = $(this);
+  $('form#vendaPainel #idCod').val('');
+
+  categ.autocomplete({
+  minLength: 2,
+  source: function (request, response) {
+      loadCategoria(categ ,request, response);
+    },
+    select:function(event, ui){
+
+      categ.val(ui.item.label);
+      categ.next().val(ui.item.cod);
+    },
+    autoFocus: true,
+    change:function(request, response){
+      loadCategoria(categ ,request, response);
+    },
+    delay: 1
+
+  });
+});
+
+//------------------------------------ FAZ A REQUISIÇÃO AJAX E RETORNA OS DADOS DA CATEGORIA----------------------------
+function loadCategoria(obj, request, func)
+{
+
+  $.ajax({
+    type:'POST',
+    url: '/categoria/load',
+    data: {'loadCategoria': request.term},
+    dataType:'json',
+    success: function(retorno){
+      console.log(retorno);
+      let arrObj = new Array();
+
+      $.each(retorno, function(key, item){
+        arrObj.push({
+          label: item[1],
+          value: item[1],
+          cod: item[0]
+          //teste: item[0]//crie para teste mas funcionou
+        });
+
+        });
+        func(arrObj);
+
+      }
+    });
+}
+
+
   //------------------------- LANÇAMENTO DE ESTOQUE --------------------------------------
 
   $('#dinamic').delegate('form#estoque, form#editEstoque', 'submit', function(event){
@@ -618,10 +750,11 @@ $('#dinamic').delegate('#tableProdutos tbody a', 'click', function(event){
       url: url,
       data: form,
       enctype: 'multipart/form-data',
-      dataType: 'json',
+      dataType: 'HTML',
       processData: false,
       contentType: false,
       success: function(retorno){
+        console.log(retorno);return false;
         message(retorno);
       }
 

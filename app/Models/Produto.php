@@ -12,6 +12,8 @@ use App\Models\Departamento;
 use App\Models\Marca;
 use App\Models\Categoria;
 use App\Models\Imagem;
+use App\Models\Estrela;
+use App\Models\Cometario;
 
 class Produto extends BaseModel
 {
@@ -30,6 +32,8 @@ class Produto extends BaseModel
     private $fornecedor;
     private $IdMarca;
     private $imagemProduto;
+    private $gostei;
+    private $votos;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
@@ -62,11 +66,13 @@ class Produto extends BaseModel
 
                 case 'categoria':
 
-                    for ($j=0; !($j == count($value)) ; $j++) { 
-                        
-                        $idCategoria = (int) $value[$j];
-                        $this->setIdCategoria($idCategoria);
-                    }
+                    $idCategoria = (int) $value;
+                    $this->setIdCategoria('categ',$idCategoria);
+                break;
+                case 'subCategoria':
+
+                    $idSubCategoria = (int) $value;
+                    $this->setIdCategoria('subCateg',$idSubCategoria);
                 break;
                 case 'prod':
                     $this->setIdProduto($value);
@@ -98,13 +104,13 @@ class Produto extends BaseModel
 
         $this->clear($dados); //atribui os dados aos gets e sets
 
-        $result = $this->parseCommit(); //retorna os dados já filtrados
+        $result = $this->parseCommit(); //retorna os dados já filtrados 
 
         //verifica se o produto já existe
         $resultSelect = $this->select(['nomeProduto'], ['nomeProduto' => $this->getNomeProduto()], '=','asc', null, null, true);
 
         if($resultSelect != false){
-            throw new Exception("Este produto já existe execessao");
+            throw new Exception("Este produto já existe");
         }
 
         $resultInsertProd = $this->insert($result);//salva o produto
@@ -115,24 +121,29 @@ class Produto extends BaseModel
 
         $idProdutoInserido = $this->maxId();
 
-        //prepara os dados para salvar a imagem do produto
-        $imagem = new Imagem();
-        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$idProdutoInserido, 'usuario'=>1];//prepara o array com dados para a classe de imagem
-        $resultImg = $imagem->save($dataImg);
 
-        if($resultImg == false){
-            throw new Exception("Falha ao cadastrar produto");
+        foreach ($this->getImagemProduto() as $key => $value) {
+
+            $imagem = new Imagem();
+            $dataImg = ['url'=>$value[1], 'produto'=>$idProdutoInserido, 'tipo' => $value[0], 'usuario'=>1];//prepara o array com dados para a classe de imagem
+            $resultImg = $imagem->save($dataImg);
+
+            if($resultImg == false){
+                throw new Exception("Falha ao cadastrar produto");
+            }
         }
-
-
+        
         //prepara os dados para salvar a categoria do produto
         $produtoCategoria = new ProdutoCategoria();
 
-        for ($i = 0; !($i == count($this->getIdCategoria())); $i++) {
+        foreach ($this->getIdCategoria() as $key => $value) {
             $subArraiComm = [];
             $subArraiCommit['idProduto'] = $idProdutoInserido;
-            $subArraiCommit['idCategoria'] = $this->getIdCategoria()[$i];
+            $subArraiCommit['idCategoria'] = $value;
             
+            if($key == 'subCateg'){
+                $subArraiCommit['classific'] = 'secundaria';
+            }
 
             $res = $produtoCategoria->save($subArraiCommit);
             if($res === false){
@@ -144,7 +155,7 @@ class Produto extends BaseModel
 
     }
 
-
+    //ajustar method de update
     public function modify(array $dados)
     {
         $this->clear($dados);
@@ -234,6 +245,21 @@ class Produto extends BaseModel
     }
 
 
+    public function Estrela()
+    {
+        $estrela = new Estrela();
+        $result = $estrela->select(['idEstrela', 'dtEstrela', 'ProdutoIdProduto'
+                                , 'UsuarioIdUsuario', 'numEstrela'],
+                                 ['ProdutoIdProduto'=>$this->idProduto], '=','asc', null, null,true);
+        if($result == false){
+            return false;
+        }
+
+        return $result;
+
+
+    }
+
     public function detalheProduto(Int $id)
     {
         $result = $this->select(['nomeProduto','textoPromorcional', 'idProduto', 'preco'], ['idProduto'=>$id], '=','asc', null, null,true);
@@ -277,7 +303,6 @@ class Produto extends BaseModel
         return $result[0];
     }
 
-
     public function getImagem()
     {
         $img = new Imagem();
@@ -291,9 +316,44 @@ class Produto extends BaseModel
 
     }
 
-    public function setImagemProduto(String $img)
-    {
-        $this->imagemProduto = $img;
+    public function setImagemProduto(array $img)
+    {   
+        if (count($img) < 4) {
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
+
+        foreach ($img as $key => $value) {
+
+            if(strlen($value) == 0){
+                throw new Exception("Parâmetro inválido\n");
+                
+            }
+
+            $tipo = null;
+            switch (trim($key)) {
+                case 'imgProduto-2':
+                   $tipo = 'secundaria';
+                    break;
+                case 'imgProduto-3':
+                    $tipo = 'ternaria';
+                    break;
+                case 'imgProduto-4':
+                    $tipo = 'quartenaria';
+                    break;
+                default:
+                     $tipo = 'primaria';
+                    break;
+            }
+
+            $nameImg = $tipo.'-'.$value;
+            $this->imagemProduto[] = [$tipo, $nameImg];
+
+        }
+
+        
+
+        
     }
 
     public function getImagemProduto()
@@ -329,6 +389,16 @@ class Produto extends BaseModel
         
     }
 
+    public function findForId(Int $id)
+    {
+        $result = $this->select(['idProduto','gostei', 'votos'], ['idProduto'=>$id], '=','asc', null, null,true);
+        if($result == false){
+            throw new Exception('Produto não encontrado');
+            
+        }
+
+        return $result[0];
+    }
 
     public function listarProdutos(array $campos):array
     {
@@ -406,33 +476,35 @@ class Produto extends BaseModel
     }
 
 
-    public function setIdCategoria(Int $id):bool
+    public function setIdCategoria(String $key, Int $id):bool
     {   
+        $key = trim($key);
 
-        if(array_key_exists('idCategoria', $this->data) == false){
-            $this->data['idCategoria'] = [];
+        if((strlen($key) == 0 )|| ($id <= 0)){
+            throw new Exception("Parâmetro inválido<br/>\n");
         }
 
-        if(($id > 0) && (!in_array($id, $this->data['idCategoria']))){
 
-            $categoria = new Categoria();
+        $categoria = new Categoria();
 
-            $result = $categoria->select(['idCategoria','nomeCategoria'], ['idCategoria'=>$id], '=','asc', null, null,true);
+        $result = $categoria->select(['idCategoria','nomeCategoria'], ['idCategoria'=>$id], '=','asc', null, null,true);
 
-            if(count($result) > 0)
-            {
-                $this->data['idCategoria'][] = $result[0]->getIdCategoria();
-            }
-            return true;
+        if(count($result) > 0)
+        {
+            $this->data['categorias'][$key]= $result[0]->getIdCategoria();
         }
+        return true;
+        
         throw new Exception("Parâmetro inválido<br/>\n");
     }
 
 
+
+
     public function getIdCategoria()
     {   
-        if(count($this->data['idCategoria']) > 0){
-            return $this->data['idCategoria'];
+        if(isset($this->data['categorias'])){
+            return $this->data['categorias'];
         }
         throw new Exception('Propriedade indefinida<br/>');
     }
@@ -467,7 +539,6 @@ class Produto extends BaseModel
 
         return $this->nomeProduto;
     }
-
 
     public function setTextoPromorcional(String $texto):bool
     {
@@ -527,6 +598,16 @@ class Produto extends BaseModel
         return false;
     }
 
+    public function Cometario()
+    {
+        $comentario = new Cometario();
+        $comentarios = $comentario->select(
+            ['idComentario','ProdutoIdProduto', 'textoComentario', 'dtComentario'],
+            ['ProdutoIdProduto'=>$this->idProduto], '=','asc', null, null,true
+        );
+
+        return $comentarios;
+    }
 
 
     private function parseFiltroAjax(array $request):array

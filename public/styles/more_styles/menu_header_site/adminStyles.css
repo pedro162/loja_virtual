@@ -472,3 +472,44 @@ form input:hover, form label:hover{
 #vendaPainelTable table thead th, #serchProd table thead th{
     text-align: center;
 }
+
+/*---------------------- BARRA LATERAL DIREITA PAINEL ADMIN ---------------*/
+#optionPlus .card .card-header{
+    border-radius: 20px 20px 0px 0px;
+}
+#optionPlus  .card{
+    border: none;
+
+}
+#optionPlus  .card:hover .card-header{
+    box-shadow: 2px 2px 4px #000;
+}
+#optionPlus  .card:hover .card-body{
+    box-shadow: 2px 2px 4px #000;
+}
+
+#optionPlus .card .card-body .btn{
+    margin-bottom: 0px;
+    border-radius: 50px;
+    font-weight: bolder;
+}
+
+/*--------------------- PAINEL DE LOGIN DO USUAROI ADMIN*/
+#body-admin{
+    background-color: #9400D3;
+}
+#body-admin section{
+    margin: auto;
+    
+}
+#loginAdmin{
+    margin: auto;
+    padding: 20px 50px;
+    background-color: #fff;
+    width: 30%;
+    border-radius: 10px;
+}
+
+#loginAdmin form{
+
+}

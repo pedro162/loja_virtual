@@ -1,11 +1,11 @@
 <?php
 $routes = [];
 $routes[] = ['/', 'HomeController@index'];
-$routes[] = ['/home/login', 'HomeController@login'];
+$routes[] = ['/home/login', 'HomeController@indexLogin'];
+$routes[] = ['/home/login/logar', 'HomeController@loginUser'];
 $routes[] = ['/home/cadastro', 'HomeController@cadastro'];
 $routes[] = ['/home/admin', 'HomeController@painel'];
 $routes[] = ['/home/admin/inicio', 'HomeController@inicoPainel'];
-$routes[] = ['/home/teste', 'HomeController@teste'];
 $routes[] = ['/home/menu', 'HomeController@menu'];
 
 $routes[] = ['/produto/all', 'ProdutoController@all'];
@@ -17,6 +17,10 @@ $routes[] = ['/produto/more', 'ProdutoController@more'];
 $routes[] = ['/produto/filtro', 'ProdutoController@filtro'];
 $routes[] = ['/produto/editar', 'ProdutoController@editarProduto'];
 $routes[] = ['/produto/atualizar', 'ProdutoController@atualizar'];
+$routes[] = ['/produto/voto', 'ProdutoController@votar'];
+
+$routes[] = ['/produto/comentar', 'ComentarioController@comentar'];
+$routes[] = ['/produto/load/comentarios', 'ComentarioController@loadComentFormProduto'];
 
 $routes[] = ['/estoque/lancar', 'FornecimentoController@lancarEstoque'];
 $routes[] = ['/estoque/salvar', 'FornecimentoController@salvar'];
@@ -29,6 +33,7 @@ $routes[] = ['/marca/salvar', 'MarcaController@salvar'];
 
 $routes[] = ['/categoria/cadastrar', 'CategoriaController@cadastrar'];
 $routes[] = ['/categoria/salvar', 'CategoriaController@salvar'];
+$routes[] = ['/categoria/load', 'CategoriaController@loadCategoria'];
 
 $routes[] = ['/pedido/carrinho', 'PedidoController@addCarrinho'];
 $routes[] = ['/pedido/iniciar', 'PedidoController@iniciarCompra'];
@@ -39,6 +44,9 @@ $routes[] = ['/pedido/load/estoque', 'PedidoController@loadEstoque'];
 $routes[] = ['/pedido/save/pedido', 'PedidoController@savePedido'];
 $routes[] = ['/pedido/produto/detalhes', 'PedidoController@detalhesOfProduto'];
 $routes[] = ['/pedido/produto/frete', 'PedidoController@calcFrete'];
+
+$routes[] = ['/usuario/index', 'UserController@index'];
+$routes[] = ['/usuario/login', 'UserController@loginAdmin'];
 
 //$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
 //$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];

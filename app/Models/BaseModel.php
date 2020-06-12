@@ -188,10 +188,10 @@ abstract class BaseModel
 
         $conn = Transaction::get();
 
-        $result = $conn->query($sql);
+        $result = $conn->exec($sql);
         //$result = self::$conn->query($sql);
 
-        if($result)
+        if($result > 0)
         {
             return true;
         }

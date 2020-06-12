@@ -11,32 +11,32 @@
 				<div class="col-md-11">
 					<nav class="navbar navbar-expand-sm justify-content-center pt-2 pb-2 pl-2 pr-2" id="navPanelCliente">
 					  <ul class="navbar-nav" >
-					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 2</a>
+					  	<li class="nav-item" style="margin: auto;">
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Inico</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Pedidos</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Prevendas</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Orçamentos</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Cadastro</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Ultimas compras</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Nf's</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2" href="#">Link 3</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Info. financeiras</a>
 					    </li>
 					    <li class="nav-item dropdown" style="margin: auto;">
-					      <a class="dropdown-toggle link" href="#" id="navbardrop" data-toggle="dropdown">
+					      <a class="dropdown-toggle link btn" href="#" id="navbardrop" data-toggle="dropdown">
 					        Dropdown link
 					      </a>
 					      <div class="dropdown-menu" herf="#navbardrop" >
@@ -93,7 +93,7 @@
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<div class="row">
 							<div class="col-md-12" style="height: 380px;  overflow: auto;">
-								<table class="table table-dark table-hover mb-2">
+								<table class="table table-light table-hover mb-2" id="itensTable">
 									<thead>
 										<tr>
 									        <th>Pdoduto</th>
@@ -123,28 +123,67 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group mt-2">
-									<label for=""><strong>Formas de pagamento: </strong></label><br>
-									<button class="btn btn-success">CCR</button>
-									<button class="btn btn-success">CD</button>
-									<button class="btn btn-success">BOL</button>
-									<button class="btn btn-success">NP</button>
-									<button class="btn btn-success">CDC</button>
+							<div class="col">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group mt-2">
+											<label for=""><strong>Formas de pagamento: </strong></label><br>
+											<button type="button" data-toggle="modal"  data-target="#myModal" class="btn btn-success cob" id="1">CCR</button>
+											<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-success cob" id="2">CD</button>
+											<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-success cob" id="3">BOL</button>
+											<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-success cob" id="4">NP</button>
+											<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-success cob" id="5">CDC</button>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label for="orcamento">Orçamento:</label>
+											<input type="radio" name="tipo" id="orcamento" value="1" required="required">
+											<label for="prevenda" class="mx-2">Prevenda:</label>
+											<input type="radio" name="tipo" id="prevenda" value="2" required="required">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<strong>Total geral: R$ <span id="totGeralVenda" ></span> </strong>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<button id="idFilanizar" type="submit" class="btn btn-primary"  data-toggle="modal" data-target="#myModal">Finalizar</button>
+										<a href="/pedido/novo"class="btn btn-danger link">Cancelar</a>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<strong>Total geral: R$ <span id="totGeralVenda" ></span> </strong>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<button id="idFilanizar" type="submit" class="btn btn-primary"  data-toggle="modal" data-target="#myModal">Finalizar</button>
-								<a href="/pedido/novo"class="btn btn-danger link">Cancelar</a>
+							<div class="col">
+								<table class="table table-light table-hover mb-2" id="cobranca">
+									<thead>
+										<tr>
+									        <th>Cob.</th>
+									        <th>Val.</th>
+									        <th>Qtd parcelas</th>
+									        <th>Ação</th>
+									    </tr>
+								    </thead>
+								    <tbody>
+								    	<tr id="mgCob">
+								    		<td colspan="8">
+								    			<div class="container-fluid">
+									    			<div class="row" style="">
+									    				<div class="col-md-12 alert alert-warning">
+									    					<h3 align="center">Adicione formas de pagamento!</h3>
+									    				</div>
+									    			</div>
+								    			</div>
+								    		</td>
+								    	</tr>
+								    </tbody>
+								</table>
 							</div>
 						</div>
 					</div>
@@ -173,7 +212,7 @@
 						</div>
 						<div class="row">
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<table class="table table-dark table-hover" id="tableSearch">
+								<table class="table table-light table-hover" id="tableSearch">
 									<thead>
 										<tr>
 											<th>Cod</th>

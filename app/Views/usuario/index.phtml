@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="../styles/bootstrap-4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../styles/bootstrap-4/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="../styles/more_styles/menu_header_site/adminStyles.css">
+    <link rel="stylesheet" href="../fontawesome/css/all.css">
+    <link rel="stylesheet" href="../jquery/jquery-ui/jquery-ui.min.css">
+    <link rel="manifest" href="../manifest.json">
+        <!-- CODELAB: Add iOS meta tags and icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Weather PWA">
+    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
+    
+    <script src="../jquery/jquery.min_google.js"></script>
+    <script src="../jquery/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../styles/bootstrap-4/js/bootstrap.min.js"></script>
+    <script src="../fontawesome/js/all.js"></script>
+    <script type="text/javascript" src='https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js'></script>
+    <script src="../js/paginasJs.js"></script>
+    <script src="../js/jsApplication.js"></script>
+
+    <script src="../ajax/pagseguro.js"></script>
+    <script type="text/javascript" src="../js/bibliotecas/chart.js"></script>
+    <title>Minha-Loja.com</title>
+</head>
+<body id="body-admin">
+    <section class="">
+      	<div class="container my-5 py-5" id="loginAdmin">
+            <div class="row">
+                <div class="col" align="center">
+                    <h1>Minha empresa .Com</h1>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <form action="/usuario/login" method="post" class="">
+                        <div class="form-group">
+                            <label for="usuario"><strong>Usruario:</strong></label>
+                            <input type="text" name="usuario" class="form-control" id="usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="senha"><strong>Senha:</strong></label>
+                            <input type="password" name="senha" class="form-control" id="senha">
+                        </div>
+                        <button class="btn btn-primary">Logar</button>
+                    </form>
+                </div>
+            </div>
+    	</div>
+    </section>
+    <footer>
+
+    </footer>
+  </body>
+</html>

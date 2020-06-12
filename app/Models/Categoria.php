@@ -41,6 +41,7 @@ class Categoria extends BaseModel
                 case 'categoria':
                    $this->setCategoria($subArray[1]);
                    break;
+                
             }
 
         }
@@ -69,6 +70,33 @@ class Categoria extends BaseModel
     public function modify(array $dados)
     {
         
+    }
+
+
+    public function loadCategoria($dados, $classCateg = true, $like = true)
+    {   
+        if(!is_string($dados)){
+
+            throw new Exception("Parametro inválido\n");
+            
+        }
+
+        $length =(int) strlen($dados);
+
+        if($length > 0){
+
+            $filtro = ['nomeCategoria', '%'.$dados.'%'];
+
+            if($like){
+                $result = $this->select(['idCategoria', 'nomeCategoria'], [$filtro[0] => $filtro[1]], 'like', 'asc', null, null, $classCateg, true);
+            }else{
+                $result = $this->select(['idCategoria', 'nomeCategoria'], [$filtro[0] => $filtro[1]], '=', 'asc', 1, 10, $classCateg, true);
+            }
+
+            return $result;
+            
+        }
+        throw new Exception('Parâmetro inválido<br/>'.PHP_EOL);
     }
 
     public function getProduto()
@@ -102,6 +130,7 @@ class Categoria extends BaseModel
         
     }
 
+    
 
     public function getCategoria()
     {

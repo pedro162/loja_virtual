@@ -11,7 +11,9 @@ use App\Models\Fornecimento;
 use App\Models\LogradouroPessoa;
 use App\Models\Pedido;
 use App\Models\DetalhesPedido;
+use \App\Models\Usuario;
 use \App\Models\ProdutoCategoria;
+use \App\Models\Comentario;
 use \Core\Utilitarios\Utils;
 
 class PedidoController extends BaseController
@@ -20,7 +22,6 @@ class PedidoController extends BaseController
 
     public function painel($request)
     { 
-        
         Transaction::startTransaction('connection');
 
         if(!isset($request['post'], $request['post']['cliente'])){
@@ -277,7 +278,35 @@ class PedidoController extends BaseController
             }
             $othesFornecimentosPrim = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategPrim, true,(int) $idProduto);
             $othesFornecimentosSec = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategSeg, true,(int) $idProduto);
+
+
+            //busca os comentatios do produto
+            $comentario = new Comentario();
+            $comentarios = $comentario->listarConsultaPersonalizada('C.ProdutoIdProduto ='.$idProduto, NULL, NULL, true);
             
+            $estrelas = $resultProduto->Estrela(); //busca as estelas do produto
+
+            //conta o total dos likes
+            $gostie = 0;
+            $totEstrelas = 0;
+
+            if($estrelas){
+
+                for ($i=0; !($i == count($estrelas)) ; $i++) { 
+                    $gostie = $estrelas[$i]->getNumEstrela();
+                }
+
+                $totEstrelas = count($estrelas);
+
+            }
+
+            //calcula a media
+            $media = round($gostie / $totEstrelas, 1);
+
+            //determina a porcentagem da estrela de like
+            $this->view->percent = ($media * 20).'%';
+            $this->view->idProduto = $idProduto;
+            $this->view->comentarios = $comentarios;
             $this->view->imagensProduto = $imagensProduto;
             $this->view->fornecimento = $resultFornce;
             $this->view->produto = $resultProduto;

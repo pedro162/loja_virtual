@@ -44,7 +44,7 @@
 								
 			           
 				 ?>
-				 <div class="row mt-4"><!-- Bloco de grid-->
+				 <div class="row mt-4" align="center"><!-- Bloco de grid-->
 					 <?php 	
 					 		$linha = $bloco[$j];
 
@@ -69,7 +69,7 @@
 									<div class="card" style="width: 22rem;">
 									  <div class="card-body">
 									  	<div class="row">
-									  		<div class="col-md-12">
+									  		<div class="col-md-12" align="left">
 									  			<h4><strong><?= isset($toorLoja) ? $toorLoja: $categ?></strong></h4>
 									  		</div>
 									  	</div>
@@ -94,7 +94,7 @@
 									    				$id = $urlIdEst[1];
 									    				$estoque = (int)$urlIdEst[2];
 
-									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:10px;">
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:30px;">
 									    				<strong>sem estoque</strong></p>':'' 
 									    				
 									    	?>
@@ -124,7 +124,7 @@
 									<div class="card" style="width: 46rem;">
 										<div class="card-body">
 											<div class="row">
-												<div class="col-md-12">
+												<div class="col-md-12" align="left">
 													<h4><strong><?=$categ?></strong></h4><a href="#">Ver mais</a>
 												</div>
 											</div>
@@ -150,7 +150,7 @@
 									    				$id = $urlIdEst[1];
 									    				$estoque = (int)$urlIdEst[2];
 
-									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:10px;">
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:138px;">
 									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
 										    	<div class="col py-2 px-2">
@@ -176,7 +176,7 @@
 									<div class="card" style="width: 93.5rem;">
 									  <div class="card-body">
 									  	<div class="row">
-									  		<div class="col-md-12">
+									  		<div class="col-md-12" align="left">
 									  			<h4><strong><?=$categ?></strong></h4></h4>
 									  		</div>
 									  	</div>

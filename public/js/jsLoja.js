@@ -32,16 +32,97 @@ $(document).ready(function(){
     $('.cnpj').show();
   })
 
+//------------------------ EFEITOS DA ESTRELA DE NIVEL DO PRODUTO ------------------
+$('body').delegate('.star', 'mouseover', function(){
+  let indice = $(this).index();
+  $('.star').removeClass('full');
+
+  for (let i =0; !(i == indice + 1); i++) {
+    $('.star:eq('+i+')').addClass('full')
+  }
+})
+
+$('body').delegate('.star', 'mouseout', function(){//remove a cor da estrela quando sai de cima
+  
+  $('.star').removeClass('full');
+
+})
+
+$('body').delegate('.star', 'click', function(){
+  let idProd = $('#imgP img.img-produto').attr('id');
+  let pontos = $(this).index() +1;
+  
+  $.ajax({
+    type:'GET',
+    url:'/produto/voto?cd='+idProd+'&&pt='+pontos,
+    dataType:'json',
+    success:function(retorno){
+
+      let  percentBar = retorno[0] * 20;
+      $('.bg').animate({width:percentBar+'%'}, 500)
+      
+      $('#barra .bg').css('width',+percentBar);
+      $('div#response').html(retorno[1])
+    }
+  })
+
+});
+
+//----------------- SALVA O COMENTÁRIO DO CLIENTE SOBRE O PRODUTO ------------
+$('body').delegate('#formComentario', 'submit', function(event){
+  event.preventDefault();
+
+  if($('#textComentario').val().trim() == ''){
+    alert("Comentario inválido\n")
+  }
+
+
+  let formulario = $(this);
+
+  let url = $(this).attr('action');
+
+  let form = new FormData(formulario [0]);
+
+  $.ajax({
+    type:'POST',
+    url:url,
+    data:form,
+    processData:false,
+    contentType: false,
+    dataType:'json',
+    success:function(retorno){
+      
+      if(retorno[0] > 0){
+        $.ajax({
+          type:'POST',
+          url:'/produto/load/comentarios',
+          data:{'produto':retorno[0]},
+          dataType:'HTML',
+          success:function(retorno){
+            $('#textComentario').val('')
+            $('body #comentarios').html(retorno);
+          }
+        })
+
+
+      }else{
+        alert('Não foi possivel salvar seu comentario');
+        return false;
+      }
+    }
+
+  });
+
+});
+
+
+
+
 //---------------- Esconde exibe botoes de ver mais na view home ---------------------------
 
 $('.hidBtn').mouseenter(function(){
       $(this).siblings('a').show();
     })
-  
-  //efito zoom na imagem view de detalhes
-  
-    
-
      
 
 // load ajax da view de detables do produto

@@ -13,6 +13,8 @@ class Pessoa extends BaseModel
     
 	private $nomePessoa;
 	private $idPessoa;
+    private $login;
+    private $senha;
 
 
     protected function parseCommit()
@@ -159,6 +161,62 @@ class Pessoa extends BaseModel
          
     }
 
+    public function getLogin()
+    {
+        if((!isset($this->login)) || (strlen($this->login) ==0 )){
+            if(isset($this->data['login']) && (strlen($this->data['login']) > 0)){
+                return $this->data['login'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->login;
+    }
+
+     public function getSenha()
+    {
+        if((!isset($this->senha)) || (strlen($this->senha) ==0 )){
+            if(isset($this->data['senha']) && (strlen($this->data['senha']) > 0)){
+                return $this->data['senha'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->senha;
+    }
+
+    public function findLoginForUserPass($user, $pass)
+    {
+        if((!isset($user) )|| (!isset($pass))){
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
+
+        $user = trim($user);
+        $pass = trim($pass);
+        if((strlen($user) == 0)|| (strlen($pass) == 0)){
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
+
+
+        $result = $this->select(['idPessoa', 'nomePessoa', 'login', 'senha'], ['login' => $user], '=', 'asc', null, null, true, false);
+
+        if($result == false){
+            throw new Exception("Usuario o senha inválidos\n");
+        }
+
+        if (($result[0]->getLogin() === $user) && ($result[0]->getSenha() === $pass)) {
+            return $result[0];
+        }
+
+        throw new Exception("Usuario o senha inválidos\n");
+
+        
+    }
+    
     
  
 

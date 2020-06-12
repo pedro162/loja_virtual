@@ -6,13 +6,13 @@
 				<div class="row">
 					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 						<div class="row">
-							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 								<div class="form-group">
-									<label for="idNome">Nome</label>
-									<input value="<?= $this->view->result->getNomeProduto(); ?>" type="text" name="nome" id="idNome" class="form-control" placeholder="Nome do produto" required="required">
+									<label for="idNomeProduto">Nome</label>
+									<input value="<?= $this->view->result->getNomeProduto(); ?>" type="text" name="nome" id="idNomeProduto" class="form-control" placeholder="Nome do produto" required="required">
 								</div>
 							</div>
-							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 								<div class="form-group">
 									<div class="form-group">
 										<label for="idMarc">Marca: </label>
@@ -35,52 +35,85 @@
 									</div>
 								</div>
 							</div>
+						</div>
+						<div class="row">
+							<?php
+								for ($i=0; !($i == count($this->view->img)) ; $i++) { 
+									$col = 12/count($this->view->img);
+								
+							 ?>
+								<div class="col-xs-<?=$col?> col-sm-<?=$col?> col-md-<?=$col?> col-lg-<?=$col?>">
+									<div class="form-group">
+										<div class="form-group">
+											<label for="upload-<?=$i+1?>">Imgem do produto nº <?=$i+1?>: </label>
+											<input type="file" class="form-control upload" id="upload-<?=$i+1?>" name="imgProduto-<?=$i+1?>" required="required">
+										</div>
+									</div>
+								</div>
+							<?php
+
+								}
+							 ?>
+						</div>
+						<div class="row">
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="form-group">
-									<div class="form-group">
-										<label for="idMsg">Imgem do produto: </label>
-										<input type="file" class="form-control" id="upload" name="imgProduto">
-									</div>
+									<label for="idCategoria">Categoria: </label>
+									<input type="text" name="" id="idCategoria" class="form-control" required="required">
+									<input type="hidden" name="categoria">
+								</div>
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<label for="idSubCategoria">Subcategoria: </label>
+									<input type="text" name="" id="idSubCategoria" class="form-control" required="required">
+									<input type="hidden" name="subCategoria">
+								</div>
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<label for="idPeso">Peso Kg: </label>
+									<input type="text" name="peso" id="idPeso" class="form-control" required="required">
 								</div>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="form-group">
-									<label for="idCategoria">Categoria: </label>
-									<select class="form-control " id="idCategoria" name="categoria[]" multiple size="3" required="required">
-										<?php 
-											for ($i=0; !($i == count($this->view->categorias)) ; $i++) {
-
-											$selected = "";
-
-											if(is_array($this->view->categoriaProduto)
-											 && (count($this->view->categoriaProduto) > 0)){
-													for ($j=0; !($j == count($this->view->categoriaProduto)); $j++) { 
-														
-														if($this->view->categoriaProduto[$j]->getIdCategoria() == $this->view->categorias[$i]->getIdCategoria()){
-															$selected = "selected=\"selected\"";
-															echo "entrou aqui<br/>".PHP_EOL;
-															break;
-														}
-
-													}
-											}
-
-
-												
-										?>
-											<option <?=$selected?> value="<?= $this->view->categorias[$i]->getIdCategoria()?>" ><?= $this->view->categorias[$i]->getCategoria()?></option>
-										<?php 
-											}
-										?>
-									</select>
+									<label for="idLargura">Largura: </label>
+									<input type="text" name="largura" id="idLargura" class="form-control" required="required">
 								</div>
 							</div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<label for="idAtura">Atura: </label>
+									<input type="text" name="altura" id="idAtura" class="form-control" required="required">
+								</div>
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<label for="idUniMed">Unidade Medida: </label>
+									<input type="text" name="uniMed" id="idUniMed" class="form-control" required="required">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<label for="idExtMin">Estoque mínimo:</label>
+									<input class="form-control" name="extMin" rows="2" id="idExtMin" required="required">
+								</div>
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								<div class="form-group">
+									<label for="idCor">Cor:</label>
+									<input class="form-control" name="cor" rows="2" id="idCor" required="required">
+								</div>
+							</div>
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="form-group">
 									<label for="idTexto">Texto promorcional:</label>
-									<textarea class="form-control" name="texto" rows="2" id="idTexto"><?= trim($this->view->result->getTextoPromorcional());?></textarea>
+									<textarea class="form-control" name="texto" rows="2" id="idTexto" required="required"></textarea>
 								</div>
 							</div>
 						</div>
@@ -95,6 +128,20 @@
 					</div>	
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="containerImg">
 						<?=$this->view->imgProduto?>"
+						<div class="row">
+						<?php
+								for ($i=0; !($i == count($this->view->img)) ; $i++) { 
+									$col = 12/count($this->view->img);
+								
+							 ?>
+							 <div class="col">
+								<img class="preview" id="img-<?=$i+1?>" name="imgProduto-<?=$i+1?>"/>
+							</div>	
+							<?php
+
+								}
+							 ?>
+						</div>
 					</div>	
 				</div>
 				<button type="submit" class="btn btn-primary">Atualisar</button>  <a href="/produto/all" class="btn link ml-2 btn-danger">Cancelar</a> 

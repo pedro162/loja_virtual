@@ -9,6 +9,7 @@ use App\Models\ProdutoCategoria;
 use App\Models\Venda;
 use App\Models\Categoria;
 use App\Models\Fornecimento;
+use App\Models\Pessoa;
 
 class HomeController extends BaseController
 {
@@ -86,10 +87,10 @@ class HomeController extends BaseController
             //determina a quantidade de interaçoes
             $qtdGrid = intval(count($categoriaFornecimento) /$soma);
 
-            //$supperArrayCategorias = [];
-
             $indiceCategoria = 0;
             $sentinela = 0;
+
+            $historic = [];
 
             $supArrayCategorias = [];
             while (!($qtdGrid == $sentinela)) {
@@ -102,12 +103,17 @@ class HomeController extends BaseController
                     
                     while (!(count($subArrCateg) == $coluna)) {
 
-                       if(array_key_exists($indiceCategoria, $categoriaFornecimento)){
+                        $key = rand(0,count($categoriaFornecimento));
+                       if(array_key_exists($key, $categoriaFornecimento)){
 
-                            $subArrCateg[] = $categoriaFornecimento[$indiceCategoria]->getNomeCategoria();
+                            if(!in_array($key, $historic)){
+                               $subArrCateg[] = $categoriaFornecimento[$key]->getNomeCategoria();
+                                $historic[] = $key; 
+                            }
+                            
                         }
                         
-                        $indiceCategoria ++;
+                        //$indiceCategoria ++;
                     }
                     
                     $supArrayCategorias[] = $subArrCateg;
@@ -136,10 +142,58 @@ class HomeController extends BaseController
         }
     }
 
-    public function login()
+    public function indexLogin()
     {
-        $this->setMenu();
-        $this->render('login/login', true);
+        try {
+            Transaction::startTransaction('connection');
+            $this->setMenu();
+            $this->setFooter();
+                
+            $this->render('home/login', true);
+
+            Transaction::close();
+
+        } catch (Exception $e) {
+            
+            Transaction::rollback();
+        }
+        
+    }
+    
+    public function loginUser($request)
+    {
+        try {
+            Transaction::startTransaction('connection');
+
+            if((!isset($request['post']['usuario'])) || (!isset($request['post']['senha']))) {
+                throw new Exception("Dados inálidos\n");
+            }
+
+            $pessoa = new Pessoa();
+            $result = $pessoa->findLoginForUserPass($request['post']['usuario'], $request['post']['senha']);
+
+            $this->view->result = json_encode('logado');
+            //$this->render('home/ajax', false);
+            header('location:/home/admin?cd=logado');
+            Transaction::close();
+
+        } catch (Exception $e) {
+            Transaction::rollback();
+
+            var_dump($e);
+            //enviar mesnagem de erro por sessao
+            
+            header('loacation:/home/login');
+        }
+        
+        
+    }
+
+
+
+    public function logoutUser()
+    {
+
     }
 
     public function cadastro()
@@ -183,7 +237,7 @@ class HomeController extends BaseController
             $this->view->resultMonitEst = $resultMonitEst;
             $this->setMenu('adminMenu');
             $this->setFooter('footer');
-           $this->render('admin/home', false);
+            $this->render('admin/home', false);
 
             Transaction::close();
 
@@ -194,11 +248,7 @@ class HomeController extends BaseController
 
     }
 
-    public function teste($request){
-        echo "<pre>";
-        var_dump($request);
-        echo "</pre>";
-    }
+    
 
     public function menu()
     {

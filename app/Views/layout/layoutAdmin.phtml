@@ -67,6 +67,11 @@
                     <i class="fas fa-window-maximize fa-3x"></i>
                   </a>
                 </li>
+                <li class ="nav-item">
+                  <a href="/usuario/index" target="self" class="btn btnIcones px-3"  data-toggle="tooltip" data-placement="right" title="Sair">
+                    <i class="fas fa-power-off fa-3x"></i>
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>
@@ -80,11 +85,10 @@
                 </div>
 
                 <div class="col-md-3 col-sm-12" id="optionPlus">
-                  <div class="row ml-3 mb-0" style=" background-color: #fff;padding: 0px 5px 20px 5px;" >
+                  <div class="row ml-3 mb-0" style=" background-color: #fff;padding: 0px 5px 5px 5px;" >
                     <div class="col">
                     <div class="row">
                         <div class="col pt-2">
-                          <h4 align="center"><strong>Estoque</strong></h4>
                           <?php
                             if(isset($this->view->resultMonitEst) && (count($this->view->resultMonitEst) > 0)){
 
@@ -92,11 +96,19 @@
                           ?>
                             <div class="row">
                               <div class="col ">
-                                <div class="card alert alert-danger py-5" role="alert">
-                                  <div class="card-body">
+                                <div class="card">
+                                  <div class="card-header">
+                                    <h4 align="center"><strong>Estoque</strong></h4>
+                                  </div>
+                                  <div class="card-body alert pt-5 alert-danger ">
                                     <div class="row">
                                       <div class="col" align="center">
-                                        <h5 class="text-dark"><a href="#" class="alert-link"><strong>Itens com estoque baixo:</strong> <?=$this->view->resultMonitEst['qtdItens']?></a></h5>
+                                        <h5 class="text-dark"><strong>Itens com estoque baixo: <?=$this->view->resultMonitEst['qtdItens']?></strong></h5>
+                                      </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                      <div class="col" align="center">
+                                        <a href="#" class="btn btn-secondary">Visualizar</a>
                                       </div>
                                     </div>
                                   </div>
@@ -110,7 +122,6 @@
                     </div>
                     <div class="row">
                       <div class="col pt-2">
-                        <h4 align="center"><strong>Financeiro</strong></h4>
                        <?php
                             if(isset($this->view->resultMonitEst) && (count($this->view->resultMonitEst) > 0)){
 
@@ -118,8 +129,11 @@
                           ?>
                            <div class="row">
                               <div class="col ">
-                                <div class="card alert alert-primary">
-                                  <div class="card-body">
+                                <div class="card">
+                                  <div class="card-header">
+                                    <h4 align="center"><strong >Financeiro</strong></h4>
+                                  </div>
+                                  <div class="card-body alert alert-primary">
                                     <div class="row">
                                       <div class="col" align="center">
                                         <div class="row text-light">
@@ -138,7 +152,12 @@
                                                 <br><span class="text-success"><strong>Saldo: R$ 600,00</strong></span>
                                               </div>
                                             </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col" align="center">
+                                            <a href="#" class="btn btn-secondary">Visualizar</a>
                                           </div>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
@@ -152,7 +171,6 @@
                     </div>
                     <div class="row">
                       <div class="col pt-2">
-                        <h4 align="center"><strong>Vendas</strong></h4>
                         <?php
                             if(isset($this->view->resultMonitEst) && (count($this->view->resultMonitEst) > 0)){
 
@@ -160,18 +178,21 @@
                           ?>
                             <div class="row">
                               <div class="col ">
-                                <div class="card alert alert-warning">
-                                  <div class="card-body">
+                                <div class="card">
+                                  <div class="card-header">
+                                    <h4 align="center"><strong>Vendas</strong></h4>
+                                  </div>
+                                  <div class="card-body alert alert-warning">
                                     <div class="row">
                                       <div class="col" align="center">
                                         <div class="row text-light">
                                           <div class="col pt-2 px-2" align="center">
-                                            <div class="text-secondary" align="center" style="margin: auto;">Loja Fisic.</div>
+                                            <div class="text-secondary" align="center" style="margin: auto;"></strong>Loja Fisic.</strong></div>
                                             <i class="text-secondary fas fa-arrow-alt-circle-up fa-3x"></i>
                                             <br><span class="text-secondary"><strong>R$ 1.800,00</strong></span>
                                           </div>
                                           <div class="col pt-2 px-2" align="center" style="margin: auto;">
-                                            <div class="text-info" align="center" style="margin: auto;">Loja Virt.</div>
+                                            <div class="text-info" align="center" style="margin: auto;"><strong>Loja Virt.</strong></div>
                                             <i class="text-info fas fa-arrow-alt-circle-up fa-3x"></i>
                                             <br><span class="text-info"><strong>R$ 1.200,00</strong></span>
                                           </div>
@@ -183,6 +204,11 @@
                                               </div>
                                             </div>
                                           </div>
+                                           <div class="row mt-2">
+                                              <div class="col" align="center">
+                                                <a href="#" class="btn btn-secondary">Visualizar</a>
+                                              </div>
+                                            </div>
                                       </div>
                                     </div>
                                   </div>

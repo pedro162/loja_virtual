@@ -10,9 +10,12 @@ class Usuario extends BaseModel
 {
     const TABLENAME = 'Usuario';
 
-	private $login;
-	private $password;
-	private $idUsuario;
+	private  $login;
+	private  $senha;
+	private  $idUsuario;
+    private $img;
+
+    private static $dataUserSection = [];
 
     private $data = [];
 
@@ -41,11 +44,6 @@ class Usuario extends BaseModel
 
     protected function parseCommit():array
     {
-         //falta implemetar
-        //$this->data['idUsuario']      = $this->getIdUser();
-        //$this->data['login']          = $this->getLogin();
-        //$this->data['senha']          = $this->getPassword();
-
         return $this->data;
     }
 
@@ -64,14 +62,6 @@ class Usuario extends BaseModel
         
     }
 
-
-    public function listaMarca():array
-    {
-    	$result = $this->select(['idMarca','nomeMarca'], [], '=','asc', null, null, true);
-    	return $result;
-    }
-
-
     public function getIdUser()
     {
     	if(empty($this->idUsuario)){
@@ -85,23 +75,60 @@ class Usuario extends BaseModel
     public function getLogin()
     {
     	if(empty($this->login)){
-    		throw new Exception("Pripriedade não defindida<br/>");
+    		throw new Exception("Pripriedade não defindida jj<br/>");
     	}
 
     	return $this->login;
     }
 
 
-    public function getPassword()
+    public function getSenha()
     {
-    	if(empty($this->password)){
+    	if(empty($this->senha)){
     		throw new Exception("Pripriedade não defindida<br/>");
     	}
 
-    	return $this->password;
+    	return $this->senha;
+    }
+
+    public function getImg()
+    {
+        if(empty($this->img)){
+            throw new Exception("Pripriedade não defindida<br/>");
+        }
+
+        return $this->img;
     }
 
 
+    public function findLoginForUserPass($user, $pass)
+    {
+        if((!isset($user) )|| (!isset($pass))){
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
+
+        $user = trim($user);
+        $pass = trim($pass);
+        if((strlen($user) == 0)|| (strlen($pass) == 0)){
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
 
 
+        $result = $this->select(['idUsuario', 'login', 'senha', 'img'], ['login' => $user], '=', 'asc', null, null, true, false);
+
+        if($result == false){
+            throw new Exception("Usuario ou senha inválidos\n");
+        }
+
+        if (($result[0]->getLogin() === $user) && ($result[0]->getSenha() === $pass)) {
+
+            return $result[0];
+        }
+
+        throw new Exception("Usuario ou senha inválidos\n");
+
+        
+    }
 }
