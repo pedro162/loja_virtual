@@ -15,7 +15,29 @@
             <div class="login">
                 <ul class="nav nav-tabs">
                     <li><a href="#" class="btn"> <span style="font-size: 13px; color: #ffff;"><i class="fas fa-cart-plus fa-2x"></i></span><span  id="qtdItensCarrinho"><?php echo (isset($this->view->qtd)) ? $this->view->qtd : '';?></span></a></li>
-                    <li><a href="/home/login" class="">Seu login <span class="caret"></span></a></li>
+
+                     <li class="nav-item dropdown" id="listLog">
+                      <a class="dropdown-toggle" href="#" id="navLog" data-toggle="dropdown">
+                        Seu login
+                      </a>
+                      <div class="dropdown-menu" herf="#navLog" >
+                        <?php
+                            if(isset($this->view->usuario) && (!empty($this->view->usuario ))){
+
+                        ?>
+                        <a class="dropdown-item" href="/home/login/logout" id="sair">Sair</a>
+                        <?php
+
+                            }else{
+                         ?>       
+                          
+                        <a class="dropdown-item" href="/home/login" id="entrar"  data-toggle="modal" data-target="#myModal">Entrar</a>
+                        <?php
+                          }
+                        ?>
+                        
+                      </div>
+                    </li>
                     <li><a href="#" class="">Devoluções <span class="caret"></span></a></li>
                 </ul>
             </div>

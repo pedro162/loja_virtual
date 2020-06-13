@@ -14,6 +14,7 @@ use App\Models\DetalhesPedido;
 use \App\Models\ProdutoCategoria;
 use \App\Models\Comentario;
 use \Core\Utilitarios\Utils;
+use Core\Utilitarios\Sessoes;
 
 class ComentarioController extends BaseController
 {
@@ -23,6 +24,13 @@ class ComentarioController extends BaseController
     	try {
 
     		Transaction::startTransaction('connection');
+
+    		$usuario = Sessoes::usuarioLoad();
+
+    		if($usuario == false){
+    			throw new \Exception("Faça o login para comentar.");
+    			
+    		}
 
 	        if((!isset($request['post']['produto']))|| (!isset($request['post']['comentario'])) ){
 	            throw new \Exception("Propriedade indefinida<br/>");
@@ -37,9 +45,12 @@ class ComentarioController extends BaseController
 	        $result = $produto->loadProdutoForId($request['post']['produto'], true);
 
 	        if($result != false){
+
+	        	$idUsuario = $usuario->getIdPessoa();
+
 	        	$comentario = new Comentario();
 	        	$comentario->setTextoComentario($request['post']['comentario']);
-	        	$comentario->setUsuarioIdUsuario(1);//obs alterar para iplementarção correta do usuario
+	        	$comentario->setUsuarioIdUsuario($idUsuario);//obs alterar para iplementarção correta do usuario
 	        	$comentario->setProdutoIdProduto((int)$result->getIdProduto());
 
 	        	$resultContario = $comentario->save([]);
@@ -60,7 +71,7 @@ class ComentarioController extends BaseController
 	        
 	        Transaction::close();
 
-    	} catch (Exception $e) {
+    	} catch (\Exception $e) {
     		Transaction::rollback();
 			
 			$erro = ['msg','warning', $e->getMessage()];
@@ -71,6 +82,8 @@ class ComentarioController extends BaseController
 
     }
 
+
+    //carrega os comentarios
     public function loadComentFormProduto($request)
     {
     	try {
@@ -97,7 +110,7 @@ class ComentarioController extends BaseController
 	        	$comentarios = $comentario->listarConsultaPersonalizada('C.ProdutoIdProduto ='.(int)$result->getIdProduto(), NULL, NULL, true);
 
 	        	if($comentarios){
-	        		
+	        		$this->view->usuario = Sessoes::usuarioLoad();//pega o usuario se estiver logado
 	        		$this->view->comentarios = $comentarios;;
 		            $this->render('comentario/comentarios', false);
 	        	}

@@ -133,17 +133,18 @@ nav ul li a{
     
 }
 
-
+nav ul #listLog a:hover{
+    
+    width: 80%;
+}
 
 /*Estilo formulario login*/
 
 #login, #cadastro{
     width: 50%;
-    margin: 100px auto auto auto;
-    padding: 50px 50px;
+    margin: auto;
     height: 100%;
     background-color: #fff;
-    box-shadow: 3px 3px 6px #000;
 
 }
 #cadastro{
@@ -223,7 +224,6 @@ form input:hover, form label:hover{
 
 form .btn-danger:hover{
     font-weight: bolder;
-    box-shadow: 2px 2px 4px #000;
 }
 
 

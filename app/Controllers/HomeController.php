@@ -10,6 +10,7 @@ use App\Models\Venda;
 use App\Models\Categoria;
 use App\Models\Fornecimento;
 use App\Models\Pessoa;
+use Core\Utilitarios\Sessoes;
 
 class HomeController extends BaseController
 {
@@ -123,6 +124,9 @@ class HomeController extends BaseController
                 $sentinela ++;
             }
 
+            $usuario = Sessoes::usuarioLoad();
+
+            $this->view->usuario = $usuario;
             $this->view->categorias = $supArrayCategorias;
             $this->view->arrProdIndexCat = $arrProdIndexCat;
 
@@ -148,8 +152,8 @@ class HomeController extends BaseController
             Transaction::startTransaction('connection');
             $this->setMenu();
             $this->setFooter();
-                
-            $this->render('home/login', true);
+
+            $this->render('home/login', false);
 
             Transaction::close();
 
@@ -172,18 +176,18 @@ class HomeController extends BaseController
             $pessoa = new Pessoa();
             $result = $pessoa->findLoginForUserPass($request['post']['usuario'], $request['post']['senha']);
 
-            $this->view->result = json_encode('logado');
-            //$this->render('home/ajax', false);
-            header('location:/home/admin?cd=logado');
+            Sessoes::usuarioInit($result);
+            
+            $this->view->result= json_encode([1]);
+            $this->render('home/ajax', false);
             Transaction::close();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Transaction::rollback();
 
-            var_dump($e);
-            //enviar mesnagem de erro por sessao
-            
-            header('loacation:/home/login');
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('home/ajax', false);
         }
         
         
@@ -193,6 +197,9 @@ class HomeController extends BaseController
 
     public function logoutUser()
     {
+        if(Sessoes::sessionEnde()){
+            header('Location:/');
+        }
 
     }
 

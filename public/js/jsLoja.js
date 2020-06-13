@@ -32,6 +32,66 @@ $(document).ready(function(){
     $('.cnpj').show();
   })
 
+//-------------------------- FAX O AJAX E GERA O LOGIN / LOGOUT------------------------------
+
+$('body').delegate('#entrar', 'click', function(event){
+  event.preventDefault();
+  let url = $(this).attr('href');
+
+  $.ajax({
+    type: 'GET',
+    url: url,
+    dataType:'HTML',
+    success: function(retorno){
+
+      getModal('Login',retorno);
+    }
+  })
+
+
+})
+
+
+//------------------ ENVIA O FORMULARIO DE LOGIN  --------------------
+
+$('body').delegate('#login', 'submit', function(event){
+  event.preventDefault();
+  let url = $(this).attr('action');
+
+  let user = $(this).find('input[id=id_email]').val();
+  let pass = $(this).find('input[id=id_password]').val();
+
+  if((user.trim() == '') || (pass.trim() == '')){
+    alert('Preencha o formulario corretamente');
+    return false;
+  }
+
+  let form = new FormData($(this)[0]);
+
+  $.ajax({
+    type:'POST',
+    url:url,
+    data:form,
+    processData:false,
+    contentType: false,
+    dataType:'json',
+    success: function(retorno){
+      if(Number(retorno[0] == 1)){
+        $('#closeModal').trigger('click');//fecha o modal se estiver aberto
+        $('#listLog div').html($('<a/>').attr('href', '/home/login/logout').attr('id', 'sair').addClass('dropdown-item').text('Sair'))
+        return true;
+      }else{
+
+        alert(retorno[2]);
+        return false;
+      }
+
+    }
+  });
+
+
+
+});
 //------------------------ EFEITOS DA ESTRELA DE NIVEL DO PRODUTO ------------------
 $('body').delegate('.star', 'mouseover', function(){
   let indice = $(this).index();
@@ -73,7 +133,8 @@ $('body').delegate('#formComentario', 'submit', function(event){
   event.preventDefault();
 
   if($('#textComentario').val().trim() == ''){
-    alert("Comentario inválido\n")
+    alert("Comentario inválido\n");
+    return false;
   }
 
 
@@ -91,7 +152,6 @@ $('body').delegate('#formComentario', 'submit', function(event){
     contentType: false,
     dataType:'json',
     success:function(retorno){
-      
       if(retorno[0] > 0){
         $.ajax({
           type:'POST',
@@ -106,7 +166,7 @@ $('body').delegate('#formComentario', 'submit', function(event){
 
 
       }else{
-        alert('Não foi possivel salvar seu comentario');
+        alert("Não foi possivel salvar seu comentario\n\r "+retorno[2]);
         return false;
       }
     }

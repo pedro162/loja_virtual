@@ -15,6 +15,7 @@ use \App\Models\Usuario;
 use \App\Models\ProdutoCategoria;
 use \App\Models\Comentario;
 use \Core\Utilitarios\Utils;
+use Core\Utilitarios\Sessoes;
 
 class PedidoController extends BaseController
 {
@@ -303,8 +304,10 @@ class PedidoController extends BaseController
             //calcula a media
             $media = round($gostie / $totEstrelas, 1);
 
-            //determina a porcentagem da estrela de like
-            $this->view->percent = ($media * 20).'%';
+            $usuario = Sessoes::usuarioLoad();//pega o usuario se estiver logado
+
+            $this->view->usuario = $usuario;
+            $this->view->percent = ($media * 20).'%';//determina a porcentagem da estrela de like
             $this->view->idProduto = $idProduto;
             $this->view->comentarios = $comentarios;
             $this->view->imagensProduto = $imagensProduto;

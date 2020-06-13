@@ -236,6 +236,26 @@ function loadProdutos(obj, request, func)
     });
 }
 
+//---------------------- FAZ O CALCULO DO PEIDO PAINEL VENDA ---------------------
+
+function calculaTotalVenda(){
+
+  let totalGeral = 0;
+    $('#vendaPainelTable #itensTable').find('tbody tr').each(function(){
+      let val =  $(this).find('td:eq(6)').text(); 
+      totalGeral+=parseFloat(foramtCalcCod(val));
+
+    })
+
+    totalComGlob = totalGeral;
+
+    totalGeral = formatMoney(totalGeral)
+    $('form#vendaPainelTable #totGeralVenda').text(totalGeral);//adiciona o valor formatado no campo total
+
+    return foramtCalcCod(totalGeral);//retorna o valor pronto para calculos
+}
+
+
 
 
 //---------------------------------- ADICIONA O ITEM NA TABELA DE PEDIDOS DO PAINEL DE VENDAS -------------------------------
@@ -276,6 +296,12 @@ $('#dinamic').delegate('form#serchProd', 'submit', function(event){
   let prod = String($(this).find('table tbody tr:first td:eq(1)').text());
   let preco = foramtCalcCod($(this).find('table tbody tr:first td:eq(2)').text());
   let estoque = Number($(this).find('table tbody tr:first td:eq(3)').text());
+
+  //calula o estoque disponível com a qtd informada pelo usuario
+  if(qtd > estoque){
+    message(['msg', 'warning', 'Atenção: Quantidade informada acima do estoque!']);
+    return false;
+  }
 
   if((prod.length == 0) || (preco.length == 0)){
 
@@ -352,19 +378,6 @@ $('#dinamic').delegate('form#vendaPainelTable #itensTable tbody a.btn-danger', '
   }
 });
 
-function calculaTotalVenda(){
-
-  let totalGeral = 0;
-    $('#vendaPainelTable #itensTable').find('tbody tr').each(function(){
-      let val =  $(this).find('td:eq(6)').text(); 
-      totalGeral+=parseFloat(foramtCalcCod(val));
-
-    })
-
-
-    totalGeral = formatMoney(totalGeral)
-    $('form#vendaPainelTable #totGeralVenda').text(totalGeral);
-}
 
 
 
@@ -425,13 +438,14 @@ $('#dinamic').delegate('#aplyModIten', 'click', function(){
 //------------------ CHAMA O MODAL APRA ADD COBRANÇA AO PEDIDO DE VENDA -------------
 $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
   $('#mgCob').remove();//remove a msg da tabela cobranca
+
   let idCob = Number($(this).attr('id'));
 
   let contentor = $('<div/>').addClass('row');
   let divDif = $('<div/>').addClass('col-md-4 col-sm-6');
   let divCob = $('<div/>').addClass('col-md-8 col-sm-6');
-
-  divDif.text('R$ '+$('#totGeralVenda').text());//pega o total da compra
+  
+  divDif.html('R$ <span id="totVendaModal">'+ (calculaTotalVenda()- calcCbobAdd())+'</span>');//pega o total da compra e subitrai do total das cobranças adicionadas
 
   //cria o label do da cobranca
   divCob.addClass('row').append(
@@ -439,7 +453,7 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
         .append($('<input/>').attr('type', 'text').attr('id', 'vlImput').attr('name', 'vlParcela').addClass('form-control'))
       );
 
-  if((idCob == 1) || (idCob == 3)){
+  if((idCob == 1) || (idCob == 4)){
     //cria os inputs de cobranca
     divCob.append(
         $('<div/>').addClass('col').append($('<label/>').attr('for','cobInput').text('Qtd parcelas'))
@@ -455,9 +469,17 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
 
   //cria os botoes de ação
   let add = $('<button/>').addClass('btn btn-primary mr-2').attr('type', 'button').html($('<strong>').text('Add'));
+  add.attr('id', 'btnAddCob');
+
   let cancel = $('<button/>').addClass('btn btn-danger').attr('type', 'button').html($('<strong>').text('Cancel'));
+  cancel.attr('id', 'btnCancel');
+  cancel.attr('data-dismiss', 'modal');
+
+  //grava o codigo da cobrana no input
+  let cbo = $('<input/>').attr('type', 'hidden').attr('id', 'codCbo').val(idCob);
+
   contentor.append(
-      $('<div/>').addClass('col').append(add).append(cancel)
+      $('<div/>').addClass('col').append(add).append(cancel).append(cbo)
     )
 
   getModal('Add Cobrança: '+$(this).text(), contentor);
@@ -465,20 +487,68 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
 
 });
 
-$('#dinamic').delegate('#addCob', 'click', function(){
 
-    //cria os botões de ação.
-    let actionEdit = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-pencil-alt'));
-    actionEdit.attr('data-target', '#myModal');
+// ---------------------- ADICIONA NA SUB TABELA DO PEDIDO AS FORMAS DE PAGAMENTO CALCULADAS
 
-    let actionDelet = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-trash-alt'));
-    actionDelet.attr('data-target', '#myModal');
+$('#myModal').delegate('#btnAddCob' ,'click', function(){
+  
+  let idCob = $('.modal-body').find('input[id=codCbo]').val();
 
-    $('<tr/>').append()
+  //calcula a diferena emtre o total do pedido e as cobrança já adicionadas
+  let dif = calculaTotalVenda()- calcCbobAdd();
+
+  if(dif == 0){
+    message(['msg', 'warning', 'Atenção: não existe cobrança para o valor do pedido']);
+
+    $('#idFilanizar').trigger('click');
+    return false;
+  }
+  
+  let vlParcela = parseFloat($('.modal-body').find('input[id=vlImput]').val());
+  let qtdParcela = Number($('.modal-body').find('select[id=cobInput]').val());
+
+  qtdParcela = qtdParcela ? qtdParcela : 1;
+
+  //cria os botões de ação.
+  let actionEdit = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-pencil-alt'));
+  actionEdit.attr('data-target', '#myModal');
+
+  let actionDelet = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-trash-alt'));
+  actionDelet.attr('data-target', '#myModal');
+
+
+
+  if(vlParcela > dif){
+    alert('Valor da parsela superior ao valor do pedido');
+    return false;
+  }
+
+  let tr = $('<tr/>').append($('<td/>').text($('#vendaPainelTable').find('button[id='+idCob+']').text()));
+
+  tr.append($('<td/>').text(vlParcela).css('aligin', 'left'))
+  tr.append($('<td/>').text(qtdParcela).css('aligin', 'center'))
+  tr.append($('<td/>').text('edit / excl'))
+
+  $('#vendaPainel').find('#mgCob').remove();
+  $('#cobranca tbody').prepend(tr);
+
 })
 
+//------------------- calcula o total das cobranças adicionadas
+function calcCbobAdd()
+{
+  let totTableParcelas = 0;
+  $('#cobranca tbody tr').each(function(){
+    let val = parseFloat($(this).find('td:eq(1)').text());
+    
+    val = val ? val: 0;
 
+    totTableParcelas += val;
 
+  })
+
+  return totTableParcelas;
+}
 
 
 

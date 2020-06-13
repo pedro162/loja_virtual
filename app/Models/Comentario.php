@@ -112,6 +112,25 @@ class Comentario extends BaseModel
     	return $this->ProdutoIdProduto;
     }
 
+    public function getUsuarioIdUsuario()
+    {
+        if((!isset($this->UsuarioIdUsuario)) || ($this->UsuarioIdUsuario <= 0)){
+
+            if(isset($this->data['UsuarioIdUsuario']) && ((int)$this->data['UsuarioIdUsuario'] > 0)){
+
+                return (int)$this->data['UsuarioIdUsuario'];
+            }
+            
+            throw new Exception("Parâmetro inváido");
+            
+        }
+        return (Int) $this->UsuarioIdUsuario;
+
+        
+        return true;
+    }
+
+
 	public function getTextoComentario()
     {
     	if((!isset($this->textoComentario)) || (strlen($this->textoComentario) == 0)){

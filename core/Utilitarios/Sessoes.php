@@ -1,6 +1,7 @@
 <?php
 
 namespace Core\Utilitarios;
+use App\Models\Pessoa;
 use \Exception;
 
 class Sessoes
@@ -52,13 +53,40 @@ class Sessoes
 
 		
 	}
+
+	public static function usuarioInit(Pessoa $pess)
+	{
+		if(isset($pess) && (!empty($pess))){
+
+			self::sessionInit();
+			$_SESSION['usuario'] = serialize($pess);
+			return true;
+		}
+
+		throw new \Exception("Parâmetro inválido\n");
+	}
+
+	public static function usuarioLoad()
+	{
+
+		self::sessionInit();
+
+		if(isset($_SESSION['usuario']) && (!empty($_SESSION['usuario']))){
+			return unserialize($_SESSION['usuario']);
+		}
+		return false;
+		
+	}
+
     public static function sessionEnde()
     {
        self::sessionInit();
 
-        $_SESSION = array();
-        \session_destroy();
-        header("Location: /");
+       $_SESSION = array();
+
+       $result = session_destroy();
+       
+       return $result;
     }
 
     public static function sessionReturnElements():array
