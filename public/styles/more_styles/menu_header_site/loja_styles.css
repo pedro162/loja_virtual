@@ -321,9 +321,6 @@ form .btn-danger:hover{
 
 }
 
-#detalheProduto{
-    background-color: #fff;
-}
 #detalheProduto span{
     color: #9400D3;
 }
@@ -379,4 +376,96 @@ form .btn-danger:hover{
 
 .star.full{
     background: linear-gradient(to bottom, #fee24f, #f4bb2f);
+}
+
+/*-------------------- STYLE VIEW CARRINHO ------------------*/
+#divCardCarriho div.card{
+    width: 22rem;
+    height: 24rem;
+    border:none;
+    color: #9400D3;
+    
+}
+#divCardCarriho a.btn{
+    display: none;
+    width: 50%;
+    background: #9400D3;
+    font-weight: bolder;
+}
+
+
+
+#divCardCarriho div.card:hover{
+     box-shadow: 2px 2px 4px #9400D3;
+}
+
+#divCardCarriho div.card:hover a.btn{
+    display: block;
+    border-radius: 50px;
+
+}
+.controller{
+    border:1px solid #9400D3;
+}
+
+.controller:hover{
+    box-shadow: 2px 2px 4px #9400D3;
+    color: #fff;
+    background-color: #9400D3;
+    font-weight: bolder;
+    border:1px solid #9400D3;
+}
+
+.controller-delete{
+    border:1px solid #9400D3;
+    padding: 2px 10px;
+}
+
+.controller-delete:hover{
+    box-shadow: 2px 2px 4px red;
+    color: #fff;
+    background-color: red;
+    font-weight: bolder;
+    border:1px solid red;
+}
+#vitrine-home .last-of-grid{
+    width: 93.5rem; height: 16rem;
+}
+#vitrine-home .last-of-grid img{
+    width: 100px; height: 100px;
+}
+
+#vitrine-home .medle-of-grid{
+    width: 46rem; height: 16rem;
+}
+#vitrine-home .medle-of-grid img{
+    width: 130px; height: 130px;
+}
+#vitrine-home .first-of-grid img{
+       width: 100px; height: 100px;
+}
+#vitrine-home .first-of-grid {
+       width: 22rem; height: 28rem;
+}
+@media(max-width: 600px){
+    #vitrine-home .last-of-grid {
+        width: auto; height: auto;
+    }
+    #vitrine-home .last-of-grid .card-body:last-child {
+        margin:0;
+    }
+
+    #vitrine-home img{/*ajustar*/
+        width: 20px;
+        height: 30px;
+    }
+
+    #vitrine-home .medle-of-grid{
+       width: auto; height: auto;
+     }
+
+    #vitrine-home .first-of-grid{
+       width: auto; height: auto;
+     }
+    
 }

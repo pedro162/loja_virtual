@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Exception;
 use \Core\Database\Transaction;
+use Core\Utilitarios\Sessoes;
 
 class BaseController
 {
@@ -14,6 +15,7 @@ class BaseController
     public function __construct()
     {
         $this->view = new \stdClass();
+               
     }
 
 
@@ -35,7 +37,7 @@ class BaseController
     public function setMenu(String $path = 'standardMenu')
     {
         if((!empty($path)) && (file_exists('../app/Views/layout/'.$path.'.phtml')))
-        {
+        {   
             $this->menu = '../app/Views/layout/'.$path.'.phtml';
         }else{
             die('Não existe mennu');

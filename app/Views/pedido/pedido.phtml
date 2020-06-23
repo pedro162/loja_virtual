@@ -3,8 +3,8 @@
 		<div class="row">
 			<div class="col">
 				<strong><h2>Nome da empresa</h2></strong>
-				<sub>ENDEREÇO DA EMPRESA</sub>
-				<p>0000-000 UF - FONE (11) 98984237623</p>
+				<p>Rua nova nº20 Ipase São Luís</p>
+				<p>65270-000 MA - FONE (11) 98984237623</p>
 			</div>
 		</div>
 		<hr>
@@ -15,7 +15,13 @@
 				<p><?=strtoupper($this->view->dataCliente[0]->endereco .'<br/>'. $this->view->dataCliente[0]->complemento)?></p>
 			</div>
 			<div class="col-md-6" align="right">
-				<strong><h6>PEDIDO Nº</h6></strong>
+				<?php
+					$tipo = 'PEDIDO';
+					if($this->view->dataCliente[0]->tipo == 'orcamento'){
+						$tipo = 'ORÇAMENTO';
+					}	
+				?>
+				<strong><h6><?=$tipo?> Nº</h6></strong>
 				<span style="font-size: 12px;"><?=$this->view->dataCliente[0]->idPedido?></span>
 			</div>
 		</div>
@@ -24,7 +30,7 @@
 				<h6>DETALHES DO PEDIDO</h6>
 			</div>
 			<div class="col-md-12">
-				<table class="table table-primary table-hover mb-2">
+				<table class="table table-light table-hover mb-2">
 					<thead>
 						<tr>
 							<th style="border-bottom: solid 1px #000;">COD</th>

@@ -15,6 +15,9 @@ class Pessoa extends BaseModel
 	private $idPessoa;
     private $login;
     private $senha;
+    private $nomeFantasia;
+    private $documento;
+    private $documentoComplementar;
 
 
     protected function parseCommit()
@@ -174,6 +177,47 @@ class Pessoa extends BaseModel
         return $this->login;
     }
 
+    public function getDocumento()
+    {
+        if((!isset($this->documento)) || (strlen($this->documento) ==0 )){
+            if(isset($this->data['documento']) && (strlen($this->data['documento']) > 0)){
+                return $this->data['documento'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->documento;
+    }
+
+    public function getDocumentoComplementar()
+    {
+        if((!isset($this->documentoComplementar)) || (strlen($this->documentoComplementar) ==0 )){
+            if(isset($this->data['documentoComplementar']) && (strlen($this->data['documentoComplementar']) > 0)){
+                return $this->data['documentoComplementar'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->documentoComplementar;
+    }
+
+
+    public function getNomeFantasia()
+    {
+        if((!isset($this->nomeFantasia)) || (strlen($this->nomeFantasia) ==0 )){
+            if(isset($this->data['nomeFantasia']) && (strlen($this->data['nomeFantasia']) > 0)){
+                return $this->data['nomeFantasia'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->nomeFantasia;
+    }
+
+
      public function getSenha()
     {
         if((!isset($this->senha)) || (strlen($this->senha) ==0 )){
@@ -217,6 +261,22 @@ class Pessoa extends BaseModel
         
     }
     
+
+    public function __get($prop)
+    {
+        if(method_exists($this, 'get'.ucfirst($prop))){
+
+            return call_user_func([$this,'get'.ucfirst($prop)]);
+        }
+    }
+
+    public function __set($prop, $value)
+    {   
+        if(method_exists($this, 'set'.ucfirst($prop))){ 
+            return call_user_func([$this,'set'.ucfirst($prop)], $value);
+        }
+    }
+
     
  
 

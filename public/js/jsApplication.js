@@ -445,7 +445,7 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
   let divDif = $('<div/>').addClass('col-md-4 col-sm-6');
   let divCob = $('<div/>').addClass('col-md-8 col-sm-6');
   
-  divDif.html('R$ <span id="totVendaModal">'+ (calculaTotalVenda()- calcCbobAdd())+'</span>');//pega o total da compra e subitrai do total das cobranças adicionadas
+  divDif.html('R$ <span id="totVendaModal">'+ formatMoney(calculaTotalVenda()- calcCbobAdd())+'</span>');//pega o total da compra e subitrai do total das cobranças adicionadas
 
   //cria o label do da cobranca
   divCob.addClass('row').append(
@@ -495,13 +495,13 @@ $('#myModal').delegate('#btnAddCob' ,'click', function(){
   let idCob = $('.modal-body').find('input[id=codCbo]').val();
 
   //calcula a diferena emtre o total do pedido e as cobrança já adicionadas
-  let dif = calculaTotalVenda()- calcCbobAdd();
+  let dif = calculaTotalVenda() - calcCbobAdd();
+
+  let error = false;
 
   if(dif == 0){
-    message(['msg', 'warning', 'Atenção: não existe cobrança para o valor do pedido']);
-
-    $('#idFilanizar').trigger('click');
-    return false;
+    message(['msg', 'warning', 'Atenção: não é possivel adicionar cobrança acima do valor do peido']);
+    error = true;
   }
   
   let vlParcela = parseFloat($('.modal-body').find('input[id=vlImput]').val());
@@ -520,17 +520,19 @@ $('#myModal').delegate('#btnAddCob' ,'click', function(){
 
   if(vlParcela > dif){
     alert('Valor da parsela superior ao valor do pedido');
-    return false;
+    error = true;
   }
 
   let tr = $('<tr/>').append($('<td/>').text($('#vendaPainelTable').find('button[id='+idCob+']').text()));
 
-  tr.append($('<td/>').text(vlParcela).css('aligin', 'left'))
+  tr.append($('<td/>').text(formatMoney(vlParcela)).css('aligin', 'left'))
   tr.append($('<td/>').text(qtdParcela).css('aligin', 'center'))
   tr.append($('<td/>').text('edit / excl'))
 
-  $('#vendaPainel').find('#mgCob').remove();
-  $('#cobranca tbody').prepend(tr);
+  if(error != true){
+    $('#vendaPainel').find('#mgCob').remove();
+    $('#cobranca tbody').prepend(tr);
+  }
 
 })
 
@@ -539,11 +541,11 @@ function calcCbobAdd()
 {
   let totTableParcelas = 0;
   $('#cobranca tbody tr').each(function(){
-    let val = parseFloat($(this).find('td:eq(1)').text());
+    let val = foramtCalcCod($(this).find('td:eq(1)').text());
     
     val = val ? val: 0;
 
-    totTableParcelas += val;
+    totTableParcelas += Number(val);
 
   })
 
@@ -557,8 +559,9 @@ function calcCbobAdd()
 $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
   event.preventDefault();
 
-  let dados = new Array();
+  let dadosItens = new Array();
 
+  //busca os itens do pedido e adiciona al array dadosIntesn
   $(this).find('table#itensTable tbody tr').each(function(){
 
     let cod = $(this).find('td:eq(7) a').attr('href');
@@ -571,52 +574,116 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
     let precoComDesc = foramtCalcCod($(this).find('td:eq(5)').text());
     let subtTot = foramtCalcCod($(this).find('td:eq(6)').text());
 
-    dados.push([cod, qtd, preco, precDesc, totDesc, precoComDesc, subtTot]);
+    dadosItens.push([cod, qtd, preco, precDesc, totDesc, precoComDesc, subtTot]);
   
   })
 
   let form = new FormData($(this)[0]);
 
-  let sentinela = false;
-  for (let i = 0; !(i == dados.length); i++) {
+  //prepara os dados do pedido para envio 
+  let sentinelaIntes = false;
+  for (let i = 0; !(i == dadosItens.length); i++) {
 
-    for (let j = 0; !(j == dados[i].length); j++) {
+    for (let j = 0; !(j == dadosItens[i].length); j++) {
       
-      if((dados[i][j].length == 0) || (dados[i][j] === false)){
-        sentinela = true;
+      if((dadosItens[i][j].length == 0) || (dadosItens[i][j] === false)){
+        sentinelaIntes = true;
         break
       }
     }
 
-    form.append('pedidoPanelVenda[]', dados[i]);
+    form.append('pedidoPanelVenda[]', dadosItens[i]);
 
-  }  
+  } 
 
-  if(sentinela == true){
-    message(['msg', 'warning', 'Atenção: Algo errado aconteceu, recarrege a página novamente!']);
-    return false;
+
+
+  let dadosPgto = new Array();
+
+  //busca as formas de pagamento do pedido
+  $(this).find('#cobranca tbody tr').each(function(e){
+    let cob = $(this).find('td:eq(0)').text();
+    let vlParcela = foramtCalcCod($(this).find('td:eq(1)').text());
+    let qtdParcela = $(this).find('td:eq(2)').text();
+
+    dadosPgto.push([cob, vlParcela, qtdParcela]);
+  })
+
+  //prepara os dados do pedido para envio 
+  let sentinelaPgto = false;
+  for (let i = 0; !(i == dadosPgto.length); i++) {
+
+    for (let j = 0; !(j == dadosPgto[i].length); j++) {
+      
+      if((dadosPgto[i][j].length == 0) || (dadosPgto[i][j] === false)){
+        sentinelaPgto = true;
+        break
+      }
+    }
+
+    form.append('PgtoPanelVenda[]', dadosPgto[i]);
+
+  } 
+
+
+
+
+  let totCob = calcCbobAdd();
+  let totPedido =  Number(calculaTotalVenda());
+
+
+  console.log(totCob);
+  console.log(totPedido)
+
+  let error = new Array();
+
+  if((totPedido - totCob) != 0){
+    error.push('Adicone cobranças para a venda!');
   }
 
+  if((sentinelaIntes == true) || (sentinelaPgto == true)){
+    
+    error.push('Algo errado aconteceu, recarrege a página novamente!');
+    
+  }
 
-  $.ajax({
-    type:'POST',
-    url: '/pedido/save/pedido',
-    data: form,
-    processData:false,
-    contentType: false,
-    dataType:'HTML',
-    success: function(retorno){
-        getModal('', '');
-        
-        $('#dinamic').html('').removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
-        $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+  if(error.length == 0){
 
-        $('#idFilanizar').trigger('click');
-        getModal('', retorno);
-      }
+    $.ajax({
+      type:'POST',
+      url: '/pedido/save/pedido',
+      data: form,
+      processData:false,
+      contentType: false,
+      dataType:'HTML',
+      success: function(retorno){
+
+          if(retorno.length == 3){
+             message(retorno);
+             return false;
+          }else{
+            getModal('', '');
+          
+            $('#dinamic').html('').removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
+            $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+
+            getModal('', retorno);
+          }
+          
+        }
     });
 
 
+  }else{
+    //casso haja algo errado
+    let msg = '';
+    for(let i=0; !(i == error.length); i++){
+      msg+=error[i]+"<br/>";
+    }
+    getModal('Erro:', msg);
+    message(['msg', 'warning', msg]);
+    return false;
+  }
 
 });
 
@@ -636,7 +703,7 @@ $('#dinamic').delegate('form#vendaPainel input[name=loadCliente], form#vendaPain
       loadPessoa(cliente ,request, response);
     },
     select:function(event, ui){
-      $('form#vendaPainel #idCod').val(ui.item.teste);
+      $('form#vendaPainel #idCod').val(ui.item.pessoa);
     },
     autoFocus: true,
     change:function(request, response){
@@ -671,7 +738,7 @@ function loadPessoa(obj, request, func)
         arrObj.push({
           label: item[1],
           value: item[1],
-          teste: item[0]//crie para teste mas funcionou
+          pessoa: item[0]//crie para teste mas funcionou
         });
 
         });
@@ -720,7 +787,6 @@ function loadCategoria(obj, request, func)
     data: {'loadCategoria': request.term},
     dataType:'json',
     success: function(retorno){
-      console.log(retorno);
       let arrObj = new Array();
 
       $.each(retorno, function(key, item){
@@ -1334,8 +1400,6 @@ function foramtCalcCod(number)
 
   }
 
-
-//---------------------- GRAFICOS -------------------------------
 
 
   /*------------------------ Disparando funcoes dos gráficos -----------------------*/

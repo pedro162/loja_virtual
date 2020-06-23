@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use App\Models\ProdutoCategoria;
 use App\Models\Fornecimento;
+use App\Models\Pedido;
 use \Exception;
 use \InvalidArgumentException;
 
@@ -16,15 +17,17 @@ class DetalhesPedido extends BaseModel
     const PERCENTDESC = 2;
 	const MARGEMERROR = 0.002;
     
-	private $PedidoIdPedido;//ok
-	private $idDetalhesPedito;
-	private $qtd;//ok
-	private $precoUnit;//ok
+	private $PedidoIdPedido;
+	private $idDetalhesPedido;
+	private $qtd;
+	private $precoUnitPratic;
 	private $dataHoraPedito;
 	private $UsuarioIdUsuario;
-	private $vlDescontoUnit;//ok
+	private $vlDescontoUnit;
+	private $FornecimentoIdFornecimento;
+	private $dataHoraPedido;
 
-	private $valBruto;//ok
+	private $valBruto;
 	private $idEstoque;
 	private $totalDesconto;
 	private $subTotal;
@@ -121,6 +124,18 @@ class DetalhesPedido extends BaseModel
 
 	}
 
+	public function getDataHoraPedido()
+	{
+		if((!isset($this->dataHoraPedido)) || (strlen($this->dataHoraPedido) == 0)){
+			if(isset($this->data['dataHoraPedido']) && (strlen($this->dataHoraPedido))){
+				return $this->data['dataHoraPedido'];
+			}
+			throw new Exception('Propriedade não definida');
+			
+		}
+
+		return $this->dataHoraPedido;
+	}
 
 	public function setIdEstoque(Int $id)
 	{
@@ -328,6 +343,18 @@ class DetalhesPedido extends BaseModel
 		
 	}
 
+
+	public function getUsuarioIdUsuario()
+	{
+		if((!isset($this->UsuarioIdUsuario)) || ($this->UsuarioIdUsuario <= 0)){
+			if(isset($this->UsuarioIdUsuario) && ($this->UsuarioIdUsuario > 0)){
+				return $this->data['UsuarioIdUsuario'];
+			}
+			throw new Exception('Propriedade não definida');
+		}
+		return $this->UsuarioIdUsuario;
+	}
+
 	public function setFornecimentoIdFornecimento(Int $id)
 	{
 		if($id > 0){
@@ -359,6 +386,45 @@ class DetalhesPedido extends BaseModel
 		throw new Exception("Propriedade indefinida\n");
 		
 	}
+
+	public function gePedido()
+	{
+		$pedido = new Pedido();
+
+    	$restult = $pedido->select(
+    		['idPedido', 'PessoaIdPessoa', 'idUsuario',
+    		 'dtPedido', 'dtEnvio', 'dtEntrega', 'via', 'frete',
+    		 'nomeDestinatario', 'LogradouroIdLogradouro', 'tipo']
+    		, [$this->PedidoIdPedido =>'idPedido']
+    		, '=', 'asc', null, null, true, false);
+
+    	if($restult == false){
+    		throw new Exception("Erro ao carregar elemento");
+    		
+    	}
+    	return $restult;
+
+	}
+
+	public function getFornecimento()
+	{
+		$fornecimento = new Fornecimento();
+
+    	$restult = $fornecimento->select(
+    		['idFornecimento', 'ProdutoIdProduto', 'nf',
+    		 'FornecedorIdFornecedor', 'dtFornecimento', 'dtRecebimento', 'dtValidade', 'dtInsert',
+    		 'qtdFornecida', 'qtdVendida', 'vlCompra', 'vlVenda', 'ativo', 'UsuarioIdUsuario']
+    		, [$this->FornecimentoIdFornecimento =>'idFornecimento']
+    		, '=', 'asc', null, null, true, false);
+
+    	if($restult == false){
+    		throw new Exception("Erro ao carregar elemento");
+    		
+    	}
+    	return $restult;
+		
+	}
+
 
 
 	public function __get($prop)

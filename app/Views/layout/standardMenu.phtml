@@ -2,7 +2,7 @@
     <nav class="navbar">
         <div class="alinha-header">
             <div class="navbar-search" align="center" style="margin: auto;">
-                <div class=""><a href="/"><img src="../files/imagens/cameraautadefinição.png" style="width: 50px; height: 50px;" id='logo' alt="Minha loja.com"></a></div>
+                <div class=""><a href="/"><img src="../files/imagens/logo/logo_loja_option.png" style="width: 100px; height: 100px; position: absolute; top: 0; left: 0;" id='logo' alt="Minha loja.com"></a></div>
                 <form class="navbar-form " id="form-header">
                     <div class="form-group div-search">
                         <input type="text" id="input-search" class="form-control" placeholder="Search">
@@ -14,7 +14,7 @@
             </div>
             <div class="login">
                 <ul class="nav nav-tabs">
-                    <li><a href="#" class="btn"> <span style="font-size: 13px; color: #ffff;"><i class="fas fa-cart-plus fa-2x"></i></span><span  id="qtdItensCarrinho"><?php echo (isset($this->view->qtd)) ? $this->view->qtd : '';?></span></a></li>
+                    <li><a href="/pedido/carrinho/finsh" id="carrinhoLink" class="btn link"> <span style="font-size: 13px; color: #ffff;"><i class="fas fa-cart-plus fa-2x"></i></span><span  id="qtdItensCarrinho"><?php echo (isset($this->view->qtdItensCarrinho)) ? $this->view->qtdItensCarrinho: '';?></span></a></li>
 
                      <li class="nav-item dropdown" id="listLog">
                       <a class="dropdown-toggle" href="#" id="navLog" data-toggle="dropdown">

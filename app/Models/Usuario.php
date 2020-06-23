@@ -62,13 +62,13 @@ class Usuario extends BaseModel
         
     }
 
-    public function getIdUser()
+    public function getIdUsuario()
     {
     	if(empty($this->idUsuario)){
     		throw new Exception("Pripriedade não defindida<br/>");
     	}
 
-    	return $this->idUsuario;
+    	return (int) $this->idUsuario;
     }
 
 

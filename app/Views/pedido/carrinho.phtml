@@ -1,0 +1,151 @@
+<div class="container-fluid">
+	<div class="row" style="width: 80%; margin:auto;">
+		<div class="col-md-12"  style="padding: 20px 40px;">
+			<div class="row">
+				<form method="post" class="was-validated col-md-12" action="/produto/atualizar" enctype="multipart/form-data" id="formCarr">
+					
+					<fieldset class=""><legend class="h2"><strong>Seu Carrinho de compras</strong></legend>
+						<div class="row">
+							<div class="col-sm-12">
+							<hr>
+							</div>
+						</div>
+						<?php
+							if(isset($this->view->allProducts) && (count($this->view->allProducts) > 0)){
+
+						?>
+
+							<div class="row">
+						<?php
+								for ($i=0; !($i == count($this->view->allProducts)) ; $i++) { 
+									$produto = $this->view->allProducts[$i]['produto'];
+									$qtdProd = $this->view->allProducts[$i]['qtd'];
+									
+									
+						?>
+								<div class="col-sm-6 col-xs-12 col-md-2">
+									<div class="row">
+										<div class="col-sm-12" align="left">
+											<span class="h5" style="color:#9400D3;"><?=$produto->getProdutoNome()?></span>
+										</div>
+									</div>
+									<div class="row mt-2">
+										<div class="col-sm-4">
+											<img style="width: 200px; height: 200px;" class="card-img-top a-img-product" src="../files/imagens/<?=$produto->getUrl()?>"  alt="<?=$produto->getUrl();?>">
+												
+										</div>
+									</div>
+									<div class="row my-2" style="margin: auto;">
+										<div class="col">
+											<div class="form-group prod-qtd">
+												<label style="color: #9400D3;" for="<?=$produto->getProdutoIdProduto();?>"><strong>Qtd</strong></label>
+												<div class="row">
+													<span class="controller btn mr-1 rounded-circle">-</span>
+													<span type="text" style="width: 30%;" name="produto-<?=$produto->getProdutoIdProduto();?>" min="0" id='<?=$produto->getProdutoIdProduto();?>' class="form-control"><?=$qtdProd?></span>
+													<span class="rounded-circle controller btn mx-1" >+</span><button class="rounded-circle controller-delete btn" type="button">
+														<i class="fas fa-trash-alt"></i>
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<?php
+
+									}
+								?>
+							</div>
+							
+						<?php
+							}else{
+						?>
+							
+							<div class="row">
+								<div class="col">
+									<h2 align="center"> Adicione itens ao carrinho...</h2>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+								</div>
+							</div>
+						<?php	
+							}
+						?>
+					</fieldset>
+
+				</form>
+			</div>
+			<div class="row">
+				<div class="col">
+					<hr style="width: 80%;" class="my-5"><br>
+					
+				</div>
+
+			</div>
+			<div class="row mb-2">
+				<h4 class="text-dark"><strong><span>Mais opções para você</span></strong></h5>
+			</div>
+			<div class="row">
+
+				<?php
+					if(isset($this->view->moreOptions) && (count($this->view->moreOptions) > 0)){
+						for ($i=0; !($i == count($this->view->moreOptions) ); $i++) { 
+							
+
+				?>
+					<div class="col-sm-4 col-md p-2 mb-2" id="divCardCarriho">
+						<div class="card" style="">
+						  <div class="card-body">
+						  	<div class="row">
+						  		<div class="col">
+									<h5 style="color:#9400D3; text-align: center;"><?=$this->view->moreOptions[$i]->getProdutoNome();?>
+									</h5>
+								</div>
+							</div>
+							<div class="row mt-3">
+								<div class="col" style=" align-items: center; text-align: center">
+									<img style="width: 200px; height: 200px;" class="" src="../files/imagens/<?=$this->view->moreOptions[$i]->getUrl()?>"  alt="<?=$this->view->moreOptions[$i]->getUrl();?>">
+										
+								</div>
+							</div>
+							<div class="row mt-1">
+								<div class="col" align="center">
+									<span class="h4">
+										R$ <?=number_format($this->view->moreOptions[$i]->getVlVenda(), 2, ',', '.')?>
+									</span>
+									
+								</div>
+							</div>
+							<div class="row mt-1">
+								<div class="col" align="center">
+									 <a class="btn text-light link-produto" href="/pedido/produto/detalhes?cd=<?=$this->view->moreOptions[$i]->getProdutoIdProduto();?>">Add. carrinho</a>
+								</div>
+							</div>
+						  </div>
+						</div>
+						
+					</div>
+				<?php
+
+						}
+					}
+				?>
+			</div>
+		</div>
+	</div>
+</div>

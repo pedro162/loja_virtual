@@ -20,6 +20,20 @@ class HomeController extends BaseController
         try{
 
             Transaction::startTransaction('connection');
+
+            //inicia a cessao para o carrinho de compras
+            if(!isset(Sessoes::sessionReturnElements()['produto'])){
+                Sessoes::sessionInit();
+            }
+
+            $carrinho = Sessoes::sessionReturnElements()['produto'];
+            $qtdItens = 0;
+            for ($i=0; !($i == count($carrinho)) ; $i++) { 
+                $qtdItens += (int) $carrinho[$i][1];
+            }
+
+            $this->view->qtdItensCarrinho = $qtdItens;
+
             $this->setMenu();
             $this->setFooter();
 
@@ -54,7 +68,7 @@ class HomeController extends BaseController
             $tot = $fornecimento->countItens();
 
             $arrProdIndexCat = [];
-
+            $arrCaegId = [];
             for ($i=0; !($i == count($categoriaFornecimento) ); $i++) { 
                 
                 foreach ($arrCategProducts as $key => $value) {
@@ -63,6 +77,10 @@ class HomeController extends BaseController
 
                     if($result != false){
                         if(!array_key_exists($categoriaFornecimento[$i]->getNomeCategoria(), $arrProdIndexCat)){
+
+                            $idCateg = $categoriaFornecimento[$i]->getIdCategoria();
+                            $arrCaegId[$categoriaFornecimento[$i]->getNomeCategoria()] = $idCateg;
+
                             $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][] = $key;
                         }else{
                             $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][] = $key;
@@ -126,9 +144,10 @@ class HomeController extends BaseController
 
             $usuario = Sessoes::usuarioLoad();
 
-            $this->view->usuario = $usuario;
-            $this->view->categorias = $supArrayCategorias;
-            $this->view->arrProdIndexCat = $arrProdIndexCat;
+            $this->view->usuario            = $usuario;
+            $this->view->categorias         = $supArrayCategorias;
+            $this->view->arrProdIndexCat    = $arrProdIndexCat;
+            $this->view->arrCaegId          = $arrCaegId;
 
             $this->view->qtd = Venda::qtdItensVenda();// insere o total de itens do carrinho
             $this->render('home/home', true);

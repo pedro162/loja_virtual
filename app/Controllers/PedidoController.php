@@ -14,8 +14,11 @@ use App\Models\DetalhesPedido;
 use \App\Models\Usuario;
 use \App\Models\ProdutoCategoria;
 use \App\Models\Comentario;
+use \App\Models\FormPgto;
+use \App\Models\PedidoFormPgto;
 use \Core\Utilitarios\Utils;
 use Core\Utilitarios\Sessoes;
+use \Exception;
 
 class PedidoController extends BaseController
 {
@@ -23,38 +26,48 @@ class PedidoController extends BaseController
 
     public function painel($request)
     { 
-        Transaction::startTransaction('connection');
+        try {
+            Transaction::startTransaction('connection');
 
-        if(!isset($request['post'], $request['post']['cliente'])){
+            if(!isset($request['post'], $request['post']['cliente'])){
             throw new \Exception("Propriedade indefinida<br/>");
             
-        }
-        if(empty($request['post']['cliente'])){
-            throw new \Exception("Propriedade indefinida<br/>");
-            
-        }
-        $idCliente = (int) explode('=', $request['post']['cliente'][0])[1];
-
-        $pessoa = new Pessoa();
-        $resultSelect = $pessoa->findPessoa($idCliente);
-
-        if($resultSelect != false){
-            $this->view->pessoa = $resultSelect->getNomePessoa();
-            $this->view->idCliente = $idCliente;
-
-            $resultLogPessoa =  $resultSelect->getLogradouro();
-
-            if($resultLogPessoa){
-                $this->view->resultLogPessoa = $resultLogPessoa;
-
-                $this->render('pedido/painel', false);
-            }else{
-                var_dump('Dados pendentes no cadastro do cliente');
             }
-            
-        }
+            if(empty($request['post']['cliente'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
+            $idCliente = (int) explode('=', $request['post']['cliente'][0])[1];
 
-        Transaction::close();
+            $pessoa = new Pessoa();
+            $resultSelect = $pessoa->findPessoa($idCliente);
+
+            if($resultSelect != false){
+                $this->view->pessoa = $resultSelect->getNomePessoa();
+                $this->view->idCliente = $idCliente;
+
+                $resultLogPessoa =  $resultSelect->getLogradouro();
+
+                if($resultLogPessoa){
+                    $this->view->resultLogPessoa = $resultLogPessoa;
+
+                    $this->render('pedido/painel', false);
+                }else{
+                    var_dump('Dados pendentes no cadastro do cliente');
+                }
+                
+            }
+
+            Transaction::close();
+
+        } catch (Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
+        
         
     }
 
@@ -71,15 +84,94 @@ class PedidoController extends BaseController
 
     public function addCarrinho($request)
     {
-        if(Venda::addToCarrinho($request['get']['id']) == true)
-        {
-            $this->view->result = json_encode(Venda::qtdItensVenda());
+        try {
+            Transaction::startTransaction('connection');
+
+            if(
+                (!isset($request['get']['cd'])) || ($request['get']['cd'] <= 0)
+                || (!isset($request['get']['qtd'])) || (($request['get']['qtd'] <= 0))
+            ){
+
+                throw new Exception("Parametro inválido");
+                
+            }
+            $id = (int) $request['get']['cd'];
+            $qtd = (int) $request['get']['qtd'];
+            $remove = false;
+
+            if(isset($request['get']['rem']) && ($request['get']['rem'] == 1)){
+                $remove = true;
+            }
+
+            Sessoes::sessionAddElement($id, $qtd, $remove);
+
+            $carrinho = Sessoes::sessionReturnElements()['produto'];
+            $qtdItens = 0;
+            for ($i=0; !($i == count($carrinho)) ; $i++) { 
+                $qtdItens += (int) $carrinho[$i][1];
+            }
+
+            $this->view->result = json_encode([$qtdItens]);
+            $this->render('pedido/ajax', false);
+
+            Transaction::close();
+        } catch (\Exception $e) {
+
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
             $this->render('pedido/ajax', false);
         }
-        
-
+         
     }
 
+    public function fineshPedido()
+    {   
+        try {
+            Transaction::startTransaction('connection');
+
+            //inicia a cessao para o carrinho de compras
+            if(!isset(Sessoes::sessionReturnElements()['produto'])){
+                Sessoes::sessionInit();
+            }
+            
+            $carrinho = Sessoes::sessionReturnElements()['produto'];
+
+
+            $allProducts = [];
+
+            $categorias = [];
+
+            $fornecimento = new Fornecimento();
+            if(count($carrinho) > 0){
+            
+                for ($i=0; !($i == count($carrinho)); $i++) { 
+
+                    $product =  $fornecimento->loadFornecimentoForIdProduto((int)$carrinho[$i][0] , true);
+                    $allProducts[] = ['produto'=>$product, 'qtd'=> $carrinho[$i][1]];
+
+                    if(!in_array($product->getIdCategoria(),  $categorias)){
+                        $categorias[] = $product->getIdCategoria();
+                    }
+
+                }
+            }
+
+            
+            $this->view->allProducts = $allProducts;
+            $this->view->moreOptions = $fornecimento->loadFornecimentoForIdCategoria($categorias, true, null, 1,20);
+            $this->render('pedido/carrinho', false);
+
+            Transaction::close();
+        } catch (\Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
+    }
 
     public function novo()
     {
@@ -157,12 +249,18 @@ class PedidoController extends BaseController
         Transaction::close();
     }
 
-
+    /**
+     * Recebe os dados do pedido e solicita 
+     * que seja salvo no banco.
+     */
     public function savePedido($request)
     {
+        
         try {
 
             Transaction::startTransaction('connection');
+
+            Sessoes::sessionInit();//inicia a sessao
 
             if(!isset($request['post']['pedidoPanelVenda'])
                 || !isset($request['post']['cliente'])
@@ -179,6 +277,8 @@ class PedidoController extends BaseController
                 
             }
 
+            $usuario = Sessoes::usuarioLoad('user_admin');
+
             $pessoa = new Pessoa();
             $resultFindPessoa = $pessoa->findPessoa((int)$request['post']['cliente']);
 
@@ -186,6 +286,9 @@ class PedidoController extends BaseController
             $logradouro = $logradouroPessoa->findLogPessoa((int)$request['post']['entrega'], true);
 
             $pedido = new Pedido();
+            $detalhesPedido = new DetalhesPedido();
+            $fornecimento = new Fornecimento();
+
             
             $arrEstoque = [];
             for ($i=0, $dados = $request['post']['pedidoPanelVenda']; !($i == count($dados)) ; $i++) { 
@@ -205,7 +308,8 @@ class PedidoController extends BaseController
                 $resultPrecoUnit = $detalhesPedido->setPrecoUnitPratic((float)$item[5]);
                 $resultEstoqueId = $detalhesPedido->setIdEstoque((int)$result[0]->getIdFornecimento());
 
-                $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario(1);//falta implementar corretamente
+                $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario($usuario->getIdUsuario());
+
                 $resultFornec    = $detalhesPedido->setFornecimentoIdFornecimento($result[0]->getIdFornecimento());
 
                 $pedido->addItem($detalhesPedido);
@@ -214,10 +318,51 @@ class PedidoController extends BaseController
             $pedido->setQtdParcelas(1);
             $pedido->setCliente((int)$request['post']['cliente']);
             $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
-            $pedido->setUsuario(1);
+            $pedido->setUsuarioIdUsuario($usuario->getIdUsuario());
+            $pedido->setTipo((int)$request['post']['tipo']);
 
             $result = $pedido->save([]);
             if($result){
+
+                //busca os detalhes do pedido gravado
+                $pedidoNow = $pedido->getPedidoForId((int)$pedido->maxId());
+                $detalhePedido = $pedidoNow->getDetalhesPedido();
+
+                //recupera o total do pedido
+                $totPedido = 0;
+
+                for ($i=0; !($i == count($detalhePedido)) ; $i++) { 
+                    $tot += (float)$detalhePedido[$i]->getPrecoUnitPratic();
+                }
+
+                $totParcelas = 0;
+
+                for ($i=0, $dados = $request['post']['PgtoPanelVenda']; !($i == count($dados)); $i++) { 
+                    $pgto = explode(',', $dados[$i]);
+
+                    $formPgto = new FormPgto();
+                    $result = $formPgto->findFormPgtoForTipo($pgto[0]);
+                    $idFormPgto = (int)$result->getIdFormPgto();
+
+                    $pedidoPgto = new PedidoFormPgto();
+                    $pedidoPgto->setFormPgtoIdFormPgto($idFormPgto);
+                    $pedidoPgto->setPedidoIdPedido($pedido->maxId());
+                    $pedidoPgto->setQtdParcelas($pgto[2]);
+                    $pedidoPgto->setUsuarioIdUsuario($usuario->getIdUsuario());
+
+                    $pedidoPgto->setVlParcela((float)$pgto[1]);
+                    $totParcelas += (float) $pgto[1];
+
+                    $pedidoPgto->save([]);
+
+                }
+
+
+                if(($totParcelas - $tot) > 0.002){
+                    throw new \Exception("Valor das parcelas não condiz com o valor do pedido\n".$pgto[1].' -> '.$tot);
+                    
+                }
+
                 $this->view->dataCliente = $pedido->previewPedido($pedido->maxId(), false);
                 $this->view->dataItens = $pedido->getItensPedido($pedido->maxId(), false);
                 $this->render('pedido/pedido', false);
@@ -252,8 +397,6 @@ class PedidoController extends BaseController
             }
             $idProduto = intval($request['get']['cd']);
 
-            
-
             $produto = new Produto();
             $resultProduto = $produto->loadProdutoForId($idProduto);
 
@@ -277,8 +420,8 @@ class PedidoController extends BaseController
                 }
                
             }
-            $othesFornecimentosPrim = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategPrim, true,(int) $idProduto);
-            $othesFornecimentosSec = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategSeg, true,(int) $idProduto);
+            $othesFornecimentosPrim = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategPrim, true,(int) $idProduto,1,4);
+            $othesFornecimentosSec = $resultFornce->loadFornecimentoForIdCategoria($arrIdCategSeg, true,(int) $idProduto, 1,4);
 
 
             //busca os comentatios do produto
@@ -294,7 +437,7 @@ class PedidoController extends BaseController
             if($estrelas){
 
                 for ($i=0; !($i == count($estrelas)) ; $i++) { 
-                    $gostie = $estrelas[$i]->getNumEstrela();
+                    $gostie += $estrelas[$i]->getNumEstrela();
                 }
 
                 $totEstrelas = count($estrelas);
@@ -302,8 +445,14 @@ class PedidoController extends BaseController
             }
 
             //calcula a media
-            $media = round($gostie / $totEstrelas, 1);
+            if($totEstrelas > 0 && $totEstrelas > 0){
 
+                $media = round($gostie / $totEstrelas, 1);
+
+            }else{
+                $media = 0;
+            }
+            
             $usuario = Sessoes::usuarioLoad();//pega o usuario se estiver logado
 
             $this->view->usuario = $usuario;
@@ -321,11 +470,52 @@ class PedidoController extends BaseController
             Transaction::close();
         } catch (\Exception $e) {
             Transaction::rollback();
-            var_dump($e->getMessage());
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
             
         }
     }
 
+    public function viewMore($request)
+    {
+        try {
+            Transaction::startTransaction('connection');
+            $this->setMenu();
+            $this->setFooter();
+
+            if((!isset($request['get']['cd']))|| ($request['get']['cd'] <= 0)){
+                throw new \Exception("Parâmetro inválido");
+                
+            }
+
+            $idCateg = (int) $request['get']['cd'];
+
+            $fornecimento = new Fornecimento();
+
+            $result = $fornecimento->loadFornecimentoForIdCategoria([$idCateg], true, null, 1, 20);
+
+            if($result != false){
+                echo "<pre>";
+                var_dump($result);
+                echo "</pre>";
+            }else{
+                throw new \Exception("Não existem produtos relaionados\n");
+                
+            }
+
+            Transaction::close();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+            
+        }
+    }
 
     public function calcFrete($request)
     {

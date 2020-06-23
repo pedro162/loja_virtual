@@ -3,7 +3,7 @@
 		<div class="row" style="width: 80%; margin: auto;">
 			<div class="container-fluid">
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-md-12 col-sm-12 col-xs-6">
 						<div id="demo" class="carousel slide" data-ride="carousel">
 							<ul class="carousel-indicators">
 							    <li data-target="#demo" data-slide-to="0" class="active"></li>
@@ -55,7 +55,9 @@
 								$categ = ucfirst(strtolower($linha[$h]));
 
 					 			$products = $this->view->arrProdIndexCat[$linha[$h]];//armazena os produtos da categoria
-					 			
+								
+								$idCategoria = $this->view->arrCaegId[$linha[$h]];
+
 								$totProducts = count($products); 
 								
 				 				$toorLoja = null;
@@ -65,15 +67,15 @@
 						  			}
 							  			
 							  	?>
-							  	<div class="col-md-3">
-									<div class="card" style="width: 22rem;">
+							  	<div class="col-md-3 col-sm-6 col-xs-6">
+									<div class="card first-of-grid" style="">
 									  <div class="card-body">
 									  	<div class="row">
 									  		<div class="col-md-12" align="left">
 									  			<h4><strong><?= isset($toorLoja) ? $toorLoja: $categ?></strong></h4>
 									  		</div>
 									  	</div>
-									    <div class="row">
+									    <div class="row" align="center">
 									    	<?php
 
 									    		$sentinela =0;
@@ -94,12 +96,12 @@
 									    				$id = $urlIdEst[1];
 									    				$estoque = (int)$urlIdEst[2];
 
-									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:30px;">
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="text-align:center;">
 									    				<strong>sem estoque</strong></p>':'' 
 									    				
 									    	?>
-										    	<div class="col-md-<?=$cols?> py-2 px-2  my-2" style="position: relative;">
-										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto " ><img style="width: 100px; height: 100px;" class="card-img-top a-img-product"  src="files/imagens/<?=$img;?>" alt=""></a>
+										    	<div class=" col-md-<?=$cols?> py-2 px-2  my-2" style="margin:auto;">
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto " ><img style="" class="card-img-top a-img-product"  src="files/imagens/<?=$img;?>" alt=""></a>
 										    			<?= $msg ?>
 										    	</div>
 									    	<?php 
@@ -110,7 +112,7 @@
 									    </div>
 									  </div>
 									  <div class="card-footer">
-									  	<p><a href="#">Ver mais</a></p>
+									  	<p><a href="/pedido/produto/vermais?cd=<?=$idCategoria?>">Ver mais</a></p>
 									  </div>
 									</div>
 								</div>
@@ -120,12 +122,12 @@
 
 
 							     ?>
-							 	<div class="col-md-6">
-									<div class="card" style="width: 46rem;">
+							 	<div class="col-md-6 col-sm-12 col-xs-12">
+									<div class="card medle-of-grid" style="">
 										<div class="card-body">
 											<div class="row">
 												<div class="col-md-12" align="left">
-													<h4><strong><?=$categ?></strong></h4><a href="#">Ver mais</a>
+													<h4><strong><?=$categ?></strong></h4><a href="/pedido/produto/vermais?cd=<?=$idCategoria?>">Ver mais</a>
 												</div>
 											</div>
 											<div class="row">
@@ -150,11 +152,11 @@
 									    				$id = $urlIdEst[1];
 									    				$estoque = (int)$urlIdEst[2];
 
-									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:138px;">
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="text-align: center">
 									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
-										    	<div class="col py-2 px-2">
-										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="width: 100px; height: 100px;" class="card-img-top a-img-product" src="files/imagens/<?=$img?>" alt="imagem"></a>
+										    	<div class="col-md-3 col-sm-12 col-xs-12 py-2 px-2" style="margin:auto;">
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="" class="py-2 px-2 rounded-circle card-img-top a-img-product" src="files/imagens/<?=$img?>" alt="imagem"></a>
 										    		<?= $msg ?>
 										    	</div>
 									    	<?php 
@@ -173,10 +175,10 @@
 							     	}else if(count($linha) == 1){
 							      ?>
 							      <div class="col-md-12">
-									<div class="card" style="width: 93.5rem;">
+									<div class="card last-of-grid" style="">
 									  <div class="card-body">
 									  	<div class="row">
-									  		<div class="col-md-12" align="left">
+									  		<div class="col-md-12 col-sm-6 col-xs-12 py-2 px-2" align="left">
 									  			<h4><strong><?=$categ?></strong></h4></h4>
 									  		</div>
 									  	</div>
@@ -202,12 +204,12 @@
 									    				$id = $urlIdEst[1];
 									    				$estoque = (int)$urlIdEst[2];
 
-									    				$msg = ($estoque == 0)? '<p class="text-danger" style="position: absolute; top: 110px;left:10px;">
+									    				$msg = ($estoque == 0)? '<p class="text-danger" style="text-align: center">
 									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
-										    	<div class="col" style="position: relative;">
-										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="width: 105px; height: 100px;" class="card-img-top py-2 px-2 a-img-product hidBtn" src="files/imagens/<?=$img?>" alt="<?=$img?>"></a><br>
-										    		<a href="#" class="btn btn-primary" style="position: absolute; top: 100px; left: auto; margin:auto;display: none;">Ver mais</a>
+										    	<div class="col-md-2 col-sm-6 col-xs-6 py-2 px-2" style="margin:auto;">
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="" class="rounded-circle card-img-top py-2 px-2 a-img-product hidBtn" src="files/imagens/<?=$img?>" alt="<?=$img?>"></a><br>
+										    		<a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="btn btn-primary" style="position: absolute; top: 100px; left: auto; margin:auto;display: none;">Ver mais</a>
 										    		<?= $msg ?>
 										    	</div>
 									    	<?php 

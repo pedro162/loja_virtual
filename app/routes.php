@@ -37,6 +37,7 @@ $routes[] = ['/categoria/salvar', 'CategoriaController@salvar'];
 $routes[] = ['/categoria/load', 'CategoriaController@loadCategoria'];
 
 $routes[] = ['/pedido/carrinho', 'PedidoController@addCarrinho'];
+$routes[] = ['/pedido/carrinho/finsh', 'PedidoController@fineshPedido'];
 $routes[] = ['/pedido/iniciar', 'PedidoController@iniciarCompra'];
 $routes[] = ['/pedido/novo', 'PedidoController@novo'];
 $routes[] = ['/pedido/painel', 'PedidoController@painel'];
@@ -45,6 +46,7 @@ $routes[] = ['/pedido/load/estoque', 'PedidoController@loadEstoque'];
 $routes[] = ['/pedido/save/pedido', 'PedidoController@savePedido'];
 $routes[] = ['/pedido/produto/detalhes', 'PedidoController@detalhesOfProduto'];
 $routes[] = ['/pedido/produto/frete', 'PedidoController@calcFrete'];
+$routes[] = ['/pedido/produto/vermais', 'PedidoController@viewMore'];
 
 $routes[] = ['/usuario/index', 'UserController@index'];
 $routes[] = ['/usuario/login', 'UserController@loginAdmin'];

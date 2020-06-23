@@ -9,6 +9,7 @@ use \Exception;
 use \InvalidArgumentException;
 use App\Models\Produto;
 use App\Models\Usuario;
+use App\Models\DetalhesPedido;
 use \Core\Utilitarios\Utils;
 
 /**
@@ -27,7 +28,7 @@ class Fornecimento extends BaseModel
     private $vlVenda;
     private $ativo;
     private $quantidade;
-    private $idUsuario; 
+    private $UsuarioIdUsuario; 
     private $nf;
     private $estoque;
 
@@ -124,7 +125,7 @@ class Fornecimento extends BaseModel
 
         }
 
-        $this->setUsuario(1);//aqui será inseido o usuario que fez a orepacao
+        $this->setUsuarioIdUsuario(1);//aqui será inseido o usuario que fez a orepacao
     }
 
     protected function parseCommit()
@@ -302,9 +303,9 @@ class Fornecimento extends BaseModel
     }
 
 
-    public function setUsuario(int $id):bool
+    public function setUsuarioIdUsuario(int $id):bool
     {
-        $this->data['idUsuario'] = $id;//apenas para teste, deve ser removida
+        $this->data['UsuarioIdUsuario'] = $id;//apenas para teste, deve ser removida
         return true;//apenas para teste, deve ser removida
 
         if($id > 0){
@@ -313,7 +314,7 @@ class Fornecimento extends BaseModel
 
             $result = $user->select(['idUsuario','nomeUsuario'], ['idUsuario'=>$id], '=','asc', null, null,true);
             if($result[0] != false){
-                $this->data['idUsuario'] = $result[0]->getIdUsuario();
+                $this->data['UsuarioIdUsuario'] = $result[0]->getIdUsuario();
                 return true;
             }else{
                 throw new Exception('Parametro invalido<br/>'.PHP_EOL);
@@ -323,16 +324,16 @@ class Fornecimento extends BaseModel
         throw new Exception('Parametro invalido<br/>'.PHP_EOL);
     }
 
-    public function getUsuario():int
+    public function getUsuarioIdUsuario():int
     {
-        if((!isset($this->idUsuario)) || ($this->idUsuario <= 0)){
+        if((!isset($this->UsuarioIdUsuario)) || ($this->UsuarioIdUsuario <= 0)){
 
-            if(isset($this->data['idUsuario']) && ($this->data['idUsuario'] > 0)){
-                return $this->data['idUsuario'];
+            if(isset($this->data['UsuarioIdUsuario']) && ($this->data['UsuarioIdUsuario'] > 0)){
+                return $this->data['UsuarioIdUsuario'];
             }
             throw new Exception('Propriedade indefinida<br/>'.PHP_EOL);
         }
-        return $this->idUsuario;
+        return $this->UsuarioIdUsuario;
     }
 
     public function setFornecedorIdFornecedor(int $id):bool
@@ -727,6 +728,20 @@ class Fornecimento extends BaseModel
         }
     }
 
+    public function getProduto()
+    {
+        $prod = new Produto();
+        $result = $prod->select(['idProduto','nomeProduto'],
+         ['idProduto'=>$this->ProdutoIdProduto], '=','asc', null, null,true);
+
+        if($result == false){
+            throw new Exception("Erro ao carregar elemento\n");
+            
+        }
+
+        return $result;
+    }
+
 
     public function listarConsultaPersonalizada(String $where = null, Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
     {
@@ -777,13 +792,12 @@ class Fornecimento extends BaseModel
     public function loadFornecimentoForIdProduto(Int $idProduto, $clasRetorno = false)
     {
         if($idProduto > 0){
-             /*$result = $this->select(['idFornecimento','ProdutoIdProduto', 'FornecedorIdFornecedor', 'dtFornecimento', 'vlVenda'],
-             ['ProdutoIdProduto' => $idProduto], '=','asc', null, null,true);*/
-
-
-             $sql = 'select P.nomeProduto As produtoNome ,P.idProduto, P.textoPromorcional As texto, Img.url, F.vlVenda from Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
-             $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
-             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' and F.ProdutoIdProduto='.$idProduto;
+            
+             $sql = 'select PC.CategoriaIdCategoria as idCategoria, P.nomeProduto As produtoNome ,P.idProduto, ';
+             $sql .= ' P.textoPromorcional As texto, Img.url, F.vlVenda from Fornecimento as F inner join Produto as P on ';
+             $sql .= ' F.ProdutoIdProduto = P.idProduto inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
+             $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdProduto = P.idProduto ';
+             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' and PC.classificCateg = \'primaria\' and F.ProdutoIdProduto='.$idProduto;
 
              $result = $this->persolizaConsulta($sql, $clasRetorno);
              if($result != false){
@@ -795,7 +809,7 @@ class Fornecimento extends BaseModel
         
     }
 
-    public function loadFornecimentoForIdCategoria(array $inIdCatec, $clasRetorno = false, Int $notProd = null)
+    public function loadFornecimentoForIdCategoria(array $inIdCatec, $clasRetorno = false, Int $notProd = null, Int $limInit = null, Int $limEnd = null)
     {
         if(count($inIdCatec) > 0){
              
@@ -813,9 +827,45 @@ class Fornecimento extends BaseModel
                 $sql .= ' and F.ProdutoIdproduto <> '.$notProd;
              }
              
+             if(($limInit != null) && ($limEnd != null)){
+                $sql .= ' LIMIT '.$limInit.', '.$limEnd;
+             }
+
              $result = $this->persolizaConsulta($sql, $clasRetorno);
              if($result != false){
                 return $result;
+             }
+             return false;
+             
+        }
+        
+    }
+
+    public function countPersonalizado(array $inIdCatec, $clasRetorno = false, Int $notProd = null, Int $limInit = null, Int $limEnd = null)
+    {
+        if(count($inIdCatec) > 0){
+             
+             $sql = 'SELECT distinct count(F.idFornecimento) total FROM Fornecimento as F inner join Produto as P on F.ProdutoIdProduto = P.idProduto';
+             $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdproduto = P.idProduto';
+             $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto';
+             $sql .= ' WHERE (F.ativo = 1) and ((F.qtdFornecida - F.qtdVendida) > 0) and (Img.tipo = \'primaria\')';
+             $sql .= ' and (PC.classificCateg <> \'secundaria\') ';
+
+             $in = implode(',', $inIdCatec);
+
+             $sql .=' and PC.CategoriaIdCategoria in ('.$in.')';
+
+             if($notProd != null){
+                $sql .= ' and F.ProdutoIdproduto <> '.$notProd;
+             }
+             
+             if(($limInit != null) && ($limEnd != null)){
+                $sql .= ' LIMIT '.$limInit.', '.$limEnd;
+             }
+
+             $result = $this->persolizaConsulta($sql, $clasRetorno);
+             if($result != false){
+                return $result[0]->total;
              }
              throw new Exception("Erro ao carregar produto.\n");
              
@@ -899,6 +949,23 @@ class Fornecimento extends BaseModel
             }
 
             return $arrItens;
+    }
+
+    public function getDetalhesPedido()
+    {
+        $detalhesPedido = new DetalhesPedido();
+
+        $restult = $detalhesPedido->select(
+            ['idDetalhesPedido','PedidoIdPedido', 'qtd', 'precoUnitPratic','vlDescontoUnit',
+            'dataHoraPedido', 'UsuarioIdUsuario', 'FornecimentoIdFornecimento']
+            , [$this->idFornecimento =>'FornecimentoIdFornecimento']
+            , '=', 'asc', null, null, true, false);
+
+        if($restult == false){
+            throw new Exception("Erro ao carregar elemento");
+            
+        }
+        return $restult;
     }
 
     public function __get($prop)

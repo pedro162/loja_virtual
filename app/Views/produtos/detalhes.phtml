@@ -29,7 +29,7 @@
 			 		<div class="row ">
 			 			<div class="col">
 			 				<div id="barra">
-				 				<span class="bg" style="width:<?=$this->view->percent?>"></span>
+				 				<span class="bg" style="width:0"></span>
 					 			<div class=" estrelas">
 					 				<?php for ($i=0; !($i == 5); $i++):?>
 					 					<span class="star" id="<?=$i?>">
@@ -51,7 +51,6 @@
 	 		</div>
 		</div>
 		<div class="col-md-5  mt-3" align="left" style="clear: both;">
-			<h3>Condiçoes</h3>
 			<h4><strong><?=$this->view->produto->getNomeProduto();?></strong></h4>
 			<p>
 				<div class="row">
@@ -70,14 +69,15 @@
 		 		</div>
 
 			</p>
-			<p  class="mt-5"><sup>Por: </sup><span id="vlP"><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span> & frete</p>
+			<p  class="mt-5" style="font-weight: bolder;"><sup>Por: </sup><span>R$ </span><span id="vlP"><?= number_format($this->view->fornecimento->getVlVenda(), 2, ',','.') ?></span></p>
 			<hr align="left" width="50%;" />
 			<h4>Detalhes do produto</h4>
-			<p>ASIN:</p>
-			<p>Dimensões d produto:</p>
+			<p>Cor:</p>
+			<p>Altura:</p>
+			<p>Largura:</p>
+			<p>Comprimento:</p>
 			<p>Número do modelo</p>
 			<p>Código de barras:</p>
-			<p>Avaliação do clientes:</p>
 			<br>
 			<br>
 			<br>
@@ -97,6 +97,7 @@
 			<div class="row" style="box-shadow: 1px 1px 2px #000">
 				<div class="col">
 					<form class="py-4" method="post" action="/pedido/produto/frete" id="formFretQtd">
+						<input type="hidden" name="prod" value="<?=$this->view->produto->getIdProduto();?>">
 						<div class="form-group row">
 							<div class="col" align="left">
 								<label for="qtd"><strong>Quantidade</strong></label>
@@ -112,12 +113,12 @@
 						</div>
 						<div class="form-group row">
 							<div class="col">
-								<button class="btn btn-warning"><strong>Add. Carrinho</strong></button>
+								<button class="btn btn-warning" type="button" id="btnAddCarr"><strong>Add. Carrinho</strong></button>
 							</div>
 						</div>
 						<div class="form-group row">
 							<div class="col">
-								<button class="btn btn-warning"><strong>Compar Agora</strong></button>
+								<button class="btn btn-warning" type="button" id="compNow" ><strong>Compar Agora</strong></button>
 							</div>
 						</div>
 						<div class="form-group row">
@@ -158,11 +159,13 @@
 				</div>
 			</div>
 			<div class="row" style="margin:auto;" align="center">
-				<div class="col-md-1" style="margin: auto -15px;" align="left"><button class="btn btn-primary"><</button></div>
+				<div class="col-md-1" style="margin: auto -15px;" align="left"><button class="btn btn-primary"><<?= isset($this->view->pagCatPri) ?$this->view->pagCatPri ++ : ''?></button></div>
 					<div class="col-md-10">
 						<div class="row">
 							<?php 
-								for ($i=0, $estoque = $this->view->othesFornecimentosPrim; !($i == count($estoque)); $i++) { 
+								if(isset($this->view->othesFornecimentosPrim)){
+									for ($i=0, $estoque = $this->view->othesFornecimentosPrim; !($i == count($estoque)); $i++) { 
+								
 									
 							?>
 								<div class="col py-2 px-2">
@@ -173,6 +176,7 @@
 							<?php 
 									
 								}
+							}
 							?>
 						</div>
 					</div>
@@ -197,7 +201,9 @@
 					<div class="col-md-10">
 						<div class="row">
 							<?php 
-								for ($i=0, $estoque = $this->view->othesFornecimentosSec; !($i == count($estoque)); $i++) { 
+								if(isset($this->view->othesFornecimentosSec) && (is_array($this->view->othesFornecimentosSec))){
+									
+									for ($i=0, $estoque = $this->view->othesFornecimentosSec; !($i == count($estoque)); $i++) { 
 									
 							?>
 								<div class="col py-2 px-2">
@@ -207,6 +213,7 @@
 								</div>
 							<?php 
 									
+									}
 								}
 							?>
 						</div>

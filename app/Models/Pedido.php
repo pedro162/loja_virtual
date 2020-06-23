@@ -10,6 +10,8 @@ use \Exception;
 use \InvalidArgumentException;
 use \App\Models\Fornecimento;
 use \App\Models\DetalhesPedido;
+use \App\Models\PedidoFormPgto;
+use \App\Models\Pessoa;
 
 /**
  * 
@@ -23,7 +25,7 @@ class Pedido extends BaseModel
 
     private $qtdParcelas;
     private $PessoaIdPessoa;
-    private $idUsuario = 1;
+    private $UsuarioIdUsuario = 1;
     private $dtPedido;
     private $dtEnvio;
     private $dtEntrega;
@@ -33,9 +35,11 @@ class Pedido extends BaseModel
     private $idPedido;
 
     private $nomeDestinatario;
-    private $endereco;
+   	private $endereco;
     private $complemento;
     private $nomePessoa;
+    private $tipo;
+
 
     public function __construct()
     {
@@ -110,15 +114,25 @@ class Pedido extends BaseModel
         
     }
 
-	public function desistirVenda()
+	public function setTipo(Int $tipo)
 	{
+		if((!isset($tipo)) || ($tipo < 1) || ($tipo > 2)){
+			throw new Exception("Parâmetro inválido\n");
+			
+		}
 
+		if($tipo == 1){
+			$this->data['tipo'] = 'orcamento';
+		}else if($tipo == 2){
+			$this->data['tipo'] = 'prevenda';
+		}
+		
 	}
 
-	public function setUsuario(Int $id)
+	public function setUsuarioIdUsuario(Int $id)
 	{
 		if(isset($id) && ($id > 0)){
-			$this->data['idUsuario'] = $id;
+			$this->data['UsuarioIdUsuario'] = $id;
 			return true;
 		}
 	}
@@ -151,10 +165,98 @@ class Pedido extends BaseModel
 		
 	}
 
+	public function getPedidoForId(Int $idPedido)
+	{
+		if($idPedido <= 0){
+
+			throw new Exception("Parãmetro inválido\n");
+    		
+		}
+
+		$restult = $this->select(
+    		['idPedido', 'PessoaIdPessoa', 'UsuarioIdUsuario',
+    		 'dtPedido', 'dtEnvio', 'dtEntrega', 'via', 'frete',
+    		 'nomeDestinatario', 'LogradouroIdLogradouro', 'tipo']
+    		, ['idPedido' =>$idPedido]
+    		, '=', 'asc', null, null, true, false);
+
+    	if($restult == false){
+    		throw new Exception("Erro ao carregar elemento");
+    		
+    	}
+    	return $restult[0];
+
+	}
+
+
+	public function getFormPgto()
+	{
+		$pedidoFormPgto = new PedidoFormPgto();
+		$result = $pedidoFormPgto->select(
+			['idPedidoFormPgto', 'PedidoIdPedido', 'FormPgtoIdFormPgto', 'qtdParcelas', 'vlParcela', 'dtOperacao']
+			, [$this->idPedido =>'PedidoIdPedido']
+    		, '=', 'asc', null, null, true, false
+		);
+
+		if($result == false){
+    		throw new Exception("Erro ao carregar elemento");
+    		
+    	}
+    	return $result;
+
+	}
+
+	public function getDetalhesPedido()
+	{
+		$detalhesPedido = new DetalhesPedido();
+		$result = $detalhesPedido->select(
+			['idDetalhesPedido', 'PedidoIdPedido', 'qtd','precoUnitPratic','dataHoraPedido',
+			'vlDescontoUnit', 'FornecimentoIdFornecimento', 'UsuarioIdUsuario']
+			, ['PedidoIdPedido' => (int)$this->idPedido]
+    		, '=', 'asc', null, null, true, false
+		);
+
+		if($result == false){
+    		throw new Exception("Erro ao carregar elemento");
+    		
+    	}
+    	return $result;
+
+	}
+
+	public function getPessoa()
+	{
+		$pessoa = new Pessoa();
+		$result = $pessoa->select([
+			 'idPessoa', 'nomePessoa', 'nomeFantasia', 'documento', 'documentoComplementar'
+			],['idPessoa' => $this->PessoaIdPessoa], '=', 'asc', null, null, true, false
+		);
+
+		if($result == false){
+			throw new Exception('Erro ao carregar elemento');
+			
+		}
+
+		return $result;
+	}
+
+
+	public function getIdPedido()
+	{
+		if((!isset($this->idPedido)) || ($this->idPedido <= 0)){
+			if(isset($this->data['idPedido']) && ($this->data['idPedido'] > 0)){
+				return $this->data['idPedido'];
+			}
+
+			throw new Exception("Propriedade não definida\n");
+		}
+
+		return $this->idPedido;
+	}
 
 	public function previewPedido(Int $idPedido, $clasRetorno = false)
 	{
-		$sql = "SELECT P.dtPedido, P.nomeDestinatario, P.idPedido, P.frete, L.endereco, L.complemento, PS.nomePessoa
+		$sql = "SELECT P.dtPedido, P.nomeDestinatario,P.tipo, P.idPedido, P.frete, L.endereco, L.complemento, PS.nomePessoa
 				FROM Pedido as P inner join LogradouroPessoa as LP
 				on LP.LogradouroIdLogradouro = P.LogradouroIdLogradouro
 				INNER JOIN Logradouro L on L.idLogradouro = LP.LogradouroIdLogradouro

@@ -10,69 +10,81 @@ class Sessoes
 
 	public static function sessionInit()
 	{
-		session_start();
+		if(session_status() != PHP_SESSION_ACTIVE){
+			session_start();
+		}
 
 	}
 
-	public static function sessionAddElement($key, $value):bool //array associativo
+	public static function sessionAddElement($id, $qtd, $remove = false):bool //array associativo
 	{
 		self::sessionInit();
 
-		if ((!isset($key)) || (!isset($value)))
+		if ((!isset($id)) || (!isset($qtd)))
 		{
 			throw new \Exception("Propriedade indefinida<br/>\n");
 		}
 
-		if ((empty($key)) || (empty($value)))
+		if ((empty($id)) || (empty($qtd)))
 		{
 			throw new \Exception("Valor indefinido<br/>\n");
 		}
 
+		if(isset($_SESSION['produto'])){
 
-		$sentinela = false;
-		if (isset($_SESSION[$key]))
-		{
-			for ($i=0; !($i == count($_SESSION[$key])) ; $i++)
-			{ 
-				if($_SESSION[$key][$i]['produto'] == $value)
-				{
-					$_SESSION[$key][$i]['quantidade'] += 1;
-					$sentinela = true;
+			$sentina = false;
+			for ($i=0; !($i == count($_SESSION['produto'])); $i++) { 
+				if($_SESSION['produto'][$i][0] == $id){
+
+					if($remove != false){
+						$_SESSION['produto'][$i][1] -= (int)$qtd;
+					}else{
+						$_SESSION['produto'][$i][1] += (int)$qtd;
+					}
+					
+					$sentina = true;
 					break;
 				}
+			}
+
+			if($sentina == false){
+
+				$_SESSION['produto'][] = [$id, $qtd];
 				
 			}
+			
+		}else{
+			$_SESSION['produto'][] = [$id, $qtd];
 		}
 
-		if($sentinela == false)
-		{
-			$_SESSION[$key][] = ['produto'=>$value, 'quantidade' => 1];
-		}
-		
 		return true;
 
 		
 	}
 
-	public static function usuarioInit(Pessoa $pess)
+	public static function usuarioInit($user, $key = 'usuario')
 	{
-		if(isset($pess) && (!empty($pess))){
+		if(isset($user) && (!empty($user)) && (isset($key)) && (!empty($key))){
 
 			self::sessionInit();
-			$_SESSION['usuario'] = serialize($pess);
+			$_SESSION[$key] = serialize($user);
 			return true;
 		}
 
 		throw new \Exception("Parâmetro inválido\n");
 	}
 
-	public static function usuarioLoad()
+	public static function usuarioLoad($key = 'usuario')
 	{
+		if((!isset($key)) || (empty($key))){
+			throw new Exception("Parâmetro inválido\n");
+			
+		}
 
 		self::sessionInit();
 
-		if(isset($_SESSION['usuario']) && (!empty($_SESSION['usuario']))){
-			return unserialize($_SESSION['usuario']);
+		if(isset($_SESSION[$key]) && (!empty($_SESSION[$key]))){
+			return unserialize($_SESSION[$key]);
 		}
 		return false;
 		
@@ -89,13 +101,12 @@ class Sessoes
        return $result;
     }
 
-    public static function sessionReturnElements():array
+    public static function sessionReturnElements()
     {
-    	//self::sessionInit();
-
-    	if (!count($_SESSION) > 0)
+    	
+    	if ((!isset($_SESSION)))
     	{
-    		throw new \Exception("Adicione proprieades<br/>\n");
+    		return 0;
     	}
     	return $_SESSION;
     }

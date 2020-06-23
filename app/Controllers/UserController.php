@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\Usuario;
 use App\Models\Pessoa;
 use \Core\Database\Transaction;
+use Core\Utilitarios\Sessoes;
 use \Exception;
 
 /**
@@ -35,12 +36,19 @@ class UserController extends BaseController
     	try {
 			Transaction::startTransaction('connection');
 
+			
+			Sessoes::sessionInit();//inicia a sessao
+            
+
+
 			if((!isset($request['post']['usuario'])) || (!isset($request['post']['senha']))) {
 				throw new Exception("Dados inálidos\n");
 			}
 
 			$usuario = new Usuario();
 			$result = $usuario->findLoginForUserPass($request['post']['usuario'], $request['post']['senha']);
+
+			Sessoes::usuarioInit($result, 'user_admin');//grava o usuario na sessao
 
 			header('location:/home/admin');
 

@@ -118,7 +118,7 @@ $('body').delegate('.star', 'click', function(){
     dataType:'json',
     success:function(retorno){
 
-      let  percentBar = retorno[0] * 20;
+      let  percentBar = pontos * 20;
       $('.bg').animate({width:percentBar+'%'}, 500)
       
       $('#barra .bg').css('width',+percentBar);
@@ -185,7 +185,7 @@ $('.hidBtn').mouseenter(function(){
     })
      
 
-// load ajax da view de detables do produto
+//----------------- LOAD AJAX DA VIEW DE DETALHES DO PRODUTO ---------------------
 
 $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
   e.preventDefault();
@@ -197,6 +197,8 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
     url:url,
     dataType:'HTML',
     success:function(retorno){
+      
+      $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página
       $('#containerLoja').html(retorno);
       $(window).scrollTop('0')//posiciona o scroll no top
 
@@ -249,40 +251,6 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
     }
   });
 })  
-
-
-// ------------------------------ Preview de imagens upload ---------------------
-  
-  $('#dinamic').delegate('#imgproduto, #upload','change',function(){
-    
-      if(($(this)[0].files[0].type != 'image/jpeg') && ($(this)[0].files[0].type != 'image/png') && ($(this)[0].files[0].type != 'image/jpg')){
-
-        alert("Imgem com formato inváldo");
-        $(this).val('');
-        $('#img').removeAttr('src');
-        return false;
-      }
-
-      const file = $(this)[0].files[0]
-
-      const fileReader = new FileReader();
-
-      fileReader.onloadend = function(){
-          $('#img').attr('src', fileReader.result).css('width', '253px').css('height', '232px')
-      }
-      fileReader.readAsDataURL(file);
-  })
-  
-
-
- 
-
-
-  // -------------------------------- Imagem de load ---------------------
-  function loadImg(nome){
-    let img = $('<div/>').addClass('load').attr('align', 'center').html($('<img/>').attr('src','../files/imagens/'+nome ));
-    return img;
-  }
 
 
 //---------------------- Filtro lateral busa produtos no banco de acordo com o filtro------------------------------//
@@ -477,38 +445,6 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
 
   }
 
-//------------------------ Menu de opcoes admin ---------------------
-$('#menuAdminHide').on('click', function(){
-  let menu = [
-  
-  '/produto/all',
-  '/financeiro',
-  '/venda/logistica'
-    
-  ];
-
-  let icon = [
-      '<i class="fas fa-cubes fa-2x" ></i>',
-      '<i class="fas fa-coins fa-2x"></i>',
-      '<i class="fas fa-shipping-fast fa-2x"></i>'
-   ];
-
-  let texto =['<br/>Produto', '<br/>Financeiro', '<br/>Logistica'];
-
-
-  let rowOptions = $('<div/>').addClass('row').css('color', '#9400D3');
-
-  let lista = $('<ul/>').addClass('nav');
-  for (let i=0; !(i == menu.length); i++) {
-      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<a/>').addClass('btn link').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('href', menu[i])));
-  }
-  let nav = $('<nav/>').addClass('navbar').append(lista);
-  rowOptions.append(nav).addClass('col-md-12');
-  getModal('<strong>Menu de opções</strong>', rowOptions);
-})
-
-/* ---------------- Teste -----------*/
-
 
 
 //chama o modal e passa alguns parametros
@@ -518,704 +454,6 @@ $('#menuAdminHide').on('click', function(){
     $('.modal-body').html(body);
     $('.modal-footer').html(footer);
   }
-
-  //---------------------------------------- Carrinho de Compras --------------------------------------------------------
-  $('.modal-footer').delegate('.carrinho', "click", function(){
-    let idProduto = $('.modal-footer div.row div.col').find('a').attr('href');
-    
-    idProduto = idProduto.substring(idProduto.indexOf('=')+1);
-
-   let xhr = $.ajax({
-            url: '/venda/carrinho?id='+idProduto,
-            type: 'GET',
-            dataType: 'json',
-            success: function(retorno){
-              $('#qtdItensCarrinho').html(retorno)
-            }
-            
-        });
-
-   
-  })
-
-
-/*------------------------------- Faz uma requisizao ajax e lista na tabela de produtos ---------------------------------------------*/
-
-  $('body').delegate('.link','click', function(event){
-    event.preventDefault();
-    let rota = $(this).attr('href');
-    let xhr = $.ajax({
-            url: rota,
-            type: 'GET',
-            dataType: 'json',
-            success: function(retorno){
-
-              switch(rota){
-                case '/produto/all':
-                  listaTabelaProdutos(retorno);
-                break;
-                case '/produto/all':
-                  listaTabelaProdutos(retorno);
-                break;
-
-
-              }
-
-              
-
-
-
-            }
-            
-        });
-
-
-  })
-
-//-----------------------------Botoes da paginaçao da tabela paginacao da tabela de produtos ---------------------------/
-$('#dinamic').delegate('ul li a', 'click', function(){
-
-  let id = $(this).attr('id');
-
-  let xhr = $.ajax({
-            url: '/produto/all?rq=ajax&pagina='+id,
-            type: 'GET',
-            dataType: 'json',
-            success: function(retorno){
-
-              listaTabelaProdutos(retorno);
-            }
-
-
-          });
-})
-
-
-
-/*-------------------------------Executa os lincks da tabela de visualização dos produtos --------------------------*/
-$("#dinamic").delegate('#tableProdutos tbody a', 'click', function(event){
-  event.preventDefault();
-  let acao = $(this).attr('href');
-
-  let ajax = $.ajax({
-    url: acao,
-    type: 'GET',
-    dataType: 'json',
-    success:function(retorno){
-
-      
-
-      let componetesFormulario =  [
-        [
-          ['Nome', 'input', 'text',retorno.nomeProduto,'Nome do produto', 'nomeProduto', true],
-          ['NF', 'input', 'number','0000000','Nº NF', 'nf', true],
-          ['Fornecedor' ,'input', 'text', 'nom padrao fornecedor','Nome do fornecedor', 'codFornecedor',true]
-          
-        ],
-        [
-          ['Quantidade' ,'input', 'number',retorno.estoque,'Informe a quantidade', 'estoque', true],
-          ['Valor Unit', 'input', 'number', retorno.preco ,'Descricão do produto', 'preco', true],
-        ],
-        [
-          ['Codigo', 'input', 'text', retorno.codigo,'Código do produto','codProduto', true],
-          ['Imagem' ,'input', 'file', '','', 'imgProduto', true]
-        ]
-
-      ];
-
-      console.log(retorno);
-
-      let formulario = formularioProduto(componetesFormulario, 'Atualizar Produto', 'Atualizar', retorno.textoPromorcional) // cria o formulario e o retorna
-      $('#dinamic').html(formulario);
-
-    }
-
-
-
-  })
-  
-})
-
-
-
-
-
-//---------------------------------------------Ctia o formulario de castro de produtos ---------------------------------------------------
-
-
-$('#dinamic').delegate('#cadastrar', 'click', function(event){
-  event.preventDefault();
-  $('#dinamic').html('');
-
-  let componetesFormulario =  [
-    [
-      ['Nome', 'input', 'text','','Nome do produto', 'nomeProduto', true],
-      ['Nº NF', 'input', 'number','','Nº NF', 'nf', true],
-      ['Fornecedor' ,'input', 'text','','Nome do fornecedor', 'codFornecedor',true]
-      
-    ],
-    [
-      ['Quantidade' ,'input', 'number','','Quantidade', 'estoque', true],
-      ['Valor Unit', 'input', 'number', '' ,'Valor unitario', 'preco', true],
-    ],
-    [
-      ['Codigo Produto', 'input', 'text','','Código do produto','codProduto', true],
-      ['Imagem' ,'input', 'file','','', 'imgProduto', true]
-    ]
-
-  ];
-
-
-  let formulario = formularioProduto(componetesFormulario) // cria o formulario e o retorna
-  $('#dinamic').html(formulario);
-
-  
-
-})
-
-
-
-// ---------------------------- cria elementos select ---------------------------------------------
-
-function criaComponentSelect(values, name){
-
-  let select = $('<select/>').addClass('form-control');
-  let id = name.toLowerCase();
-
-  select.attr('id', id);
-  select.attr('name', id);
-  select.attr('required', 'required');
-
-  for (let i = 0; !(i == values.length); i++) {
-    select.append($('<option/>').val(values[i][0]).html(values[i][1]));
-    
-  }
-
-  return select;
-
-}
-
-//------------------------------- cria alguns componetes inputs de formulario---------------------------------------------
-
-function criaComponenteForm(label, nomeElento, type, value='', placeholder='', name = '',required=false){
-
-  let elento = null;
-
-  let formLabel = $('<label/>').css('color', '#000');
-
-  switch(nomeElento){
-    case 'button':
-      elento = $('<button/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-    case 'checkbox':
-      elento = $('<checkbox/>').addClass('form-check-input');
-      formLabel.addClass('form-check-label');
-    break;
-
-    case 'textarea':
-      elento = $('<textarea/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-    case 'file':
-      elento = $('<file/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-    default:
-      elento = $('<input/>').addClass('form-control').attr('placeholder', placeholder);
-    break;
-
-   
-  }
-
-   if(required == true){
-      elento.attr('required', required);
-    }
-
-
-    let idElento = name.toLowerCase();
-
-    elento.attr('type', type);
-    elento.attr('name', name);
-    elento.attr('id', idElento);
-    elento.val(value);
-
-
-    formLabel.attr('id', idElento);
-
-    formLabel.html(label);
-
-    let result = $('<div/>').addClass('form-group').append(formLabel).append(elento);
-
-    return result;
-
-
-}
-
-
-  $('#btnInicio').on('click', function(){
-
-     $('#dinamic').html('')
-
-  })
-
-  $('#btnEntretas').on('click', function(){
-
-     $('#dinamic').html('')
-     
-  })
-
-  $('#btnConfig').on('click', function(){
-
-     $('#dinamic').html('')
-     
-  })
-
-
-//---------------------- GRAFICOS -------------------------------
-
-
-  /*------------------------ Disparando funcoes dos gráficos -----------------------*/
-  $('#btnDesemprenho').on('click', function(){
-
-    //inicas os canvas
-    let canvasMeta = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').
-      append($('<div/>').text('Meta').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'metaVenda'))
-
-    let canvasExecAnual = $('<div/>').addClass('col-xs-12 mt-3 col-sm-12 col-md-6').append($('<div/>').
-      text('Compartivo do exercicio anual').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'excAnual'))
-
-    let canvasMaisVendidos = $('<div/>').addClass('col-xs-12 mt-3 mb-3 col-sm-12 col-md-6').append($('<div/>').text('Mais vendidos').
-      addClass('titleChar h3')).append($('<canvas/>').attr('id', 'maisVendidos'))
-
-    let canvasMargem = $('<div/>').addClass('col-xs-12 col-sm-12 mt-3 mb-3 col-md-6').append($('<div/>').
-      text('Composição da margem').addClass('titleChar h3')).append($('<canvas/>').attr('id', 'compMargemLucr'))
-
-    //cria uma div e armazena os canvas
-    let rowCanvas = $('<div/>').addClass('row').css('background-color', 'rgba(0, 0, 0, .8)');
-    rowCanvas.css('padding', 'padding: 20px 40px')
-
-    rowCanvas.append(canvasMeta);
-    rowCanvas.append(canvasExecAnual);
-    rowCanvas.append(canvasMaisVendidos);
-    rowCanvas.append(canvasMargem);
-
-    //isere a dive no corpo do documetno principal
-    $('#dinamic').html('');
-    $('#dinamic').append(rowCanvas);
-
-    //exibe a barra vertial direita
-    $('#optionPlus').css('display', 'block');
-
- 
-
-
-    let ctx = $('#maisVendidos');
-    let myChart = new Chart(ctx, {
-      type: 'pie',//pie
-      data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [{
-              label: 'My First dataset',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
-                ticks: {
-                      barPercentage: 0.2,
-                      fontColor: '#fff'
-                  }
-              }]
-          }
-      }
-  });
-
-    /*--------------- Composicao da margem de lucro ---------------*/
-    let compMarg = $('#compMargemLucr');
-    let margemChar = new Chart(compMarg, {
-      type: 'pie',//pie
-      data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [{
-              label: 'My First dataset',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(75, 0, 192)',
-                  'rgb(70, 102, 20)',
-                  'rgb(0, 159, 64)'
-              ],
-              borderColor: [
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(75, 0, 192)',
-                  'rgb(70, 102, 20)',
-                  'rgb(0, 159, 64)'
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
-                ticks: {
-                      barPercentage: 0.2,
-                      fontColor: '#fff'
-                  }
-              }]
-          }
-      }
-  });
-
-    /*-------------- Exercicio anual ---------*/
-    let excAnual = $('#excAnual');
-    let cahrExAnual = new Chart(excAnual, {
-      type: 'line',//pie
-      data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [{
-              label: '2020',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: 'rgba(255, 255, 255, 0.001)',
-              borderColor:'rgba(0,255,0)',
-              borderWidth: 3
-          },
-          {
-              label: '2019',
-              data: [10, 5, 8, 7, 10, 15],
-              backgroundColor: 'rgba(255, 255, 255, 0.001)',
-              borderColor:'rgba(0,255,255)',
-              borderWidth: 3
-          }]
-      },
-      options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
-                ticks: {
-                      barPercentage: 0.2,
-                      fontColor: '#fff'
-                  }
-              }]
-          }
-      }
-  });
-
-
-
-    // ------------------ Meta --------
-    let ctxs = $('#metaVenda');
-    let myCharts = new Chart(ctxs, {
-      type: 'bar',//pie
-      data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-          datasets: [
-              {
-                  label: 'Meta',
-                  data: [15, 20.6, 19.85, 13.9, 25.45, 17.87],
-                  borderColor:'rgba(148,0,211)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.001)',
-                  borderWidth: 3,
-                  type: 'line'
-              },
-              {
-              label: 'My First dataset',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(255, 159, 64)'
-              ],
-              borderWidth: 3
-              },
-              {
-              label: 'My Next dataset',
-              data: [10, 19, 5, 9, 8, 11],
-              backgroundColor:[
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(0, 0, 192)',
-                  'rgb(153, 102, 0)',
-                  'rgb(255, 0, 64)'
-
-              ],
-              borderColor:[
-                  'rgb(0, 99, 132)',
-                  'rgb(54, 162, 0)',
-                  'rgb(255, 0, 86)',
-                  'rgb(0, 0, 192)',
-                  'rgb(153, 102, 0)',
-                  'rgb(255, 0, 64)'
-              ],
-              borderWidth: 3
-          }
-          ]
-      },
-      options: {
-          layout:{
-             padding: {
-                  left: 50,
-                  right: 0,
-                  top: 0,
-                  bottom: 0
-              },
-              width:'10px'
-          }
-          ,scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                      fontColor: '#fff'
-                  }
-              }],
-              xAxes:[{
-                ticks:{
-                  barPercentage: 1,
-                  fontColor: '#fff'
-                }
-                
-              }]
-          }
-        }
-    });
-
-  })
-
-
-
-/* ------------------------------------------------------------------------- Views -------------------------------------------------------------------------------------------*/
-
-
-
-//cria a tabela de protos e recebe os dados por parametro
-function listaTabelaProdutos(retorno) {
-
-  $('#closeModal').trigger('click');
-
-  //exibe a barra lateral direita
-   
-  $('#optionPlus').css('display', 'block');
-    //Cabecalho da tabela
-    let thead = $('<thead/>').css('color', '#000').append($('<tr/>').append($('<th/>').html('Nome'))
-                          .append($('<th/>').html('Estoque'))
-                          .append($('<th/>').html('Preço'))
-                          .append($('<th/>').html('Código'))
-                          .append($('<th/>').html('Ação'))
-    )
-
-
-    //Corpo da tabela
-    let tbody = $('<tbody/>');
-    for (let i = 0; !(i == retorno[0].length); i++) {
-
-    tbody.append($('<tr/>').append($('<td/>').html(retorno[0][i].nomeProduto))
-      .append($('<td/>').html(retorno[0][i].estoque))
-      .append($('<td/>').html(retorno[0][i].preco))
-      .append($('<td/>').html(retorno[0][i].codigo))
-      .append($('<td/>').append($('<a/>').addClass('btn button-modal mr-2').attr('href','/produto/editar?id='+retorno[0][i].idProduto).html('<i class="fas fa-pencil-alt"></i>'))
-                        .append($('<a/>').addClass('btn btn-primary mr-2').attr('href','/produto/visualizar?id='+retorno[0][i].idProduto).html('<i class="fas fa-search-plus"></i>'))
-                        .append($('<a/>').addClass('btn btn-danger').attr('href','/estoque/deletar?id='+retorno[0][i].idProduto).html('<i class="fas fa-trash-alt"></i>'))
-          )
-
-      )
-    }
-
-
-
-    //armazena a tabela numa div de coluna 12
-    let divTabela = $('<div/>').css('color', '#000').css('padding', '20px 40px 0px 40px').addClass('col-md-12');
-
-    divTabela.append($('<a/>').attr('id', 'cadastrar').attr('href', '/produto/cadastrar').addClass('btn button-modal mb-2').html('<i class="fas fa-plus-circle fa-2x"></i>'));
-
-    divTabela.append($('<table/>').attr('id', 'tableProdutos').addClass('table table-hover').append(thead).append(tbody));
-
-    //retorna um lista de navegacao
-    let retult = pagination(retorno[1].pagina, retorno[1].totPaginas);
-
-    $('#dinamic').css('color', '#000').css('background-color', '#fff').html('');
-    $('#dinamic').append(divTabela);
-    $('#dinamic').append(retult);
-}
-
-
-/*--------------------------------------------------cria o formulario de cadastro de produtos ------------------------------------------*/
-
-function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Produto', btnAcao = 'Cadastar', textoPromorcional = null, select = null){ //recebe uma array multdimensional 
-
-  let colInputs = $('<div/>').addClass('col-md-9');
-
-  //cria os elemtnos imputs e adicona ao fieldset
-  for (let i = 0; !(i == componetesFormulario.length); i++) {
-
-    let row = $('<div/>').addClass('row');
-
-    for (let j = 0; !(j == componetesFormulario[i].length); j++) {
-      let nomeElento  = componetesFormulario[i][j][0];
-      let input = componetesFormulario[i][j][1];
-      let text  = componetesFormulario[i][j][2];
-      let value = componetesFormulario[i][j][3]
-      let placehoder = componetesFormulario[i][j][4];
-      let name = componetesFormulario[i][j][5]
-      let requerido = componetesFormulario[i][j][6];
-
-
-      let elento = criaComponenteForm(nomeElento, input, text, value, placehoder, name, requerido);
-      let colElento = $('<div/>').addClass('col-md-'+ ( 12 / componetesFormulario[i].length)).append(elento);
-      
-      row.append(colElento);
-
-    }
-
-    colInputs.append(row);
-    
-  }
-
-  //opcoes para select de marcas
-  let optionsMarca = [
-    [1, 'Sansung'],
-    [2, 'Ios'],
-    [3, 'Motorola']
-  ];
-
-
-  //opcoes para select de categorias
-
-   let optionsCategoria = [
-    [1, 'Esport'],
-    [2, 'Infantil'],
-    [3, 'Adulto']
-  ];
-
-  let selectMarca = criaComponentSelect(optionsMarca, 'Marca'); //craia uma lista de opcoes e a retorna
-  let selectCategoria = criaComponentSelect(optionsCategoria, 'Categoria');
-  
-  //aramazena as listas de opcoes em div para formulario
-  let divSelectMarca = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'marca').html('Marca')).append(selectMarca);
-
-  let divSelectCategoria = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'categoria').html('Categoria')).append(selectCategoria);
-
-
-  let rowSelect = $('<div/>').addClass('row');
-
-  //aramazena cada lista numa coluna
-  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectMarca))
-  rowSelect.append($('<div/>').addClass('col-xs-6 col-sm-6 col-md-6 col-lg-6').append(divSelectCategoria))
-
-  colInputs.append(rowSelect);
-
-
-
-  //cria a div para fazer o previw da imagme 
-  let preview = $('<div/>').addClass('col-md-3').append($('<img/>').attr('id', 'img'))
-
-  let filtdSet = $('<fieldset/>').append($('<legend/>').text(tituloFormulario).addClass('mt-2'));
-
-  let textAreaPromorcional = $('<textarea/>').attr('name', 'texto').attr('id', 'idTexto');
-  textAreaPromorcional.attr('rows', '6').addClass('form-control');
-  textAreaPromorcional.attr('required', 'required');
-  textAreaPromorcional.html(textoPromorcional);
-
-  let divTextarea = $('<div/>').addClass('form-group').append($('<label/>').css('color', '#000').attr('id', 'idTexto').html('Texto promorcional'));
-  divTextarea.append(textAreaPromorcional);
-
-
-  let rowTextArea = $('<div/>').addClass('row');
-  rowTextArea.append($('<div/>').addClass('col-xs-12 col-sm-12 col-md-12 col-lg-12').append(divTextarea));
-  //armazena a text area na coluna de imputs
-  colInputs.append(rowTextArea);
-
-  colInputs.append($('<button/>').html(btnAcao).addClass('btn btn-lg btn-success'))
-  colInputs.append($('<a/>').attr('href', '/produto/all').html('Cancelar').addClass('btn btn-lg btn-danger ml-2 link'))
-
-  //adicona as colunas de imput e preview ao fidset
-  filtdSet.append($('<div/>').addClass('row').append(colInputs).append(preview));
-
-  let formulario = $('<form/>').css('color', '#000').attr('enctype', 'multipart/form-data').append(filtdSet);
-  formulario.css('padding', '40px 20px 0px 20px')
-
-  let divFormulario = $('<div/>').addClass('col-md-12 mt-2 mb-5').append(formulario);
-    
-  return divFormulario;
-  
-}
 
 //--------------------------------------------- Modal de produtos -----------------------------------------
   $('.child-card-footer, div#itens').delegate('.button-modal','click',  function(){
@@ -1294,46 +532,181 @@ function formularioProduto(componetesFormulario, tituloFormulario ='Cadastar Pro
 
   });
 
+  //----------------- formata valores para calculo
+
+function foramtCalcCod(number)
+{
+  try{
+
+    number = String(number);
+    
+
+    if(number.length == 0){
+      return false;
+    }
+
+    let arrNumber = number.split('.');
+
+    let newNumber = '';
+    for (let i =0; !(i == arrNumber.length); i++) {
+      newNumber+=arrNumber[i]
+    }
+
+
+    newNumber = newNumber.replace(/,/g, '.');
+
+    newNumber = parseFloat(newNumber).toFixed(2);
+
+    return newNumber;
+
+  }catch(e){
+
+    console.log(e);
+  }
+}
+
 
 //----------------------- CALCULAR FRETE DO PRODUTO ---------------------------
 
-$('body').delegate('#formFretQtd', 'submit', function(e){
-  e.preventDefault();
+  $('body').delegate('#formFretQtd', 'submit', function(e){
+    e.preventDefault();
 
-  let vlP = $('#vlP').text();
-  vlP = vlP.split('.');
+    let vlP = $('#vlP').text();
+    vlP = vlP.split('.');
 
-  let newVlP = '';
-  for (let i =0; !(i == vlP.length); i++) {
-    newVlP+=vlP[i]
+    let newVlP = '';
+    for (let i =0; !(i == vlP.length); i++) {
+      newVlP+=vlP[i]
+    }
+
+    newVlP = foramtCalcCod(newVlP);
+
+    let form= $(this);
+
+    let formD = new FormData(form[0]);
+    
+    formD.append('vlP', newVlP);
+
+    let xhr = $.ajax({
+              type:'POST',
+              url: '/pedido/produto/frete',
+              data: formD,
+              processData:false,
+              contentType: false,
+              dataType:'HTML',
+              success: function(retorno){
+                form.find('#response').html(retorno);//'Total: R$ '+retorno.valor+'<br/>Dias: '+retorno.entrega
+              },
+              beforeSend: function(){
+                form.find('#response').html('Aguarde...');
+                  
+              }
+              
+          });
+
+  })
+  
+ //--------------------CAPITURA OS ITENS ADICIONADOS NA VIEW DE DETALHES E MANDA PARA O CARRINHO 
+  $('body').delegate('#formFretQtd button#btnAddCarr', 'click', function(){
+    let cd = $('#formFretQtd').find('input[name=prod]').val();
+    let qtd = $('#formFretQtd').find('select[name=qtd]').val();
+
+
+    if(cd.length == 0 || qtd.length == 0){
+      return false;
+    }
+
+    cd = Number(cd);
+    qtd = Number(qtd);
+
+    addToCar(cd, qtd);
+    
+    
+  })
+
+   $('body').delegate('#formCarr .controller', 'click', function(){
+    
+    let action = $(this).text().trim();
+    
+    let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
+
+    let valQtd = $(this).parent().find('span.form-control').text().trim();
+    valQtd = Number(valQtd);
+
+
+    if(cd.length == 0){
+      alert('Erro na solicitação');
+      return false;
+    }
+    
+    cd = Number(cd);
+
+    if(action == '-'){
+
+      if(valQtd <= 1){
+        alert('Quantidade solicitada inválida');
+        return false;
+      }
+
+      addToCar(cd, 1, true)
+    }else{
+      addToCar(cd, 1)
+    }
+    
+    $('body #carrinhoLink').trigger('click');
+    
+  })
+
+  
+
+
+  /*-------------------- ENVIA O ITEM E A QUANTIDADE PARA ADICIONAR AO CARRINHO --------*/
+  function addToCar(cd, qtd, remov=false)
+  {
+    if((cd <= 0) || (qtd <= 0)){
+      return false;
+    }
+
+    let url = '/pedido/carrinho?qtd='+qtd+'&cd='+cd;
+    if(remov !=false){
+      url += '&rem=1';
+    }
+
+    var result = null;
+
+    $.ajax({
+      url:url,
+      type:'GET',
+      dataType:'json',
+      success:function(retorno){
+
+        if(retorno.length == 1){
+          $('body').find('#qtdItensCarrinho').text(retorno[0]);
+          return true;
+        }else{
+          console.log(retorno);
+          return false;
+        }
+      }
+    })
   }
 
-  newVlP = newVlP.replace(/,/g, '.');console.log(newVlP);
+  // --------------EXIBE A VIEW DE ITENS NO CARRINHO ----------
+  $('body').delegate('#carrinhoLink', 'click', function(event){
+    event.preventDefault();
+    let url = $(this).attr('href');
+    
+     $.ajax({
+        url:url,
+        type:'GET',
+        dataType:'HTML',
+        success:function(retorno){
+          $('#containerLoja').html(retorno);
+          $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+          console.log('ok')
+        }
+      })
+  })
 
-  let form= $(this);
-
-  let formD = new FormData(form[0]);
-  
-  formD.append('vlP', newVlP);
-
-  let xhr = $.ajax({
-            type:'POST',
-            url: '/pedido/produto/frete',
-            data: formD,
-            processData:false,
-            contentType: false,
-            dataType:'HTML',
-            success: function(retorno){
-              form.find('#response').html(retorno);//'Total: R$ '+retorno.valor+'<br/>Dias: '+retorno.entrega
-            },
-            beforeSend: function(){
-              form.find('#response').html('Aguarde...');
-                
-            }
-            
-        });
-
-})
-
-
+ 
 })

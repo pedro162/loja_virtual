@@ -118,7 +118,7 @@ abstract class BaseModel
         if(!(is_null($litmitInit) && is_null($limitEnd))){
             $sql .= ' LIMIT '.$litmitInit.','. $limitEnd;
         }
-
+        
         $conn = Transaction::get();
 
         $result = $conn->query($sql);
