@@ -23,6 +23,7 @@ use \Exception;
 class PedidoController extends BaseController
 {
     
+    const CEP_EMPRESA = 65061220;
 
     public function painel($request)
     { 
@@ -497,9 +498,8 @@ class PedidoController extends BaseController
             $result = $fornecimento->loadFornecimentoForIdCategoria([$idCateg], true, null, 1, 20);
 
             if($result != false){
-                echo "<pre>";
-                var_dump($result);
-                echo "</pre>";
+                $this->view->result = $result;
+                $this->render('produtos/produtosRelacionados', false);;
             }else{
                 throw new \Exception("Não existem produtos relaionados\n");
                 
@@ -519,35 +519,69 @@ class PedidoController extends BaseController
 
     public function calcFrete($request)
     {
-        $cepO = 65061220;
+        try {
 
-        $dadosProduto['nCdEmpresa'] = '';
-        $dadosProduto['sDsSenha'] = '';
-        $dadosProduto['nCdServico'] = 41106;
-        $dadosProduto['sCepOrigem'] = $cepO;
-        $dadosProduto['sCepDestino'] = $request['post']['cep'];
-        $dadosProduto['nVlPeso'] = 2;
-        $dadosProduto['nCdFormato'] = 1;
-        $dadosProduto['nVlComprimento'] = 20;
-        $dadosProduto['nVlAltura'] = 6;
-        $dadosProduto['nVlLargura'] = 21;
-        $dadosProduto['nVlDiametro'] = 11;
-        $dadosProduto['sCdMaoPropria'] = 'n';
-        $dadosProduto['nVlValorDeclarado'] = $request['post']['vlP'];
-        $dadosProduto['sCdAvisoRecebimento'] = 'N';
-        $dadosProduto['StrRetorno'] = 'xml';
-        $dadosProduto['nIndicaCalculo'] = 3;
+            Transaction::startTransaction('connection');
+            $this->setMenu();
+            $this->setFooter();
 
-        $frete = new Utils();
-        $result = $frete->calFreteCorreios($dadosProduto);
+            if((!isset($request['get']['cep'])) || (!isset($request['get']['prod']))){
+                throw new Exception('Parâmetro inválido');
+                
+            }
 
-        $frete = $result->cServico;
+            $cep = preg_replace('/[^0-9]/', '',trim($request['get']['cep']));
+            $idProd = (int) trim($request['get']['prod']);
 
-        $response = 'Total frete R$ '.$frete->Valor.'<br/>Entrega em até '.$frete->PrazoEntrega.' dias';
+            if(!($cep && $idProd)){
+                throw new Exception("Parâmetro inválido\n");
+                
+            }
 
-        $this->view->result = $response;
-        
-        $this->render('pedido/ajax', false);
+            $fornce = new Fornecimento();
+
+            $fornProduct = $fornce->loadFornecimentoForIdProduto($idProd, true);
+
+            /*----------------------------- calcua o frete ------------*/
+            
+            $dadosProduto['nCdEmpresa'] = '';
+            $dadosProduto['sDsSenha'] = '';
+            $dadosProduto['nCdServico'] = 41106;
+            $dadosProduto['sCepOrigem'] = self::CEP_EMPRESA;
+            $dadosProduto['sCepDestino'] = $cep;
+            $dadosProduto['nVlPeso'] = 2;
+            $dadosProduto['nCdFormato'] = 1;
+            $dadosProduto['nVlComprimento'] = $fornProduct->getComprimento(); //20;
+            $dadosProduto['nVlAltura'] = $fornProduct->getAltura();//6;
+            $dadosProduto['nVlLargura'] = $fornProduct->getLargura();//21;
+            $dadosProduto['nVlDiametro'] = 11;
+            $dadosProduto['sCdMaoPropria'] = 'n';
+            $dadosProduto['nVlValorDeclarado'] =  $fornProduct->getVlVenda();
+            $dadosProduto['sCdAvisoRecebimento'] = 'N';
+            $dadosProduto['StrRetorno'] = 'xml';
+            $dadosProduto['nIndicaCalculo'] = 3;
+
+            $frete = new Utils();
+            $result = $frete->calFreteCorreios($dadosProduto);
+
+            $frete = $result->cServico;
+
+            $response = 'Total frete R$ '.$frete->Valor.'<br/>Entrega em até '.$frete->PrazoEntrega.' dias';
+
+            $this->view->result = $response;
+            
+            $this->render('pedido/ajax', false);
+
+            Transaction::close();
+            
+        } catch (\Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
+
     }
 
 

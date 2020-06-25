@@ -379,6 +379,25 @@ form .btn-danger:hover{
 }
 
 /*-------------------- STYLE VIEW CARRINHO ------------------*/
+#divProdRelac div.card{
+    width: 22rem;
+    height: 26rem;
+    border:none;
+    color: #9400D3;
+    
+}
+#divProdRelac .card .card-body:last-child .col a.btn{
+    display: none;
+    width: 50%;
+    background: #9400D3;
+    font-weight: bolder;
+}
+
+#divProdRelac .card:hover .card-body:last-child .col a.btn{
+    display: block;
+    border-radius: 50px;
+}
+
 #divCardCarriho div.card{
     width: 22rem;
     height: 24rem;
@@ -392,12 +411,15 @@ form .btn-danger:hover{
     background: #9400D3;
     font-weight: bolder;
 }
-
-
+    
+#divProdRelac div.card:hover{
+    box-shadow: 2px 2px 4px #9400D3;
+}
 
 #divCardCarriho div.card:hover{
      box-shadow: 2px 2px 4px #9400D3;
 }
+
 
 #divCardCarriho div.card:hover a.btn{
     display: block;

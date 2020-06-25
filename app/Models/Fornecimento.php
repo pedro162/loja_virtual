@@ -13,7 +13,9 @@ use App\Models\DetalhesPedido;
 use \Core\Utilitarios\Utils;
 
 /**
- * 
+ * Classe fornecimento tambem acessa
+ * via getter os atributos do produto
+ * para melhor desempenho nas querys
  */
 class Fornecimento extends BaseModel
 {	
@@ -31,6 +33,10 @@ class Fornecimento extends BaseModel
     private $UsuarioIdUsuario; 
     private $nf;
     private $estoque;
+    private $altura;
+    private $largura;
+    private $comprimento;
+    private $cor;
 
     private $idProduto;
     private $texto;
@@ -204,6 +210,46 @@ class Fornecimento extends BaseModel
         }
         throw new Exception("Estoque não pôde ser atualizado");
         
+    }
+
+    public function getCor():String
+    {
+        if((!isset($this->cor)) || (strlen($this->cor) == 0)){
+
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->cor;
+    }
+
+    public function getComprimento():float
+    {
+        if((!isset($this->comprimento)) || ($this->comprimento < 0)){
+
+            throw new Exception('Propriedade inválida dd');
+        }
+
+        return $this->comprimento;
+    }
+
+    public function getLargura():float
+    {
+        if((!isset($this->largura)) || ($this->largura < 0)){
+
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->largura;
+    }
+
+    public function getAltura():float
+    {
+        if((!isset($this->altura)) || ($this->altura < 0)){
+
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->altura;
     }
 
     public function getProdutoIdProduto():int
@@ -794,7 +840,8 @@ class Fornecimento extends BaseModel
         if($idProduto > 0){
             
              $sql = 'select PC.CategoriaIdCategoria as idCategoria, P.nomeProduto As produtoNome ,P.idProduto, ';
-             $sql .= ' P.textoPromorcional As texto, Img.url, F.vlVenda from Fornecimento as F inner join Produto as P on ';
+             $sql .= ' P.altura ,P.largura, P.comprimento, P.textoPromorcional As texto, Img.url, ';
+             $sql .= ' F.vlVenda from Fornecimento as F inner join Produto as P on ';
              $sql .= ' F.ProdutoIdProduto = P.idProduto inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
              $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdProduto = P.idProduto ';
              $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' and PC.classificCateg = \'primaria\' and F.ProdutoIdProduto='.$idProduto;

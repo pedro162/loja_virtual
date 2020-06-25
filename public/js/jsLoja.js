@@ -570,40 +570,46 @@ function foramtCalcCod(number)
 
   $('body').delegate('#formFretQtd', 'submit', function(e){
     e.preventDefault();
+    let form = $(this);
+    
+    let prod = $(this).find('input[name=prod]').val().trim();
+    let cep = $(this).find('input[name=cep]').val().trim();
 
-    let vlP = $('#vlP').text();
-    vlP = vlP.split('.');
+    let errors = new Array();
 
-    let newVlP = '';
-    for (let i =0; !(i == vlP.length); i++) {
-      newVlP+=vlP[i]
+    if(prod.length == 0){
+      errors.push('Produto inválido');
     }
 
-    newVlP = foramtCalcCod(newVlP);
+    if(cep.length == 0){
+      errors.push('Por favor, informe um cep');
+    }
 
-    let form= $(this);
+    if(errors.length > 0){
+      let msg = '';
+      for(let i=0; !(i == errors.length); i++){
+        msg+=errors[i]+"\n";
+      }
+      alert('Atençao: '+msg)
+    }else{
 
-    let formD = new FormData(form[0]);
-    
-    formD.append('vlP', newVlP);
+      let url = '/pedido/produto/frete?cep='+cep+"&&prod="+prod;
 
-    let xhr = $.ajax({
-              type:'POST',
-              url: '/pedido/produto/frete',
-              data: formD,
-              processData:false,
-              contentType: false,
-              dataType:'HTML',
-              success: function(retorno){
-                form.find('#response').html(retorno);//'Total: R$ '+retorno.valor+'<br/>Dias: '+retorno.entrega
-              },
-              beforeSend: function(){
-                form.find('#response').html('Aguarde...');
-                  
-              }
-              
-          });
+      let xhr = $.ajax({
+                type:'GET',
+                url: url,
+                dataType:'HTML',
+                success: function(retorno){
+                  form.find('#response').html(retorno);//'Total: R$ '+retorno.valor+'<br/>Dias: '+retorno.entrega
+                },
+                beforeSend: function(){
+                  form.find('#response').html('Aguarde...');
+                    
+                }
+                
+            });
 
+      }
   })
   
  //--------------------CAPITURA OS ITENS ADICIONADOS NA VIEW DE DETALHES E MANDA PARA O CARRINHO 
@@ -703,10 +709,29 @@ function foramtCalcCod(number)
         success:function(retorno){
           $('#containerLoja').html(retorno);
           $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-          console.log('ok')
+         
         }
       })
   })
 
- 
+ //-------------------------- CHAMA A VIEW DE VER MAIS PRODUTOS RELACIONADOS ------------------------
+
+ $('body').delegate('.ver-mais', 'click', function(e){
+  e.preventDefault();
+  let url = $(this).attr('href');
+
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'HTML',
+    success: function(retorno){
+      $('#containerLoja').html(retorno);
+      $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+      $(window).scrollTop('0')//posiciona o scroll no top
+    }
+  })
+
+ })
+
+
 })
