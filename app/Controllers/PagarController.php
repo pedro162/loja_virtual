@@ -8,13 +8,27 @@ use \Core\Database\Transaction;
 
 class PagarController extends BaseController
 {
-    private static $email;
-    private static $token;
-    private static $url;
-    private static $script;
-
     public function pagar()
     {
+        $dados = [];
+        $dados['email'] = 'email@test.com.br';
+        $dados['token'] = 'token';
+        $dados['currency'] = 'BRL';
+        $dados['itemId1'] = '1';
+        $dados['itemDescription1'] = 'descricao do produto';
+        $dados['itemAmount1'] = 'valor do produto sem virgula ex:1000.52';
+        $dados['itemQuantity1'] = 'quantidade do iten';
+        $dados['reference'] = 'numero de referencia qualquer';
+        $dados['senderName'] = 'nome cliente';
+        $dados['senderAreaCode'] = 'codigo da area do telefone cliente';
+        $dados['senderPhone'] = 'numero do telefone cliente';
+        $dados['senderEmail'] = 'email do cliente';
+        $dados['shippingAddressRequired'] = true;
+        $dados['extraAmount'] = '0.00';
+
+        $pgSeg = new PagSeguro();
+        $pgSeg->obterAltorizacao($dados, false);
+
         $this->render('pagamentos/pagamento', true);
     }
 
@@ -24,57 +38,9 @@ class PagarController extends BaseController
         $this->render('pagamentos/sessaoPagseguro', false);
         
     }
-
-    public static function startPagSeguro(bool $producao = false)
-    {
-        self::$email = 'phedroclooney@gmail.com';
-        self::$token = 'FA3BCBA60FEF46D39C0BEC28A624542F';
-        self::$url = 'https://ws.sandbox.pagseguro.uol.com.br/v2/checkout/';
-        if($producao == true)
-        {
-            self::$email = 'phedroclooney@gmail.com';
-            self::$token = 'b9ad5e73-b3af-483a-9e57-2302a14a40c815c453714f228ba4f41ce8ca69ff2c518a93-98e8-44d1-be50-8ed2d4cf6a55';
-            self::$url = 'https://ws.pagseguro.uol.com.br/v2/checkout/';
-            
-        }
-        
-        $pagSeguro = new PagSeguro(self::$email, self::$token, self::$url);
-        
-        $retorno = $pagSeguro->obterAltorizacao();
-        
-        return $retorno; 
-    }
-
-    public static function getScript()
-    {
-        return self::$script;
-    }
-
-    private function setScript($producao = false)
-    {
-        self::$script = 'https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js';
-
-        if($producao == true)
-        {
-            self::$script = 'https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js';
-        }
-        
-    }
-
-    public function texte()
-    {
-        try {
-            Transaction::startTransaction('connection');
-            $this->setMenu();
-            $this->setFooter();
-            
-            $this->render('produtos/detalhes', true);
-            Transaction::close();
-        } catch (\Exception $e) {
-            Transaction::rollback();
-            var_dump($e);
-            
-        }
-    }
+    /*curl -X POST \
+  'https://ws.pagseguro.uol.com.br/v2/checkout?email=email@email.com&token=token' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'email=email%40email.com&token=token&currency=BRL&itemId1=001&itemDescription1=Item%201&itemAmount1=169.90&itemQuantity1=1&reference=124665c23f7896adff508377925&senderName=Natalie%20Green&senderAreaCode=51&senderPhone=988888888&senderEmail=emaildocomprador@pagseguro.com.br&shippingAddressRequired=true&extraAmount=0.00*/
 
 }

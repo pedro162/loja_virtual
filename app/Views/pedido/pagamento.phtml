@@ -1,0 +1,70 @@
+<div class="container-fluid">
+	<div class="row" style="width: 80%; margin:auto;">
+		<div class="col-md-12"  style="padding: 20px 40px;">
+			<div class="row">
+				<div class="col alert alert-success h2" align="center">
+					Pedido finalizado com sucesso!
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<table class="table table-hover" id="tableProdutos">
+					    <thead>
+					      <tr>
+					        <th>Produto</th>
+					        <th style="text-align:center;">Quantidade</th>
+					        <th style="text-align:right;">Valor unitário</th>
+					        <th style="text-align:right;">Sub total R$</th>
+					      </tr>
+					    </thead>
+					    <tbody>
+					    	<?php 
+					    		$totGeralPed = 0;
+
+								for ($i=0; !($i == count($this->view->allProducts)); $i++) { 
+									$produto = $this->view->allProducts[$i]['produto'];
+									$qtdProd = $this->view->allProducts[$i]['qtd'];
+
+									$preco = $produto->getVlVenda();
+									$subtot = $preco * $qtdProd;
+
+									$totGeralPed += $subtot;
+								
+							?>
+								<tr>
+									<td><?=$produto->getProdutoNome();?></td>
+									<td style="text-align:center;"><?=$qtdProd?></td>
+									<td style="text-align:right;"><?=number_format($preco, 2, ',', '.')?></td>
+									<td style="text-align:right;"><?=number_format($subtot, 2, ',', '.')?></td>
+								</tr>
+
+							<?php 
+								}
+							?>
+					    </tbody>
+					 </table>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="col alert alert-warning" align="right">
+					<p><strong>Total:  R$ <?=number_format($totGeralPed, 2, ',', '.')?></strong></p>
+					<p><strong>Frete:  R$ 0,00</strong></p>
+					<p><strong>Total do pedido: R$ <?=number_format($totGeralPed, 2, ',', '.')?></strong></p>
+				</div>
+			</div>
+			<div class="row mt-3">
+				<div class="col-sm-12 col-md-12" align="center">
+					<div class="row">
+						<div class="col"><h2>Formas de pagamento</h2></div>
+					</div>
+					<div class="row my-3">
+						<div class="col"><button class="btn btn-success" style="width: 300px;">Pague com o Pagseguro</button></div>
+					</div>
+					<div class="row">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

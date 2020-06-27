@@ -517,6 +517,54 @@ class PedidoController extends BaseController
         }
     }
 
+
+    public function pedidoPagar()
+    {
+        try {
+
+            Transaction::startTransaction('connection');
+
+            //inicia a cessao para o carrinho de compras
+            if(!isset(Sessoes::sessionReturnElements()['produto'])){
+                Sessoes::sessionInit();
+            }
+            
+            $carrinho = Sessoes::sessionReturnElements()['produto'];
+
+
+            $allProducts = [];
+
+            $categorias = [];
+
+            $fornecimento = new Fornecimento();
+            if(count($carrinho) > 0){
+            
+                for ($i=0; !($i == count($carrinho)); $i++) { 
+
+                    $product =  $fornecimento->loadFornecimentoForIdProduto((int)$carrinho[$i][0] , true);
+                    $allProducts[] = ['produto'=>$product, 'qtd'=> $carrinho[$i][1]];
+
+                    if(!in_array($product->getIdCategoria(),  $categorias)){
+                        $categorias[] = $product->getIdCategoria();
+                    }
+
+                }
+            }
+
+            
+            $this->view->allProducts = $allProducts;
+            $this->render('/pedido/pagamento', false);
+
+            Transaction::close();
+        } catch (\Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
+    }
+
     public function calcFrete($request)
     {
         try {

@@ -733,5 +733,23 @@ function foramtCalcCod(number)
 
  })
 
+  //-------------------------- CHAMA A VIEW DE PAGAMENTO ------------------------
+  $('body').delegate('#formCarr #finalizarPedido', 'click', function(e){
+  e.preventDefault();
+  let url = $(this).attr('href');
+
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'HTML',
+    success: function(retorno){
+      $('#containerLoja').html(retorno);
+      $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+      $(window).scrollTop('0')//posiciona o scroll no top
+    }
+  })
+
+ })
+
 
 })

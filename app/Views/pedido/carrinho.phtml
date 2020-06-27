@@ -1,6 +1,10 @@
 <div class="container-fluid">
 	<div class="row" style="width: 80%; margin:auto;">
 		<div class="col-md-12"  style="padding: 20px 40px;">
+			<?php
+				if(isset($this->view->allProducts) && (count($this->view->allProducts) > 0)){
+
+			?>
 			<div class="row">
 				<form method="post" class="was-validated col-md-12" action="/produto/atualizar" enctype="multipart/form-data" id="formCarr">
 					
@@ -10,29 +14,37 @@
 							<hr>
 							</div>
 						</div>
-						<?php
-							if(isset($this->view->allProducts) && (count($this->view->allProducts) > 0)){
-
-						?>
-
 							<div class="row">
 						<?php
+								$totGeralPed = 0;
 								for ($i=0; !($i == count($this->view->allProducts)) ; $i++) { 
 									$produto = $this->view->allProducts[$i]['produto'];
 									$qtdProd = $this->view->allProducts[$i]['qtd'];
-									
+
+									$preco = $produto->getVlVenda();
+									$subtot = $preco * $qtdProd;
+
+									$totGeralPed += $subtot;
 									
 						?>
 								<div class="col-sm-6 col-xs-12 col-md-2">
 									<div class="row">
 										<div class="col-sm-12" align="left">
-											<span class="h5" style="color:#9400D3;"><?=$produto->getProdutoNome()?></span>
+											<span class="h5" style="color:#9400D3; font-size: 14px;"><?=$produto->getProdutoNome()?></span>
 										</div>
 									</div>
 									<div class="row mt-2">
 										<div class="col-sm-4">
 											<img style="width: 200px; height: 200px;" class="card-img-top a-img-product" src="../files/imagens/<?=$produto->getUrl()?>"  alt="<?=$produto->getUrl();?>">
 												
+										</div>
+									</div>
+									<div class="row my-2">
+										<div class="col">
+											<?php
+												$precoFormat = explode(',', number_format($subtot, 2, ',','.'));	 
+											?>
+											<span style="color: #9400D3;">Subtotal: </span><sup>R$ </sup><?=$precoFormat[0]?><sup> <?=$precoFormat[1]?></sup>
 										</div>
 									</div>
 									<div class="row my-2" style="margin: auto;">
@@ -56,36 +68,8 @@
 								?>
 							</div>
 							
-						<?php
-							}else{
-						?>
-							
-							<div class="row">
-								<div class="col">
-									<h2 align="center"> Adicione itens ao carrinho...</h2>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-									<br/>
-								</div>
-							</div>
-						<?php	
-							}
-						?>
+							<a id="finalizarPedido" href="/pedido/pagamento" class="btn btn-primary mr-2">Finalizar compra</a><span style="color: #9400D3;">Total geral: </span><span><?=number_format($totGeralPed, 2, ',', '.')?></span>
+						
 					</fieldset>
 
 				</form>
@@ -146,6 +130,36 @@
 					}
 				?>
 			</div>
+			<?php
+				}else{
+			?>
+				
+				<div class="row">
+					<div class="col">
+						<h2 align="center"> Adicione itens ao carrinho...</h2>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+					</div>
+				</div>
+			<?php	
+				}
+			?>
 		</div>
 	</div>
 </div>

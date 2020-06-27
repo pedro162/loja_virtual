@@ -18,7 +18,7 @@ class LogradouroPessoa extends BaseModel
     private $data = [];
 
 
-    protected function clear(array $dados)//Exite ao instanciar uma nova chamada de url $request['post'], $request['get']
+    protected function clear(array $dados)
     {
         //falta implementar corretamente
         if(!isset($dados)){

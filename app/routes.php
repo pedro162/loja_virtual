@@ -47,6 +47,7 @@ $routes[] = ['/pedido/save/pedido', 'PedidoController@savePedido'];
 $routes[] = ['/pedido/produto/detalhes', 'PedidoController@detalhesOfProduto'];
 $routes[] = ['/pedido/produto/frete', 'PedidoController@calcFrete'];
 $routes[] = ['/pedido/produto/vermais', 'PedidoController@viewMore'];
+$routes[] = ['/pedido/pagamento', 'PedidoController@pedidoPagar'];
 
 $routes[] = ['/usuario/index', 'UserController@index'];
 $routes[] = ['/usuario/login', 'UserController@loginAdmin'];

@@ -69,6 +69,7 @@ class HomeController extends BaseController
 
             $arrProdIndexCat = [];
             $arrCaegId = [];
+            $cateOfProds = [];
             for ($i=0; !($i == count($categoriaFornecimento) ); $i++) { 
                 
                 foreach ($arrCategProducts as $key => $value) {
@@ -82,8 +83,20 @@ class HomeController extends BaseController
                             $arrCaegId[$categoriaFornecimento[$i]->getNomeCategoria()] = $idCateg;
 
                             $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][] = $key;
+
+                            //aciona as categorias num array para gerar o grid
+                            if(! in_array($categoriaFornecimento[$i]->getNomeCategoria(), $cateOfProds)){
+
+                                $cateOfProds[] = $categoriaFornecimento[$i]->getNomeCategoria();
+                            }
                         }else{
                             $arrProdIndexCat[$categoriaFornecimento[$i]->getNomeCategoria()][] = $key;
+
+                            //aciona as categorias num array para gerar o grid
+                            if(! in_array($categoriaFornecimento[$i]->getNomeCategoria(), $cateOfProds)){
+
+                                $cateOfProds[] = $categoriaFornecimento[$i]->getNomeCategoria();
+                            }
                         }
                     }   
                  } 
@@ -91,9 +104,7 @@ class HomeController extends BaseController
 
                 
             }
-
             
-
             //grid
             $grid = [4,2,4,1];
 
@@ -104,7 +115,7 @@ class HomeController extends BaseController
             }
 
             //determina a quantidade de interaçoes
-            $qtdGrid = intval(count($categoriaFornecimento) /$soma);
+            $qtdGrid = intval(count($cateOfProds) /$soma);
 
             $indiceCategoria = 0;
             $sentinela = 0;
@@ -122,11 +133,11 @@ class HomeController extends BaseController
                     
                     while (!(count($subArrCateg) == $coluna)) {
 
-                        $key = rand(0,count($categoriaFornecimento));
-                       if(array_key_exists($key, $categoriaFornecimento)){
+                        $key = rand(0,count($cateOfProds));
+                       if(array_key_exists($key, $cateOfProds)){
 
                             if(!in_array($key, $historic)){
-                               $subArrCateg[] = $categoriaFornecimento[$key]->getNomeCategoria();
+                               $subArrCateg[] = $cateOfProds[$key];
                                 $historic[] = $key; 
                             }
                             
