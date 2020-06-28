@@ -14,7 +14,8 @@ use App\Models\Marca;
 use App\Models\Fornecimento;
 use App\Models\Imagem;
 use App\Models\Estrela;
-
+use \Core\Utilitarios\Sessoes;
+use \App\Models\Usuario;
 
 class ProdutoController extends BaseController
 {
@@ -293,6 +294,9 @@ class ProdutoController extends BaseController
         
             Transaction::startTransaction('connection');
 
+            Sessoes::sessionInit();//inicia a sessao
+            $usuario = Sessoes::usuarioLoad('user_admin');
+
             if(!isset($request['post'])){
                 throw new \Exception("Preencha o formulario corretament\n");
                 
@@ -333,6 +337,8 @@ class ProdutoController extends BaseController
 
 
             $produto = new Produto();
+
+            $produto->setUsuarioIdUsuario($usuario->getIdUsuario());
             $resultPoduto = $produto->save($request['post']);
 
             if($resultPoduto != false){
@@ -355,10 +361,8 @@ class ProdutoController extends BaseController
                     }
 
                     $newNameImg = $tipo.'-'.$nameImg;
-                    var_dump($newNameImg);
 
-
-                   if($tipo != null){
+                    if($tipo != null){
                         $fiile = new File($newNameImg, $value['size'], $value['tmp_name']);
 
                         $fiile->salvar('imagens', true);
@@ -515,6 +519,9 @@ class ProdutoController extends BaseController
         try{
 
             Transaction::startTransaction('connection');
+
+            Sessoes::sessionInit();//inicia a sessao
+            $usuario = Sessoes::usuarioLoad('user_admin');
 
             if((!isset($request['get']['cd'])) || (!isset($request['get']['pt']))){
                 throw new \Exception("Parâmetro inváldio");

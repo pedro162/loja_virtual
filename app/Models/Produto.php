@@ -14,6 +14,7 @@ use App\Models\Categoria;
 use App\Models\Imagem;
 use App\Models\Estrela;
 use App\Models\Cometario;
+use \App\Models\Usuario;
 
 class Produto extends BaseModel
 {
@@ -34,6 +35,12 @@ class Produto extends BaseModel
     private $imagemProduto;
     private $gostei;
     private $votos;
+    private $UsuarioIdUsuario;
+
+    private $altura;
+    private $largura;
+    private $comprimento;
+    private $cor;
 
     protected $data = []; //armazena chaves e valores filtrados por setters  para pessistencia no banco
 
@@ -53,33 +60,48 @@ class Produto extends BaseModel
            
             switch ($key) {
                 case 'nome':
-                   $this->setNomeProduto($value);
-                   break;
+                        $this->setNomeProduto($value);
+                    break;
                 case 'texto':
-                   $this->setTextoPromorcional($value);
-                   break;
+                        $this->setTextoPromorcional($value);
+                    break;
 
                 case 'marca':
-                    $idMarca = (int) $value;
-                   $this->setIdMarca($value);
-                   break;
+                        $idMarca = (int) $value;
+                        $this->setIdMarca($value);
+                    break;
 
                 case 'categoria':
 
-                    $idCategoria = (int) $value;
-                    $this->setIdCategoria('categ',$idCategoria);
-                break;
+                        $idCategoria = (int) $value;
+                        $this->setIdCategoria('categ',$idCategoria);
+                    break;
                 case 'subCategoria':
 
-                    $idSubCategoria = (int) $value;
-                    $this->setIdCategoria('subCateg',$idSubCategoria);
-                break;
+                        $idSubCategoria = (int) $value;
+                        $this->setIdCategoria('subCateg',$idSubCategoria);
+                    break;
                 case 'prod':
-                    $this->setIdProduto($value);
-                break;
+                        $this->setIdProduto($value);
+                    break;
                 case 'img':
-                    $this->setImagemProduto($value);
-                break;
+                        $this->setImagemProduto($value);
+                    break;
+                case 'cor':
+                        $this->setCor($value);
+                    break;
+                case 'comprimento':
+                        $value = (float) $value;
+                        $this->setComprimento($value);
+                    break;
+                case 'largura':
+                        $value = (float) $value;
+                        $this->setLargura($value);
+                    break;
+                case 'altura':
+                        $value = (float) $value;
+                        $this->setAltura($value);
+                    break;
             }
 
         }
@@ -125,7 +147,7 @@ class Produto extends BaseModel
         foreach ($this->getImagemProduto() as $key => $value) {
 
             $imagem = new Imagem();
-            $dataImg = ['url'=>$value[1], 'produto'=>$idProdutoInserido, 'tipo' => $value[0], 'usuario'=>1];//prepara o array com dados para a classe de imagem
+            $dataImg = ['url'=>$value[1], 'produto'=>$idProdutoInserido, 'tipo' => $value[0], 'usuario'=>$this->getUsuarioIdUsuario()];//prepara o array com dados para a classe de imagem
             $resultImg = $imagem->save($dataImg);
 
             if($resultImg == false){
@@ -165,11 +187,11 @@ class Produto extends BaseModel
         $resultUpdate = $this->update($result, $this->getIdProduto());
 
          //prepara os dados para salvar a imagem do produto
-        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$this->getIdProduto(), 'usuario'=>1];//prepara o array com dados para a classe de imagem 
+        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$this->getIdProduto(), 'usuario'=>$this->getUsuarioIdUsuario()];//prepara o array com dados para a classe de imagem 
 
         $imagem = $this->getImagem()[0];
         $idImagem = $imagem->getIdImagem();
-        $dataImg = ['url'=>$this->getImagemProduto(), 'usuario'=>1];
+        $dataImg = ['url'=>$this->getImagemProduto(), 'usuario'=>$this->getUsuarioIdUsuario()];
         $resultImg = $imagem->modify($dataImg);
 
         $produtoCategoria = new ProdutoCategoria();
@@ -200,13 +222,138 @@ class Produto extends BaseModel
 
     }
 
-    public function setFornecedor(Int $id)
+    public function setUsuarioIdUsuario(Int $id)
+    {
+        if(isset($id) && ($id > 0)){
+            $this->data['UsuarioIdUsuario'] = $id;
+            return true;
+        }
+    }
+
+    public function getUsuarioIdUsuario()
+    {
+        if((!isset($this->UsuarioIdUsuario)) || ($this->UsuarioIdUsuario <= 0)){
+
+            if(isset($this->data['UsuarioIdUsuario']) && ($this->data['UsuarioIdUsuario'] > 0)){
+                return $this->data['UsuarioIdUsuario'];
+            }
+
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->UsuarioIdUsuario;
+    }
+
+
+    public function getCor():String
+    {
+        if((!isset($this->cor)) || (strlen($this->cor) == 0)){
+
+            if(isset($this->data['cor']) && (strlen($this->data['cor']) > 0)){
+                return $this->data['cor'];
+            }
+
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->cor;
+    }
+
+    public function setCor(String $cor):bool
+    {
+        if((!isset($cor)) || (strlen($cor) == 0)){
+
+            throw new Exception('Parâmetro invalido\n');
+        }
+
+        $this->data['cor'] = $cor;
+        return true;
+    }
+
+    public function getComprimento():float
+    {
+        if((!isset($this->comprimento)) || ($this->comprimento < 0)){
+
+            if(isset($this->data['comprimento']) && ($this->data['comprimento'] > 0)){
+                return $this->data['comprimento'];
+            }
+            throw new Exception('Propriedade inválida dd');
+        }
+
+        return $this->comprimento;
+    }
+
+    public function setComprimento(float $compr):bool
+    {
+        if((!isset($compr)) || ($compr <= 0)){
+
+            throw new Exception('Parâmetro invalido\n');
+        }
+
+        $this->data['comprimento'] = $compr;
+
+        return true;
+    }
+
+
+    public function getLargura():float
+    {
+        if((!isset($this->largura)) || ($this->largura < 0)){
+
+            if(isset($this->data['largura']) && ($this->data['largura'] > 0)){
+                return $this->data['largura'];
+            }
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->largura;
+    }
+
+    public function setLargura(float $larg):bool
+    {
+        if((!isset($larg)) || ($larg <= 0)){
+
+             throw new Exception('Parâmetro invalido\n');
+        }
+
+        $this->data['largura'] = $larg;
+
+        return true;
+    }
+
+
+    public function getAltura():float
+    {
+        if((!isset($this->altura)) || ($this->altura < 0)){
+
+            if(isset($this->data['altura']) && ($this->data['altura'] > 0)){
+                return $this->data['altura'];
+            }
+            throw new Exception('Propriedade inválida');
+        }
+
+        return $this->altura;
+    }
+
+    public function setAltura(float $alt):bool
+    {
+        if((!isset($alt)) || ($alt <= 0)){
+
+            throw new Exception('Propriedade inválida');
+        }
+
+        $this->data['altura'] = $alt;
+        return true;
+    }
+
+
+    public function setFornecedor(Int $id):bool
     {
         $fornecedor = new Fornecedor();
         $result = $fornecedor->select(['idFornecedor','nomeFornecedor'], ['idFornecedor'=>$id], '=','asc', null, null,true);
 
         $this->data['fornecedor'] = $result[0];
-
+        return true;
     }
 
 

@@ -333,7 +333,7 @@ class PedidoController extends BaseController
                 $totPedido = 0;
 
                 for ($i=0; !($i == count($detalhePedido)) ; $i++) { 
-                    $tot += (float)$detalhePedido[$i]->getPrecoUnitPratic();
+                    $totPedido += (float)$detalhePedido[$i]->getPrecoUnitPratic();
                 }
 
                 $totParcelas = 0;
@@ -358,9 +358,9 @@ class PedidoController extends BaseController
 
                 }
 
-
-                if(($totParcelas - $tot) > 0.002){
-                    throw new \Exception("Valor das parcelas não condiz com o valor do pedido\n".$pgto[1].' -> '.$tot);
+                //verificar o bug na diferença entre o total das parcelas e o total do pedido
+                if(abs($totParcelas - $totPedido) > 0.005){
+                    throw new \Exception("Valor das parcelas não condiz com o valor do pedido\n".$totParcelas.' -> '.$totPedido);
                     
                 }
 

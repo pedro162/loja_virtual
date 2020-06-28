@@ -25,7 +25,7 @@ class Pedido extends BaseModel
 
     private $qtdParcelas;
     private $PessoaIdPessoa;
-    private $UsuarioIdUsuario = 1;
+    private $UsuarioIdUsuario;
     private $dtPedido;
     private $dtEnvio;
     private $dtEntrega;

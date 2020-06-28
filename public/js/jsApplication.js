@@ -518,7 +518,7 @@ $('#myModal').delegate('#btnAddCob' ,'click', function(){
 
 
 
-  if(vlParcela > dif){
+  if(vlParcela > (dif + 0.005)){
     alert('Valor da parsela superior ao valor do pedido');
     error = true;
   }
@@ -637,7 +637,7 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
 
   let error = new Array();
 
-  if((totPedido - totCob) != 0){
+  if(Math.abs(totPedido - totCob) > 0.005){
     error.push('Adicone cobranças para a venda!');
   }
 
@@ -759,7 +759,7 @@ $('#dinamic').delegate(
   $('form#vendaPainel #idCod').val('');
 
   categ.autocomplete({
-  minLength: 2,
+  minLength: 1,
   source: function (request, response) {
       loadCategoria(categ ,request, response);
     },
@@ -1085,35 +1085,6 @@ $('#menuAdminHide').on('click', function(){
       getModal('<strong>Menu de opções</strong>', retorno);
     }
   })
-
-  /*let menu = [
-  
-  '/produto/all',
-  '/financeiro',
-  '/venda/logistica',
-  '/marca/cadastrar'
-    
-  ];
-
-  let icon = [
-      '<i class="fas fa-cubes fa-2x" ></i>',
-      '<i class="fas fa-coins fa-2x"></i>',
-      '<i class="fas fa-shipping-fast fa-2x"></i>',
-      '<i class="fas fa-box fa-2x"></i>'
-   ];
-
-  let texto =['<br/>Produto', '<br/>Financeiro', '<br/>Logistica'];
-
-
-  let rowOptions = $('<div/>').addClass('row').css('color', '#9400D3');
-
-  let lista = $('<ul/>').addClass('nav');
-  for (let i=0; !(i == menu.length); i++) {
-      lista.append($('<li/>').addClass('nav-item mb-5 mr-3').append($('<a/>').addClass('btn link').css('color', '#9400D3').append(icon[i]).append(texto[i]).attr('href', menu[i])));
-  }
-  let nav = $('<nav/>').addClass('navbar').append(lista);
-  rowOptions.append(nav).addClass('col-md-12');
-  getModal('<strong>Menu de opções</strong>', rowOptions);*/
 })
   
 //chama o modal e passa alguns parametros

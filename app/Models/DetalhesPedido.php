@@ -15,7 +15,7 @@ class DetalhesPedido extends BaseModel
     
     const TABLENAME = 'DetalhesPedido';
     const PERCENTDESC = 2;
-	const MARGEMERROR = 0.002;
+	const MARGEMERROR = 0.005;
     
 	private $PedidoIdPedido;
 	private $idDetalhesPedido;
@@ -116,11 +116,11 @@ class DetalhesPedido extends BaseModel
 		$preco = $Fornecimento->getVlVenda();
 		$descontoPermit = ($preco * (self::PERCENTDESC/100));
 
-		if($descontoPermit >= $desc){
+		if(abs($descontoPermit - $desc) <= self::MARGEMERROR){
 			$this->data['vlDescontoUnit'] = $desc;
 			return true;
 		}
-		throw new Exception('Desconto inválido/'.$descontoPermit.'/ para valor: '.abs($descontoPermit - $desc).' enviado '.$desc.PHP_EOL);
+		throw new Exception('Desconto inválido/'.$descontoPermit.'/ para valor: '.abs($descontoPermit - $desc).' enviado '.$desc.' -> margem '.self::MARGEMERROR.PHP_EOL);
 
 	}
 
@@ -281,7 +281,7 @@ class DetalhesPedido extends BaseModel
 	}
 
 
-	public function getPrecoUnitPratic()
+	public function getPrecoUnitPratic():float
 	{
 		if((!isset($this->precoUnitPratic)) || ($this->precoUnitPratic <= 0)){
 			if(isset($this->data['precoUnitPratic']) && ($this->data['precoUnitPratic'] >0)){
