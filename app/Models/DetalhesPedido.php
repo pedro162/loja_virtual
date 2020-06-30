@@ -107,7 +107,7 @@ class DetalhesPedido extends BaseModel
 			throw new Exception('Desconto inválido'.PHP_EOL);
 		}
 
-		if($desc == 0){
+		if(($desc == 0) || ($desc == 0.00)){
 			$this->data['vlDescontoUnit'] = $desc;
 			return true;
 		}

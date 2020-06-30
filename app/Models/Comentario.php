@@ -239,6 +239,17 @@ class Comentario extends BaseModel
 
         return $result;
     }
+
+    /*//consulta para buscar comentarios e respostas..
+        SELECT C.id_comentario, C.comentario, C.id_projeto,(
+            SELECT COUNT(responseId) FROM `comentario` WHERE 
+            C.id_comentario = responseId
+        )as tot_response
+        FROM comentario as C
+        GROUP BY C.id_comentario
+    
+    */
+
     public function listarConsultaPersonalizada(String $where = null, Int $limitInt = NULL, Int $limtEnd = NULL, $clasRetorno = false)
     {
 

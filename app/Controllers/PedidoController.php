@@ -288,10 +288,10 @@ class PedidoController extends BaseController
 
             $pedido = new Pedido();
             $detalhesPedido = new DetalhesPedido();
-            $fornecimento = new Fornecimento();
+            //$fornecimento = new Fornecimento();
 
             
-            $arrEstoque = [];
+            //$arrEstoque = [];
             for ($i=0, $dados = $request['post']['pedidoPanelVenda']; !($i == count($dados)) ; $i++) { 
 
                 $item = explode(',', $dados[$i]);
@@ -316,7 +316,7 @@ class PedidoController extends BaseController
                 $pedido->addItem($detalhesPedido);
             
             }
-            $pedido->setQtdParcelas(1);
+            //$pedido->setQtdParcelas(1);
             $pedido->setCliente((int)$request['post']['cliente']);
             $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
             $pedido->setUsuarioIdUsuario($usuario->getIdUsuario());
@@ -383,6 +383,125 @@ class PedidoController extends BaseController
         
     }
 
+    public function savePedidoLoja()
+    {
+        try {
+
+            Transaction::startTransaction('connection');
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            if(!array_key_exists('produto', Sessoes::sessionReturnElements())){
+
+                throw new Exception("Não existem produtos no carrinho\n");
+                
+            }
+
+            if(!array_key_exists('usuario', Sessoes::sessionReturnElements())){
+
+                throw new Exception("Usuario não definido\n");
+                
+            }
+
+            $pedido = new Pedido();
+            $detalhesPedido = new DetalhesPedido();
+            $fornecimento = new Fornecimento();
+
+            $logradouroPessoa = new LogradouroPessoa();
+            $logradouro = $logradouroPessoa->findLogPessoa(1, true);//ajustar o id do logradouro
+
+
+            $produtos = Sessoes::sessionReturnElements()['produto'];
+            $cliente = Sessoes::usuarioLoad('usuario')->findPessoa(Sessoes::usuarioLoad('usuario')->getIdPessoa());
+            echo "<pre>\n";
+            var_dump($produtos);
+            echo "</pre>\n";
+
+            for ($i=0; !($i == count($produtos)) ; $i++) { 
+
+                $item = (int)$produtos[$i][0];
+                $qtd = $produtos[$i][1];
+
+                $estoque = new Fornecimento();
+                $result = $estoque->listarConsultaPersonalizada('F.ativo = 1 and (F.qtdFornecida - F.qtdVendida > 0) and P.idProduto = '.$item, NULL, NULL, true);
+
+                
+                $detalhesPedido = new DetalhesPedido();
+
+                $resultQtd       = $detalhesPedido->setQtd($result[0], $qtd);
+                $resultVab       = $detalhesPedido->setValBruto($result[0], $result[0]->getVlVenda());
+                $resultDesCunit  = $detalhesPedido->setVlDescontoUnit($result[0], 0);
+                $resultTotDesc   = $detalhesPedido->setTotalDesconto(0);
+                $resultPrecoUnit = $detalhesPedido->setPrecoUnitPratic((float)$result[0]->getVlVenda());
+                $resultEstoqueId = $detalhesPedido->setIdEstoque((int)$result[0]->getIdFornecimento());
+
+                $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario($cliente->getIdPessoa());
+
+                $resultFornec    = $detalhesPedido->setFornecimentoIdFornecimento($result[0]->getIdFornecimento());
+
+                $pedido->addItem($detalhesPedido);
+            
+            }
+            //$pedido->setQtdParcelas(1);
+            $pedido->setCliente((int)$cliente->getIdPessoa());
+            $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
+            $pedido->setUsuarioIdUsuario($cliente->getIdPessoa());
+            $pedido->setTipo(1);
+
+            $result = $pedido->save([]);
+            if($result){
+
+                //busca os detalhes do pedido gravado
+                $pedidoNow = $pedido->getPedidoForId((int)$pedido->maxId());
+                $detalhePedido = $pedidoNow->getDetalhesPedido();
+
+                //recupera o total do pedido
+                $totPedido = 0;
+
+                for ($i=0; !($i == count($detalhePedido)) ; $i++) { 
+                    $totPedido += (float)$detalhePedido[$i]->getPrecoUnitPratic();
+                }
+
+                
+                $formPgto = new FormPgto();
+                $result = $formPgto->findFormPgtoForTipo('CCR');//ajustar o id da forma de pagamento
+                $idFormPgto = (int)$result->getIdFormPgto();
+                echo "okk";
+                $pedidoPgto = new PedidoFormPgto();
+                $pedidoPgto->setFormPgtoIdFormPgto($idFormPgto);
+                $pedidoPgto->setPedidoIdPedido($pedido->maxId());
+                $pedidoPgto->setQtdParcelas(1);//ajustar para a quantidade de parcelas do cliente
+                $pedidoPgto->setUsuarioIdUsuario($cliente->getIdPessoa());
+
+                $pedidoPgto->setVlParcela($totPedido / $pedidoPgto->getQtdParcelas());//ajustar o calculo da parcela 
+               
+                $pedidoPgto->save([]);
+
+                /*
+
+                verificar o bug na diferença entre o total das parcelas e o total do pedido
+                if(abs($totParcelas - $totPedido) > 0.005){
+                    throw new \Exception("Valor das parcelas não condiz com o valor do pedido\n".$totParcelas.' -> '.$totPedido);
+                    
+                }*/
+            }
+
+            echo "<pre>\n";
+            var_dump($getItensPedidoInListArr);
+            echo "</pre>\n";
+
+
+            Transaction::close();
+
+        } catch (\Exception $e) {
+            
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
+    }
 
 
      public function detalhesOfProduto($request)

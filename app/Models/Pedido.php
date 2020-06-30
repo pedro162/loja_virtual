@@ -125,8 +125,9 @@ class Pedido extends BaseModel
 			$this->data['tipo'] = 'orcamento';
 		}else if($tipo == 2){
 			$this->data['tipo'] = 'prevenda';
+		}else if($tipo == 3){
+			$this->data['tipo'] = 'venda';
 		}
-		
 	}
 
 	public function setUsuarioIdUsuario(Int $id)
@@ -288,6 +289,38 @@ class Pedido extends BaseModel
 
 	}
 	
+	public function getItensPedidoInListArr(aray $idPedido, $clasRetorno = false)
+	{
+		if(count($idPedido) == 0){
+			throw new Exception("Parãmetro inválido\n");
+			
+		}
+
+		for ($i=0; !($i == count($in)) ; $i++) { 
+
+			if(!is_integer($in[$i])){
+				throw new Exception("Parãmetro com valor inválido\n");
+				
+			}
+		}
+
+		$in = implode(',', $idProduto);
+
+		$sql = "SELECT P.nomeProduto, P.idProduto, DT.qtd, DT.precoUnitPratic, DT.vlDescontoUnit, DT.dataHoraPedido, DT.FornecimentoIdFornecimento
+				FROM DetalhesPedido as DT INNER JOIN Fornecimento as F on F.idFornecimento = DT.FornecimentoIdFornecimento
+				INNER JOIN Produto as P on P.idProduto = F.ProdutoIdProduto
+				INNER join Pedido as PD on PD.idPedido = DT.PedidoIdPedido
+				WHERE PD.idPedido in ({$in})";
+
+		$result = $this->persolizaConsulta($sql, $clasRetorno);
+	    if($result != false){
+	        return $result;
+	    }
+	     throw new Exception("Erro ao carregar itens.\n");
+
+	}
+	
+
 	public function __get($prop)
     {
         if(method_exists($this, 'get'.ucfirst($prop))){

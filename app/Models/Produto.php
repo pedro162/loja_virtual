@@ -148,6 +148,7 @@ class Produto extends BaseModel
 
             $imagem = new Imagem();
             $dataImg = ['url'=>$value[1], 'produto'=>$idProdutoInserido, 'tipo' => $value[0], 'usuario'=>$this->getUsuarioIdUsuario()];//prepara o array com dados para a classe de imagem
+
             $resultImg = $imagem->save($dataImg);
 
             if($resultImg == false){

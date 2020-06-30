@@ -120,7 +120,7 @@ class Pessoa extends BaseModel
 
 	public function findPessoa(Int $id)
 	{
-		$result = $this->select(['idPessoa', 'nomePessoa', 'documento'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
+		$result = $this->select(['idPessoa', 'nomePessoa', 'nomeFantasia','documentoComplementar','tipo','documento'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
 		if($result){
 			return $result[0];
 		}
@@ -128,6 +128,8 @@ class Pessoa extends BaseModel
         
 
 	}
+
+
 
     public function getNomePessoa()
     {

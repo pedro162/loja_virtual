@@ -8,13 +8,13 @@ class PagSeguro
 {
     /* --------- PAGSEGURO ----------*/
     const EMAIL_PAGS = 'phedroclooney@gmail.com';
-    const TOKEN_PAGS = '5e73-b3af-483a-9e57-2302a14a40c815c453714f228ba4f41ce8ca69ff2c518a93-98e8-44d1-be50-8ed2d4cf6a55';
-    const URL_PAGS   = 'https://ws.sandbox.pagseguro.uol.com.br/v2/checkout/';
+    const TOKEN_PAGS = '**************************';
+    const URL_PAGS   = '***********************';
 
     /* --------- SANDBOX ----------*/
     const EMAIL_SANDB  = 'phedroclooney@gmail.com';
-    const TOKEN_SANDB  = 'FA3BCBA60FEF46D39C0BEC28A624542F';
-    const URL_SANDB    = 'https://ws.pagseguro.uol.com.br/v2/checkout/';
+    const TOKEN_SANDB  = '**************************';
+    const URL_SANDB    = '****************************';
 
     public function __construct()
     {

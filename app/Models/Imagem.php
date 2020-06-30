@@ -57,6 +57,9 @@ class Imagem extends BaseModel
                 case 'url':
                     $this->setUrl($value);
                 break;
+                case 'tipo':
+                    $this->setTipo($value);
+                break;
             }
 
         }
@@ -98,7 +101,17 @@ class Imagem extends BaseModel
         
     }
 
-    
+    public function setTipo(String $tipo)
+    {
+        $tipo = trim($tipo);
+
+        if(isset($tipo) && (strlen($tipo) > 0)){
+            $this->data['tipo'] = $tipo;
+            return true;
+            
+        }
+        throw new Exception('Parametro inválido<br/>'.PHP_EOL);
+    }
 
 
     public function getProdutoIdProduto()
@@ -162,15 +175,7 @@ class Imagem extends BaseModel
     	if(isset($id) && ($id > 0)){
     		$this->data['idUsuario'] = $id;
     		return true;
-        	/*$produto = new Produto();
-        	$result = $produto->select(['idProduto'], ['idProduto' => $id], '=','asc', null, null, true, false);
-
-        	if($result != false){
-        		$idProduto = $result[0]->getIdProduto();
-        		$this->data['ProdutoIdProduto'] = $idProduto;
-        		return true;
-        	}*/
-            
+        	           
         }
         throw new Exception('Parametro inválido<br/>'.PHP_EOL);
     }
