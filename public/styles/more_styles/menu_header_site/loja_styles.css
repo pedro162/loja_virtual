@@ -15,9 +15,8 @@ body{
     color: #000;
 }
 
-.bodyLojaVirtual section{
-    margin-top: 80px; z-index: 1;
-    color: #000;
+#bodyLojaVirtual{
+    background-color: #ddd;"
 }
 section{
     margin-top: 80px;
@@ -450,6 +449,33 @@ form .btn-danger:hover{
     font-weight: bolder;
     border:1px solid red;
 }
+
+
+
+
+#navPanelUser ul{
+    width: 100%;
+}
+#navPanelUser ul li{
+    margin: auto;
+}
+#navPanelUser ul li a{
+    padding: 5px;
+    text-decoration: none;
+    font-weight: bolder;
+}
+#navPanelUser ul li a:hover{
+    background-color: #fff;
+    color: #9400D3;
+}
+
+
+
+
+
+
+
+/*----------------------- VITRINE DA LOJA ----------------*/
 #vitrine-home .last-of-grid{
     width: 93.5rem; height: 16rem;
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use App\Models\Pedido;
 use \Exception;
 use \InvalidArgumentException;
 
@@ -77,6 +78,49 @@ class Pessoa extends BaseModel
     public function modify(array $dados)
     {
         
+    }
+
+    public function infoPedidoComplete()
+    {
+        $sql = "SELECT P.idPedido, P.dtPedido, P.frete, P.tipo, (
+            SELECT sum(D.precoUnitPratic * D.qtd) total from DetalhesPedido D 
+            where D.PedidoIdPedido = P.idPedido
+        )as total,
+            (
+                SELECT sum(D.vlDescontoUnit * D.qtd) total from DetalhesPedido D 
+                where D.PedidoIdPedido = P.idPedido
+            ) as totalDesconto,
+            (
+                SELECT nomePessoa FROM Pessoa WHERE idPessoa = U.PessoaIdPessoa 
+            )as vendedor
+        from Pedido P 
+
+        INNER join DetalhesPedido D on D.PedidoIdPedido = P.idPedido
+        INNER JOIN Usuario U on U.idUsuario = P.UsuarioIdUsuario
+        WHERE P.tipo = 'venda' and P.PessoaIdPessoa = ".$this->idPessoa;
+
+        $sql .= ' GROUP BY P.idPedido ORDER BY P.dtPedido DESC';
+
+        $result = $this->persolizaConsulta($sql);
+
+        return $result;
+    }
+
+    public function getPedido(String $tipo = 'venda')
+    {
+        if(!(isset($tipo) && (strlen($tipo) > 0))){
+
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
+
+        $pedido = new Pedido();
+
+        $result = $pedido->select(['idPedido', 'dtPedido','dtEnvio', 'dtEntrega',
+            'via', 'frete', 'LogradouroIdLogradouro'
+            ], ['PessoaIdPessoa' => $this->idPessoa, 'tipo' => $tipo], '=', 'desc', 0, 10, true, false);
+
+        return $result;
     }
 
     public function loadPessoa($dados, $classPessoa = true, $like = true)

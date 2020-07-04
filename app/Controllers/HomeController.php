@@ -18,7 +18,7 @@ class HomeController extends BaseController
     public function index()
     {
         try{
-
+            
             Transaction::startTransaction('connection');
 
             //inicia a cessao para o carrinho de compras
@@ -244,7 +244,18 @@ class HomeController extends BaseController
     {   
         try {
 
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             Transaction::startTransaction('connection');
+
             $fornecimento = new Fornecimento();
             $resultMonitEst = $fornecimento->monitoraEstoque();
 
@@ -267,7 +278,17 @@ class HomeController extends BaseController
     {
         try {
 
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             Transaction::startTransaction('connection');
+
             $fornecimento = new Fornecimento();
             $resultMonitEst = $fornecimento->monitoraEstoque();
 

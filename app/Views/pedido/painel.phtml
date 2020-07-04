@@ -1,5 +1,5 @@
 
-<div class="row">
+<div class="row" id="row-nav">
 	<div class="col-md-12">
 		<div class="container-fluid">
 			<div class="row">
@@ -12,31 +12,31 @@
 					<nav class="navbar navbar-expand-sm justify-content-center pt-2 pb-2 pl-2 pr-2" id="navPanelCliente">
 					  <ul class="navbar-nav" >
 					  	<li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Inico</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn link-panel-cliente" href="/pedido/painel?cliente=<?=$this->view->idCliente?>" id="panelPedidoInicio">Inico</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Pedidos</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn link-panel-cliente" href="/pessoa/pedidos?cliente=<?=$this->view->idCliente?>" id="panelPedidoPedidos">Pedidos</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Prevendas</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="/pessoa/prevendas?cliente=<?=$this->view->idCliente?>" id="panelPedidoPrevendas">Prevendas</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Orçamentos</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="/pessoa/orcamentos?cliente=<?=$this->view->idCliente?>" id="panelPedidoOrcamentos">Orçamentos</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Cadastro</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="/pessoa/cadastro?cliente=<?=$this->view->idCliente?>" id="panelPedidoCadastro">Cadastro</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Ultimas compras</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="/pessoa/compras?cliente=<?=$this->view->idCliente?>" id="panelPedidoUltCompras">Ultimas compras</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Nf's</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="/pessoa/nfs?cliente=<?=$this->view->idCliente?>"  id="panelPedidoNfs">Nf's</a>
 					    </li>
 					    <li class="nav-item" style="margin: auto;">
-					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="#">Info. financeiras</a>
+					      <a class="pt-2 pb-2 pl-2 pr-2 btn" href="/pessoa/financeiro?cliente=<?=$this->view->idCliente?>" id="panelPedidoInfoFinan">Info. financeiras</a>
 					    </li>
 					    <li class="nav-item dropdown" style="margin: auto;">
-					      <a class="dropdown-toggle link btn" href="#" id="navbardrop" data-toggle="dropdown">
+					      <a class="dropdown-toggle btn" href="#" id="navbardrop" data-toggle="dropdown">
 					        Dropdown link
 					      </a>
 					      <div class="dropdown-menu" herf="#navbardrop" >
@@ -52,7 +52,7 @@
 		</div>
 	</div>
 </div>
-<div class="row" style="padding: 20px 40px;">
+<div class="row" style="padding: 20px 40px;" id="pnPedidoCliente">
 	<div class="col-md-8" style="border-right: 2px solid #ccc">
 		<form method="post" class="was-validated" action="/venda/produto/search" enctype="multipart/form-data" id="vendaPainelTable">
 			<fieldset class=""><legend><strong>Pedido:</strong></legend>
@@ -157,7 +157,7 @@
 								<div class="row">
 									<div class="col-md-12">
 										<button id="idFilanizar" type="submit" class="btn btn-primary"  data-toggle="modal" data-target="#myModal">Finalizar</button>
-										<a href="/pedido/novo"class="btn btn-danger link">Cancelar</a>
+										<a href="/pedido/novo"class="btn btn-danger link" id="cancelPeidido">Cancelar</a>
 									</div>
 								</div>
 							</div>

@@ -20,11 +20,22 @@ use \App\Models\Usuario;
 class ProdutoController extends BaseController
 {
     const IMG = ['primaria', 'secundaria', 'ternaria','quatenaria'];
+
     public function show($request)
     {  
         try{
 
-            Transaction::startTransaction('connection');
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
+
+            Transaction::startTransaction('connection'); //arbre a conexao com o banco
 
             $pagina = 1;
             $itensPorPagina = 18;
@@ -72,6 +83,16 @@ class ProdutoController extends BaseController
     public function cadastrar()
     {
         try{
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             Transaction::startTransaction('connection');
 
             $categoria = new Categoria();
@@ -113,6 +134,15 @@ class ProdutoController extends BaseController
     public function all($request)
     {
         try{
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
 
             Transaction::startTransaction('connection');
 
@@ -186,8 +216,17 @@ class ProdutoController extends BaseController
     public function editarProduto($request)
     {   
 
-
         try{ 
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             Transaction::startTransaction('connection');
 
             if(!isset($request['get'], $request['get']['id'])){
@@ -241,6 +280,14 @@ class ProdutoController extends BaseController
     public function filtro($request)
     {
         try{
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
 
             Transaction::startTransaction('connection');
 
@@ -266,6 +313,15 @@ class ProdutoController extends BaseController
     {
         try {
 
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             Transaction::startTransaction('connection');
 
             $produto = new Produto();
@@ -290,12 +346,19 @@ class ProdutoController extends BaseController
     public function salvar($request)
     {
         try {
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             set_time_limit(0);
         
             Transaction::startTransaction('connection');
-
-            Sessoes::sessionInit();//inicia a sessao
-            $usuario = Sessoes::usuarioLoad('user_admin');
 
             if(!isset($request['post'])){
                 throw new \Exception("Preencha o formulario corretament\n");
@@ -391,6 +454,17 @@ class ProdutoController extends BaseController
     public function atualizar($request)
     {
         try{
+
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             set_time_limit(0);
             
             Transaction::startTransaction('connection');
@@ -488,6 +562,16 @@ class ProdutoController extends BaseController
     public function lancarEstoque()
     {
         try{
+
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
 
             Transaction::startTransaction('connection');
 

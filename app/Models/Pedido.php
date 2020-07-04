@@ -71,11 +71,16 @@ class Pedido extends BaseModel
 			
 			$idPedido = $this->maxId();
 
+			$ajustarEstoque = false;
+			if($this->getTipo() != 'orcamento'){
+				$ajustarEstoque  = true;
+			}
+
 			for ($i=0; !($i == count($this->loatItem()) ); $i++) {
 
 				$this->loatItem()[$i]->setPedidoIdPedido((int)$idPedido);
 
-				$result = $this->loatItem()[$i]->save([]); // salva os itens do pedido
+				$result = $this->loatItem()[$i]->save([], $ajustarEstoque); // salva os itens do pedido e ajusta o estoque
 				if($result == false){
 					throw new Exception("Erro ao salvar o pedido\n");
 				}
@@ -116,7 +121,7 @@ class Pedido extends BaseModel
 
 	public function setTipo(Int $tipo)
 	{
-		if((!isset($tipo)) || ($tipo < 1) || ($tipo > 2)){
+		if((!isset($tipo)) || ($tipo < 1) || ($tipo > 3)){
 			throw new Exception("Parâmetro inválido\n");
 			
 		}
@@ -128,6 +133,33 @@ class Pedido extends BaseModel
 		}else if($tipo == 3){
 			$this->data['tipo'] = 'venda';
 		}
+	}
+
+	public function getTipo()
+	{
+		if((! isset($this->tipo)) || (strlen($this->tipo) == 0)){
+			if(isset($this->data['tipo']) && (strlen($this->data['tipo']))){
+				return $this->data['tipo'];
+			}
+
+			throw new Exception("Propriedade não definida\n");
+		}
+
+		return $this->tipo;
+	}
+
+	public function getDtPedido()
+	{
+		if((! isset($this->dtPedido)) || (strlen($this->dtPedido) == 0)){
+			if(isset($this->data['dtPedido']) && (strlen($this->data['dtPedido']))){
+				return $this->data['dtPedido'];
+			}
+
+			throw new Exception("Propriedade não definida\n");
+		}
+
+		return $this->dtPedido;
+		
 	}
 
 	public function setUsuarioIdUsuario(Int $id)
@@ -190,17 +222,17 @@ class Pedido extends BaseModel
 	}
 
 
-	public function getFormPgto()
+	public function getPedidoFormPgto()
 	{
 		$pedidoFormPgto = new PedidoFormPgto();
 		$result = $pedidoFormPgto->select(
 			['idPedidoFormPgto', 'PedidoIdPedido', 'FormPgtoIdFormPgto', 'qtdParcelas', 'vlParcela', 'dtOperacao']
-			, [$this->idPedido =>'PedidoIdPedido']
+			, ['PedidoIdPedido' =>$this->idPedido]
     		, '=', 'asc', null, null, true, false
 		);
 
 		if($result == false){
-    		throw new Exception("Erro ao carregar elemento");
+    		throw new Exception("Erro ao carregar elemento\n");
     		
     	}
     	return $result;

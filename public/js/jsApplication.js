@@ -138,6 +138,31 @@ $(document).ready(function(){
     })
   });
 
+//--------------------------------------- CONFIGURA OS LINKS DO PAINEL DE VENDA ----------------
+$('#dinamic').delegate('.link-panel-cliente', 'click', function(e){
+  e.preventDefault();
+  let element = $(this);
+
+  let url  = $(this).attr('href');
+
+  let subUrl = url.split('?')[0];
+  $.ajax({
+    type:'GET',
+    url:url,
+    dataType: 'HTML',
+    success: function(retorno){
+      if(subUrl == '/pedido/painel'){
+        $('#dinamic').html(retorno)
+      }else{
+
+        $('#dinamic #pnPedidoCliente').html(retorno)
+      }
+    }
+  })
+
+})
+
+
 
 
 //-------------------------------------- LOAD DINAMICO DE PRODUTOS PAINEL VENDA------------------------------
@@ -441,7 +466,7 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
 
   let idCob = Number($(this).attr('id'));
 
-  let contentor = $('<div/>').addClass('row');
+  let contentor = $('<form/>').addClass('row');
   let divDif = $('<div/>').addClass('col-md-4 col-sm-6');
   let divCob = $('<div/>').addClass('col-md-8 col-sm-6');
   
@@ -468,7 +493,7 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
   contentor.append(divCob)
 
   //cria os botoes de ação
-  let add = $('<button/>').addClass('btn btn-primary mr-2').attr('type', 'button').html($('<strong>').text('Add'));
+  let add = $('<button/>').addClass('btn btn-primary mr-2').attr('type', 'submit').html($('<strong>').text('Add'));
   add.attr('id', 'btnAddCob');
 
   let cancel = $('<button/>').addClass('btn btn-danger').attr('type', 'button').html($('<strong>').text('Cancel'));
@@ -490,8 +515,9 @@ $('#dinamic').delegate('#vendaPainelTable .cob', 'click', function(){
 
 // ---------------------- ADICIONA NA SUB TABELA DO PEDIDO AS FORMAS DE PAGAMENTO CALCULADAS
 
-$('#myModal').delegate('#btnAddCob' ,'click', function(){
-  
+$('#myModal').delegate('#btnAddCob' ,'click', function(e){
+  e.preventDefault();
+
   let idCob = $('.modal-body').find('input[id=codCbo]').val();
 
   //calcula a diferena emtre o total do pedido e as cobrança já adicionadas
@@ -512,11 +538,11 @@ $('#myModal').delegate('#btnAddCob' ,'click', function(){
   //cria os botões de ação.
   let actionEdit = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-pencil-alt'));
   actionEdit.attr('data-target', '#myModal');
+  actionEdit.addClass('update btn');
 
-  let actionDelet = $('<a/>').attr('data-target', '#myModal').append($('<i/>').addClass('fas fa-trash-alt'));
-  actionDelet.attr('data-target', '#myModal');
-
-
+  let actionDelet = $('<a/>').append($('<i/>').addClass('fas fa-trash-alt'));
+  actionDelet.addClass('remove btn btn-danger ml-1');
+  actionDelet.attr('href', '#')
 
   if(vlParcela > (dif + 0.005)){
     alert('Valor da parsela superior ao valor do pedido');
@@ -527,14 +553,30 @@ $('#myModal').delegate('#btnAddCob' ,'click', function(){
 
   tr.append($('<td/>').text(formatMoney(vlParcela)).css('aligin', 'left'))
   tr.append($('<td/>').text(qtdParcela).css('aligin', 'center'))
-  tr.append($('<td/>').text('edit / excl'))
+  tr.append($('<td/>').append(actionEdit).append(actionDelet))
 
   if(error != true){
     $('#vendaPainel').find('#mgCob').remove();
     $('#cobranca tbody').prepend(tr);
+
+    $('#closeModal').trigger('click');//fecha o modal
   }
 
 })
+
+  //----------------- REMOVE A COBRANÇA ADICIONADA AO PEDIDO DE VENDA ----------------------
+  $('body').delegate('table#cobranca tbody tr td a.remove', 'click', function(e){
+    e.preventDefault();
+    let element = $(this);
+
+    let cob = $(this).parents('tr').find('td:eq(0)').text();
+    let val = $(this).parents('tr').find('td:eq(1)').text();
+
+    let response = confirm('Deseja realmente remover esta cobrança de valor: "'+cob+'" RS '+val);
+    if(response == true){
+      element.parents('tr').remove();
+    }
+  })
 
 //------------------- calcula o total das cobranças adicionadas
 function calcCbobAdd()
@@ -662,12 +704,11 @@ $('#dinamic').delegate('form#vendaPainelTable', 'submit', function(event){
              message(retorno);
              return false;
           }else{
+            
             getModal('', '');
-          
-            $('#dinamic').html('').removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
-            $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
 
             getModal('', retorno);
+            $('#dinamic #vendaPainelTable #cancelPeidido').trigger('click');
           }
           
         }
@@ -1175,7 +1216,7 @@ $('#menuAdminHide').on('click', function(){
   })
 
 //-----------------------------Botoes da paginaçao da tabela paginacao da tabela de produtos ---------------------------/
-$('#dinamic').delegate('ul li a', 'click', function(event){
+$('#dinamic').delegate('#container-table-produtos ul li a', 'click', function(event){
   event.preventDefault();
   let url = $(this).attr('href');
   
@@ -1215,9 +1256,6 @@ $("#dinamic").delegate('#tableProdutos tbody a', 'click', function(event){
   })
   
 })
-
-
-
 
 
 //---------------------------------------------Ctia o formulario de castro de produtos ---------------------------------------------------

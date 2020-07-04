@@ -16,6 +16,7 @@ use \App\Models\ProdutoCategoria;
 use \App\Models\Comentario;
 use \App\Models\FormPgto;
 use \App\Models\PedidoFormPgto;
+use \App\Models\ContaPagarReceber;
 use \Core\Utilitarios\Utils;
 use Core\Utilitarios\Sessoes;
 use \Exception;
@@ -27,18 +28,25 @@ class PedidoController extends BaseController
 
     public function painel($request)
     { 
+        
         try {
             Transaction::startTransaction('connection');
 
-            if(!isset($request['post'], $request['post']['cliente'])){
-            throw new \Exception("Propriedade indefinida<br/>");
+            $idCliente = null;
+
+            if(isset($request['post']['cliente']) && (!empty($request['post']['cliente']))){
+
+                $idCliente = (int) explode('=', $request['post']['cliente'][0])[1];
             
+            }elseif(isset($request['get']['cliente']) && (!empty($request['get']['cliente']))){
+                $idCliente = (int) $request['get']['cliente'];
             }
-            if(empty($request['post']['cliente'])){
+
+            if($idCliente == null){
+
                 throw new \Exception("Propriedade indefinida<br/>");
                 
             }
-            $idCliente = (int) explode('=', $request['post']['cliente'][0])[1];
 
             $pessoa = new Pessoa();
             $resultSelect = $pessoa->findPessoa($idCliente);
@@ -51,7 +59,7 @@ class PedidoController extends BaseController
 
                 if($resultLogPessoa){
                     $this->view->resultLogPessoa = $resultLogPessoa;
-
+                    $this->view->idCliente = $idCliente;
                     $this->render('pedido/painel', false);
                 }else{
                     var_dump('Dados pendentes no cadastro do cliente');
@@ -256,7 +264,6 @@ class PedidoController extends BaseController
      */
     public function savePedido($request)
     {
-        
         try {
 
             Transaction::startTransaction('connection');
@@ -288,10 +295,7 @@ class PedidoController extends BaseController
 
             $pedido = new Pedido();
             $detalhesPedido = new DetalhesPedido();
-            //$fornecimento = new Fornecimento();
 
-            
-            //$arrEstoque = [];
             for ($i=0, $dados = $request['post']['pedidoPanelVenda']; !($i == count($dados)) ; $i++) { 
 
                 $item = explode(',', $dados[$i]);
@@ -316,7 +320,7 @@ class PedidoController extends BaseController
                 $pedido->addItem($detalhesPedido);
             
             }
-            //$pedido->setQtdParcelas(1);
+
             $pedido->setCliente((int)$request['post']['cliente']);
             $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
             $pedido->setUsuarioIdUsuario($usuario->getIdUsuario());
@@ -333,7 +337,7 @@ class PedidoController extends BaseController
                 $totPedido = 0;
 
                 for ($i=0; !($i == count($detalhePedido)) ; $i++) { 
-                    $totPedido += (float)$detalhePedido[$i]->getPrecoUnitPratic();
+                    $totPedido += (float) $detalhePedido[$i]->getPrecoUnitPratic() * $detalhePedido[$i]->getQtd();
                 }
 
                 $totParcelas = 0;
@@ -413,9 +417,6 @@ class PedidoController extends BaseController
 
             $produtos = Sessoes::sessionReturnElements()['produto'];
             $cliente = Sessoes::usuarioLoad('usuario')->findPessoa(Sessoes::usuarioLoad('usuario')->getIdPessoa());
-            echo "<pre>\n";
-            var_dump($produtos);
-            echo "</pre>\n";
 
             for ($i=0; !($i == count($produtos)) ; $i++) { 
 
@@ -435,18 +436,19 @@ class PedidoController extends BaseController
                 $resultPrecoUnit = $detalhesPedido->setPrecoUnitPratic((float)$result[0]->getVlVenda());
                 $resultEstoqueId = $detalhesPedido->setIdEstoque((int)$result[0]->getIdFornecimento());
 
-                $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario($cliente->getIdPessoa());
+                //configura o uruario da operação a própria loja virtual
+                $resultUsuario   = $detalhesPedido->setUsuarioIdUsuario(1);
 
                 $resultFornec    = $detalhesPedido->setFornecimentoIdFornecimento($result[0]->getIdFornecimento());
 
                 $pedido->addItem($detalhesPedido);
             
             }
-            //$pedido->setQtdParcelas(1);
+
             $pedido->setCliente((int)$cliente->getIdPessoa());
             $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
             $pedido->setUsuarioIdUsuario($cliente->getIdPessoa());
-            $pedido->setTipo(1);
+            $pedido->setTipo(1); //tipo 3 configura uma venda
 
             $result = $pedido->save([]);
             if($result){
@@ -459,36 +461,70 @@ class PedidoController extends BaseController
                 $totPedido = 0;
 
                 for ($i=0; !($i == count($detalhePedido)) ; $i++) { 
-                    $totPedido += (float)$detalhePedido[$i]->getPrecoUnitPratic();
+                    $totPedido += (float)$detalhePedido[$i]->getPrecoUnitPratic() * $detalhePedido[$i]->getQtd();
                 }
 
                 
                 $formPgto = new FormPgto();
-                $result = $formPgto->findFormPgtoForTipo('CCR');//ajustar o id da forma de pagamento
+                $result = $formPgto->findFormPgtoForTipo('CCR');
                 $idFormPgto = (int)$result->getIdFormPgto();
-                echo "okk";
+                
                 $pedidoPgto = new PedidoFormPgto();
                 $pedidoPgto->setFormPgtoIdFormPgto($idFormPgto);
                 $pedidoPgto->setPedidoIdPedido($pedido->maxId());
-                $pedidoPgto->setQtdParcelas(1);//ajustar para a quantidade de parcelas do cliente
-                $pedidoPgto->setUsuarioIdUsuario($cliente->getIdPessoa());
+                $pedidoPgto->setQtdParcelas(3);//ajustar para a quantidade de parcelas do cliente
 
-                $pedidoPgto->setVlParcela($totPedido / $pedidoPgto->getQtdParcelas());//ajustar o calculo da parcela 
+                //configura o uruario da operação a própria loja virtual
+                $pedidoPgto->setUsuarioIdUsuario(1);
+
+                $pedidoPgto->setVlParcela($totPedido / $pedidoPgto->getQtdParcelas());//ajustar o calculo da parcela correto
                
-                $pedidoPgto->save([]);
+                $result = $pedidoPgto->save([]);
 
-                /*
-
-                verificar o bug na diferença entre o total das parcelas e o total do pedido
-                if(abs($totParcelas - $totPedido) > 0.005){
-                    throw new \Exception("Valor das parcelas não condiz com o valor do pedido\n".$totParcelas.' -> '.$totPedido);
+                if($result){
                     
-                }*/
+                    $formPgto = $pedidoNow->getPedidoFormPgto();
+
+                    for ($i=0; !($i == count($formPgto) ); $i++) { 
+
+                        $qtdParcelas = $formPgto[$i]->getQtdParcelas();
+
+                        for ($j=0; !($j == $qtdParcelas) ; $j++) {
+
+                            $dtVenc = new \DateTime();
+                            $dtVenc->modify('+'.($j+1).' month');
+
+                            $contPgtoReceb = new ContaPagarReceber();
+                            $contPgtoReceb->setPedFormPgtoIdPedFormPgto($formPgto[$i]->getIdPedidoFormPgto());
+
+                            $contPgtoReceb->setPcDescontoJuros(0);
+                            $contPgtoReceb->setDescricao('pgto venda lojavirtual');
+                            $contPgtoReceb->setTipo('entrada');
+                            $contPgtoReceb->setDtVencimento($dtVenc->format('Y-m-d'));
+
+                            //configura o caixa da operação o da própria loja virtual
+                            $contPgtoReceb->setCaixaIdCaixa(3);
+
+                            //configura o uruario da operação a própria loja virtual
+                            $contPgtoReceb->setUsuarioIdUsuario(1);
+                            $result = $contPgtoReceb->save([]);
+
+                            if($result == false){
+                                throw new Exception("Erro ao de processamento\n");
+                                
+                            }
+
+                            $this->view->result = json_encode(['msg','success','Pagametno realizado com sucesso!']);
+                            $this->render('pedido/ajax', false);
+                        }
+
+                    }
+
+
+                }
             }
 
-            echo "<pre>\n";
-            var_dump($getItensPedidoInListArr);
-            echo "</pre>\n";
+            
 
 
             Transaction::close();

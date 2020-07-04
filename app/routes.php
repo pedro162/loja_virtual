@@ -50,8 +50,17 @@ $routes[] = ['/pedido/produto/vermais', 'PedidoController@viewMore'];
 $routes[] = ['/pedido/pagamento', 'PedidoController@pedidoPagar'];
 $routes[] = ['/pedido/save/loja', 'PedidoController@savePedidoLoja'];
 
+$routes[] = ['/pessoa/prevendas', 'PessoaController@prevendas'];
+$routes[] = ['/pessoa/pedidos', 'PessoaController@pedidos'];
+$routes[] = ['/pessoa/orcamentos', 'PessoaController@orcamentos'];
+$routes[] = ['/pessoa/cadastro', 'PessoaController@cadastro'];
+$routes[] = ['/pessoa/compras', 'PessoaController@compras'];
+$routes[] = ['/pessoa/nfs', 'PessoaController@nfs'];
+
 $routes[] = ['/usuario/index', 'UserController@index'];
 $routes[] = ['/usuario/login', 'UserController@loginAdmin'];
+
+$routes[] = ['/loja/painel', 'LojaController@painel'];
 
 //$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
 //$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];

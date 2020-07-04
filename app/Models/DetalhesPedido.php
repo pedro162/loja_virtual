@@ -68,26 +68,32 @@ class DetalhesPedido extends BaseModel
 
         }
     }
-    public function save(array $dados)//falta implementar corretamente
+    public function save(array $dados, $orcamento = false)
     {
 
         $result = $this->parseCommit();
 
         $resultInsert = $this->insert($result);
 
-        $fornecimento = new Fornecimento();
-        $idForn = $this->getFornecimentoIdFornecimento();
+        //se for orçamento, não faz o update na quantidade vendida
+        if($orcamento != false){
 
-        $resultFindForn = $fornecimento->findFornecimentoForId((int)$idForn);
+	        $fornecimento = new Fornecimento();
+	        $idForn = $this->getFornecimentoIdFornecimento();
 
-        $saldoEstoque = (int)$resultFindForn->getQtdFornecida() - (int)$resultFindForn->getQtdVendida() ;
+	        $resultFindForn = $fornecimento->findFornecimentoForId((int)$idForn);
 
-        if($saldoEstoque < (int)$this->getQtd()){
-        	throw new Exception("Estoque insuficiente para o produto \"{$resultFindForn->getProdutoNome()}\"");
-        	
+	        $saldoEstoque = (int)$resultFindForn->getQtdFornecida() - (int)$resultFindForn->getQtdVendida() ;
+
+	        if($saldoEstoque < (int)$this->getQtd()){
+	        	throw new Exception("Estoque insuficiente para o produto \"{$resultFindForn->getProdutoNome()}\"");
+	        	
+	        }
+
+	        $resultFindForn->modify(['qtdVend='.((int)$resultFindForn->getQtdVendida() + $this->getQtd())]);
+
+
         }
-
-        $resultFindForn->modify(['qtdVend='.((int)$resultFindForn->getQtdVendida() + $this->getQtd())]);
 
         if($resultInsert == true){
             return true;
@@ -99,6 +105,22 @@ class DetalhesPedido extends BaseModel
     public function modify(array $dados)
     {
         
+    }
+
+
+    public function exercicoAnual()
+    {
+    	$sql = 'SELECT year(dataHoraPedido) ano ,month(dataHoraPedido) mes,(
+					SELECT SUM(D.precoUnitPratic) FROM DetalhesPedido D 
+				    WHERE month(D.dataHoraPedido) = month(DT.dataHoraPedido)
+				    and year(D.dataHoraPedido) = year(DT.dataHoraPedido)
+				) totMes
+				from DetalhesPedido DT
+				group by ano, mes';
+
+		$restult = $this->persolizaConsulta($sql);
+
+    	return $restult;
     }
 
     public function setVlDescontoUnit(Fornecimento $Fornecimento,Float $desc)
@@ -116,11 +138,20 @@ class DetalhesPedido extends BaseModel
 		$preco = $Fornecimento->getVlVenda();
 		$descontoPermit = ($preco * (self::PERCENTDESC/100));
 
-		if(abs($descontoPermit - $desc) <= self::MARGEMERROR){
+		if($desc > $descontoPermit){
+			
+			if(abs($descontoPermit - $desc) <= self::MARGEMERROR){
+				$this->data['vlDescontoUnit'] = $desc;
+				return true;
+			}
+
+			throw new Exception('Desconto inválido/'.$descontoPermit.'/ para valor: '.abs($descontoPermit - $desc).' enviado '.$desc.' -> margem '.self::MARGEMERROR.PHP_EOL);
+		}else{
+
 			$this->data['vlDescontoUnit'] = $desc;
 			return true;
 		}
-		throw new Exception('Desconto inválido/'.$descontoPermit.'/ para valor: '.abs($descontoPermit - $desc).' enviado '.$desc.' -> margem '.self::MARGEMERROR.PHP_EOL);
+		
 
 	}
 
@@ -395,7 +426,7 @@ class DetalhesPedido extends BaseModel
     		['idPedido', 'PessoaIdPessoa', 'idUsuario',
     		 'dtPedido', 'dtEnvio', 'dtEntrega', 'via', 'frete',
     		 'nomeDestinatario', 'LogradouroIdLogradouro', 'tipo']
-    		, [$this->PedidoIdPedido =>'idPedido']
+    		, ['idPedido' => $this->PedidoIdPedido]
     		, '=', 'asc', null, null, true, false);
 
     	if($restult == false){
@@ -414,7 +445,7 @@ class DetalhesPedido extends BaseModel
     		['idFornecimento', 'ProdutoIdProduto', 'nf',
     		 'FornecedorIdFornecedor', 'dtFornecimento', 'dtRecebimento', 'dtValidade', 'dtInsert',
     		 'qtdFornecida', 'qtdVendida', 'vlCompra', 'vlVenda', 'ativo', 'UsuarioIdUsuario']
-    		, [$this->FornecimentoIdFornecimento =>'idFornecimento']
+    		, ['idFornecimento' => $this->FornecimentoIdFornecimento]
     		, '=', 'asc', null, null, true, false);
 
     	if($restult == false){

@@ -8,7 +8,7 @@ use \Core\Database\Transaction;
 
 class PagarController extends BaseController
 {
-    public function pagar()
+    public function pagar($request)
     {
         $dados = [];
         $dados['email'] = 'email@test.com.br';
@@ -27,9 +27,9 @@ class PagarController extends BaseController
         $dados['extraAmount'] = '0.00';
 
         $pgSeg = new PagSeguro();
-        $pgSeg->obterAltorizacao($dados, false);
-
-        $this->render('pagamentos/pagamento', true);
+        //$pgSeg->obterAltorizacao($dados, false);
+        $this->view->result = json_encode($pgSeg->getSession());
+        $this->render('pagamentos/ajax', true);
     }
 
     public function finesh()
@@ -38,9 +38,5 @@ class PagarController extends BaseController
         $this->render('pagamentos/sessaoPagseguro', false);
         
     }
-    /*curl -X POST \
-  'https://ws.pagseguro.uol.com.br/v2/checkout?email=email@email.com&token=token' \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -d 'email=email%40email.com&token=token&currency=BRL&itemId1=001&itemDescription1=Item%201&itemAmount1=169.90&itemQuantity1=1&reference=124665c23f7896adff508377925&senderName=Natalie%20Green&senderAreaCode=51&senderPhone=988888888&senderEmail=emaildocomprador@pagseguro.com.br&shippingAddressRequired=true&extraAmount=0.00*/
 
 }

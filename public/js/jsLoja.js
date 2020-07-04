@@ -78,8 +78,11 @@ $('body').delegate('#login', 'submit', function(event){
     success: function(retorno){
       if(Number(retorno[0] == 1)){
         $('#closeModal').trigger('click');//fecha o modal se estiver aberto
-        $('#listLog div').html($('<a/>').attr('href', '/home/login/logout').attr('id', 'sair').addClass('dropdown-item').text('Sair'))
+        $('#listLog div').html('');
+        $('#listLog div').append($('<a/>').attr('href', '/home/login/logout').attr('id', 'sair').addClass('dropdown-item').text('Sair'))
+        $('#listLog div').append($('<a/>').attr('href', '/loja/painel').attr('id', 'penelUser').addClass('dropdown-item').text('Minha Conta'))
         return true;
+
       }else{
 
         alert(retorno[2]);
@@ -92,6 +95,24 @@ $('body').delegate('#login', 'submit', function(event){
 
 
 });
+
+//---------------------------------- CHAMA O PAINEL DO USUARIO -----------------------------
+$('body').delegate('#menu-principal #penelUser', 'click', function(e){
+  e.preventDefault();
+
+  let url  = $(this).attr('href');
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'HTML',
+    success: function(retorno){
+      $('#containerLoja').html(retorno);
+      $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+    }
+  })
+})
+  
+
 //------------------------ EFEITOS DA ESTRELA DE NIVEL DO PRODUTO ------------------
 $('body').delegate('.star', 'mouseover', function(){
   let indice = $(this).index();
@@ -750,6 +771,39 @@ function foramtCalcCod(number)
   })
 
  })
+
+
+  //-------------------------- REGISTRA O PAGAMENTO ------------------------
+  $('body').delegate('#container-pgto #pgSeguro', 'click', function(e){
+  e.preventDefault();
+  let url = $(this).attr('href');
+
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'json',
+    success: function(retorno){
+      if(retorno.length == 3){
+        alert(retorno[2])
+      }else{
+        console.log(retorno);
+      }
+    }
+  })
+
+ })
+  //---------------------------------- INICIANDO SESSAO DE PAGAMENTO PGSEGURO -----------------
+  function iniciaSessao()
+  {
+    $.ajax({
+      url: '/pagar/seguro',
+      type:'POST',
+      dataType: 'json',
+      success: function(retorno){
+        PagSeguroDirectPayment.setSessionId(retorno.id);
+      }
+    })
+  }
 
 
 })

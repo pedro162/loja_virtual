@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use App\Models\Pedido;
 use App\Models\FormPgto;
+use App\Models\ContaPagarReceber;
 use \Exception;
 
 /**
@@ -77,6 +78,24 @@ class PedidoFormPgto extends BaseModel
 		return true;
 	}
 
+	public function getContaPagarReceber()
+	{
+		$contReceber = new ContaPagarReceber();
+
+		$restult = $contReceber->select(
+    		['idContaReceber', 'codBarrTitulo', 'PedFormPgtoIdPedFormPgto',
+    		 'dtVencimento', 'dtPagamento', 'descricao', 'pcDescontoJuros', 'UsuarioIdUsuario',
+    		 'CaixaIdCaixa', 'LogradouroIdLogradouro', 'tipo', 'status', 'dtOperacao']
+    		, ['PedFormPgtoIdPedFormPgto' =>$this->idPedidoFormPgto]
+    		, '=', 'asc', null, null, true, false);
+
+    	if($restult == false){
+    		throw new Exception("Erro ao carregar elemento");
+    		
+    	}
+    	return $restult;
+
+	}
 
 
 	public function setFormPgtoIdFormPgto(Int $id)
