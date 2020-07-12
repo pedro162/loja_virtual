@@ -8,6 +8,7 @@ $routes[] = ['/home/cadastro', 'HomeController@cadastro'];
 $routes[] = ['/home/admin', 'HomeController@painel'];
 $routes[] = ['/home/admin/inicio', 'HomeController@inicoPainel'];
 $routes[] = ['/home/menu', 'HomeController@menu'];
+$routes[] = ['/home/init', 'HomeController@init'];
 
 $routes[] = ['/produto/all', 'ProdutoController@all'];
 $routes[] = ['/produto/show', 'ProdutoController@show'];
@@ -38,6 +39,7 @@ $routes[] = ['/categoria/load', 'CategoriaController@loadCategoria'];
 
 $routes[] = ['/pedido/carrinho', 'PedidoController@addCarrinho'];
 $routes[] = ['/pedido/carrinho/finsh', 'PedidoController@fineshPedido'];
+$routes[] = ['/pedido/carrinho/remove', 'PedidoController@removeFromCarrinho'];
 $routes[] = ['/pedido/iniciar', 'PedidoController@iniciarCompra'];
 $routes[] = ['/pedido/novo', 'PedidoController@novo'];
 $routes[] = ['/pedido/painel', 'PedidoController@painel'];
@@ -60,12 +62,14 @@ $routes[] = ['/pessoa/nfs', 'PessoaController@nfs'];
 $routes[] = ['/usuario/index', 'UserController@index'];
 $routes[] = ['/usuario/login', 'UserController@loginAdmin'];
 
-$routes[] = ['/loja/painel', 'LojaController@painel'];
+$routes[] = ['/chate/init', 'ChateController@init'];
+$routes[] = ['/chate/send/mensage', 'ChateController@saveMessage'];
 
-//$routes[] = ['/financeriro/receber', 'VendaController@iniciarCompra'];
-//$routes[] = ['/financeriro/pagar', 'VendaController@iniciarCompra'];
+$routes[] = ['/loja/painel', 'LojaController@painel'];
 
 $routes[] = ['/pagar/seguro', 'PagarController@pagar'];
 $routes[] = ['/pagar/finesh', 'PagarController@finesh'];
+
+$routes[] = ['/pinpad/index', 'PinPadController@index'];
 
 return $routes;

@@ -62,6 +62,44 @@ class Sessoes
 		
 	}
 
+	public static function removeElement(Int $id)
+	{
+		if($id <= 0){
+			throw new \Exception("Parãmetro inválido\n");
+			
+		}
+		self::sessionInit();
+
+		$position = null;
+		if(array_key_exists('produto', $_SESSION)){
+
+			for ($i=0; !($i == count($_SESSION['produto']) ); $i++) { 
+				$has = $_SESSION['produto'][$i][0] == $id;
+
+				if($has ==true){
+
+					$position =  $i;
+					break ;
+				}
+			}
+		}
+
+		if($position != null){
+			unset($_SESSION['produto'][$position]);
+		}
+
+	}
+
+	public static function rezetCarrinho()
+	{
+		self::sessionInit();
+
+		if(array_key_exists('produto', $_SESSION)){
+			unset($_SESSION['produto']);
+			return true;
+		}
+	}
+
 	public static function usuarioInit($user, $key = 'usuario')
 	{
 		if(isset($user) && (!empty($user)) && (isset($key)) && (!empty($key))){

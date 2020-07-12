@@ -17,6 +17,9 @@ class UserController extends BaseController
 	public function index()
 	{
 		try {
+			
+			Sessoes::sessionEnde();
+
 			Transaction::startTransaction('connection');
 				
 			$this->render('usuario/index', false);

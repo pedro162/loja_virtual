@@ -107,22 +107,6 @@ class DetalhesPedido extends BaseModel
         
     }
 
-
-    public function exercicoAnual()
-    {
-    	$sql = 'SELECT year(dataHoraPedido) ano ,month(dataHoraPedido) mes,(
-					SELECT SUM(D.precoUnitPratic) FROM DetalhesPedido D 
-				    WHERE month(D.dataHoraPedido) = month(DT.dataHoraPedido)
-				    and year(D.dataHoraPedido) = year(DT.dataHoraPedido)
-				) totMes
-				from DetalhesPedido DT
-				group by ano, mes';
-
-		$restult = $this->persolizaConsulta($sql);
-
-    	return $restult;
-    }
-
     public function setVlDescontoUnit(Fornecimento $Fornecimento,Float $desc)
 	{
 		if($desc < 0){

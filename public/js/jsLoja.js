@@ -54,7 +54,7 @@ $('body').delegate('#entrar', 'click', function(event){
 
 //------------------ ENVIA O FORMULARIO DE LOGIN  --------------------
 
-$('body').delegate('#login', 'submit', function(event){
+/*$('body').delegate('#login', 'submit', function(event){
   event.preventDefault();
   let url = $(this).attr('action');
 
@@ -94,7 +94,7 @@ $('body').delegate('#login', 'submit', function(event){
 
 
 
-});
+});*/
 
 //---------------------------------- CHAMA O PAINEL DO USUARIO -----------------------------
 $('body').delegate('#menu-principal #penelUser', 'click', function(e){
@@ -684,6 +684,18 @@ function foramtCalcCod(number)
     
   })
 
+   //------------- RETIRA O ITEM DO CARRINHO -------------------
+  $('body').delegate('#formCarr .controller-delete', 'click', function(){
+    
+    
+    let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
+    
+    removeToCar(cd);
+    
+    $('body #carrinhoLink').trigger('click');
+    
+  })
+
   
 
 
@@ -698,8 +710,6 @@ function foramtCalcCod(number)
     if(remov !=false){
       url += '&rem=1';
     }
-
-    var result = null;
 
     $.ajax({
       url:url,
@@ -717,6 +727,33 @@ function foramtCalcCod(number)
       }
     })
   }
+
+  /*-------------------- ENVIA O ITEM E A QUANTIDADE PARA ADICIONAR AO CARRINHO --------*/
+  function removeToCar(cd)
+  {
+    if(cd <= 0){
+      return false;
+    }
+
+    let url = '/pedido/carrinho/remove?cd='+cd;
+
+    $.ajax({
+      url:url,
+      type:'GET',
+      dataType:'json',
+      success:function(retorno){
+
+        if(retorno.length == 1){
+          $('body').find('#qtdItensCarrinho').text(retorno[0]);
+          return true;
+        }else{
+          console.log(retorno);
+          return false;
+        }
+      }
+    })
+  }
+
 
   // --------------EXIBE A VIEW DE ITENS NO CARRINHO ----------
   $('body').delegate('#carrinhoLink', 'click', function(event){
@@ -776,7 +813,10 @@ function foramtCalcCod(number)
   //-------------------------- REGISTRA O PAGAMENTO ------------------------
   $('body').delegate('#container-pgto #pgSeguro', 'click', function(e){
   e.preventDefault();
+
+  let element = $(this);
   let url = $(this).attr('href');
+  $(this).hide();
 
   $.ajax({
     url: url,
@@ -784,9 +824,12 @@ function foramtCalcCod(number)
     dataType: 'json',
     success: function(retorno){
       if(retorno.length == 3){
-        alert(retorno[2])
+        $('body').find('#qtdItensCarrinho').text(0);
+        getModal('<strong>Atençao</strong>',retorno[2]);
+        element.parents('#form-pgto').remove();
       }else{
         console.log(retorno);
+        $(this).show();
       }
     }
   })
@@ -805,5 +848,87 @@ function foramtCalcCod(number)
     })
   }
 
+
+
+  //------------------------------- PAINEL CLIENTE --------------------------------------------
+  $('body').delegate('#navPanelUser #ultCompras', 'click', function(ev){
+    ev.preventDefault();
+
+      $.ajax({
+      url: '/pessoa/compras',
+      type:'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+    })
+  })
+
+  /*---------------------------CHAMA A VIEW DO CHATE ------------*/
+
+
+  $('body').delegate('#navPanelUser #chate', 'click', function(ev){
+    ev.preventDefault();
+
+    let url = $(this).attr('href');
+
+    $.ajax({
+      url: url,
+      type:'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+
+    })
+  });
+
+  /*----------------------------- ENVIA A MENSAGEM ---------------*/
+  $('body').delegate('#form-chat', 'submit', function(event){
+  event.preventDefault();
+
+
+
+    let formulario = $(this);
+
+    let url = $(this).attr('action');
+
+    let form = new FormData(formulario [0]);
+
+    if($(this).find('textarea').val().trim() == ''){
+      alert("Comentario inválido\n");
+      return false;
+    }else{
+
+      $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'HTML',
+        success:function(retorno){
+          if(retorno.length == 3){
+            alert(retorno[2]);
+          }else{
+            $('body #containerLoja #responseUser').scrollTop('100%')//posiciona o scroll no top
+            $('body #navPanelUser #chate').trigger('click'); 
+                       
+          }
+        }
+
+      });
+    }
+
+
+  
+
+  });
 
 })

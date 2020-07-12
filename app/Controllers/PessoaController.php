@@ -65,12 +65,41 @@ class PessoaController extends BaseController
     	}
     }
 
-    public function prevendas()
+    public function prevendas($request)
     {
     	try {
 
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
+            if((!isset($request['get']['cliente'])) || (empty($request['get']['cliente']))){
+
+                throw new Exception('Parâmetro inválido');
+                
+            }
+
+            //abre a conexao com o banco de dados
     		Transaction::startTransaction('connection');
 
+            $pessoa = new Pessoa();
+
+            $idPessoa = (int) $request['get']['cliente'];
+            $resultPessoa = $pessoa->findPessoa($idPessoa);
+
+            //busca todos os pedidos com status de venda
+            $tipo = 'prevenda';
+            $this->view->tipo = $tipo;
+            $this->view->pedidos = $resultPessoa->infoPedidoComplete([], $tipo);
+            $this->view->pessoa = $resultPessoa;
+            $this->render('pessoa/pedidos', false);
+
+            //fax o commit e fecha a conexao com o banco
     		Transaction::close();
     		
     	} catch (\Exception $e) {
@@ -81,21 +110,50 @@ class PessoaController extends BaseController
             $this->render('pessoa/ajax', false);
     	}
     }
-	public function orcamentos()
+	public function orcamentos($request)
     {
     	try {
 
-    		Transaction::startTransaction('connection');
+            Sessoes::sessionInit();//inicia a sessao
 
-    		Transaction::close();
-    		
-    	} catch (\Exception $e) {
-    		Transaction::rollback();
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
+            if((!isset($request['get']['cliente'])) || (empty($request['get']['cliente']))){
+
+                throw new Exception('Parâmetro inválido');
+                
+            }
+
+            //abre a conexao com o banco de dados
+            Transaction::startTransaction('connection');
+
+            $pessoa = new Pessoa();
+
+            $idPessoa = (int) $request['get']['cliente'];
+            $resultPessoa = $pessoa->findPessoa($idPessoa);
+
+            //busca todos os pedidos com status de venda
+            $tipo = 'orcamento';
+            $this->view->tipo = $tipo;
+            $this->view->pedidos = $resultPessoa->infoPedidoComplete([], $tipo);
+            $this->view->pessoa = $resultPessoa;
+            $this->render('pessoa/pedidos', false);
+
+            //fax o commit e fecha a conexao com o banco
+            Transaction::close();
+            
+        } catch (\Exception $e) {
+            Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
             $this->view->result = json_encode($erro);
             $this->render('pessoa/ajax', false);
-    	}
+        }
     }
 	public function cadastro()
     {
@@ -117,7 +175,20 @@ class PessoaController extends BaseController
     {
     	try {
 
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
     		Transaction::startTransaction('connection');
+
+            //busca todos os pedidos com status de venda
+            $this->view->pedidos = $usuario->infoPedidoComplete();
+            $this->view->pessoa = $usuario;
+
+            $this->render('pessoa/pedidos', false);
 
     		Transaction::close();
     		
@@ -129,6 +200,7 @@ class PessoaController extends BaseController
             $this->render('pessoa/ajax', false);
     	}
     }
+
 	public function nfs()
     {
     	try {
@@ -145,4 +217,7 @@ class PessoaController extends BaseController
             $this->render('pessoa/ajax', false);
     	}
     }
+
+    
+
 }

@@ -1201,6 +1201,12 @@ $('#menuAdminHide').on('click', function(){
                   $('#dinamic').html(retorno);
                 break;
 
+                case '/pinpad/index':
+                  $('#closeModal').trigger('click');
+                  $('#optionPlus').hide();//oculta o menu lateral direito se estiver visivel
+                  $('#dinamic').html(retorno).removeClass('col-md-9').addClass('col-md-12');//ajusta o painel
+                break;
+
 
               }
 
@@ -1214,6 +1220,24 @@ $('#menuAdminHide').on('click', function(){
 
 
   })
+
+// -------------- RETORNA OS ITENS DO ESTOQE COM PAGINAÇÃO.
+$('#dinamic').delegate('#nav-estoque ul li a.page-link', 'click', function(ev){
+  ev.preventDefault();
+
+  let url = $(this).attr('href');
+  $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'HTML',
+          success: function(retorno){
+            $('#dinamic').html(retorno);
+          }
+
+        });
+
+
+})
 
 //-----------------------------Botoes da paginaçao da tabela paginacao da tabela de produtos ---------------------------/
 $('#dinamic').delegate('#container-table-produtos ul li a', 'click', function(event){

@@ -1,0 +1,84 @@
+<div class="row" style="">
+	<div class="col-sm-8 col-md-8 py-4" style="box-shadow: 2px 2px 4px #9400D3; border-radius: 4px; height: 25rem; overflow-y: scroll;background: #fff;">
+		<?php
+			if((!isset($this->view->conversation)) || (!is_array($this->view->conversation))){
+
+		?>
+			<div class="row">
+				<div class="col-ms-12 col-md-12 alert alert-warning">
+					<h4>Não existem mensagens ainda...</h4>
+				</div>
+			</div>
+		<?php
+
+
+			}else{
+
+				for ($i=0; !($i == count($this->view->conversation)) ; $i++) { 
+					
+		?>
+			<div class="row">
+				<?php
+					if($this->view->conversation[$i]->sender == $this->view->usuario->getIdPessoa()){
+
+				?>
+					<div class="col-sm-12 col-md-12 px-4 mt-1" align="right">
+						<div class="row" align="right" style="">
+							<div class="col">
+								<p style="text-align: left;max-width: 30%; background-color: #00BFFF;padding: 6px; color: #fff; border-radius: 12px;">
+									<?= $this->view->conversation[$i]->textChat;?>
+								</p>
+							</div>
+							<div class="col-sm-1">
+								<img class="rounded-circle"  style="width: 50px; height: 50px;" src="../files/imagens/perfil/<?= $this->view->usuario->getImg();?>" align="imagem do usuario"/>
+							</div>
+						</div>
+					</div>
+				<?php
+					}else{
+				?>
+					<div class="col-sm-12 col-md-12 px-4 mt-1" align="left">
+						<div class="row">
+							<div class="col-sm-1">
+								<img class="rounded-circle"  style="width: 50px; height: 50px;" src="../files/imagens/perfil/avatar.png" align="imagem do usuario"/>
+							</div>
+							<div class="col">
+								<p style="text-align: left;max-width: 30%; background-color: #ccc;padding: 6px; color: #000; border-radius: 12px;">
+									<?= $this->view->conversation[$i]->textChat;?>
+								</p>
+							</div>
+						</div>
+					</div>
+				<?php
+					}
+				?>
+			</div>
+
+		<?php 
+				}
+			}
+		?>
+	</div>
+	<div class="col-sm-4 col-md-4">
+		<form action="/chate/send/mensage" method="post" class="" id="form-chat">
+			<div class="row">
+				<div class="col form-group">
+					<input type="hidden" name="reciever" value="<?=$this->view->conversation[$i]->reciever ?? 1?>">
+					<textarea name='msg' class="form-control" style="border-radius: 4px;box-shadow: 2px 2px 4px #9400D3; " cols="" rows="3" placeholder="Digite sua mensagem aqui!"></textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col form-group ">
+					<button class="btn btn-light" type="button">e</button>
+				</div>
+				<div class="col">
+					<input type="file" name="file" class="form-control">
+				</div>
+				<div class="col">
+					<button class="btn btn-success" type="submit">Enviar</button>
+				</div>
+			</div>	
+		</form>
+	</div>
+</div>
+

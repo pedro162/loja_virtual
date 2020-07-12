@@ -17,6 +17,7 @@ class Estrela extends BaseModel
 	private $dtEstrela;
 	private $ProdutoIdProduto;
 	private $numEstrela;
+    private $UsuarioIdUsuario;
 
     protected function parseCommit()
     {
@@ -47,6 +48,9 @@ class Estrela extends BaseModel
                    break;
                 case 'estrela':
                    $this->setNumEstrela((int)$value);
+                   break;
+                case 'user':
+                   $this->setUsuarioIdUsuario((int)$value);
                    break;
                 
             }
@@ -153,5 +157,18 @@ class Estrela extends BaseModel
 
     	return (int)$this->ProdutoIdProduto;
  	}
+
+    public function setUsuarioIdUsuario(Int $id)
+    {
+        if(!isset($id) || ($id <= 0)){
+
+            throw new Exception("Parâmetro inválido\n");
+            
+        }
+
+        $this->data['UsuarioIdUsuario'] = $id;
+
+        return true;
+    }
 
 }

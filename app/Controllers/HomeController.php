@@ -26,6 +26,13 @@ class HomeController extends BaseController
                 Sessoes::sessionInit();
             }
 
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
             $carrinho = Sessoes::sessionReturnElements()['produto'];
             $qtdItens = 0;
             for ($i=0; !($i == count($carrinho)) ; $i++) { 
@@ -153,8 +160,6 @@ class HomeController extends BaseController
                 $sentinela ++;
             }
 
-            $usuario = Sessoes::usuarioLoad();
-
             $this->view->usuario            = $usuario;
             $this->view->categorias         = $supArrayCategorias;
             $this->view->arrProdIndexCat    = $arrProdIndexCat;
@@ -193,6 +198,25 @@ class HomeController extends BaseController
         }
         
     }
+
+    public function init()
+    {
+        try {
+            
+            Sessoes::sessionEnde();
+
+            Transaction::startTransaction('connection');
+            
+            $this->render('home/loginInit', false);
+
+            Transaction::close();
+
+        } catch (Exception $e) {
+            
+            Transaction::rollback();
+        }
+        
+    }
     
     public function loginUser($request)
     {
@@ -208,8 +232,9 @@ class HomeController extends BaseController
 
             Sessoes::usuarioInit($result);
             
-            $this->view->result= json_encode([1]);
-            $this->render('home/ajax', false);
+            header('Location:/');
+            //$this->view->result= json_encode([1]);
+            //$this->render('home/ajax', false);
             Transaction::close();
 
         } catch (\Exception $e) {
@@ -228,7 +253,7 @@ class HomeController extends BaseController
     public function logoutUser()
     {
         if(Sessoes::sessionEnde()){
-            header('Location:/');
+            header('Location:/home/init');
         }
 
     }
@@ -243,7 +268,6 @@ class HomeController extends BaseController
     public function painel()
     {   
         try {
-
 
             Sessoes::sessionInit();//inicia a sessao
 

@@ -7,8 +7,20 @@
 
 	?>
 	<div class="row">
-		<div class="col">
-			<h3 class="text-warning">Pedidos: <?=$this->view->pessoa->getNomePessoa();?></h3>
+		<div class="col" align="left">
+			 <?php
+			 	$tipo = 'Pedidos';
+			 	if(isset($this->view->tipo) && ($this->view->tipo == 'prevenda')){
+			 		$tipo = 'Prevendas';
+			 	}elseif(isset($this->view->tipo) && ($this->view->tipo == 'orcamento')){
+			 		$tipo = 'Orçamentos';
+			 	}
+			 ?>
+
+			 <?php
+
+			 ?>
+			<h3 class="text-dark"><?=$tipo?>: <?=$this->view->pessoa->getNomePessoa();?></h3>
 		</div>
 	</div>
 	<div class="row">
@@ -16,8 +28,8 @@
 			<table class="table table-light table-hover">
 				<thead>
 					<tr>
-						<th>Nº Pedido</th>
-						<th>DT. Pedido</th>
+						<th>Nº</th>
+						<th>Data</th>
 						<th>Vendedor</th>
 						<th>VL. Frete</th>
 						<th>NF</th>
@@ -46,24 +58,7 @@
 					?>
 				</tbody>
 			</table>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
+			
 		</div>
 	</div>
 	<?php

@@ -54,7 +54,8 @@
 												<div class="row">
 													<span class="controller btn mr-1 rounded-circle">-</span>
 													<span type="text" style="width: 30%;" name="produto-<?=$produto->getProdutoIdProduto();?>" min="0" id='<?=$produto->getProdutoIdProduto();?>' class="form-control"><?=$qtdProd?></span>
-													<span class="rounded-circle controller btn mx-1" >+</span><button class="rounded-circle controller-delete btn" type="button">
+													<span class="rounded-circle controller btn mx-1" >+</span>
+													<button class="rounded-circle controller-delete btn" type="button" name="produto-<?=$produto->getProdutoIdProduto();?>">
 														<i class="fas fa-trash-alt"></i>
 													</button>
 												</div>
@@ -87,7 +88,7 @@
 			<div class="row">
 
 				<?php
-					if(isset($this->view->moreOptions) && (count($this->view->moreOptions) > 0)){
+					if(isset($this->view->moreOptions) && (is_array($this->view->moreOptions))){
 						for ($i=0; !($i == count($this->view->moreOptions) ); $i++) { 
 							
 

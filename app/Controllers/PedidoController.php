@@ -114,11 +114,7 @@ class PedidoController extends BaseController
 
             Sessoes::sessionAddElement($id, $qtd, $remove);
 
-            $carrinho = Sessoes::sessionReturnElements()['produto'];
-            $qtdItens = 0;
-            for ($i=0; !($i == count($carrinho)) ; $i++) { 
-                $qtdItens += (int) $carrinho[$i][1];
-            }
+            $qtdItens = $this->qtdIntensCar();
 
             $this->view->result = json_encode([$qtdItens]);
             $this->render('pedido/ajax', false);
@@ -133,6 +129,61 @@ class PedidoController extends BaseController
             $this->render('pedido/ajax', false);
         }
          
+    }
+
+    public function qtdIntensCar()
+    {
+        //busca o usuario logado
+        $usuario = Sessoes::usuarioLoad();
+        if($usuario == false){
+            header('Location:/home/init');
+            
+        }
+
+        $carrinho = Sessoes::sessionReturnElements()['produto'];
+        $qtdItens = 0;
+
+        if(is_array($carrinho)){
+
+            for ($i=0; !($i == count($carrinho)) ; $i++) {
+                if(in_array($carrinho[$i][1], $carrinho[$i])){
+
+                    $qtdItens += (int) $carrinho[$i][1];
+                }
+            }
+        }
+
+        return $qtdItens;
+    }
+
+    public function removeFromCarrinho($request)
+    {
+        try {
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            if((!isset($request['get']['cd'])) || ($request['get']['cd'] <= 0)){
+                throw new Exception("Parametro inválido");
+            }
+
+            Sessoes::removeElement((int)$request['get']['cd']);
+
+            $qtdItens = $this->qtdIntensCar();
+
+            $this->view->result = json_encode([$qtdItens]);
+            $this->render('pedido/ajax', false);
+            
+        } catch (\Exception $e) {
+            
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
     }
 
     public function fineshPedido()
@@ -153,15 +204,17 @@ class PedidoController extends BaseController
             $categorias = [];
 
             $fornecimento = new Fornecimento();
-            if(count($carrinho) > 0){
+            if((is_array($carrinho)) && (count($carrinho) > 0)){
             
                 for ($i=0; !($i == count($carrinho)); $i++) { 
 
-                    $product =  $fornecimento->loadFornecimentoForIdProduto((int)$carrinho[$i][0] , true);
-                    $allProducts[] = ['produto'=>$product, 'qtd'=> $carrinho[$i][1]];
+                    if(in_array($carrinho[$i][0], $carrinho[$i])){
+                        $product =  $fornecimento->loadFornecimentoForIdProduto((int)$carrinho[$i][0] , true);
+                        $allProducts[] = ['produto'=>$product, 'qtd'=> $carrinho[$i][1]];
 
-                    if(!in_array($product->getIdCategoria(),  $categorias)){
-                        $categorias[] = $product->getIdCategoria();
+                        if(!in_array($product->getIdCategoria(),  $categorias)){
+                            $categorias[] = $product->getIdCategoria();
+                        }
                     }
 
                 }
@@ -391,19 +444,18 @@ class PedidoController extends BaseController
     {
         try {
 
-            Transaction::startTransaction('connection');
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
 
-            Sessoes::sessionInit();//inicia a sessao
+            Transaction::startTransaction('connection');
 
             if(!array_key_exists('produto', Sessoes::sessionReturnElements())){
 
                 throw new Exception("Não existem produtos no carrinho\n");
-                
-            }
-
-            if(!array_key_exists('usuario', Sessoes::sessionReturnElements())){
-
-                throw new Exception("Usuario não definido\n");
                 
             }
 
@@ -416,7 +468,7 @@ class PedidoController extends BaseController
 
 
             $produtos = Sessoes::sessionReturnElements()['produto'];
-            $cliente = Sessoes::usuarioLoad('usuario')->findPessoa(Sessoes::usuarioLoad('usuario')->getIdPessoa());
+            $cliente = $usuario->findPessoa($usuario->getIdPessoa());
 
             for ($i=0; !($i == count($produtos)) ; $i++) { 
 
@@ -447,8 +499,10 @@ class PedidoController extends BaseController
 
             $pedido->setCliente((int)$cliente->getIdPessoa());
             $pedido->setLogradouroIdLogradouro((int)$logradouro[0]->getIdLogradouroPessoa());
-            $pedido->setUsuarioIdUsuario($cliente->getIdPessoa());
-            $pedido->setTipo(1); //tipo 3 configura uma venda
+
+            //configura o uruario da operação a própria loja virtual
+            $pedido->setUsuarioIdUsuario(1);
+            $pedido->setTipo(3); //tipo 3 configura uma venda
 
             $result = $pedido->save([]);
             if($result){
@@ -513,8 +567,39 @@ class PedidoController extends BaseController
                                 throw new Exception("Erro ao de processamento\n");
                                 
                             }
+                            
+                            Sessoes::rezetCarrinho();
 
-                            $this->view->result = json_encode(['msg','success','Pagametno realizado com sucesso!']);
+                            $img_response = 'files/imagens/response/response_success.png';
+                            $msg = "
+                                <div class='container'>
+                                    <div class='row'>
+                                        <div class='col-sm-12 col-md-12'>
+                                            <div class='row'>
+                                                <div class='col-sm-12 col-md-12 alert alert-success'>
+                                                    <h4>".ucwords($usuario->getNomePessoa()).", seu pagamento foi realizado com sucesso!</h4>
+                                                </div>
+                                            </div>
+                                            <div class='row'>
+                                                <div class='col-sm-12 col-md-12' align='center'>
+                                                    <img style='width: 50%;height:100%;' src=".$img_response."/>
+                                                </div>
+                                            </div>
+                                            <div class='row'>
+                                                <div class='col-sm-12 col-md-12 alert alert-warning mt-3'>
+                                                    <p>
+                                                        Você receberá um email com algumas informações adicionais.<br/>
+                                                        Fique avontade para entrar em contato através dos nossos canais: chate, email, whatsapp.<br/><br/>
+                                                        Obs: vefique sua caixa de spam caso não encontre na caixa de entrada.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ";
+
+                            $this->view->result = json_encode(['msg','Success:',$msg]);
                             $this->render('pedido/ajax', false);
                         }
 
@@ -543,6 +628,14 @@ class PedidoController extends BaseController
      public function detalhesOfProduto($request)
     {
         try {
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
             Transaction::startTransaction('connection');
             $this->setMenu();
             $this->setFooter();
@@ -609,7 +702,6 @@ class PedidoController extends BaseController
                 $media = 0;
             }
             
-            $usuario = Sessoes::usuarioLoad();//pega o usuario se estiver logado
 
             $this->view->usuario = $usuario;
             $this->view->percent = ($media * 20).'%';//determina a porcentagem da estrela de like
@@ -637,6 +729,15 @@ class PedidoController extends BaseController
     public function viewMore($request)
     {
         try {
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+
             Transaction::startTransaction('connection');
             $this->setMenu();
             $this->setFooter();
@@ -677,12 +778,21 @@ class PedidoController extends BaseController
     {
         try {
 
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+
             Transaction::startTransaction('connection');
 
             //inicia a cessao para o carrinho de compras
             if(!isset(Sessoes::sessionReturnElements()['produto'])){
                 Sessoes::sessionInit();
             }
+
             
             $carrinho = Sessoes::sessionReturnElements()['produto'];
 
@@ -723,6 +833,14 @@ class PedidoController extends BaseController
     public function calcFrete($request)
     {
         try {
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
 
             Transaction::startTransaction('connection');
             $this->setMenu();

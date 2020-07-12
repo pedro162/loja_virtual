@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use App\Models\Pedido;
+use App\Models\Chate;
+use App\Models\ConversaChate;
 use \Exception;
 use \InvalidArgumentException;
 
@@ -19,7 +21,7 @@ class Pessoa extends BaseModel
     private $nomeFantasia;
     private $documento;
     private $documentoComplementar;
-
+    private $img;
 
     protected function parseCommit()
     {
@@ -77,10 +79,10 @@ class Pessoa extends BaseModel
 
     public function modify(array $dados)
     {
-        
+
     }
 
-    public function infoPedidoComplete()
+    public function infoPedidoComplete(Array $where = [], String $tipo = 'venda', Int $init = 0, Int $end = 10)
     {
         $sql = "SELECT P.idPedido, P.dtPedido, P.frete, P.tipo, (
             SELECT sum(D.precoUnitPratic * D.qtd) total from DetalhesPedido D 
@@ -97,14 +99,35 @@ class Pessoa extends BaseModel
 
         INNER join DetalhesPedido D on D.PedidoIdPedido = P.idPedido
         INNER JOIN Usuario U on U.idUsuario = P.UsuarioIdUsuario
-        WHERE P.tipo = 'venda' and P.PessoaIdPessoa = ".$this->idPessoa;
+        WHERE P.tipo = '".$tipo."' and P.PessoaIdPessoa = ".$this->idPessoa;
 
-        $sql .= ' GROUP BY P.idPedido ORDER BY P.dtPedido DESC';
+        if((isset($where)) && (count($where) > 0)){
+            for ($i=0; !($i == count($where)); $i++) { 
+                if(is_array($where[$i]) && (count($where[$i]) > 0)){
+                    if(isset($where[$i]['key']) && isset($where[$i]['val']) && isset($where[$i]['operator']) && isset($where[$i]['comparator'])){
+                        $key        = trim($where[$i]['key']);
+                        $val        = trim($where[$i]['val']);
+                        $comparator   = trim($where[$i]['comparator']);
+                        $operator   = trim($where[$i]['operator']);
+
+                        if(!is_numeric($val)){
+                            $val = $this->satinizar($val);
+                        }
+
+                        $sql .= ' '.$operator.' '.$key.' '.$comparator.' '.$val;
+                    }
+                }
+            }
+            
+        }
+
+        $sql .= ' GROUP BY P.idPedido ORDER BY P.dtPedido DESC LIMIT '.$init.','.$end;
 
         $result = $this->persolizaConsulta($sql);
 
         return $result;
     }
+
 
     public function getPedido(String $tipo = 'venda')
     {
@@ -174,6 +197,13 @@ class Pessoa extends BaseModel
 	}
 
 
+    public function getConversation()
+    {
+        $conversation = new ConversaChate();
+        $result = $conversation->loadConversationForPersonId($this->idPessoa);
+        return $result;
+    }
+
 
     public function getNomePessoa()
     {
@@ -221,6 +251,19 @@ class Pessoa extends BaseModel
         }
 
         return $this->login;
+    }
+
+    public function getImg()
+    {
+        if((!isset($this->img)) || (strlen($this->img) ==0 )){
+            if(isset($this->data['img']) && (strlen($this->data['img']) > 0)){
+                return $this->data['img'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->img;
     }
 
     public function getDocumento()
@@ -292,7 +335,7 @@ class Pessoa extends BaseModel
         }
 
 
-        $result = $this->select(['idPessoa', 'nomePessoa', 'login', 'senha'], ['login' => $user], '=', 'asc', null, null, true, false);
+        $result = $this->select(['idPessoa', 'nomePessoa', 'login', 'senha', 'img'], ['login' => $user], '=', 'asc', null, null, true, false);
 
         if($result == false){
             throw new Exception("Usuario o senha inválidos\n");
@@ -307,6 +350,14 @@ class Pessoa extends BaseModel
         
     }
     
+
+    public function loadChate()
+    {
+        $chate = new Chate();
+        $result = $chate->getChateOfLucutor($this->idPessoa);
+
+        return $result;
+    }
 
     public function __get($prop)
     {

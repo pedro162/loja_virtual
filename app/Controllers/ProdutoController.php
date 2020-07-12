@@ -24,16 +24,14 @@ class ProdutoController extends BaseController
     public function show($request)
     {  
         try{
-
             Sessoes::sessionInit();//inicia a sessao
 
             //busca o usuario logado
-            $usuario = Sessoes::usuarioLoad('user_admin');
+            $usuario = Sessoes::usuarioLoad();
             if($usuario == false){
-                header('Location:/usuario/index');
+                header('Location:/home/init');
                 
             }
-
 
             Transaction::startTransaction('connection'); //arbre a conexao com o banco
 
@@ -57,6 +55,7 @@ class ProdutoController extends BaseController
             
             $this->view->fornecimento = $result; 
             
+            $this->view->usuario = $usuario;
             $this->view->pagina = $pagina;
             $this->view->itensPorPagina = $itensPorPagina;
             $this->view->totPaginas = ceil($totItens / $itensPorPagina);
@@ -602,10 +601,15 @@ class ProdutoController extends BaseController
     {
         try{
 
-            Transaction::startTransaction('connection');
-
             Sessoes::sessionInit();//inicia a sessao
-            $usuario = Sessoes::usuarioLoad('user_admin');
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            Transaction::startTransaction('connection');
 
             if((!isset($request['get']['cd'])) || (!isset($request['get']['pt']))){
                 throw new \Exception("Parâmetro inváldio");
@@ -634,7 +638,7 @@ class ProdutoController extends BaseController
             }
 
             $estrela = new Estrela();
-            $resultVoto = $estrela->save(['produto'=>(int) $id, 'estrela'=> (int)$pontos]);
+            $resultVoto = $estrela->save(['produto'=>(int) $id, 'estrela'=> (int)$pontos, 'user' => $usuario->getIdPessoa()]);
 
             if($resultVoto == true){
 
