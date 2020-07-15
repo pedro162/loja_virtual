@@ -49,6 +49,20 @@ $(document).ready(function(){
     
   })
 
+  /*---------------- MENU ADMIN MODAL --------------*/
+  $('body').delegate('#menu-modal nav ul.nav-pills li:first-child', 'click', function(ev){
+    ev.preventDefault();
+    let divOpt = $(this).parent().find('div');
+
+    divOpt.find('a').each(function(){
+      $(this).hover(function(){
+        $(this).addClass('active').css('color', '#fff')
+      }).mouseout(function(){
+        $(this).removeClass('active').css('color', '#000')
+      })
+    })
+  })
+
   //-------------- EXIBE OU ESCONDE A NAVEGAÇÃO DO PAINEL VENDA CLIENTE --------------
   $('#dinamic').delegate('#controlNavPanel', 'click', function(){
     let i = $(this).find('#ic');
@@ -1174,11 +1188,13 @@ $('#menuAdminHide').on('click', function(){
                 
                 case '/marca/cadastrar':
                   $('#closeModal').trigger('click');
-                  $('#dinamic').html(retorno);
+                  $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+                  $('#dinamic').html(retorno).removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
                 break;
                 case '/categoria/cadastrar':
                   $('#closeModal').trigger('click');
-                  $('#dinamic').html(retorno);
+                  $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+                  $('#dinamic').html(retorno).removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
                 break;
 
                 case '/pedido/novo':
@@ -1189,12 +1205,14 @@ $('#menuAdminHide').on('click', function(){
 
                 case '/estoque/lancar':
                   $('#closeModal').trigger('click');
-                  $('#dinamic').html(retorno);
+                  $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+                  $('#dinamic').html(retorno).removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
                 break;
 
                 case '/estoque/all':
                   $('#closeModal').trigger('click');
-                  $('#dinamic').html(retorno);
+                  $('#optionPlus').show();//exibe o menu lateral direito se estiver oculto
+                  $('#dinamic').html(retorno).removeClass('col-md-12').addClass('col-md-9');//ajusta o painel
                 break;
 
                 case '/produto/cadastrar':
@@ -1202,6 +1220,11 @@ $('#menuAdminHide').on('click', function(){
                 break;
 
                 case '/pinpad/index':
+                  $('#closeModal').trigger('click');
+                  $('#optionPlus').hide();//oculta o menu lateral direito se estiver visivel
+                  $('#dinamic').html(retorno).removeClass('col-md-9').addClass('col-md-12');//ajusta o painel
+                break;
+                case '/contas/painel':
                   $('#closeModal').trigger('click');
                   $('#optionPlus').hide();//oculta o menu lateral direito se estiver visivel
                   $('#dinamic').html(retorno).removeClass('col-md-9').addClass('col-md-12');//ajusta o painel

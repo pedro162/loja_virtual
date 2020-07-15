@@ -84,8 +84,15 @@ class Sessoes
 			}
 		}
 
-		if($position != null){
-			unset($_SESSION['produto'][$position]);
+		if($position !== null){
+
+			if((count($_SESSION['produto']) == 1) && ($position === 0)){
+				unset($_SESSION['produto']);
+			}else{
+				unset($_SESSION['produto'][$position]);
+				sort($_SESSION['produto']);
+			}
+			
 		}
 
 	}

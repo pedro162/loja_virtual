@@ -474,6 +474,24 @@ form input:hover, form label:hover{
 }
 
 /*---------------------- BARRA LATERAL DIREITA PAINEL ADMIN ---------------*/
+#optionPlus .card{
+    width: 80%;
+    margin: auto;
+    font-size: 12px;
+}
+#optionPlus .card-one{
+    background-color: #FF4500;
+}
+
+#optionPlus .card-two{
+    background-color: #DDD;
+
+}
+
+#optionPlus .card-three{
+    background-color: #00FA9A;
+}
+
 #optionPlus .card .card-header{
     border-radius: 20px 20px 0px 0px;
 }

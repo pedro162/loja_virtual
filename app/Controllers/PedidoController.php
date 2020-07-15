@@ -421,9 +421,8 @@ class PedidoController extends BaseController
                     
                 }
 
-                $this->view->dataCliente = $pedido->previewPedido($pedido->maxId(), false);
-                $this->view->dataItens = $pedido->getItensPedido($pedido->maxId(), false);
-                $this->render('pedido/pedido', false);
+                $this->printPedido($pedido->maxId());
+                
             }
 
 
@@ -438,6 +437,50 @@ class PedidoController extends BaseController
             $this->render('pedido/ajax', false);
         }
         
+    }
+
+    //monta a view do pedido completo
+    public function printPedido(Int $id)
+    {   
+        $pedido = new Pedido();
+        
+        $this->view->dataCliente = $pedido->previewPedido($id, false);
+        $this->view->dataItens = $pedido->getItensPedido($id, false);
+        $this->render('pedido/pedido', false);
+    }
+
+    public function viewPedidoLoja($request)
+    {
+
+        try {
+            
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            if((!isset($request['get']['cd'])) || ($request['get']['cd'] <= 0)){
+                throw new Exception("Parametro inválido");
+            }
+
+            Transaction::startTransaction('connection');
+
+            $pedido = new Pedido();
+            $resultPedido = $pedido->getPedidoForId((int) $request['get']['cd']);
+            $this->printPedido($resultPedido->getIdPedido());
+            Transaction::close();
+
+        } catch (\Exception $e) {
+            
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pedido/ajax', false);
+        }
+       
     }
 
     public function savePedidoLoja()

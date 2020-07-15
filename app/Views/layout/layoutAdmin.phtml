@@ -63,6 +63,11 @@
                   </button>
                 </li>
                 <li class ="nav-item">
+                  <button type="button" class="btn btnIcones"  data-toggle="tooltip" data-placement="right" title="Usuarios" id="btnUsers">
+                    <i class="fas fa-users fa-3x"></i>
+                  </button>
+                </li>
+                <li class ="nav-item">
                   <a href="/" target="_balck" class="btn btnIcones px-3"  data-toggle="tooltip" data-placement="right" title="Site">
                     <i class="fas fa-window-maximize fa-3x"></i>
                   </a>
@@ -95,12 +100,12 @@
 
                           ?>
                             <div class="row">
-                              <div class="col ">
+                              <div class="col py-3">
                                 <div class="card">
                                   <div class="card-header">
                                     <h4 align="center"><strong>Estoque</strong></h4>
                                   </div>
-                                  <div class="card-body alert pt-5 alert-danger ">
+                                  <div class="card-body pt-5 card-one">
                                     <div class="row">
                                       <div class="col" align="center">
                                         <h5 class="text-dark"><strong>Itens com estoque baixo: <?=$this->view->resultMonitEst['qtdItens']?></strong></h5>
@@ -128,28 +133,30 @@
 
                           ?>
                            <div class="row">
-                              <div class="col ">
-                                <div class="card">
+                              <div class="col py-3">
+                                <div class="card" style="">
                                   <div class="card-header">
                                     <h4 align="center"><strong >Financeiro</strong></h4>
                                   </div>
-                                  <div class="card-body alert alert-primary">
+                                  <div class="card-body card-two">
                                     <div class="row">
                                       <div class="col" align="center">
                                         <div class="row text-light">
                                           <div class="col pt-2 px-2" align="center">
                                             <i class="text-danger fas fa-arrow-alt-circle-down fa-3x"></i>
-                                            <br><span class="text-danger"><strong>R$ 1.800,00</strong></span>
+                                            <br>
+                                            <span class="text-danger" style="font-size: 15px;"><strong>R$ 1.800,00</strong></span>
                                           </div>
                                           <div class="col pt-2 px-2" align="center" style="margin: auto;">
                                             <i class="text-success fas fa-arrow-alt-circle-up fa-3x"></i>
-                                            <br><span class="text-success"><strong>R$ 1.200,00</strong></span>
+                                              <br>
+                                              <span class="text-success" style="font-size: 15px;"><strong>R$ 1.200,00</strong></span>
                                           </div>
                                         </div>
                                         <div class="row text-light">
                                             <div class="col">
-                                              <div class="" align="center" style="margin: auto;">
-                                                <br><span class="text-success"><strong>Saldo: R$ 600,00</strong></span>
+                                              <div class="" align="center" style="margin: auto; font-size: 15px;">
+                                                <br><span class="text-success" style="font-size: 20px;"><strong>Saldo: R$ 600,00</strong></span>
                                               </div>
                                             </div>
                                         </div>
@@ -177,30 +184,30 @@
 
                           ?>
                             <div class="row">
-                              <div class="col ">
+                              <div class="col py-3">
                                 <div class="card">
                                   <div class="card-header">
                                     <h4 align="center"><strong>Vendas</strong></h4>
                                   </div>
-                                  <div class="card-body alert alert-warning">
+                                  <div class="card-body card-three">
                                     <div class="row">
                                       <div class="col" align="center">
                                         <div class="row text-light">
-                                          <div class="col pt-2 px-2" align="center">
-                                            <div class="text-secondary" align="center" style="margin: auto;"></strong>Loja Fisic.</strong></div>
-                                            <i class="text-secondary fas fa-arrow-alt-circle-up fa-3x"></i>
-                                            <br><span class="text-secondary"><strong>R$ 1.800,00</strong></span>
+                                          <div class="col px-2" align="center">
+                                            <div class="text-dark" align="center" style="margin: auto; font-size: 15px;"></strong>Loja Fisic.</strong></div>
+                                            <i class="text-dark fas fa-arrow-alt-circle-up fa-3x"></i>
+                                            <br><span class="text-dark" style="font-size: 15px;"><strong>R$ 1.800,00</strong></span>
                                           </div>
-                                          <div class="col pt-2 px-2" align="center" style="margin: auto;">
-                                            <div class="text-info" align="center" style="margin: auto;"><strong>Loja Virt.</strong></div>
-                                            <i class="text-info fas fa-arrow-alt-circle-up fa-3x"></i>
-                                            <br><span class="text-info"><strong>R$ 1.200,00</strong></span>
+                                          <div class="col px-2" align="center" style="margin: auto;">
+                                            <div class="" align="center" style="margin: auto;color: #1E90FF; font-size: 15px;"><strong>Loja Virt.</strong></div>
+                                            <i class="fas fa-arrow-alt-circle-up fa-3x" style="color: #1E90FF"></i>
+                                            <br><span class="" style="color: #1E90FF; font-size: 15px;"><strong>R$ 1.200,00</strong></span>
                                           </div>
                                         </div>
                                         <div class="row text-light">
                                             <div class="col">
                                               <div class="" align="center" style="margin: auto;">
-                                                <br><span class="text-dark"><strong>Total: R$ 3.000,00</strong></span>
+                                                <br><span class="text-dark" style="font-size: 20px;"><strong>Total: R$ 3.000,00</strong></span>
                                               </div>
                                             </div>
                                           </div>

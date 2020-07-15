@@ -835,8 +835,30 @@ function foramtCalcCod(number)
   })
 
  })
+
+
+  //-------------- FAX BUSCA O PEDIDO PARA VISUALIZAR NO MODAL -----------
+  $('body').delegate('#responseUser #tbl-itens-cliente tbody tr', 'click', function(e){
+    
+    let cd = $(this).find('td:eq(0)').text();
+    printPedido(cd);
+  })
+
+  //------------ BUSCA O PEDIDO E XIBE NO MODAL ---------------
+  function printPedido(cd)
+  {
+    $.ajax({
+      url: '/pedido/loja/view?cd='+cd,
+      type: 'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+        getModal('<strong>Detalhes:</strong>',retorno);
+      }
+    })
+  }
+
   //---------------------------------- INICIANDO SESSAO DE PAGAMENTO PGSEGURO -----------------
-  function iniciaSessao()
+  function iniciaSessaoPgSeguro()
   {
     $.ajax({
       url: '/pagar/seguro',
@@ -844,8 +866,36 @@ function foramtCalcCod(number)
       dataType: 'json',
       success: function(retorno){
         PagSeguroDirectPayment.setSessionId(retorno.id);
+      },
+      complete: function(){
+        listaMeiosPagamentoPgSeguro();
       }
     })
+  }
+
+  //---------------------------------- LISTA OS MEIOS DE PAGAMENTO DO PGSEGURO -----------------
+
+  function listaMeiosPagamentoPgSeguro()
+  {
+    PagSeguroDirectPayment.getPaymentMethods({
+      amount: 500.00,
+      success: function(response) {
+          $.each(response.paymentMethods.CREDIT_CARD.options, function(i, obj){
+            $('.CartaoCredito').append("<div><img src=https://stc.pagseguro.uol.com.br/"+obj.images.SMALL.path+" />"+obj.CREDIT_CARD.name+"</div>")
+          })
+
+          $('.Boleto').append("<div><img src=https://stc.pagseguro.uol.com.br/"+response.paymentMethods.BOLETO.options.BOLETO.images.SMALL.path+" />"+response.paymentMethods.BOLETO.name+"</div>");
+
+          $.each(response.paymentMethods.ONLINE_DEBIT.options, function(i, obj){
+            $('.CartaoCredito').append("<div><img src=https://stc.pagseguro.uol.com.br/"+obj.images.SMALL.path+" />"+obj.CREDIT_CARD.name+"</div>")
+          })
+          
+      },
+      complete: function(response) {
+          // Callback para todas chamadas.
+      }
+    });
+
   }
 
 

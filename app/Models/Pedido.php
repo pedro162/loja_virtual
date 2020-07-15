@@ -342,7 +342,7 @@ class Pedido extends BaseModel
 				FROM Pedido as P inner join LogradouroPessoa as LP
 				on LP.LogradouroIdLogradouro = P.LogradouroIdLogradouro
 				INNER JOIN Logradouro L on L.idLogradouro = LP.LogradouroIdLogradouro
-				INNER join Pessoa as PS on PS.idPessoa = LP.PessoaIdPessoa WHERE P.idPedido = ".$idPedido;
+				INNER join Pessoa as PS on PS.idPessoa = P.PessoaIdPessoa WHERE P.idPedido = ".$idPedido;
 
 
 		$result = $this->persolizaConsulta($sql, $clasRetorno);

@@ -75,7 +75,7 @@ class PagSeguro
 
         $xml = simplexml_load_string($retorno);
         
-        var_dump($xml);
+        return $xml;
     }
 
     public function extornTransaction(string $transactionCode)

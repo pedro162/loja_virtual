@@ -25,7 +25,7 @@
 	</div>
 	<div class="row">
 		<div class="col" align="center">
-			<table class="table table-light table-hover">
+			<table class="table table-light table-hover" id="tbl-itens-cliente">
 				<thead>
 					<tr>
 						<th>Nº</th>
@@ -42,7 +42,7 @@
 						for ($i=0; !($i == count($this->view->pedidos)) ; $i++) { 
 							
 					?>
-						<tr>
+						<tr class="pedido-cliente" data-toggle="modal" data-target="#myModal">
 							<td><?=$this->view->pedidos[$i]->idPedido;?></td>
 							<td><?=$this->view->pedidos[$i]->dtPedido;?></td>
 							<td><?=$this->view->pedidos[$i]->vendedor;?></td>

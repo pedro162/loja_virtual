@@ -51,6 +51,9 @@ $routes[] = ['/pedido/produto/frete', 'PedidoController@calcFrete'];
 $routes[] = ['/pedido/produto/vermais', 'PedidoController@viewMore'];
 $routes[] = ['/pedido/pagamento', 'PedidoController@pedidoPagar'];
 $routes[] = ['/pedido/save/loja', 'PedidoController@savePedidoLoja'];
+$routes[] = ['/pedido/loja/view', 'PedidoController@viewPedidoLoja'];
+
+$routes[] = ['/contas/painel', 'ContaPagarReceberController@painel'];
 
 $routes[] = ['/pessoa/prevendas', 'PessoaController@prevendas'];
 $routes[] = ['/pessoa/pedidos', 'PessoaController@pedidos'];
