@@ -11,7 +11,7 @@
 		<div class="row">
 			<div class="col-md-6">
 				<p align="left" class="h6"><strong>DADOS DO CLIENTE</strong></p>
-				<p><?=strtoupper($this->view->dataCliente[0]->nomePessoa)?> (00)98984257623 - PHEDROCLOONEY@GMAIL.COM</p>
+				<p><?=strtoupper($this->view->dataCliente[0]->nomePessoa)?> (00)98984257623 - <?=strtoupper($this->view->dataCliente[0]->login);?></p>
 				<p><?=strtoupper($this->view->dataCliente[0]->endereco .'<br/>'. $this->view->dataCliente[0]->complemento)?></p>
 			</div>
 			<div class="col-md-6" align="right">

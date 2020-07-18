@@ -20,7 +20,29 @@
 			 <?php
 
 			 ?>
-			<h3 class="text-dark"><?=$tipo?>: <?=$this->view->pessoa->getNomePessoa();?></h3>
+			<h3 class="text-dark"><strong><?=$tipo?>: </strong><?=$this->view->pessoa->getNomePessoa();?></h3>
+		</div>
+	</div>
+	<div class="row " align="center">
+		<div class="col-sm-6 col-md-6">
+			<form method="post" action="#" class="row">
+				<div class="form-group col-sm-5">
+					<select class="form-control form-control-sm" name="status">
+						<option>Todos</option>
+						<option>Cancelado</option>
+						<option>Em aberto</option>
+					</select>
+				</div>
+				<div class="form-group col-sm-5">
+					<input type="text" name="pedido" class="form-control form-control-sm" placeholder="nº pedido">
+				</div>
+				<div class="form-group col-sm-2">
+					<button class="btn btn-sm btn-success ml-1" type="button" style="background-color: #9400D3">Buscar</button>
+				</div>
+			</form>
+		</div>
+		<div class="col-sm-6 col-md-6" align="right">
+			<a href="#" class="btn btn-sm btn-primary">Monitorar pedido</a>
 		</div>
 	</div>
 	<div class="row">

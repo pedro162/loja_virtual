@@ -1,0 +1,38 @@
+<div class="row" style="background-color: #fff; width: 60%;" align="left">
+	<div class="col-md-12 py-4 px-4" style="margin: auto;">
+		<div class="row">
+			<div class="col" align="center"><h2><strong>Login e Segurança</strong></h2></div>
+		</div>
+		<div class="row" style="">
+			<div class="col-sm-8 py-3" style="border: 4px dotted #ddd;margin: auto;">
+				<p>
+					<strong>Nome:</strong><br>
+					<?=ucwords($this->view->pessoa->getNomePessoa());?>
+				</p>
+				<p>
+					<strong>Sobrenome:</strong><br>
+					<?=ucwords($this->view->pessoa->getNomeComplementar());?>
+				</p>
+				<p>
+					<strong>Email:</strong><br>
+					<?=strtolower($this->view->pessoa->getLogin());?>
+				</p>
+				<p>
+					<strong>Telefone ou celular:</strong><br>
+					98 984000000
+				</p>
+				<p>
+					<strong>Senha:</strong><br>
+					*******
+				</p>
+				<p>
+					<strong>CPF:</strong><br>
+					*************
+				</p>
+				<p align="right">
+					<a href="#" class="btn btn-sm btn-success" style="background-color: #9400D3">Editar</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>

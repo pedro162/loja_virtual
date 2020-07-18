@@ -1,0 +1,34 @@
+<div class="row" style="background-color: #fff; width: 90%;" align="left">
+	<div class="col-md-12 py-4 px-4" style="margin: auto;">
+		<div class="row">
+			<div class="col" align="center"><h2><strong>Seus endereços</strong></h2></div>
+		</div>
+		<div class="row">
+			<?php
+	    		for ($i=0, $logradouro = $this->view->pessoa->logradouro()[0]->getLogradouro(); !($i == count($logradouro)); $i++) { 
+	    			
+	    	?>
+				<div class="col-sm-4 py-3" style="border: 4px dotted #ddd; margin: auto;">
+					<p><strong>Endereco: </strong><?=$logradouro[$i]->getEndereco()?></p>
+					<p><strong>Bairro: </strong><?=$logradouro[$i]->getBairro()?></p>
+					<p><strong>Cidade: </strong><?=$logradouro[$i]->getCidade()->getNome()?></p>
+					<p><strong>Estado: </strong>MA</p>
+					<p><strong>Cep: </strong><?=$logradouro[$i]->getCep()?></p>
+					<p><strong>Complemento: </strong><?=$logradouro[$i]->getComplemento()?></p>
+					<p><strong>País / Região: </strong>Brasil</p>
+					<p><a href="#" class="btn btn-sm btn-success" style="background-color: #9400D3">Editar</a></p>
+				</div>	
+				
+			<?php
+
+	    		}
+		    ?>	
+		</div>
+		
+		<div class="row" align="right">
+			<div class="col">
+				<a href="#" class="btn btn-sm btn-primary">Adicionar</a>
+			</div>
+		</div>
+	</div>
+</div>

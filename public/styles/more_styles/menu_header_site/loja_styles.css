@@ -450,19 +450,8 @@ form .btn-danger:hover{
     border:1px solid red;
 }
 
-
-
-
-#navPanelUser ul{
-    width: 100%;
-}
-#navPanelUser ul li{
-    margin: auto;
-}
-#navPanelUser ul li a{
-    padding: 5px;
+#navPanelUser a{
     text-decoration: none;
-    font-weight: bolder;
 }
 #navPanelUser ul li a:hover{
     background-color: #fff;
@@ -477,14 +466,14 @@ form .btn-danger:hover{
 
 /*----------------------- VITRINE DA LOJA ----------------*/
 #vitrine-home .last-of-grid{
-    width: 93.5rem; height: 16rem;
+    width: 85.3rem; height: 16rem;
 }
 #vitrine-home .last-of-grid img{
-    width: 100px; height: 100px;
+    width: 130px; height: 130px;
 }
 
 #vitrine-home .medle-of-grid{
-    width: 46rem; height: 16rem;
+    width: 42rem; height: 16rem;
 }
 #vitrine-home .medle-of-grid img{
     width: 130px; height: 130px;
@@ -493,7 +482,7 @@ form .btn-danger:hover{
        width: 100px; height: 100px;
 }
 #vitrine-home .first-of-grid {
-       width: 22rem; height: 28rem;
+       width: 20rem; height: 28rem;
 }
 @media(max-width: 600px){
     #vitrine-home .last-of-grid {
@@ -516,4 +505,9 @@ form .btn-danger:hover{
        width: auto; height: auto;
      }
     
+}
+
+/*------------------ style para tabela de pedidos ------------*/
+#tbl-itens-cliente tbody tr{
+    cursor: pointer;
 }

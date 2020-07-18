@@ -53,7 +53,7 @@ class PessoaController extends BaseController
     		//busca todos os pedidos com status de venda
     		$this->view->pedidos = $resultPessoa->infoPedidoComplete();
     		$this->view->pessoa = $resultPessoa;
-    		$this->render('pessoa/pedidos', false);
+    		$this->render('pessoa/pedido/index', false);
     		Transaction::close();
     		
     	} catch (\Exception $e) {
@@ -97,7 +97,7 @@ class PessoaController extends BaseController
             $this->view->tipo = $tipo;
             $this->view->pedidos = $resultPessoa->infoPedidoComplete([], $tipo);
             $this->view->pessoa = $resultPessoa;
-            $this->render('pessoa/pedidos', false);
+            $this->render('pessoa/pedido/index', false);
 
             //fax o commit e fecha a conexao com o banco
     		Transaction::close();
@@ -155,11 +155,22 @@ class PessoaController extends BaseController
             $this->render('pessoa/ajax', false);
         }
     }
+
 	public function cadastro()
     {
     	try {
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
 
     		Transaction::startTransaction('connection');
+            
+            $this->view->pessoa = $usuario;
+            $this->render('pessoa/cadastro/index', false);
 
     		Transaction::close();
     		
@@ -171,6 +182,32 @@ class PessoaController extends BaseController
             $this->render('pessoa/ajax', false);
     	}
     }
+
+    public function endereco()
+    {
+        try {
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            Transaction::startTransaction('connection');
+
+            $this->view->pessoa = $usuario;
+            $this->render('pessoa/endereco/index', false);
+            Transaction::close();
+            
+        } catch (\Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pessoa/ajax', false);
+        }
+    }
+
 	public function compras()
     {
     	try {
@@ -188,7 +225,7 @@ class PessoaController extends BaseController
             $this->view->pedidos = $usuario->infoPedidoComplete();
             $this->view->pessoa = $usuario;
 
-            $this->render('pessoa/pedidos', false);
+            $this->render('pessoa/pedido/index', false);
 
     		Transaction::close();
     		
@@ -199,6 +236,36 @@ class PessoaController extends BaseController
             $this->view->result = json_encode($erro);
             $this->render('pessoa/ajax', false);
     	}
+    }
+
+    public function pagamento()
+    {
+        try {
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            Transaction::startTransaction('connection');
+
+            //busca todos os pedidos com status de venda
+            $this->view->pedidos = $usuario->infoPedidoComplete();
+            $this->view->pessoa = $usuario;
+
+            $this->render('pessoa/pagamento/index', false);
+
+            Transaction::close();
+            
+        } catch (\Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('pessoa/ajax', false);
+        }
     }
 
 	public function nfs()

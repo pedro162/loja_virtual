@@ -898,9 +898,31 @@ function foramtCalcCod(number)
 
   }
 
+//----------------- IDENTIFICA O CARTAO DE PAGAMENTO PGSEGURO -----------
 
+$('body').delegate('#NumeroCartao', 'keyup', function(){
+  let NumeroCartao = $(this).val();
+  let QtdCaracteres = NumeroCartao.length;
+
+  if(QtdCaracteres == 6){
+    PagSeguroDirectPayment.getBrand({
+      cardBin: NumeroCartao,
+      success: function(response) {
+        let BandeiraImg = response.brand.name;
+        $('#BandeiraCartao').html("<img src='https://public/img/payment-methods-flags/42x20/"+BandeiraImg+".png' />")
+       console.log(response);
+      },
+      error:function(response){
+        alert('Cartão não reconhecido');
+        $('#BandeiraCartao').empty();
+      }
+    });
+  }
+
+})
 
   //------------------------------- PAINEL CLIENTE --------------------------------------------
+      //----------- pedidos----
   $('body').delegate('#navPanelUser #ultCompras', 'click', function(ev){
     ev.preventDefault();
 
@@ -916,6 +938,57 @@ function foramtCalcCod(number)
       }
     })
   })
+
+      //-------- cadastro ---------
+  $('body').delegate('#navPanelUser #cadastro', 'click', function(ev){
+    ev.preventDefault();
+
+      $.ajax({
+      url: '/pessoa/cadastro',
+      type:'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+    })
+  })
+
+     //-------- endereco ---------
+  $('body').delegate('#navPanelUser #endereco', 'click', function(ev){
+    ev.preventDefault();
+
+      $.ajax({
+      url: '/pessoa/endereco',
+      type:'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+    })
+  })
+  //-------- pagamento ---------
+  $('body').delegate('#navPanelUser #pagamento', 'click', function(ev){
+    ev.preventDefault();
+
+      $.ajax({
+      url: '/pessoa/pagamento',
+      type:'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+    })
+  })
+
 
   /*---------------------------CHAMA A VIEW DO CHATE ------------*/
 

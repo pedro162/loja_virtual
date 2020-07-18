@@ -12,6 +12,7 @@ class LogradouroPessoa extends BaseModel
 	private $endereco;
 	private $idLogradouro;
     private $idLogradouroPessoa;
+    private $LogradouroIdLogradouro;
 
     const TABLENAME = 'LogradouroPessoa';
 
@@ -99,6 +100,18 @@ class LogradouroPessoa extends BaseModel
 
         return $result;
 
+    }
+
+    public function getLogradouro()
+    {
+        $logradouro  = new Logradouro();
+        $result = $logradouro->select(['*'], ['idLogradouro' => $this->LogradouroIdLogradouro], '=', 'asc', null, null, true);
+
+        if($result != false){
+            return $result;
+        }
+
+        throw new Exception("Registro não encontrado\n");
     }
 
     public function getComplemento()

@@ -18,10 +18,13 @@ class Pessoa extends BaseModel
 	private $idPessoa;
     private $login;
     private $senha;
-    private $nomeFantasia;
+    private $nomeComplementar;
     private $documento;
     private $documentoComplementar;
     private $img;
+    private $sexo;
+    private $tipo;
+    private $grupo;
 
     protected function parseCommit()
     {
@@ -187,7 +190,7 @@ class Pessoa extends BaseModel
 
 	public function findPessoa(Int $id)
 	{
-		$result = $this->select(['idPessoa', 'nomePessoa', 'nomeFantasia','documentoComplementar','tipo','documento'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
+		$result = $this->select(['idPessoa', 'nomePessoa', 'nomeComplementar','documentoComplementar','tipo','documento'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
 		if($result){
 			return $result[0];
 		}
@@ -238,6 +241,13 @@ class Pessoa extends BaseModel
          }
          throw new Exception("Logradouro não encontrado\n");
          
+    }
+
+    public function logradouro()
+    {
+        $logradouro = new LogradouroPessoa();
+        $result = $logradouro->select(['*'], ['PessoaIdPessoa' => $this->getIdPessoa()], '=','asc', null, null, true);
+        return $result;
     }
 
     public function getLogin()
@@ -293,17 +303,17 @@ class Pessoa extends BaseModel
     }
 
 
-    public function getNomeFantasia()
+    public function getNomeComplementar()
     {
-        if((!isset($this->nomeFantasia)) || (strlen($this->nomeFantasia) ==0 )){
-            if(isset($this->data['nomeFantasia']) && (strlen($this->data['nomeFantasia']) > 0)){
-                return $this->data['nomeFantasia'];
+        if((!isset($this->nomeComplementar)) || (strlen($this->nomeComplementar) ==0 )){
+            if(isset($this->data['nomeComplementar']) && (strlen($this->data['nomeComplementar']) > 0)){
+                return $this->data['nomeComplementar'];
             }
 
             throw new Exception("Propriedade não definida\n");
         }
 
-        return $this->nomeFantasia;
+        return $this->nomeComplementar;
     }
 
 
@@ -318,6 +328,44 @@ class Pessoa extends BaseModel
         }
 
         return $this->senha;
+    }
+
+    public function getTipo()
+    {
+        if((!isset($this->tipo)) || (strlen($this->tipo) ==0 )){
+            if(isset($this->data['tipo']) && (strlen($this->data['tipo']) > 0)){
+                return $this->data['tipo'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->tipo;
+    }
+
+    public function getGrupo()
+    {
+        if((!isset($this->grupo)) || (strlen($this->grupo) ==0 )){
+            if(isset($this->data['grupo']) && (strlen($this->data['grupo']) > 0)){
+                return $this->data['grupo'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->grupo;
+    }
+    public function getSexo()
+    {
+        if((!isset($this->sexo)) || (strlen($this->sexo) ==0 )){
+            if(isset($this->data['sexo']) && (strlen($this->data['sexo']) > 0)){
+                return $this->data['sexo'];
+            }
+
+            throw new Exception("Propriedade não definida\n");
+        }
+
+        return $this->sexo;
     }
 
     public function findLoginForUserPass($user, $pass)
@@ -335,7 +383,7 @@ class Pessoa extends BaseModel
         }
 
 
-        $result = $this->select(['idPessoa', 'nomePessoa', 'login', 'senha', 'img'], ['login' => $user], '=', 'asc', null, null, true, false);
+        $result = $this->select(['*'], ['login' => $user], '=', 'asc', null, null, true, false);
 
         if($result == false){
             throw new Exception("Usuario o senha inválidos\n");

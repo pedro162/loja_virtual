@@ -59,7 +59,9 @@ $routes[] = ['/pessoa/prevendas', 'PessoaController@prevendas'];
 $routes[] = ['/pessoa/pedidos', 'PessoaController@pedidos'];
 $routes[] = ['/pessoa/orcamentos', 'PessoaController@orcamentos'];
 $routes[] = ['/pessoa/cadastro', 'PessoaController@cadastro'];
+$routes[] = ['/pessoa/endereco', 'PessoaController@endereco'];
 $routes[] = ['/pessoa/compras', 'PessoaController@compras'];
+$routes[] = ['/pessoa/pagamento', 'PessoaController@pagamento'];
 $routes[] = ['/pessoa/nfs', 'PessoaController@nfs'];
 
 $routes[] = ['/usuario/index', 'UserController@index'];

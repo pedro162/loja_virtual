@@ -338,9 +338,9 @@ class Pedido extends BaseModel
 
 	public function previewPedido(Int $idPedido, $clasRetorno = false)
 	{
-		$sql = "SELECT P.dtPedido, P.nomeDestinatario,P.tipo, P.idPedido, P.frete, L.endereco, L.complemento, PS.nomePessoa
+		$sql = "SELECT P.dtPedido, P.nomeDestinatario,P.tipo, P.idPedido, P.frete, L.endereco, L.complemento, PS.nomePessoa, PS.login
 				FROM Pedido as P inner join LogradouroPessoa as LP
-				on LP.LogradouroIdLogradouro = P.LogradouroIdLogradouro
+				on LP.PessoaIdPessoa = P.PessoaIdPessoa
 				INNER JOIN Logradouro L on L.idLogradouro = LP.LogradouroIdLogradouro
 				INNER join Pessoa as PS on PS.idPessoa = P.PessoaIdPessoa WHERE P.idPedido = ".$idPedido;
 
