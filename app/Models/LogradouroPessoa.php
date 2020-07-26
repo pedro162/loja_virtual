@@ -13,6 +13,8 @@ class LogradouroPessoa extends BaseModel
 	private $idLogradouro;
     private $idLogradouroPessoa;
     private $LogradouroIdLogradouro;
+    private $PessoaIdPessoa;
+    private $idUsuario;
 
     const TABLENAME = 'LogradouroPessoa';
 
@@ -43,19 +45,30 @@ class LogradouroPessoa extends BaseModel
 
     protected function parseCommit():array
     {
-      
-
-        return $this->data;
+        $arrayPase = [];
+        for ($i=0; !($i == count($this->columns())) ; $i++) { 
+            $chave = $this->columns()[$i]->Field;
+            if(array_key_exists($chave, $this->data)){
+                $arrayPase[$chave] = $this->data[$chave];
+            }
+        }
+        return $arrayPase;
     }
 
 
     public function save(array $dados)
     {
-        $this->clear($dados);
 
-        $result = $this->parseCommit();
+        $info = $this->parseCommit();
 
-        $this->insert($result);
+        $response = $this->insert($info);
+
+        if($response == false){
+            throw new Exception("Erro ao salvar registro\n");
+            
+        }
+
+        return true;
     }
 
     public function modify(array $dados)
@@ -141,10 +154,27 @@ class LogradouroPessoa extends BaseModel
     	throw new \Exception("Proriedade indefinida");
     }
 
-
-    public function setIdLogradouroPessoa(Int $id)
+    public function setIdUsuario(Int $id):bool
     {
-        $this->data['idLogradouroPessoa'] = $id;//falta validar
+        if((!isset($id)) || ($id <=0)){
+            throw new Exception("Parãmetro inválido\n");
+           
+        }
+
+        $this->data['idUsuario'] = $id;
+        return true;
+    }
+
+    public function setPessoaIdPessoa(Int $id):bool
+    {
+        //falta validar
+        if((!isset($id)) || ($id <=0)){
+            throw new Exception("Parãmetro inválido\n");
+            
+        }
+
+        $this->data['PessoaIdPessoa'] = $id;
+        return true;
     }
 
     public function getIdLogradouroPessoa()
@@ -158,4 +188,29 @@ class LogradouroPessoa extends BaseModel
 
         return $this->idLogradouroPessoa;
     }
+
+    public function setIdLogradouroPessoa(Int $id):bool
+    {
+        //falta validar
+        if((!isset($id)) || ($id <=0)){
+            throw new Exception("Parãmetro inválido\n");
+            
+        }
+
+        $this->data['idLogradouroPessoa'] = $id;
+        return true;
+    }
+
+    public function setLogradouroIdLogradouro(Int $id):bool
+    {
+        //falta validar
+        if((!isset($id)) || ($id <=0)){
+            throw new Exception("Parãmetro inválido\n");
+            
+        }
+
+        $this->data['LogradouroIdLogradouro'] = $id;
+        return true;
+    }
+
 }

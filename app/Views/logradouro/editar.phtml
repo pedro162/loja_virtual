@@ -1,0 +1,65 @@
+<div class="row" style="background-color: #fff; width: 100%;  margin: auto;" align="left">
+	<div class="col py-3">
+		<div class="row mb-2"><div class="col" id="msg-logradouro"></div></div>
+		<div class="row mb-4">
+			<div class="col h4" style="width: 80%;" align="center"><strong>Atualizar Endereço</strong></div>
+		</div>
+		<div class="row">
+			<form method="post" id="cadastro-logradouro-editar" action="/logradouro/atualizar" enctype="multipart/form-data" style="margin: auto; width: 80%;">
+				<input type="hidden" name="cod" value="<?=$this->view->logradouro->getIdLogradouro();?>">
+				<div class="row">
+					<div class="col">
+						<div class="form-group">
+							<label for="cep">Cep</label>
+							<input type="text" name="cep" id="cep" class="form-control form-control-sm" value="<?=$this->view->logradouro->getCep();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="endereco">Endereço</label>
+							<input type="text" name="endereco" id="endereco" class="form-control form-control-sm" value="<?=$this->view->logradouro->getEndereco();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="bairro">Bairro</label>
+							<input type="text" name="bairro" id="bairro" class="form-control form-control-sm" value="<?=$this->view->logradouro->getBairro();?>">
+						</div>
+					</div>			
+				</div>
+				<div class="row">
+					<div class="col">
+						<div class="form-group">
+							<label for="complemento">Complemento</label>
+							<input type="text" name="complemento" id="complemento" class="form-control form-control-sm" value="<?=$this->view->logradouro->getComplemento();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="tipo">Tipo</label>
+							<select class="form-control form-control-sm"  name="tipo" id="tipo">
+								<option value="apartamento">Apartamento</option>
+								<option value="casa">Casa</option>
+								<option value="ktinet">Ktinet</option>
+							</select>
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="cidade">Cidade</label>
+							<select class="form-control form-control-sm"  name="cidade" id="cidade">
+								<option value="1">São Luis</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col" align="left">
+						<button type="submit" class="btn btn-sm btn-primary">Atualizar</button>
+						<a align='right' href="/" id="cancelar" class="btn btn-sm btn-danger">Cancelar</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

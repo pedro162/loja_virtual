@@ -255,6 +255,10 @@ abstract class BaseModel
                 $key = htmlspecialchars($key);
 
                 $value = trim($value);
+                if(strlen($value) == 0){
+                    throw new \Exception("Parâmetro inválido");
+                    
+                }
                 $value = htmlspecialchars($value);
 
                 $conn = Transaction::get();

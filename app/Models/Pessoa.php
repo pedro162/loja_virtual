@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\Pedido;
 use App\Models\Chate;
 use App\Models\ConversaChate;
+use \Core\Utilitarios\Utils;
 use \Exception;
 use \InvalidArgumentException;
 
@@ -61,28 +62,55 @@ class Pessoa extends BaseModel
     }
     public function save(array $dados)
     {
-       /* $this->clear($dados);
-
         $result = $this->parseCommit();
 
-        $resultSelect = $this->select(['nomeCategoria'], ['nomeCategoria' => $this->getCategoria()], '=','asc', null, null, true);
+        $resultSelect = $this->select(['*'], ['login' => $this->getLogin()] , '=','asc', null, null, true);
 
         if($resultSelect != false){
 
-            return ['msg','warning','Atenção: Esta categoria já existe!'];
+            throw new Exception("Email já cadastrado");
+            
+        }
+
+        $resultSelect = $this->select(['*'], ['documento' => $this->getDocumento()] , '=','asc', null, null, true);
+
+        if($resultSelect != false){
+
+            throw new Exception("Pessoa já está cadastrada\n");
+            
+        }
+
+        $resultSelect = $this->select(['*'], ['documentoComplementar' => $this->getDocumentoComplementar()] , '=','asc', null, null, true);
+
+        if($resultSelect != false){
+
+            throw new Exception("Pessoa já está cadastrada\n");
+            
+        }
+
+        if($this->getTipo() == 'F'){
+            if(Utils::validaCpf($this->getDocumento()) == false){
+                throw new Exception("Cpf inválido\n");
+                
+            }
         }
 
         $resultInsert = $this->insert($result);
         if($resultInsert == true){
-            return ['msg','success','Categoria cadastrada com sucesso!'];
+            return true;
         }
 
-        return ['msg','warning','Falha ao cadastrar categoria!'];*/
+        return false;
     }
 
     public function modify(array $dados)
     {
+        $result = $this->parseCommit();
+        var_dump($result);
 
+        $resultUpdate = $this->update($result, $this->getIdPessoa());
+
+        return $resultUpdate;
     }
 
     public function infoPedidoComplete(Array $where = [], String $tipo = 'venda', Int $init = 0, Int $end = 10)
@@ -190,7 +218,7 @@ class Pessoa extends BaseModel
 
 	public function findPessoa(Int $id)
 	{
-		$result = $this->select(['idPessoa', 'nomePessoa', 'nomeComplementar','documentoComplementar','tipo','documento'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
+		$result = $this->select(['*'], ['idPessoa' => $id], '=', 'asc', null, null, true, false);
 		if($result){
 			return $result[0];
 		}
@@ -217,6 +245,19 @@ class Pessoa extends BaseModel
         
     }
 
+    public function setNomePessoa(String $nome):bool
+    {
+        if((!isset($nome)) || (strlen($nome) <= 0)){
+            throw new Exception("Parâmetro  inválido.");
+        }
+
+       $this->data['nomePessoa'] = $nome;
+
+       return true;
+        
+        
+    }
+
     public function getIdPessoa():int
     {
         if((!isset($this->idPessoa)) || ($this->idPessoa <= 0)){
@@ -228,6 +269,19 @@ class Pessoa extends BaseModel
         }
 
         return $this->idPessoa;
+        
+        
+    }
+
+    public function setIdPessoa(Int $id):bool
+    {
+        if((!isset($id)) || ($id <= 0)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['idPessoa'] = $id;
+
+       return true;
         
         
     }
@@ -263,6 +317,19 @@ class Pessoa extends BaseModel
         return $this->login;
     }
 
+    public function setLogin(String $login):bool
+    {
+        if((!isset($login)) || (strlen($login) <= 0)){
+            throw new Exception("Propriedade não inválida.");
+        }
+
+       $this->data['login'] = $login;
+
+       return true;
+        
+        
+    }
+
     public function getImg()
     {
         if((!isset($this->img)) || (strlen($this->img) ==0 )){
@@ -274,6 +341,19 @@ class Pessoa extends BaseModel
         }
 
         return $this->img;
+    }
+
+    public function setImg(String $img):bool
+    {
+        if((!isset($img)) || (strlen($img) <= 0)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['img'] = $img;
+
+       return true;
+        
+        
     }
 
     public function getDocumento()
@@ -289,6 +369,19 @@ class Pessoa extends BaseModel
         return $this->documento;
     }
 
+    public function setDocumento(String $documento):bool
+    {
+        if((!isset($documento)) || (strlen($documento) <= 0)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['documento'] = $documento;
+
+       return true;
+        
+        
+    }
+
     public function getDocumentoComplementar()
     {
         if((!isset($this->documentoComplementar)) || (strlen($this->documentoComplementar) ==0 )){
@@ -300,6 +393,19 @@ class Pessoa extends BaseModel
         }
 
         return $this->documentoComplementar;
+    }
+
+    public function setDocumentoComplementar(String $documento):bool
+    {
+        if((!isset($documento)) || (strlen($documento) <= 0)){
+            throw new Exception("Propriedade não inválida.");
+        }
+
+       $this->data['documentoComplementar'] = $documento;
+
+       return true;
+        
+        
     }
 
 
@@ -317,6 +423,20 @@ class Pessoa extends BaseModel
     }
 
 
+    public function setNomeComplementar(String $nomeComplementar):bool
+    {
+        if((!isset($nomeComplementar)) || (strlen($nomeComplementar) <= 0)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['nomeComplementar'] = $nomeComplementar;
+
+       return true;
+        
+        
+    }
+
+
      public function getSenha()
     {
         if((!isset($this->senha)) || (strlen($this->senha) ==0 )){
@@ -328,6 +448,19 @@ class Pessoa extends BaseModel
         }
 
         return $this->senha;
+    }
+
+    public function setSenha(String $senha):bool
+    {
+        if((!isset($senha)) || (strlen($senha) <= 6)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['senha'] = $senha;
+
+       return true;
+        
+        
     }
 
     public function getTipo()
@@ -343,6 +476,20 @@ class Pessoa extends BaseModel
         return $this->tipo;
     }
 
+
+    public function setTipo(String $tipo):bool
+    {
+        if((!isset($tipo)) || (strlen($tipo) <= 0)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['tipo'] = $tipo;
+
+       return true;
+        
+        
+    }
+
     public function getGrupo()
     {
         if((!isset($this->grupo)) || (strlen($this->grupo) ==0 )){
@@ -355,6 +502,20 @@ class Pessoa extends BaseModel
 
         return $this->grupo;
     }
+
+    public function setGrupo(String $grupo):bool
+    {
+        if((!isset($grupo)) || (strlen($grupo) <= 6)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+       $this->data['grupo'] = $grupo;
+
+       return true;
+        
+        
+    }
+
     public function getSexo()
     {
         if((!isset($this->sexo)) || (strlen($this->sexo) ==0 )){
@@ -366,6 +527,27 @@ class Pessoa extends BaseModel
         }
 
         return $this->sexo;
+    }
+
+    public function setSexo(String $sexo):bool
+    {   
+        $sexo = trim($sexo);
+        
+        $sex = ['M', 'F', 'N'];
+
+        if((!isset($sexo)) || (strlen($sexo) <= 0)){
+            throw new Exception("Parâmetro inválido\n");
+        }
+
+        if(! in_array($sexo, $sex)){
+           throw new Exception("Parâmetro inválido\n");
+        }
+
+        $this->data['sexo'] = $sexo;
+
+        return true;
+        
+        
     }
 
     public function findLoginForUserPass($user, $pass)

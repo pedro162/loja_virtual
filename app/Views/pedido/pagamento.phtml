@@ -6,6 +6,24 @@
 					Pedido finalizado com sucesso!
 				</div>
 			</div>
+			<div class="row mb-2">
+				<div class="col " align="right">
+					Enterga: 
+					<select name="entrega" id="entrega-pedido" class="form-control" style="width: 20%;">
+						<?php 
+							if(isset($this->view->logradouro) && ($this->view->logradouro != false)){
+								for ($i=0, $enderecos = $this->view->logradouro[0]->getLogradouro(); !($i == count($enderecos) ); $i++) { 
+									
+
+						?>
+							<option value="<?= $enderecos[$i]->getIdLogradouro();?>"> <?= $enderecos[$i]->getEndereco()?></option>
+						<?php
+								}
+							}
+						 ?>
+					</select>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col">
 					<table class="table table-hover" id="tableProdutos">

@@ -346,6 +346,11 @@ class PedidoController extends BaseController
             $logradouroPessoa = new LogradouroPessoa();
             $logradouro = $logradouroPessoa->findLogPessoa((int)$request['post']['entrega'], true);
 
+            if( $logradouro == false){
+                throw new Exception("Endereço de entrega não definido\n");
+                
+            }
+
             $pedido = new Pedido();
             $detalhesPedido = new DetalhesPedido();
 
@@ -483,7 +488,7 @@ class PedidoController extends BaseController
        
     }
 
-    public function savePedidoLoja()
+    public function savePedidoLoja($request)
     {
         try {
 
@@ -493,6 +498,13 @@ class PedidoController extends BaseController
                 header('Location:/home/init');
                 
             }
+
+
+            if((!isset($request['get']['cd'])) || ($request['get']['cd'] <= 0)){
+                throw new Exception("Parametro inválido");
+            }
+
+            $idEntrega = (int) $request['get']['cd'];
 
             Transaction::startTransaction('connection');
 
@@ -507,8 +519,15 @@ class PedidoController extends BaseController
             $fornecimento = new Fornecimento();
 
             $logradouroPessoa = new LogradouroPessoa();
-            $logradouro = $logradouroPessoa->findLogPessoa(1, true);//ajustar o id do logradouro
 
+            $resultLogPess = $usuario->logradouro();
+            if($resultLogPess == false){
+                throw new Exception("Endereço de entrega não definido\n");
+                
+            }
+            //recebe o id do endereço de entrega.
+
+            $logradouro = $logradouroPessoa->findLogPessoa($idEntrega, true);//ajustar o id do logradouro
 
             $produtos = Sessoes::sessionReturnElements()['produto'];
             $cliente = $usuario->findPessoa($usuario->getIdPessoa());
@@ -859,7 +878,9 @@ class PedidoController extends BaseController
                 }
             }
 
-            
+            $logradouro = $usuario->logradouro();
+
+            $this->view->logradouro = $logradouro;
             $this->view->allProducts = $allProducts;
             $this->render('/pedido/pagamento', false);
 

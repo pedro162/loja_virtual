@@ -9,13 +9,31 @@
 </div>
 <div class="row">
 	<div class="col">
-		<form>
+		<form class="form" id="form-pg-seguro" action="/pedido/save/loja">
 			<div class="form-group">
-				<input type="text" name="NumeroCartao" id="NumeroCartao">
+				<input type="text" name="NumeroCartao" id="NumeroCartao" class="form-control form-control-sm">
 			</div>
-			<div class="form-group" id="BandeiraCartao">
-				
+			<div class="form-group">
+				<input type="text" id="TokenCard" class="form-control form-control-sm" name="TokenCard">
 			</div>
+			<div class="form-group">
+				<input type="text" id="HashCard" class="form-control form-control-sm" name="HashCard">
+			</div>
+			<div class="form-group">
+				<select name="QtdParcelas" class="form-control form-control-sm" style="display: none;">
+					<option value=""> Selecionoe </option>
+
+				</select>
+			</div>
+			<div class="form-group">
+				<input type="text" id="ValorParcelas" class="form-control form-control-sm" name="ValorParcelas">
+			</div>
+			<button id="BotaoComprar" class="btn btn-sm btn-success">Comprar</button>
 		</form>
+	</div>
+</div>
+<div class="row">
+	<div class="col" id="BandeiraCartao">
+		
 	</div>
 </div>

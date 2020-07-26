@@ -78,6 +78,28 @@ class PagSeguro
         return $xml;
     }
 
+    public function executarTransaction(Array $dados)
+    {
+        $url = 'https://ws.sandbox.uol.com.br/v2/transactions/?email='.self::EMAIL_PAGS.'&token='.self::TOKEN_SANDB;
+
+        $dados['receiverEmail'] = EMAIL_PAGS;
+
+        $url.= http_build_query($dados);
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded; charset=UTF-8']);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($crul, CURLOPT_RETURNTRANSFER , true);
+
+        $retorno = curl_exec($curl);
+
+        $xml = simplexml_load_string($retorno);
+        
+        return $xml;
+    }
+
     public function extornTransaction(string $transactionCode)
     {
 

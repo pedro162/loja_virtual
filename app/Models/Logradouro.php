@@ -59,7 +59,7 @@ class Logradouro extends BaseModel
         return $arrayPase;
     }
 
-    public function save(array $dados):bool
+    public function save(array $dados)
     {
 
         $result = $this->parseCommit(); //retorna os dados já filtrados 
@@ -67,7 +67,7 @@ class Logradouro extends BaseModel
         
         if($resultInsertComent == false){
 
-        	throw new Exception("Erroa cadastrar comentário\n");
+        	throw new Exception("Erro ao cadastrar endereço\n");
         	
         }
         return true;
@@ -75,15 +75,14 @@ class Logradouro extends BaseModel
     }
 
     //ajustar method de update
-    public function modify(array $dados)
+    public function modify(array $dados):bool
     {
-        //$this->clear($dados);
 
-       // $result = $this->parseCommit();
+        $result = $this->parseCommit();
 
-        //$resultUpdate = $this->update($result, $this->getIdProduto());
+        $resultUpdate = $this->update($result, $this->getIdLogradouro());
 
-        
+        return $resultUpdate;
     }
 
    public function getComplemento()
@@ -98,6 +97,19 @@ class Logradouro extends BaseModel
 
         return $this->complemento;
     }
+
+    public function setComplemento(String $complemento):bool
+    {
+        if((!isset($complemento)) || (strlen($complemento) ==0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['complemento'] = $complemento;
+
+        return true;
+    }
+
    	
    	public function getIdLogradouro():int
     {
@@ -129,6 +141,18 @@ class Logradouro extends BaseModel
         
     }
 
+    public function setCidadeidCidade(Int $id):bool
+    {
+        if((!isset($id)) || ($id <=0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['CidadeIdCidade'] = $id;
+
+        return true;
+    }
+
     public function getCidade()
     {
     	$cidade  = new Cidade();
@@ -156,6 +180,20 @@ class Logradouro extends BaseModel
         
     }
 
+    public function setUsuarioIdUsuario(Int $id):bool
+    {
+
+        if((!isset($id)) || ($id <=0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['UsuarioIdUsuario'] = $id;
+
+        return true;        
+        
+    }
+
     public function getCep()
     {
         if((!isset($this->cep)) || (strlen($this->cep) ==0 )){
@@ -167,6 +205,18 @@ class Logradouro extends BaseModel
         }
 
         return $this->cep;
+    }
+
+    public function setCep(String $cep):bool
+    {
+        if((!isset($cep)) || (strlen($cep) ==0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['cep'] = $cep;
+
+        return true;
     }
 
     public function getBairro()
@@ -182,6 +232,18 @@ class Logradouro extends BaseModel
         return $this->bairro;
     }
 
+    public function setBairro(String $bairro):bool
+    {
+        if((!isset($bairro)) || (strlen($bairro) ==0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['bairro'] = $bairro;
+
+        return true;
+    }
+
     public function getTipo()
     {
         if((!isset($this->tipo)) || (strlen($this->tipo) ==0 )){
@@ -193,6 +255,18 @@ class Logradouro extends BaseModel
         }
 
         return $this->cipo;
+    }
+
+    public function setTipo(String $tipo):bool
+    {
+        if((!isset($tipo)) || (strlen($tipo) ==0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['tipo'] = $tipo;
+
+        return true;
     }
 
     public function getEndereco()
@@ -207,6 +281,36 @@ class Logradouro extends BaseModel
 
         return $this->endereco;
     }
+
+    public function setEndereco(String $endereco):bool
+    {
+        if((!isset($endereco)) || (strlen($endereco) ==0 )){
+            
+            throw new Exception("Parãmetro inválido\n");
+        }
+
+        $this->data['endereco'] = $endereco;
+
+        return true;
+    }
+
+    public function findLogradouro(Int $id)
+    {
+        if((!isset($id)) || ($id <=0 )){
+
+            throw new Exception("Parãmetro inválido\n");
+            
+        }
+
+        $result = $this->select(['*'], ['idLogradouro' => $id], '=','asc', null, null, true);
+
+        if($result != false){
+            return $result[0];
+        }
+
+        return false;
+    }
+
 
     public function __get($prop)
     {

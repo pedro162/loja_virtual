@@ -1,0 +1,74 @@
+<div class="row" style="background-color: #fff; width: 100%;  margin: auto;" align="left">
+	<div class="col py-3">
+		<div class="row mb-2"><div class="col" id="msg-logradouro"></div></div>
+		<div class="row mb-4">
+			<div class="col h4" style="width: 80%;" align="center"><strong>Atualizar cadastro</strong></div>
+		</div>
+		<div class="row">
+			<form method="post" id="cadastro-pessoa-atualizar" action="/pessoa/atualizar" enctype="multipart/form-data" style="margin: auto; width: 80%;">
+				<input type="hidden" name="cd" value="<?=$this->view->registros->getIdPessoa();?>">
+				<div class="row">
+					<div class="col">
+						<div class="form-group">
+							<label for="nome">Nome</label>
+							<input type="text" name="nome" id="nome" class="form-control form-control-sm" value="<?=$this->view->registros->getNomePessoa(); ?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="nome_complementar">Sobrenome</label>
+							<input type="text" name="nome_complementar" id="nome_complementar" class="form-control form-control-sm" value="<?=$this->view->registros->getNomeComplementar();?>">
+						</div>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col">
+						<div class="form-group">
+							<label for="documento">Cpf</label>
+							<input type="text" name="documento" id="documento" class="form-control form-control-sm" value="<?=$this->view->registros->getDocumento();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="documento_complementar">RG</label>
+							<input type="text" name="documento_complementar" id="documento_complementar" class="form-control form-control-sm" value="<?=$this->view->registros->getDocumentoComplementar();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="sexo">Sexo</label>
+							<input type="text" name="sexo" id="sexo" class="form-control form-control-sm" value="<?=$this->view->registros->getSexo();?>">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<div class="form-group">
+							<label for="img">Imagem</label>
+							<input type="file" name="img" id="img" class="form-control form-control-sm" value="<?=$this->view->registros->getImg();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="login">Email</label>
+							<input type="email" name="login" id="" class="form-control form-control-sm" value="<?=$this->view->registros->getLogin();?>">
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="senha">Senha</label>
+							<input type="text" name="senha" id="senha" class="form-control form-control-sm">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col" align="left">
+						<button type="submit" class="btn btn-sm btn-primary">Atualizar</button>
+						<a align='right' href="/" id="cancelar" class="btn btn-sm btn-danger">Cancelar</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

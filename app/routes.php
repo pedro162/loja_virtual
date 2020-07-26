@@ -53,6 +53,11 @@ $routes[] = ['/pedido/pagamento', 'PedidoController@pedidoPagar'];
 $routes[] = ['/pedido/save/loja', 'PedidoController@savePedidoLoja'];
 $routes[] = ['/pedido/loja/view', 'PedidoController@viewPedidoLoja'];
 
+$routes[] = ['/logradouro/cadastrar', 'LogradouroController@cadastrar'];
+$routes[] = ['/logradouro/salvar', 'LogradouroController@salvar'];
+$routes[] = ['/logradouro/editar', 'LogradouroController@editar'];
+$routes[] = ['/logradouro/atualizar', 'LogradouroController@atualizar'];
+
 $routes[] = ['/contas/painel', 'ContaPagarReceberController@painel'];
 
 $routes[] = ['/pessoa/prevendas', 'PessoaController@prevendas'];
@@ -62,6 +67,10 @@ $routes[] = ['/pessoa/cadastro', 'PessoaController@cadastro'];
 $routes[] = ['/pessoa/endereco', 'PessoaController@endereco'];
 $routes[] = ['/pessoa/compras', 'PessoaController@compras'];
 $routes[] = ['/pessoa/pagamento', 'PessoaController@pagamento'];
+$routes[] = ['/pessoa/cadastrar', 'PessoaController@cadastrar'];
+$routes[] = ['/pessoa/editar', 'PessoaController@editar'];
+$routes[] = ['/pessoa/atualizar', 'PessoaController@atualizar'];
+$routes[] = ['/pessoa/salvar', 'PessoaController@salvar'];
 $routes[] = ['/pessoa/nfs', 'PessoaController@nfs'];
 
 $routes[] = ['/usuario/index', 'UserController@index'];

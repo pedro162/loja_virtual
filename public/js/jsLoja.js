@@ -816,23 +816,37 @@ function foramtCalcCod(number)
 
   let element = $(this);
   let url = $(this).attr('href');
-  $(this).hide();
+  let entrega = $('select#entrega-pedido').val();
 
-  $.ajax({
-    url: url,
-    type: 'GET',
-    dataType: 'json',
-    success: function(retorno){
-      if(retorno.length == 3){
-        $('body').find('#qtdItensCarrinho').text(0);
-        getModal('<strong>Atençao</strong>',retorno[2]);
-        element.parents('#form-pgto').remove();
-      }else{
-        console.log(retorno);
-        $(this).show();
+
+  if(entrega){
+
+    $(element).hide();
+
+    url += '?cd='+entrega;
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: 'json',
+      success: function(retorno){
+        if((retorno.length == 3) && (retorno[1] != 'warning')){
+          $('body').find('#qtdItensCarrinho').text(0);
+          getModal('<strong>Atençao</strong>',retorno[2]);
+          element.parents('#form-pgto').remove();
+        }else{
+          let msg = '<div class="row"><div class="col col-sm alert alert-warning h4" align="center">'+retorno[2]+'</div></div>'
+          getModal('<strong>Atençao</strong>',msg);
+          element.show();
+
+          console.log(retorno);
+        }
       }
-    }
-  })
+    })
+
+  }else{
+    let msg = `<div class="row"><div class="col col-sm alert alert-warning h4" align="center">Cadastre um endereço de entrega para finaliazar o pagamento!</div></div>`;
+    getModal('<strong>Atençao</strong>',msg);
+  }
 
  })
 
@@ -858,6 +872,8 @@ function foramtCalcCod(number)
   }
 
   //---------------------------------- INICIANDO SESSAO DE PAGAMENTO PGSEGURO -----------------
+  //configura o amout das funcoes
+  let Amount = 500.00;
   function iniciaSessaoPgSeguro()
   {
     $.ajax({
@@ -878,7 +894,7 @@ function foramtCalcCod(number)
   function listaMeiosPagamentoPgSeguro()
   {
     PagSeguroDirectPayment.getPaymentMethods({
-      amount: 500.00,
+      amount: Amount,
       success: function(response) {
           $.each(response.paymentMethods.CREDIT_CARD.options, function(i, obj){
             $('.CartaoCredito').append("<div><img src=https://stc.pagseguro.uol.com.br/"+obj.images.SMALL.path+" />"+obj.CREDIT_CARD.name+"</div>")
@@ -892,7 +908,7 @@ function foramtCalcCod(number)
           
       },
       complete: function(response) {
-          // Callback para todas chamadas.
+          getTokenCard();
       }
     });
 
@@ -910,7 +926,9 @@ $('body').delegate('#NumeroCartao', 'keyup', function(){
       success: function(response) {
         let BandeiraImg = response.brand.name;
         $('#BandeiraCartao').html("<img src='https://public/img/payment-methods-flags/42x20/"+BandeiraImg+".png' />")
-       console.log(response);
+        
+        getParcelas(BandeiraImg);
+
       },
       error:function(response){
         alert('Cartão não reconhecido');
@@ -920,6 +938,77 @@ $('body').delegate('#NumeroCartao', 'keyup', function(){
   }
 
 })
+
+// ------------------- AEXIBE A QUANTIDADE DE PARCELAS DISPONIVEIS -----------
+
+function getParcelas(Bandeira){
+  PagSeguroDirectPayment.getInstallments({
+        amount:Amount,
+        maxInstallmentNoInterest: 2,
+        brand: Bandeira,
+        success: function(response){
+           $.each(response.installments,function(i, obj){
+              $.each(obj,function(i2, obj2){
+
+                let NumberParcrelas = obj2.installmentAmount.toFixed(2);
+
+                $('#QtdParcelas').show();
+
+                $('#QtdParcelas').append("<option value='"+obj2.quantity+"' label='"+NumberParcrelas+"'>"+obj2.quantity+" parcelas de "+obj2.installmentAmount+"</option>")
+
+              })
+           })
+       },
+        error: function(response) {
+            // callback para chamadas que falharam.
+       },
+        complete: function(response){
+            // Callback para todas chamadas.
+       }
+  });
+
+}
+
+//--------------^^^^^^^^^ pegar o valor da parcdla ^^^^^^^^^ -----------
+$('body').delegate('#ValorParcelas', 'change', function(){
+  let ValueSelected = document.getElementById('QtdParcelas');
+  $('#ValorParcelas').val(ValueSelected.options[ValueSelected.selectedIndex].label);
+})
+
+//--------------------------- OBTEM O TOKEN DO CARTAO DE CREDITO ----------------
+  function getTokenCard(){
+
+    PagSeguroDirectPayment.createCardToken({
+       cardNumber: '4111111111111111', // Número do cartão de crédito
+       brand: 'visa', // Bandeira do cartão
+       cvv: '013', // CVV do cartão
+       expirationMonth: '12', // Mês da expiração do cartão
+       expirationYear: '2026', // Ano da expiração do cartão, é necessário os 4 dígitos.
+       success: function(response) {
+           $('#TokenCard').val(response.card.token);
+       },
+       error: function(response) {
+                // Callback para chamadas que falharam.
+       },
+       complete: function(response) {
+            // Callback para todas chamadas.
+       }
+    });
+
+  }
+
+  $('body').delegate('form#form-pg-seguro', 'submit', function(ev){
+    ev.preventDefault();
+
+        PagSeguroDirectPayment.onSenderHashReady(function(response){
+        if(response.status == 'error') {
+            console.log(response.message);
+            return false;
+        }
+        $('#HashCard').val(response.senderHash); //Hash estará disponível nesta variável.
+    });
+
+  })
 
   //------------------------------- PAINEL CLIENTE --------------------------------------------
       //----------- pedidos----
@@ -1053,5 +1142,248 @@ $('body').delegate('#NumeroCartao', 'keyup', function(){
   
 
   });
+
+
+
+  //-------------------- CHAMA A VIEW PARA CADASTRAR ENDERECO -------------
+  $('body').delegate('#enderecos-pessoa a#new-enderecdo, #enderecos-pessoa a#other-endereco', 'click', function(ev){
+    ev.preventDefault();
+    let url = $(this).attr('href');
+
+    $.ajax({
+        type:'GET',
+        url:url,
+        dataType:'HTML',
+        success:function(retorno){
+          
+          $('#containerLoja #responseUser').html(retorno);
+          $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+          $(window).scrollTop('0')//posiciona o scroll no top
+        }
+
+      });
+  })
+
+  $('body').delegate('#enderecos-pessoa a#endereco-editar', 'click', function(ev){
+    ev.preventDefault();
+    
+    let url  = $(this).attr('href');
+
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+         
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+    })
+
+  });
+
+  //---------------------------- ENVAIA O FORMULARIO DE EDIÇÃO DO LOGRADOURO  ---------------- 
+ 
+  $('body').delegate('#cadastro-logradouro', 'submit', function(event){
+    event.preventDefault();
+
+
+
+    let formulario = $(this);
+
+    let url = $(this).attr('action');
+
+    let form = new FormData(formulario [0]);
+
+    // falta fazer a validação do formulario
+    if(false){
+      alert("Comentario inválido\n");
+      return false;
+    }else{
+
+      $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'json',
+        success:function(retorno){
+          if(retorno[1] == 'success'){
+            $('#navPanelUser #endereco').trigger('click');
+            $('body').find('div#msg-endereco').addClass('alert alert-success').html('<h5 align="center">'+retorno[2]+'</h5>')
+          }else{
+            $('body #msg-logradouro').addClass('alert alert-warning').html('<h5 align="center">'+retorno[2]+'</h5>')
+            //console.log(retorno)
+          }
+        }
+
+      });
+    }
+
+
+  
+
+  });
+
+   //---------------------------- ENVAIA O FORMULARIO DE CADASTRO DE LOGRADOURO  ---------------- 
+ 
+  $('body').delegate('#cadastro-logradouro-editar', 'submit', function(event){
+    event.preventDefault();
+
+
+
+    let formulario = $(this);
+
+    let url = $(this).attr('action');
+
+    let form = new FormData(formulario [0]);
+
+    // falta fazer a validação do formulario
+    if(false){
+      alert("Comentario inválido\n");
+      return false;
+    }else{
+
+      $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'json',
+        success:function(retorno){
+          if(retorno[1] == 'success'){
+            $('#navPanelUser #endereco').trigger('click');
+            $('body').find('div#msg-endereco').addClass('alert alert-success').html('<h5 align="center">'+retorno[2]+'</h5>')
+          }else{
+            $('body #msg-logradouro').addClass('alert alert-warning').html('<h5 align="center">'+retorno[2]+'</h5>')
+            //console.log(retorno)
+          }
+        }
+
+      });
+    }
+
+
+  
+
+  });
+
+  //---------------------------- CHAMA O FORMULARIO DE EDIÇÃO DO CADASTRO  ---------------- 
+ 
+  $('body').delegate('a#pessoa-editar', 'click', function(event){
+    event.preventDefault();
+
+    let url = $(this).attr('href');
+
+     $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+         
+        $('#containerLoja #responseUser').html(retorno);
+        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        $(window).scrollTop('0')//posiciona o scroll no top
+      }
+    })
+
+  });
+
+  //---------------------------- ENVAIA O FORMULARIO DE EDIÇÃO DO CADASTRO  ---------------- 
+ 
+  $('body').delegate('#cadastro-pessoa-atualizar', 'submit', function(event){
+    event.preventDefault();
+
+
+
+    let formulario = $(this);
+
+    let url = $(this).attr('action');
+
+    let form = new FormData(formulario[0]);
+
+    // falta fazer a validação do formulario
+    if(false){
+      alert("Dados inválidos\n");
+      return false;
+    }else{
+
+      $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'HTML',
+        success:function(retorno){
+          console.log(retorno);
+          if(retorno[1] == 'success'){
+            $('#navPanelUser #cadastro').trigger('click');
+            $('body').find('div#msg-endereco').addClass('alert alert-success').html('<h5 align="center">'+retorno[2]+'</h5>')
+          }else{
+            $('body #msg-cadastro').addClass('alert alert-warning').html('<h5 align="center">'+retorno[2]+'</h5>')
+            //console.log(retorno)
+          }
+        }
+
+      });
+    }
+
+
+  
+
+  });
+
+
+  //-------------------------- FUNCAO PARA VALIDAR CPF ----------------
+
+  function validaCpf(cpf){
+        cpf = cpf.replace(/[^\d]+/g, '');
+
+        if(cpf.length != 11){
+          return false;
+        }
+        
+        let splitCpf = cpf.split('');
+
+        let digitoUm = 0;
+        let digitoDois = 0;
+
+        
+
+        for (let i=0, x=1; !(i == 9 ); i++, x ++) { 
+             digitoUm += splitCpf[i] * x;
+        }
+
+        
+
+        for (let i=0,  y=0; !(i == 10 ); i++, y ++) { 
+
+            let invaliCpf = '';
+
+            for (let j = 0; !(j == 10); j++) {
+              invaliCpf += i;
+            }
+
+            if(invaliCpf == cpf){
+                return false;
+            }
+
+            digitoDois += splitCpf[i] * y;
+        }
+
+        let calculoUm = ((digitoUm % 11) == 10) ? 0 : (digitoUm % 11);
+        let calculoDois = ((digitoDois % 11) == 10) ? 0 : (digitoDois % 11);
+
+        if((calculoUm != splitCpf[9]) || (calculoDois != splitCpf[10])){
+            return false;
+        }
+
+        return true;
+
+    }
 
 })

@@ -26,16 +26,22 @@
     <title>Minha-Loja.com</title>
 </head>
   <body id="bodyLojaVirtual" style="background-color: #fff;">
-      <section class="container" id="">
+      <section class="container" id="section-login">
+        <div class="row">
+            <div class="col bem-vindo" style="width: 50%;">
+              <span style="font-size: 48px; color: #8B008B;">
+               <i class="far fa-user fa-2x"></i>
+              </span>
+            </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <div class="bem-vindo">Bem-Vindo(a) ao MinhaLoja.com</div>
+          </div>
+        </div>
       	<div class="row">
-      		<div class="col-ms-12 col-md-12" style="margin: auto;">
+      		<div class="col-ms-12 col-md-12" style="margin: auto;" id="login-user">
 		         <form method="post" action="/home/login/logar" class="was-validated" novalidate style="width: 50%;margin: auto; padding: 20px 30px;">
-				    <div class="form-group bem-vindo">
-				      <span style="font-size: 48px; color: #8B008B;">
-				       <i class="far fa-user fa-2x"></i>
-				      </span>
-				    </div>
-				    <div class="form-group bem-vindo">Bem-Vindo(a) ao MinhaLoja.com</div>
 				    <hr/>
 				    <div class="form-group">
 				        <label for="id_email">Email</label>
@@ -60,7 +66,7 @@
 				    </div>
 				    <div class="form-group rodape" style="display: flex; justify-content: space-between;">
 				        <button type="submit" class="btn btn-success">Entrar</button>
-				        <a href="/home/cadastro" class="link">Inda não sou cadastrado(a)</a>
+				        <a href="/pessoa/cadastrar" class="link" id="novo-cadastro">Inda não sou cadastrado(a)</a>
 				    </div>
 				</form>
 			</div>
@@ -93,5 +99,212 @@
       </div>
 
       </footer>
+
+      <script type="text/javascript">
+        $(document).ready(function(){
+
+          $('body').delegate('a#novo-cadastro', 'click', function(ev){
+            ev.preventDefault();
+            let url  = $(this).attr('href');
+            $.ajax({
+              url: url,
+              type: 'GET',
+              dataType: 'HTML',
+              success: function(retorno){
+                $('#login-user').html(retorno);
+              }
+            })
+          })
+
+          $('body').delegate('form#cadastro-pessoa', 'submit', function(ev){
+            ev.preventDefault();
+            let form = $(this);
+
+            let error = new Array();
+
+            form.find('input').each(function(){
+              let inputNow = $(this);
+              let name = inputNow.attr('name');
+
+              let val = inputNow.val();
+
+              if(val.trim().length == 0){
+                switch(name.trim()){
+                  case 'documento':
+                    error.push('Preencha o campo de "CPF", por favor.');
+                  break;
+
+                  case 'nome_complementar':
+                    error.push('Preencha o campo de "Sobrenome", por favor.');
+                  break;
+
+                  case 'documento_complementar':
+                    error.push('Preencha o campo de "RG", por favor.');
+                  break;
+
+                  case 'sexo':
+                    error.push('Preencha o campo de "SEXO", por favor.');
+                  break;
+
+                  case 'login':
+                    error.push('Preencha o campo de "LOGIN", por favor.');
+                  break;
+
+                  case 'senha':
+                    error.push('Preencha o campo de "SENHA", por favor.');
+                  break;
+
+                  case 'nome':
+                    error.push('Preencha o campo de "NOME", por favor.');
+                  break;
+                }
+                
+              }else{
+
+                 switch(name.trim()){
+                  case 'documento':
+                      if(validaCpf(val.trim()) == false){
+
+                        error.push('O Cpf informado é inválido');
+                      }
+
+                  break;
+                  case 'nome_complementar':
+                    if(val.trim().length < 4){
+
+                        error.push('O sobrnome informado é muito curto');
+                      }
+                  break;
+
+                  case 'documento_complementar':
+                    if(val.trim().length < 6){
+
+                        error.push('O Rg informado é inválido');
+                      }
+
+                  break;
+
+                  case 'sexo':
+                    if((val.trim() != 'F') && (val.trim() != 'M')){
+
+                        error.push('O sexo informado é inválido!');
+                      }
+                  break;
+
+                  case 'login':
+                    if(val.trim().length < 6){
+
+                        error.push('Email inválido');
+                      }
+                  break;
+
+                  case 'senha':
+                    if(val.trim().length < 6){
+
+                        error.push('Informe uma senha que tenha seis caracteres ou mais!');
+                      }
+                  break;
+
+                  case 'nome':
+                    if(val.trim().length < 4){
+
+                        error.push('O nome informado é muito curto!');
+                      }
+                  break;
+                }
+
+              }
+
+            })
+
+            let url  = $(this).attr('action');
+
+            let objForm = new  FormData(form[0]);
+            if(error.length == 0){
+
+                $.ajax({
+                  url: url,
+                  type: 'POST',
+                  data: objForm,
+                  dataType: 'json',
+                  processData: false,
+                  contentType: false,
+                  success: function(retorno){ 
+
+                    $('#retorno').remove();
+
+                    if(retorno[1] == 'success'){
+                      $('#section-login').html('');
+                    }
+
+                    let msg = $('<div/>').addClass('row').attr('id', 'retorno');
+                    msg.append($('<div/>').addClass('col alert alert-'+retorno[1]).html(retorno[2]))
+                    
+                    $('#section-login').prepend(msg);
+                  }
+                })
+              }else{
+                let msg = 'Atenção: \n\n';
+                for (let i = 0; !(i == error.length); i++) {
+                  msg+= error[i]+'\n';
+                }
+                alert(msg);
+                return false;
+              }
+
+          })
+
+
+
+          function validaCpf(cpf){
+            cpf = cpf.replace(/[^\d]+/g, '');
+
+            if(cpf.length != 11){
+              return false;
+            }
+            
+            let splitCpf = cpf.split('');
+
+            let digitoUm = 0;
+            let digitoDois = 0;
+
+            
+
+            for (let i=0, x=1; !(i == 9 ); i++, x ++) { 
+                 digitoUm += splitCpf[i] * x;
+            }
+
+            
+
+            for (let i=0,  y=0; !(i == 10 ); i++, y ++) { 
+
+                let invaliCpf = '';
+
+                for (let j = 0; !(j == 11); j++) {
+                  invaliCpf += i;
+                }
+
+                console.log(invaliCpf)
+                if(invaliCpf == cpf){
+                    return false;
+                }
+
+
+                digitoDois += splitCpf[i] * y;
+            }
+
+            let calculoUm = ((digitoUm % 11) == 10) ? 0 : (digitoUm % 11);
+            let calculoDois = ((digitoDois % 11) == 10) ? 0 : (digitoDois % 11);
+
+            if((calculoUm != splitCpf[9]) || (calculoDois != splitCpf[10])){
+                return false;
+            }
+
+            return true;
+
+          }
+
+        })
+      </script>
   </body>
 </html>
