@@ -64,38 +64,10 @@ class Pessoa extends BaseModel
     {
         $result = $this->parseCommit();
 
-        $resultSelect = $this->select(['*'], ['login' => $this->getLogin()] , '=','asc', null, null, true);
-
-        if($resultSelect != false){
-
-            throw new Exception("Email já cadastrado");
-            
-        }
-
-        $resultSelect = $this->select(['*'], ['documento' => $this->getDocumento()] , '=','asc', null, null, true);
-
-        if($resultSelect != false){
-
-            throw new Exception("Pessoa já está cadastrada\n");
-            
-        }
-
-        $resultSelect = $this->select(['*'], ['documentoComplementar' => $this->getDocumentoComplementar()] , '=','asc', null, null, true);
-
-        if($resultSelect != false){
-
-            throw new Exception("Pessoa já está cadastrada\n");
-            
-        }
-
-        if($this->getTipo() == 'F'){
-            if(Utils::validaCpf($this->getDocumento()) == false){
-                throw new Exception("Cpf inválido\n");
-                
-            }
-        }
+        $this->validaPessoa();
 
         $resultInsert = $this->insert($result);
+
         if($resultInsert == true){
             return true;
         }
@@ -106,11 +78,86 @@ class Pessoa extends BaseModel
     public function modify(array $dados)
     {
         $result = $this->parseCommit();
-        var_dump($result);
+        
+        $this->validaPessoa(true);
 
         $resultUpdate = $this->update($result, $this->getIdPessoa());
 
         return $resultUpdate;
+    }
+
+    public function validaPessoa($edit = false):bool
+    {
+
+        $error = [];
+
+        if($edit == false){
+            
+            $resultLogin = $this->select(['*'], ['login' => $this->data['login']] , '=','asc', null, null, true);
+
+            if($resultLogin != false){
+                $error[] = "Email já cadastrado";
+                
+            }
+
+            $resultDocument = $this->select(['*'], ['documento' => $this->data['documento']] , '=','asc', null, null, true);
+
+            $resultDocComplement = $this->select(['*'], ['documentoComplementar' => $this->data['documentoComplementar']] , '=','asc', null, null, true);
+
+            if(($resultDocument != false) || ($resultDocComplement != false)){
+                $error[] = "Pessoa já está cadastrada\n";
+            }
+
+            if($this->data['tipo'] == 'F'){
+                if(Utils::validaCpf($this->data['documento']) == false){
+                    $error[] = "Cpf inválido\n";
+                    
+                }
+            }
+
+        }else{
+
+            $resultLogin = $this->select(['*'], ['login' => $this->data['login']] , '=','asc', null, null, true);
+
+            if($resultLogin[0]->getIdPessoa() != $this->getIdPessoa()){
+                $error[] = "Email já cadastrado";
+                
+            }
+
+            $resultDocument = $this->select(['*'], ['documento' => $this->data['documento']] , '=','asc', null, null, true);
+
+            $resultDocComplement = $this->select(['*'], ['documentoComplementar' => $this->data['documentoComplementar']] , '=','asc', null, null, true);
+
+            if(
+                ($resultDocument[0]->getIdPessoa() != $this->getIdPessoa()) 
+                || ($resultDocComplement[0]->getIdPessoa() != $this->getIdPessoa())
+            ){
+                $error[] = "Pessoa já está cadastrada\n";
+            }
+
+            if($this->data['tipo'] == 'F'){
+                if(Utils::validaCpf($this->data['documento']) == false){
+                    $error[] = "Cpf inválido\n";
+                    
+                }
+            }
+
+        }
+
+
+        
+
+        if($tot = count($error) > 0){
+            $msg = '';
+
+            for ($i=0; !($i == $tot ); $i++) { 
+                $msg .= $error[$i].'<br/>'.PHP_EOL;
+            }
+
+            throw new Exception($msg);
+        }
+
+        return true;
     }
 
     public function infoPedidoComplete(Array $where = [], String $tipo = 'venda', Int $init = 0, Int $end = 10)
@@ -135,17 +182,22 @@ class Pessoa extends BaseModel
         if((isset($where)) && (count($where) > 0)){
             for ($i=0; !($i == count($where)); $i++) { 
                 if(is_array($where[$i]) && (count($where[$i]) > 0)){
-                    if(isset($where[$i]['key']) && isset($where[$i]['val']) && isset($where[$i]['operator']) && isset($where[$i]['comparator'])){
+                    if(isset($where[$i]['key']) && isset($where[$i]['val']) && isset($where[$i]['comparator'])){
+
                         $key        = trim($where[$i]['key']);
                         $val        = trim($where[$i]['val']);
                         $comparator   = trim($where[$i]['comparator']);
-                        $operator   = trim($where[$i]['operator']);
 
                         if(!is_numeric($val)){
                             $val = $this->satinizar($val);
                         }
 
-                        $sql .= ' '.$operator.' '.$key.' '.$comparator.' '.$val;
+                        if(isset($where[$i]['operator'])){
+                            $sql .= ' '.trim($where[$i]['operator']);
+                        }
+
+                        $sql .= ' '.$key.' '.$comparator.' '.$val;
+
                     }
                 }
             }
@@ -360,6 +412,7 @@ class Pessoa extends BaseModel
     {
         if((!isset($this->documento)) || (strlen($this->documento) ==0 )){
             if(isset($this->data['documento']) && (strlen($this->data['documento']) > 0)){
+
                 return $this->data['documento'];
             }
 

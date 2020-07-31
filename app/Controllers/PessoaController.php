@@ -209,7 +209,7 @@ class PessoaController extends BaseController
         }
     }
 
-	public function compras()
+	public function compras($request)
     {
     	try {
 
@@ -220,17 +220,69 @@ class PessoaController extends BaseController
                 
             }
 
+            $pagina = 1;
+            $itensPorPagina = 10;
+
+            if(isset($request['get']['pagina'])){
+                $pagina = (int) $request['get']['pagina'];
+            }
+
+            $filtroOptionSelected = 0;
+            $search = null;
+
+            if(isset($request['get']['filtro'])){
+                $filtroOptionSelected = (int)$request['get']['filtro'];
+
+                switch ((int)$request['get']['filtro']) {
+                    case 1:
+                        $search = 'cancelado';
+                        break;
+                    
+                    case 2:
+                        $search = 'andamento';
+                        break;
+                    case 3:
+                        $search = 'entregue';
+                        break;
+                }
+            }
+
     		Transaction::startTransaction('connection');
 
-            //busca todos os pedidos com status de venda
-            $this->view->pedidos = $usuario->infoPedidoComplete();
-            $this->view->pessoa = $usuario;
+            $pedido = new Pedido();
 
+            $inicio = ($itensPorPagina * $pagina) - $itensPorPagina;
+
+            if($search != null){
+                $totItens = $pedido->countItens('PessoaIdPessoa = '.$usuario->getIdPessoa().' and tipo = \'venda\' and status = \''.$search.'\'');
+
+                $this->view->pedidos = $usuario->infoPedidoComplete(
+                    [['key'=>'status','val'=>$search,'comparator'=> '=','operator'=> 'and']],
+                    'venda', $inicio, $itensPorPagina
+                );
+
+            }else{
+                $totItens = $pedido->countItens('PessoaIdPessoa = '.$usuario->getIdPessoa().' and tipo = \'venda\'');
+
+                $this->view->pedidos = $usuario->infoPedidoComplete([],'venda', $inicio, $itensPorPagina);
+            }
+
+            
+            $this->view->pessoa = $usuario;
+            $this->view->pagina = $pagina;
+            $this->view->itensPorPagina = $itensPorPagina;
+            $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+            $this->view->filtro = $filtroOptionSelected;
             $this->render('pessoa/pedido/index', false);
 
     		Transaction::close();
     		
-    	} catch (\Exception $e) {
+    	}catch (\PDOException $e) {
+            $erro = ['msg','warning', 'Algo errado aconteceu na requisição'];
+            $this->view->result = json_encode($erro);
+            $this->render('pessoa/ajax', false);
+
+        } catch (\Exception $e) {
     		Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
@@ -389,44 +441,46 @@ class PessoaController extends BaseController
 
             $dados = $request['post'];
 
-
             Transaction::startTransaction('connection');
             
-            $usuario->setNomePessoa($dados['nome']);
-            $usuario->setLogin($dados['login']);
-            $usuario->setDocumento($dados['documento']);
-            $usuario->setDocumentoComplementar($dados['documento_complementar']);
-            $usuario->setNomeComplementar($dados['nome_complementar']);
+            $pessoa = new Pessoa();
+            $resultPessoa = $pessoa->findPessoa($usuario->getIdPessoa());
+
+            $resultPessoa->setNomePessoa($dados['nome']);
+            $resultPessoa->setLogin($dados['login']);
+            $resultPessoa->setDocumento($dados['documento']);
+            $resultPessoa->setDocumentoComplementar($dados['documento_complementar']);
+            $resultPessoa->setNomeComplementar($dados['nome_complementar']);
 
             if(isset($dados['senha']) && (strlen($dados['senha']) > 0)){
-               $usuario->setSenha($dados['senha']);
+               $resultPessoa->setSenha($dados['senha']);
             }
 
             if(isset($dados['img']) && (strlen($dados['img']) > 0)){
-                $usuario->setImg($dados['img']);
+                $resultPessoa->setImg($dados['img']);
             }else{
-                $usuario->setImg('avatar.png');
+                $resultPessoa->setImg('avatar.png');
             }
 
             if(isset($dados['grupo'])){
-                $pessoa->setGrupo($dados['grupo']);
+                $resultPessoa->setGrupo($dados['grupo']);
             }else{
-                $usuario->setGrupo('Cliente');
+                $resultPessoa->setGrupo('Cliente');
             }
 
             if(isset($dados['tipo'])){
-                $usuario->setTipo($dados['tipo']);
+                $resultPessoa->setTipo($dados['tipo']);
             }else{
-                $usuario->setTipo('F');
+                $resultPessoa->setTipo('F');
             }
 
             if(isset($dados['sexo'])){
-                $usuario->setSexo($dados['sexo']);
+                $resultPessoa->setSexo($dados['sexo']);
             }else{
-                $usuario->setSexo('N');
+                $resultPessoa->setSexo('N');
             }
 
-            $result = $usuario->modify([]);
+            $result = $resultPessoa->modify([]);
 
             if($result == true){
                 $this->view->result = json_encode(['msg', 'success', '<h3>Cadastro atualizado com sucesso</h3> ']);

@@ -30,6 +30,11 @@ abstract class BaseModel
         
 
         $sql = "SELECT COUNT(id{$this->getTable()}) totItens FROM {$this->getTable()}";
+
+        if($where){
+            $sql.= ' WHERE '.$where;
+        }
+
         $conn = Transaction::get();
 
         $consulta = $conn->query($sql);
@@ -41,13 +46,57 @@ abstract class BaseModel
     }
 
 
-    public function paginador(array $campos, Int $itensPorPagina, Int $paginas, $class =  null)
+    public function paginador(array $campos, Int $itensPorPagina, Int $paginas, $class =  null, array $where = null)
     {   
 
         $inicio = ($itensPorPagina * $paginas) - $itensPorPagina;
 
+        if(is_null($where)){
 
-        $result = $this->select($campos, [],'=','asc', $inicio, $itensPorPagina, $class);
+            $result = $this->select($campos, [],'=','asc', $inicio, $itensPorPagina, $class);
+
+        }else{
+            $sql = 'SELECT '.implode(',', $campos).' FROM '.$this->getTable();
+
+            $whe = '';
+
+            if((isset($where)) && (count($where) > 0)){
+
+                for ($i=0; !($i == count($where)); $i++) { 
+                    if(is_array($where[$i]) && (count($where[$i]) > 0)){
+                        if(isset($where[$i]['key']) && isset($where[$i]['val']) && isset($where[$i]['comparator'])){
+
+                            $key        = trim($where[$i]['key']);
+                            $val        = trim($where[$i]['val']);
+                            $comparator   = trim($where[$i]['comparator']);
+
+                            if(!is_numeric($val)){
+                                $val = $this->satinizar($val);
+                            }
+
+                            $whe .= ' '.$key.' '.$comparator.' '.$val;
+
+                            if(isset($where[$i]['operator'])){
+                                $whe .= ' '.$operator   = trim($where[$i]['operator']);
+                            }
+                        }
+                    }
+                }
+                
+            }
+
+
+            if(strlen($whe) > 0)
+            {
+                $sql .= " where ".$whe;
+
+            }
+
+            $sql.= ' LIMIT '.$inicio.','.$itensPorPagina;
+
+            $result = $this->persolizaConsulta($sql, $class);
+        }
+        
         
         return $result;
        

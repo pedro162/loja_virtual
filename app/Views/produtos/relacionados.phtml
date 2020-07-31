@@ -69,7 +69,7 @@
 		 ?> 
 			    <div class="col-xs-6 col-md-2 card-produto">
 			    	<div class="card produto-item">
-			    		<a class="produto-item link-produto" href=<?= "/pedido/produto/detalhes?cd=".$fornecimento[$i]->getProdutoIdProduto();?> >
+			    		<a class="produto-item link-produto desable-link" href=<?= "/pedido/produto/detalhes?cd=".$fornecimento[$i]->getProdutoIdProduto();?> >
 			    		<div align="center" style="padding-top: 10px">
 			    			<img src="../files/imagens/xbox_controller.jpeg" class="produto" style="width: 100px; height: 100px;">
 			    		</div>
@@ -115,7 +115,7 @@
 				  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
 				  	?>
 				    <li class="page-item <?= $blockPrevius ?>">
-				      <a class="page-link" href="/produto/show?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
+				      <a class="page-link desable-link" href="/produto/show?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
 				    </li>
 
 				    <?php
@@ -125,7 +125,7 @@
 				    		
 				    ?>
 						<li class="page-item <?= $estilo ?>">
-							<a class="page-link" href="/produto/show?pagina=<?= $i+1?>">
+							<a class="page-link desable-link" href="/produto/show?pagina=<?= $i+1?>">
 							<?= $i+1?>
 							</a>
 						</li>
@@ -137,7 +137,7 @@
 				    ?>
 
 				    <li class="page-item <?= $blockNext;?>">
-				      <a class="page-link" href="/produto/show?pagina=<?= $next?>"><strong>Next</strong></a>
+				      <a class="page-link desable-link" href="/produto/show?pagina=<?= $next?>"><strong>Next</strong></a>
 				    </li>
 				  </ul>
 				</nav>

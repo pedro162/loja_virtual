@@ -19,6 +19,11 @@
 
 
 $(document).ready(function(){
+
+  /*-------- HABILITA OS LINKS DO SISTEMA -----------*/
+  ConfigController.ativarLinks();
+
+
   $('.btn-success, .button-modal').css('background-color', '#8B008B');
 
   $('.cnpj').hide();
@@ -51,67 +56,6 @@ $('body').delegate('#entrar', 'click', function(event){
 
 })
 
-
-//------------------ ENVIA O FORMULARIO DE LOGIN  --------------------
-
-/*$('body').delegate('#login', 'submit', function(event){
-  event.preventDefault();
-  let url = $(this).attr('action');
-
-  let user = $(this).find('input[id=id_email]').val();
-  let pass = $(this).find('input[id=id_password]').val();
-
-  if((user.trim() == '') || (pass.trim() == '')){
-    alert('Preencha o formulario corretamente');
-    return false;
-  }
-
-  let form = new FormData($(this)[0]);
-
-  $.ajax({
-    type:'POST',
-    url:url,
-    data:form,
-    processData:false,
-    contentType: false,
-    dataType:'json',
-    success: function(retorno){
-      if(Number(retorno[0] == 1)){
-        $('#closeModal').trigger('click');//fecha o modal se estiver aberto
-        $('#listLog div').html('');
-        $('#listLog div').append($('<a/>').attr('href', '/home/login/logout').attr('id', 'sair').addClass('dropdown-item').text('Sair'))
-        $('#listLog div').append($('<a/>').attr('href', '/loja/painel').attr('id', 'penelUser').addClass('dropdown-item').text('Minha Conta'))
-        return true;
-
-      }else{
-
-        alert(retorno[2]);
-        return false;
-      }
-
-    }
-  });
-
-
-
-});*/
-
-//---------------------------------- CHAMA O PAINEL DO USUARIO -----------------------------
-$('body').delegate('#menu-principal #penelUser', 'click', function(e){
-  e.preventDefault();
-
-  let url  = $(this).attr('href');
-  $.ajax({
-    url: url,
-    type: 'GET',
-    dataType: 'HTML',
-    success: function(retorno){
-      $('#containerLoja').html(retorno);
-      $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-    }
-  })
-})
-  
 
 //------------------------ EFEITOS DA ESTRELA DE NIVEL DO PRODUTO ------------------
 $('body').delegate('.star', 'mouseover', function(){
@@ -553,41 +497,7 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
 
   });
 
-  //----------------- formata valores para calculo
-
-function foramtCalcCod(number)
-{
-  try{
-
-    number = String(number);
-    
-
-    if(number.length == 0){
-      return false;
-    }
-
-    let arrNumber = number.split('.');
-
-    let newNumber = '';
-    for (let i =0; !(i == arrNumber.length); i++) {
-      newNumber+=arrNumber[i]
-    }
-
-
-    newNumber = newNumber.replace(/,/g, '.');
-
-    newNumber = parseFloat(newNumber).toFixed(2);
-
-    return newNumber;
-
-  }catch(e){
-
-    console.log(e);
-  }
-}
-
-
-//----------------------- CALCULAR FRETE DO PRODUTO ---------------------------
+  //----------------------- CALCULAR FRETE DO PRODUTO ---------------------------
 
   $('body').delegate('#formFretQtd', 'submit', function(e){
     e.preventDefault();
@@ -646,7 +556,8 @@ function foramtCalcCod(number)
     cd = Number(cd);
     qtd = Number(qtd);
 
-    addToCar(cd, qtd);
+    PedidoController.addToCar(cd, qtd);
+
     
     
   })
@@ -674,10 +585,11 @@ function foramtCalcCod(number)
         alert('Quantidade solicitada inválida');
         return false;
       }
-
-      addToCar(cd, 1, true)
+      //remove o item ao carrinho
+      PedidoController.addToCar(cd, 1, true)
     }else{
-      addToCar(cd, 1)
+      //adicona o item ao carrinho
+      PedidoController.addToCar(cd, 1)
     }
     
     $('body #carrinhoLink').trigger('click');
@@ -687,89 +599,25 @@ function foramtCalcCod(number)
    //------------- RETIRA O ITEM DO CARRINHO -------------------
   $('body').delegate('#formCarr .controller-delete', 'click', function(){
     
-    
     let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
     
-    removeToCar(cd);
+    //adicona o item ao carrinho
+    PedidoController.removeToCar(cd)
     
     $('body #carrinhoLink').trigger('click');
     
   })
 
-  
-
-
-  /*-------------------- ENVIA O ITEM E A QUANTIDADE PARA ADICIONAR AO CARRINHO --------*/
-  function addToCar(cd, qtd, remov=false)
-  {
-    if((cd <= 0) || (qtd <= 0)){
-      return false;
-    }
-
-    let url = '/pedido/carrinho?qtd='+qtd+'&cd='+cd;
-    if(remov !=false){
-      url += '&rem=1';
-    }
-
-    $.ajax({
-      url:url,
-      type:'GET',
-      dataType:'json',
-      success:function(retorno){
-
-        if(retorno.length == 1){
-          $('body').find('#qtdItensCarrinho').text(retorno[0]);
-          return true;
-        }else{
-          console.log(retorno);
-          return false;
-        }
-      }
-    })
-  }
-
-  /*-------------------- ENVIA O ITEM E A QUANTIDADE PARA ADICIONAR AO CARRINHO --------*/
-  function removeToCar(cd)
-  {
-    if(cd <= 0){
-      return false;
-    }
-
-    let url = '/pedido/carrinho/remove?cd='+cd;
-
-    $.ajax({
-      url:url,
-      type:'GET',
-      dataType:'json',
-      success:function(retorno){
-
-        if(retorno.length == 1){
-          $('body').find('#qtdItensCarrinho').text(retorno[0]);
-          return true;
-        }else{
-          console.log(retorno);
-          return false;
-        }
-      }
-    })
-  }
-
-
+ 
   // --------------EXIBE A VIEW DE ITENS NO CARRINHO ----------
   $('body').delegate('#carrinhoLink', 'click', function(event){
     event.preventDefault();
     let url = $(this).attr('href');
     
-     $.ajax({
-        url:url,
-        type:'GET',
-        dataType:'HTML',
-        success:function(retorno){
-          $('#containerLoja').html(retorno);
-          $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-         
-        }
-      })
+    //exibe o carrinho
+    PedidoController.showCarrinho(url);
+  
+    
   })
 
  //-------------------------- CHAMA A VIEW DE VER MAIS PRODUTOS RELACIONADOS ------------------------
@@ -818,36 +666,9 @@ function foramtCalcCod(number)
   let url = $(this).attr('href');
   let entrega = $('select#entrega-pedido').val();
 
-
-  if(entrega){
-
-    $(element).hide();
-
-    url += '?cd='+entrega;
-    $.ajax({
-      url: url,
-      type: 'GET',
-      dataType: 'json',
-      success: function(retorno){
-        if((retorno.length == 3) && (retorno[1] != 'warning')){
-          $('body').find('#qtdItensCarrinho').text(0);
-          getModal('<strong>Atençao</strong>',retorno[2]);
-          element.parents('#form-pgto').remove();
-        }else{
-          let msg = '<div class="row"><div class="col col-sm alert alert-warning h4" align="center">'+retorno[2]+'</div></div>'
-          getModal('<strong>Atençao</strong>',msg);
-          element.show();
-
-          console.log(retorno);
-        }
-      }
-    })
-
-  }else{
-    let msg = `<div class="row"><div class="col col-sm alert alert-warning h4" align="center">Cadastre um endereço de entrega para finaliazar o pagamento!</div></div>`;
-    getModal('<strong>Atençao</strong>',msg);
-  }
-
+  //exibe a view de finazar pedido
+  PedidoController.finalizarPedido(element, url, entrega)
+  
  })
 
 
@@ -855,21 +676,13 @@ function foramtCalcCod(number)
   $('body').delegate('#responseUser #tbl-itens-cliente tbody tr', 'click', function(e){
     
     let cd = $(this).find('td:eq(0)').text();
-    printPedido(cd);
+
+    let pedido = new PedidoController();
+    pedido.showPedido(cd)
+
   })
 
-  //------------ BUSCA O PEDIDO E XIBE NO MODAL ---------------
-  function printPedido(cd)
-  {
-    $.ajax({
-      url: '/pedido/loja/view?cd='+cd,
-      type: 'GET',
-      dataType: 'HTML',
-      success: function(retorno){
-        getModal('<strong>Detalhes:</strong>',retorno);
-      }
-    })
-  }
+
 
   //---------------------------------- INICIANDO SESSAO DE PAGAMENTO PGSEGURO -----------------
   //configura o amout das funcoes
@@ -1011,71 +824,58 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   })
 
   //------------------------------- PAINEL CLIENTE --------------------------------------------
+
+  $('body').delegate('#menu-principal #penelUser', 'click', function(e){
+    e.preventDefault();
+
+    const painel = new PessoaController();
+
+    painel.index();
+    
+  })
       //----------- pedidos----
-  $('body').delegate('#navPanelUser #ultCompras', 'click', function(ev){
+  $('body').delegate('#navPanelUser #ultCompras, #pagination-compras a', 'click', function(ev){
     ev.preventDefault();
+      let url = $(this).attr('href');
 
-      $.ajax({
-      url: '/pessoa/compras',
-      type:'GET',
-      dataType: 'HTML',
-      success: function(retorno){
+      let pedidoPessoa = new PessoaController();
+      pedidoPessoa.pedido(url);
+  })
+    //pedido com filtro
+  $('body').delegate('#pedido-status', 'change', function(ev){
+    ev.preventDefault();
+      let vl = $(this).val();
+      
+      let url = '/pessoa/compras?filtro='+vl;
 
-        $('#containerLoja #responseUser').html(retorno);
-        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-        $(window).scrollTop('0')//posiciona o scroll no top
-      }
-    })
+      let pedidoPessoa = new PessoaController();
+      pedidoPessoa.pedido(url);
   })
 
       //-------- cadastro ---------
   $('body').delegate('#navPanelUser #cadastro', 'click', function(ev){
     ev.preventDefault();
 
-      $.ajax({
-      url: '/pessoa/cadastro',
-      type:'GET',
-      dataType: 'HTML',
-      success: function(retorno){
-
-        $('#containerLoja #responseUser').html(retorno);
-        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-        $(window).scrollTop('0')//posiciona o scroll no top
-      }
-    })
+      const cadastroPessoa = new PessoaController();
+      cadastroPessoa.cadastro()
   })
 
      //-------- endereco ---------
   $('body').delegate('#navPanelUser #endereco', 'click', function(ev){
     ev.preventDefault();
 
-      $.ajax({
-      url: '/pessoa/endereco',
-      type:'GET',
-      dataType: 'HTML',
-      success: function(retorno){
-
-        $('#containerLoja #responseUser').html(retorno);
-        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-        $(window).scrollTop('0')//posiciona o scroll no top
-      }
-    })
+      const enderecoPessoa = new PessoaController();
+      enderecoPessoa.endereco()
   })
+
   //-------- pagamento ---------
   $('body').delegate('#navPanelUser #pagamento', 'click', function(ev){
     ev.preventDefault();
 
-      $.ajax({
-      url: '/pessoa/pagamento',
-      type:'GET',
-      dataType: 'HTML',
-      success: function(retorno){
+     const pagamentosPessoa = new PessoaController();
 
-        $('#containerLoja #responseUser').html(retorno);
-        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-        $(window).scrollTop('0')//posiciona o scroll no top
-      }
-    })
+     pagamentosPessoa.pagamento();
+
   })
 
 
@@ -1092,6 +892,7 @@ $('body').delegate('#ValorParcelas', 'change', function(){
       type:'GET',
       dataType: 'HTML',
       success: function(retorno){
+        $('#msg-response').html('');
 
         $('#containerLoja #responseUser').html(retorno);
         $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
@@ -1127,7 +928,7 @@ $('body').delegate('#ValorParcelas', 'change', function(){
         dataType:'HTML',
         success:function(retorno){
           if(retorno.length == 3){
-            alert(retorno[2]);
+            //alert(retorno[2]);
           }else{
             $('body #containerLoja #responseUser').scrollTop('100%')//posiciona o scroll no top
             $('body #navPanelUser #chate').trigger('click'); 
@@ -1183,90 +984,24 @@ $('body').delegate('#ValorParcelas', 'change', function(){
 
   });
 
-  //---------------------------- ENVAIA O FORMULARIO DE EDIÇÃO DO LOGRADOURO  ---------------- 
+  //---------------------------- ENVAIA O FORMULARIO DE SALVAR DO LOGRADOURO  ---------------- 
  
   $('body').delegate('#cadastro-logradouro', 'submit', function(event){
     event.preventDefault();
 
-
-
     let formulario = $(this);
-
-    let url = $(this).attr('action');
-
-    let form = new FormData(formulario [0]);
-
-    // falta fazer a validação do formulario
-    if(false){
-      alert("Comentario inválido\n");
-      return false;
-    }else{
-
-      $.ajax({
-        type:'POST',
-        url:url,
-        data:form,
-        processData:false,
-        contentType: false,
-        dataType:'json',
-        success:function(retorno){
-          if(retorno[1] == 'success'){
-            $('#navPanelUser #endereco').trigger('click');
-            $('body').find('div#msg-endereco').addClass('alert alert-success').html('<h5 align="center">'+retorno[2]+'</h5>')
-          }else{
-            $('body #msg-logradouro').addClass('alert alert-warning').html('<h5 align="center">'+retorno[2]+'</h5>')
-            //console.log(retorno)
-          }
-        }
-
-      });
-    }
-
-
-  
+    LogradouroController.salvarLogradouro(formulario);
 
   });
 
-   //---------------------------- ENVAIA O FORMULARIO DE CADASTRO DE LOGRADOURO  ---------------- 
+   //---------------------------- ENVAIA O FORMULARIO DE EDICAO DE LOGRADOURO  ---------------- 
  
   $('body').delegate('#cadastro-logradouro-editar', 'submit', function(event){
     event.preventDefault();
 
-
-
     let formulario = $(this);
 
-    let url = $(this).attr('action');
-
-    let form = new FormData(formulario [0]);
-
-    // falta fazer a validação do formulario
-    if(false){
-      alert("Comentario inválido\n");
-      return false;
-    }else{
-
-      $.ajax({
-        type:'POST',
-        url:url,
-        data:form,
-        processData:false,
-        contentType: false,
-        dataType:'json',
-        success:function(retorno){
-          if(retorno[1] == 'success'){
-            $('#navPanelUser #endereco').trigger('click');
-            $('body').find('div#msg-endereco').addClass('alert alert-success').html('<h5 align="center">'+retorno[2]+'</h5>')
-          }else{
-            $('body #msg-logradouro').addClass('alert alert-warning').html('<h5 align="center">'+retorno[2]+'</h5>')
-            //console.log(retorno)
-          }
-        }
-
-      });
-    }
-
-
+    LogradouroController.atualizarLogradouro(formulario)
   
 
   });
@@ -1297,17 +1032,321 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   $('body').delegate('#cadastro-pessoa-atualizar', 'submit', function(event){
     event.preventDefault();
 
-
-
     let formulario = $(this);
+    CadastroController.atualizarCadastro(formulario);
 
-    let url = $(this).attr('action');
+  });
+
+
+    //------------- ADICONA UMA MENSAGEM ARMAZENADA NO RETORNO AO OBJ  -------
+  function message(obj, retorno){
+
+    if((retorno.length == 3) &&  (retorno[0] == 'msg')){
+      let msg = $('<div/>').addClass('alert alert-'+retorno[1]+' alert-dismissible fadeshow col-md-12');
+      msg.append($('<button/>').addClass('close').attr('data-dismiss', 'alert').html('&times'))
+      msg.attr('align', 'center').append('<h3>'+retorno[2]+'</h3>');
+      msg.css('box-shadow', '2px 2px 3px #000');
+
+      obj.html(msg);
+      return true;
+    }
+    return false;
+  }
+
+
+})
+
+
+
+/*------------------------------------BASE CONTROLLER --------------------------------------*/
+
+class BaseController{
+
+  static requestAjax(url, type='GET', dataType = 'HTML', data= null, objRender=null, clearMsg = true){
+    if(type == 'POST'){
+
+    }else{
+
+        $.ajax({
+        url: url,
+        type: type,
+        dataType: dataType,
+        success: function(retorno){
+          //limpa a div de respostas
+          if(clearMsg){
+            $('#msg-response').html('')
+          }
+
+          if(objRender){
+            objRender.html(retorno);
+          }
+          $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+        }
+      })
+    }
+
+
+  }
+
+
+
+
+}
+
+
+
+
+
+/*----------------------------------- CLASSE DE CONTROLLER PESSOA  -------------------------------------------------*/
+class PessoaController extends BaseController{
+
+  index(){
+    BaseController.requestAjax('/loja/painel', 'GET','HTML', null, $('#containerLoja'));   
+  }
+
+  endereco(){
+       //-------- endereco ---------
+    BaseController.requestAjax('/pessoa/endereco', 'GET','HTML', null, $('#containerLoja #responseUser'));
+    
+  }
+
+  //----------- pedidos----
+  pedido(url){
+
+    if((!url) || (url.trim().length == 0)){
+      throw new Error('Parâmetro inválido\n');
+    }
+    BaseController.requestAjax(url, 'GET','HTML', null, $('#containerLoja #responseUser'));
+
+  }
+
+
+  //-------- cadastro ---------
+  cadastro(){
+    BaseController.requestAjax('/pessoa/cadastro', 'GET','HTML', null, $('#containerLoja #responseUser'));
+    
+  }
+
+
+  //----------- formas de pagamento ------------
+  pagamento(){
+    BaseController.requestAjax('/pessoa/pagamento', 'GET','HTML', null, $('#containerLoja #responseUser'));
+
+  }
+
+
+
+}
+
+/*----------------------------------- CLASSE DE CONTROLLER PEDIDO  -------------------------------------------------*/
+
+class PedidoController extends BaseController{
+
+  index(){
+
+  }
+
+  showPedido(cd){
+    if(cd <= 0){
+      return false;
+    }
+
+
+    $.ajax({
+      url: '/pedido/loja/view?cd='+cd,
+      type: 'GET',
+      dataType: 'HTML',
+      success: function(retorno){
+        let util = new Utilitarios();
+
+        util.getModal('<strong>Detalhes:</strong>',retorno);
+      }
+    })
+
+    return true;
+  }
+
+  static addToCar(cd, qtd, remov=false){
+    if((cd <= 0) || (qtd <= 0)){
+      return false;
+    }
+
+    let url = '/pedido/carrinho?qtd='+qtd+'&cd='+cd;
+    if(remov !=false){
+      url += '&rem=1';
+    }
+
+    $.ajax({
+      url:url,
+      type:'GET',
+      dataType:'json',
+      success:function(retorno){
+
+        if(retorno.length == 1){
+          $('body').find('#qtdItensCarrinho').text(retorno[0]);
+          return true;
+        }else{
+          //console.log(retorno);
+          return false;
+        }
+      }
+    })
+  }
+
+  static removeToCar(cd){
+    if(cd <= 0){
+      throw new Error('Parâmetro inválido');
+    }
+
+    let url = '/pedido/carrinho/remove?cd='+cd;
+
+    $.ajax({
+      url:url,
+      type:'GET',
+      dataType:'json',
+      success:function(retorno){
+
+        if(retorno.length == 1){
+          $('body').find('#qtdItensCarrinho').text(retorno[0]);
+          return true;
+        }else{
+          //console.log(retorno);
+          return false;
+        }
+      }
+    })
+  }
+
+
+  static showCarrinho(url){
+    if(url.trim().length == 0){
+      throw new Error('Parâmetro inválido')
+    }
+
+    BaseController.requestAjax(url, 'GET','HTML', null, $('#containerLoja'));
+
+  }
+
+  static finalizarPedido(element, url, entrega){
+
+    if(entrega){
+
+      $(element).hide();
+
+      url += '?cd='+entrega;
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        success: function(retorno){
+          if((retorno.length == 3) && (retorno[1] != 'warning')){
+            $('body').find('#qtdItensCarrinho').text(0);
+
+            let utilitario = new Utilitarios();
+            utilitario.getModal('<strong>Atençao</strong>',retorno[2]);
+
+            element.parents('#form-pgto').remove();
+          }else{
+            let msg = '<div class="row"><div class="col col-sm alert alert-warning h4" align="center">'+retorno[2]+'</div></div>'
+            
+            let urilitario = Utilitarios();
+            urilitario.getModal('<strong>Atençao</strong>',msg);
+
+            element.show();
+
+            //console.log(retorno);
+          }
+        }
+      })
+
+      return true;
+
+    }
+
+    throw new Error('Algo errado ocorreu, recarrgue a página')
+      //let msg = `<div class="row"><div class="col col-sm alert alert-warning h4" align="center">Cadastre um endereço de entrega para finaliazar o pagamento!</div></div>`;
+      //getModal('<strong>Atençao</strong>',msg);
+    
+  }
+
+}
+
+class CadastroController extends BaseController{
+
+  constructor(){
+
+  }
+
+  static atualizarCadastro(formulario){
+
+    if(!formulario){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    let url = formulario.attr('action');
 
     let form = new FormData(formulario[0]);
 
+    let errors  = [];
+
+    let utilitario = new Utilitarios();
+    if(utilitario.validaCpf(formulario.find('#documento').val()) == false){
+      errors.push('Cpf inválido\n')
+    }
+
+    // falta fazer a validação do formulario
+    if(errors.length > 0){
+      let msg = '';
+      for (let i = 0; !(i == errors.length) ; i++) {
+         msg += errors[i]
+      }
+
+      let utilitario = new Utilitarios();
+      utilitario.message($('#msg-response'), ['msg', 'warning', msg]);
+
+      return false;
+
+    }else{
+
+      $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'json',
+        success:function(retorno){
+
+          let utilitario = new Utilitarios();
+          utilitario.message($('#msg-response'), retorno);
+
+          if(retorno[1] == 'success'){
+            BaseController.requestAjax('/pessoa/cadastro', 'GET','HTML', null, $('#containerLoja #responseUser'));
+          }
+        }
+
+      });
+    }
+
+
+  }
+
+
+}
+
+class LogradouroController extends BaseController{
+  constructor(){
+
+  }
+
+  static salvarLogradouro(formulario){
+    let url = formulario.attr('action');
+
+    let form = new FormData(formulario [0]);
+
     // falta fazer a validação do formulario
     if(false){
-      alert("Dados inválidos\n");
+      alert("Comentario inválido\n");
       return false;
     }else{
 
@@ -1317,33 +1356,188 @@ $('body').delegate('#ValorParcelas', 'change', function(){
         data:form,
         processData:false,
         contentType: false,
-        dataType:'HTML',
+        dataType:'json',
         success:function(retorno){
-          console.log(retorno);
+
+          let utilitario = new Utilitarios();
+          utilitario.message($('#msg-response'), retorno)
+
           if(retorno[1] == 'success'){
-            $('#navPanelUser #cadastro').trigger('click');
-            $('body').find('div#msg-endereco').addClass('alert alert-success').html('<h5 align="center">'+retorno[2]+'</h5>')
-          }else{
-            $('body #msg-cadastro').addClass('alert alert-warning').html('<h5 align="center">'+retorno[2]+'</h5>')
-            //console.log(retorno)
+            BaseController.requestAjax(
+              '/pessoa/endereco', 'GET','HTML', null,
+               $('#containerLoja #responseUser'), false
+              );
+            
           }
+        }
+
+      });
+
+    }
+
+  }
+
+  static atualizarLogradouro(formulario){
+    let url = $(this).attr('action');
+
+    let form = new FormData(formulario [0]);
+
+    // falta fazer a validação do formulario
+    if(false){
+      alert("Comentario inválido\n");
+      return false;
+    }else{
+
+      $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'json',
+        success:function(retorno){
+         
+          let utilitario = new Utilitarios();
+          utilitario.message($('#msg-response'), retorno)
+
+          if(retorno[1] == 'success'){
+            BaseController.requestAjax(
+              '/pessoa/endereco', 'GET','HTML', null,
+               $('#containerLoja #responseUser'), false
+              );
+            
+          }
+
         }
 
       });
     }
 
-
-  
-
-  });
+  }
 
 
-  //-------------------------- FUNCAO PARA VALIDAR CPF ----------------
+  static editar(url){
 
-  function validaCpf(cpf){
-        cpf = cpf.replace(/[^\d]+/g, '');
+  }
+
+}
+
+/*------------- CONTROLLER DE CONFIGURAÇÃO DA PÁGINA -------------------------*/
+class ConfigController extends BaseController{
+  constructor(){
+
+  }
+
+  static ativarLinks(){
+    $('body').find('a.desable-link').removeClass('desable-link');
+  }
+
+
+
+}
+
+
+
+
+
+
+/*----------------------------------- CLASSE DE MOLEDO PESSOA  -------------------------------------------------*/
+class Pessoa{
+  constructor(){
+    this.nome;
+    this.cpf;
+    this.email;
+    this.rg;
+  }
+
+  setNome(nome){
+    if(!nome){
+
+      return false;
+    }
+
+    if(nome.length <= 4){
+      return false;
+    }
+
+    this.nome = nome;
+    return true;
+
+  }
+
+  getNome(){
+    if(!this.nome){
+      return false;
+    }
+
+    return this.nome;
+  }
+
+
+  setEmail(email){
+    if(!email){
+      return false;
+    }
+
+    if(email.length <= 4){
+      return false;
+    }
+
+    this.email = email;
+    return true;
+  }
+
+  getRg(){
+    if(!this.rg){
+      return false;
+    }
+
+    return this.rg;
+
+  }
+
+  setRg(rg){
+    if(!rg){
+      return false;
+    }
+
+    if(rg.length <= 5){
+      return false;
+    }
+
+  }
+
+  getCpf(){
+    if(!this.cpf){
+      return false;
+    }
+
+    return this.cpf;
+  }
+
+
+  setCpf(cpf){
+    if((!cpf) || (cpf.length != 11)){
+      return false;
+    }
+
+    this.cpf = cpf;
+    return true;
+
+  }
+
+
+}
+
+/*----------------------------------- CLASSE DE UTILITÁRIOS  -------------------------------------------------*/
+
+class Utilitarios{
+
+  validaCpf(cpf){
+    cpf = cpf.replace(/[^\d]+/g, '');
 
         if(cpf.length != 11){
+
           return false;
         }
         
@@ -1364,13 +1558,14 @@ $('body').delegate('#ValorParcelas', 'change', function(){
 
             let invaliCpf = '';
 
-            for (let j = 0; !(j == 10); j++) {
+            for (let j = 0; !(j == 11); j++) {
               invaliCpf += i;
             }
 
             if(invaliCpf == cpf){
                 return false;
             }
+
 
             digitoDois += splitCpf[i] * y;
         }
@@ -1379,11 +1574,65 @@ $('body').delegate('#ValorParcelas', 'change', function(){
         let calculoDois = ((digitoDois % 11) == 10) ? 0 : (digitoDois % 11);
 
         if((calculoUm != splitCpf[9]) || (calculoDois != splitCpf[10])){
+
             return false;
         }
 
-        return true;
+        return cpf;
+  }
 
+  /**
+    Formata valores para calculo
+  */
+  static foramtCalcCod(number){
+  
+
+    number = String(number);
+    
+
+    if(number.length == 0){
+      return false;
     }
 
-})
+    let arrNumber = number.split('.');
+
+    let newNumber = '';
+    for (let i =0; !(i == arrNumber.length); i++) {
+      newNumber+=arrNumber[i]
+    }
+
+
+    newNumber = newNumber.replace(/,/g, '.');
+
+    newNumber = parseFloat(newNumber).toFixed(2);
+
+    return newNumber;
+
+
+  }
+
+
+  getModal(titulo='Aguarde', body='', footer=''){
+
+    $('.modal-header h4').html(titulo)
+    $('.modal-body').html(body);
+    $('.modal-footer').html(footer);
+
+  }
+
+  message(obj, retorno){
+
+    if((retorno.length == 3) &&  (retorno[0] == 'msg')){
+      let msg = $('<div/>').addClass('alert alert-'+retorno[1]+' alert-dismissible fadeshow col-md-12');
+      msg.append($('<button/>').addClass('close').attr('data-dismiss', 'alert').html('&times'))
+      msg.attr('align', 'center').append('<h3>'+retorno[2]+'</h3>');
+      msg.css('box-shadow', '2px 2px 3px #000');
+
+      obj.html(msg);
+      return true;
+    }
+    throw new Error('Parâmetro inválido')
+  }
+
+
+}

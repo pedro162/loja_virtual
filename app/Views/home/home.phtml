@@ -21,10 +21,10 @@
 							      	<img src="files/imagens/teclado.jpeg" style="width: 100%;height: 500px;"/>
 							    </div>
 							</div>
-							<a class="carousel-control-prev" href="#demo" data-slide="prev">
+							<a class="carousel-control-prev desable-link" href="#demo" data-slide="prev">
 							    <span class="carousel-control-prev-icon"></span>
 							</a>
-							<a class="carousel-control-next" href="#demo" data-slide="next">
+							<a class="carousel-control-next desable-link" href="#demo" data-slide="next">
 							    <span class="carousel-control-next-icon"></span>
 							</a>
 						</div>
@@ -101,7 +101,7 @@
 									    				
 									    	?>
 										    	<div class=" col-md-<?=$cols?> py-2 px-2  my-2" style="margin:auto;">
-										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto " ><img style="" class="card-img-top a-img-product"  src="files/imagens/<?=$img;?>" alt=""></a>
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto  desable-link" ><img style="" class="card-img-top a-img-product"  src="files/imagens/<?=$img;?>" alt=""></a>
 										    			<?= $msg ?>
 										    	</div>
 									    	<?php 
@@ -112,7 +112,7 @@
 									    </div>
 									  </div>
 									  <div class="card-footer" align="left">
-									  	<p><a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="ver-mais">Ver mais</a></p>
+									  	<p><a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="ver-mais desable-link">Ver mais</a></p>
 									  </div>
 									</div>
 								</div>
@@ -127,7 +127,7 @@
 										<div class="card-body">
 											<div class="row">
 												<div class="col-md-12" align="left">
-													<h4><strong><?=$categ?></strong></h4><a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="ver-mais" >Ver mais</a>
+													<h4><strong><?=$categ?></strong></h4><a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="ver-mais desable-link" >Ver mais</a>
 												</div>
 											</div>
 											<div class="row">
@@ -156,7 +156,7 @@
 									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
 										    	<div class="col-md-3 col-sm-12 col-xs-12 py-2 px-2" style="margin:auto;">
-										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="" class="py-2 px-2 rounded-circle card-img-top a-img-product" src="files/imagens/<?=$img?>" alt="imagem"></a>
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2 desable-link" ><img style="" class="py-2 px-2 rounded-circle card-img-top a-img-product" src="files/imagens/<?=$img?>" alt="imagem"></a>
 										    		<?= $msg ?>
 										    	</div>
 									    	<?php 
@@ -208,8 +208,8 @@
 									    				<strong>sem estoque</strong></p>':'' 
 									    	?>
 										    	<div class="col-md-2 col-sm-6 col-xs-6 py-2 px-2" style="margin:auto;">
-										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2" ><img style="" class="rounded-circle card-img-top py-2 px-2 a-img-product hidBtn" src="files/imagens/<?=$img?>" alt="<?=$img?>"></a><br>
-										    		<a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="btn btn-primary ver-mais" style="position: absolute; top: 100px; left: auto; margin:auto;display: none;">Ver mais</a>
+										    		<a href="/pedido/produto/detalhes?cd=<?=$id?>" class="link-produto my-2 desable-link" ><img style="" class="rounded-circle card-img-top py-2 px-2 a-img-product hidBtn" src="files/imagens/<?=$img?>" alt="<?=$img?>"></a><br>
+										    		<a href="/pedido/produto/vermais?cd=<?=$idCategoria?>" class="btn btn-primary ver-mais desable-link" style="position: absolute; top: 100px; left: auto; margin:auto;display: none;">Ver mais</a>
 										    		<?= $msg ?>
 										    	</div>
 									    	<?php 

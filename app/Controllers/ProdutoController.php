@@ -38,7 +38,7 @@ class ProdutoController extends BaseController
             $pagina = 1;
             $itensPorPagina = 18;
 
-            if(isset($request['get'], $request['get']['pagina'])){
+            if(isset($request['get']['pagina'])){
                 $pagina = $request['get']['pagina'];
             }
 

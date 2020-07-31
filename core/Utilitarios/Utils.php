@@ -47,14 +47,18 @@ class Utils
     {
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
 
+        if(strlen($cpf) != 11){
+            return false;
+        }
+
         $digitoUm = 0;
         $digitoDois = 0;
 
-        for ($i=0, $x=10; !($i == 9 ); $i++, $x --) { 
+        for ($i=0, $x=1; !($i == 9 ); $i++, $x ++) { 
             $digitoUm += $cpf[$i] * $x;
         }
 
-        for ($i=0, $x=11; !($i == 10 ); $i++, $x --) { 
+        for ($i=0, $x=0; !($i == 10 ); $i++, $x ++) { 
             if(str_repeat($i, 11) == $cpf){
                 return false;
             }
@@ -62,13 +66,15 @@ class Utils
             $digitoDois += $cpf[$i] * $x;
         }
 
-        $calculoUm = (($digitoUm % 11) <2) ? 0 : 11-($digitoUm % 11);
-        $calculoDois = (($digitoDois % 11) <2) ? 0 : 11-($digitoDois % 11);
+        $calculoUm = (($digitoUm % 11)  == 10) ? 0 : ($digitoUm % 11);
+        $calculoDois = (($digitoDois % 11) == 10) ? 0 : ($digitoDois % 11);
 
         if(($calculoUm != $cpf[9]) || ($calculoDois != $cpf[10])){
+
             return false;
         }
 
+        
         return true;
 
     }

@@ -1,11 +1,6 @@
 
 
 <div class="col-sm-12">
-	<?php
-
-		 if((isset($this->view->pedidos)) && (is_array($this->view->pedidos))){
-
-	?>
 	<div class="row">
 		<div class="col" align="left">
 			 <?php
@@ -27,10 +22,12 @@
 		<div class="col-sm-6 col-md-6">
 			<form method="post" action="#" class="row">
 				<div class="form-group col-sm-5">
-					<select class="form-control form-control-sm" name="status">
-						<option>Todos</option>
-						<option>Cancelado</option>
-						<option>Em aberto</option>
+					<select class="form-control form-control-sm" name="status" id="pedido-status">
+						
+						<option value="0" <?= ($this->view->filtro == 0) ? 'selected' : '';?>>Todos</option>
+						<option value="1" <?= ($this->view->filtro == 1) ? 'selected' : '';?>>Cancelado</option>
+						<option value="2" <?= ($this->view->filtro == 2) ? 'selected' : '';?>>Em andamento</option>
+						<option value="3" <?= ($this->view->filtro == 3) ? 'selected' : '';?>>Entregue</option>
 					</select>
 				</div>
 				<div class="form-group col-sm-5">
@@ -45,6 +42,11 @@
 			<a href="#" class="btn btn-sm btn-primary">Monitorar pedido</a>
 		</div>
 	</div>
+	<?php
+
+		 if((isset($this->view->pedidos)) && (is_array($this->view->pedidos))){
+
+	?>
 	<div class="row">
 		<div class="col" align="center">
 			<table class="table table-light table-hover" id="tbl-itens-cliente">
@@ -83,11 +85,48 @@
 			
 		</div>
 	</div>
+	<div class="row">
+		<div class="col">
+			<nav aria-label="Page navigation example" id="pagination-compras">
+			  <ul class="pagination justify-content-end">
+			  	<?php 
+			  		$previous = $this->view->pagina - 1;
+			  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
+			  	?>
+			    <li class="page-item <?= $blockPrevius ?>">
+			      <a class="page-link" href="/pessoa/compras?pagina=<?=$previous?>&filtro=<?= $this->view->filtro?>" tabindex="-1"><strong>Previous</strong></a>
+			    </li>
+
+			    <?php
+			    	for ($i=0; !($i == $this->view->totPaginas); $i++) {
+
+			    		$estilo = ($this->view->pagina == ($i + 1)) ? 'active' : '';
+			    		
+			    ?>
+					<li class="page-item <?= $estilo ?>">
+						<a class="page-link" href="/pessoa/compras?pagina=<?= $i+1?>&filtro=<?= $this->view->filtro?>">
+						<?= $i+1?>
+						</a>
+					</li>
+			    <?php 
+					}
+
+					$blockNext = ($this->view->pagina  == $this->view->totPaginas) ? 'disabled' : '';
+					$next = $this->view->pagina + 1;
+			    ?>
+
+			    <li class="page-item <?= $blockNext;?>">
+			      <a class="page-link" href="/pessoa/compras?pagina=<?= $next?>&filtro=<?= $this->view->filtro?>"><strong>Next</strong></a>
+			    </li>
+			  </ul>
+			</nav>
+		</div>
+	</div>
 	<?php
 
 		}else{
 
-	?>
+	?>	
 		<h2 class="alert alert-warning" align="center">Nenhum registro encontrado!</h2>
 
 	<?php	
