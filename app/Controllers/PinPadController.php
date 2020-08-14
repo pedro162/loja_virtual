@@ -66,6 +66,10 @@ class PinPadController extends BaseController
             //fax o commit e fecha a conexao com o banco
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 

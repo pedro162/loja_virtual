@@ -13,6 +13,7 @@ use App\Models\Pedido;
 use App\Models\DetalhesPedido;
 use \App\Models\Usuario;
 use \App\Models\ProdutoCategoria;
+use \App\Models\Marca;
 use \App\Models\Comentario;
 use \App\Models\FormPgto;
 use \App\Models\PedidoFormPgto;
@@ -69,6 +70,10 @@ class PedidoController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 
@@ -120,6 +125,10 @@ class PedidoController extends BaseController
             $this->render('pedido/ajax', false);
 
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
 
             Transaction::rollback();
@@ -178,6 +187,10 @@ class PedidoController extends BaseController
             $this->view->result = json_encode([$qtdItens]);
             $this->render('pedido/ajax', false);
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             $erro = ['msg','warning', $e->getMessage()];
@@ -226,6 +239,10 @@ class PedidoController extends BaseController
             $this->render('pedido/carrinho', false);
 
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 
@@ -243,72 +260,101 @@ class PedidoController extends BaseController
 
     public function loadPessoa($request)
     {   
-        Transaction::startTransaction('connection');
-
-        if(!isset($request['post']['loadPessoa'])){
-            throw new \Exception("Propriedade indefinida<br/>");
+        try{
             
-        }
-        if(empty($request['post']['loadPessoa'])){
-            throw new \Exception("Propriedade indefinida<br/>");
-            
-        }
+            Transaction::startTransaction('connection');
 
-        $pessoa = new Pessoa();
-        $result = $pessoa->loadPessoa($request['post']['loadPessoa'], false, true);
-
-        if($result != false){
-
-            $newResult = [];
-
-            for ($i=0; !($i == count($result)); $i++) { 
-                $newResult[] = [$result[$i]->idPessoa, $result[$i]->nomePessoa, $result[$i]->documento];
+            if(!isset($request['post']['loadPessoa'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
             }
-            $this->view->result = json_encode($newResult);
-            $this->render('pedido/ajax', false);
+            if(empty($request['post']['loadPessoa'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
 
-        }else{
-            $this->view->result = json_encode($result);
+            $pessoa = new Pessoa();
+            $result = $pessoa->loadPessoa($request['post']['loadPessoa'], false, true);
+
+            if($result != false){
+
+                $newResult = [];
+
+                for ($i=0; !($i == count($result)); $i++) { 
+                    $newResult[] = [$result[$i]->idPessoa, $result[$i]->nomePessoa, $result[$i]->documento];
+                }
+                $this->view->result = json_encode($newResult);
+                $this->render('pedido/ajax', false);
+
+            }else{
+                $this->view->result = json_encode($result);
+                $this->render('pedido/ajax', false);
+            }
+            
+            Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
             $this->render('pedido/ajax', false);
         }
-        
-        Transaction::close();
     }
 
 
     public function loadEstoque($request)
     {
-        Transaction::startTransaction('connection');
 
-        if(!isset($request['post']['loadEstoque'])){
-            throw new \Exception("Propriedade indefinida<br/>");
-            
-        }
-        if(empty($request['post']['loadEstoque'])){
-            throw new \Exception("Propriedade indefinida<br/>");
-            
-        }
+        try {
 
-        $estoque = new Fornecimento();
-        $result = $estoque->loadFornecimento($request['post']['loadEstoque'], true);
+            Transaction::startTransaction('connection');
 
-        if($result != false){
-
-            $newResult = [];
-
-            for ($i=0; !($i == count($result)); $i++) {
-                $newResult[] = [$result[$i]->getProdutoIdProduto(), $result[$i]->getProdutoNome(), ($result[$i]->getQtdFornecida() - $result[$i]->getQtdVendida()), $result[$i]->getVlVenda()];
-               // $newResult[] = $result[$i]->cpf;
+            if(!isset($request['post']['loadEstoque'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
             }
-            $this->view->result = json_encode($newResult);
-            $this->render('pedido/ajax', false);
+            if(empty($request['post']['loadEstoque'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
 
-        }else{
-            $this->view->result = json_encode($result);
+            $estoque = new Fornecimento();
+            $result = $estoque->loadFornecimento($request['post']['loadEstoque'], true);
+
+            if($result != false){
+
+                $newResult = [];
+
+                for ($i=0; !($i == count($result)); $i++) {
+                    $newResult[] = [$result[$i]->getProdutoIdProduto(), $result[$i]->getProdutoNome(), ($result[$i]->getQtdFornecida() - $result[$i]->getQtdVendida()), $result[$i]->getVlVenda()];
+                   // $newResult[] = $result[$i]->cpf;
+                }
+                $this->view->result = json_encode($newResult);
+                $this->render('pedido/ajax', false);
+
+            }else{
+                $this->view->result = json_encode($result);
+                $this->render('pedido/ajax', false);
+            }
+            
+            Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
             $this->render('pedido/ajax', false);
         }
-        
-        Transaction::close();
     }
 
     /**
@@ -433,6 +479,10 @@ class PedidoController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -476,6 +526,10 @@ class PedidoController extends BaseController
             $resultPedido = $pedido->getPedidoForId((int) $request['get']['cd']);
             $this->printPedido($resultPedido->getIdPedido());
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
             
@@ -676,6 +730,10 @@ class PedidoController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -778,6 +836,10 @@ class PedidoController extends BaseController
             $this->render('produtos/detalhes', false);
             
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 
@@ -816,6 +878,11 @@ class PedidoController extends BaseController
             $result = $fornecimento->loadFornecimentoForIdCategoria([$idCateg], true, null, 1, 20);
 
             if($result != false){
+
+                $marc= new Marca();
+                $marcas = $marc->loadMarcaBasedCateProduct($idCateg);
+
+                $this->view->marcas = $marcas;
                 $this->view->result = $result;
                 $this->render('produtos/produtosRelacionados', false);;
             }else{
@@ -824,6 +891,10 @@ class PedidoController extends BaseController
             }
 
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
             Transaction::rollback();
@@ -885,6 +956,10 @@ class PedidoController extends BaseController
             $this->render('/pedido/pagamento', false);
 
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 
@@ -959,6 +1034,10 @@ class PedidoController extends BaseController
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 

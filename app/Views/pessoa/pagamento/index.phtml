@@ -1,8 +1,12 @@
-<div class="row" style="background-color: #fff; width: 60%;" align="left">
+<div class="row" style="background-color: #fff; width: 100%;" align="left">
 	<div class="col-md-12 py-4 px-4" style="margin: auto;">
 		<div class="row">
 			<div class="col" align="center"><h2><strong>Seus pagamentos</strong></h2></div>
 		</div>
+		<?php
+			if(isset($this->view->registros) && ($this->view->registros != false)){
+
+		?>
 		<div class="row">
 			<div class="col-sm-12 py-3">
 				<strong>Seus cartões:</strong><br>
@@ -16,20 +20,34 @@
 				      </tr>
 				    </thead>
 				    <tbody>
+				    	<?php
+				    		for ($i=0, $registros = $this->view->registros; !($i == count($registros) ); $i++) { 
+
+
+				    	?>
 				    	<tr>
-					    	<td>Visa</td>
+					    	<td><?=$registros[$i]->getCartao()[0]->getBandeira();?></td>
 					        <td>Credito</td>
-					        <td>0045</td>
+					        <td><?=substr($registros[$i]->getCartao()[0]->getNumero(), -4); ?></td>
 					        <td>
 					        	<a href="#" class="btn btn-sm btn-primary"  style="background-color: #9400D3">Editar</a>
-					        	<a href="#" class="btn btn-sm btn-danger">Excluir</a>
+					        	<a href="/cartao/deletar?cc=<?=$registros[$i]->getCartao()[0]->getIdCartao();?>&cp=<?=$this->view->pessoa->getIdPessoa();?>" class="btn btn-sm btn-danger cartao-deletar">Excluir</a>
 					        </td>
 					    </tr>
+
+					    <?php 
+					    	# code...
+				    		}
+					    ?>
 				    </tbody>
 				</table>
 				
 			</div>		
 		</div>
+		<?php
+
+			}
+		?>
 		<div class="row">
 			<div class="col">
 				<strong>Adicione uma forma de pagamento:</strong>
@@ -44,7 +62,7 @@
 		<div class="row">
 			<div class="col py-3">
 				<strong>Cartão de crédito:</strong><br>
-				<a href="#" class="btn btn-sm btn-primary">adicicionar</a>
+				<a href="/cartao/cadastrar" class="btn btn-sm btn-primary add-card-cred">adicicionar</a>
 			</div>
 		</div>
 	</div>

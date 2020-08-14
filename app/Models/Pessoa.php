@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\Pedido;
 use App\Models\Chate;
 use App\Models\ConversaChate;
+use App\Models\CartaoComprador;
 use \Core\Utilitarios\Utils;
 use \Exception;
 use \InvalidArgumentException;
@@ -127,14 +128,15 @@ class Pessoa extends BaseModel
             $resultDocument = $this->select(['*'], ['documento' => $this->data['documento']] , '=','asc', null, null, true);
 
             $resultDocComplement = $this->select(['*'], ['documentoComplementar' => $this->data['documentoComplementar']] , '=','asc', null, null, true);
-
-            if(
-                ($resultDocument[0]->getIdPessoa() != $this->getIdPessoa()) 
-                || ($resultDocComplement[0]->getIdPessoa() != $this->getIdPessoa())
-            ){
-                $error[] = "Pessoa já está cadastrada\n";
+            if(($resultDocComplement != false) && ($resultDocument != false)){
+                if( 
+                    ($resultDocument[0]->getIdPessoa() != $this->getIdPessoa()) 
+                    || ($resultDocComplement[0]->getIdPessoa() != $this->getIdPessoa())
+                ){
+                    $error[] = "Pessoa já está cadastrada\n";
+                }
             }
-
+            
             if($this->data['tipo'] == 'F'){
                 if(Utils::validaCpf($this->data['documento']) == false){
                     $error[] = "Cpf inválido\n";
@@ -631,6 +633,30 @@ class Pessoa extends BaseModel
         throw new Exception("Usuario o senha inválidos\n");
 
         
+    }
+
+    public function getCartaoComprador()
+    {
+        $cartao = new CartaoComprador();
+
+        $result = $cartao->selectNew(['*'],
+         [
+            ['key'=>'idPessoa', 'val'=> $this->idPessoa, 'comparator'=> '=', 'operator' => 'and'],
+            ['key'=>'ativo', 'val'=> 'sim', 'comparator'=> '=']
+         ],
+
+         [
+            ['key'=>'idPessoa', 'order'=>'asc']
+         ],
+
+          null, null, true, false
+        );
+
+        if($result == false){
+            throw new Exception("Nenhum registro encontrado\n");
+            
+        }
+        return $result;
     }
     
 

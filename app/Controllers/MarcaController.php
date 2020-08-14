@@ -57,14 +57,27 @@ class MarcaController extends BaseController
 
     public function salvar($request)
     {
-       Transaction::startTransaction('connection');
-       
-        $marca = new Marca();
-        $result = $marca->save($request['post']['marca']);
+        try{
 
-        $this->view->result = json_encode($result);
-        $this->render('produtos/ajaxPainelAdmin', false);
+           Transaction::startTransaction('connection');
+           
+            $marca = new Marca();
+            $result = $marca->save($request['post']['marca']);
 
-        Transaction::close();
+            $this->view->result = json_encode($result);
+            $this->render('produtos/ajaxPainelAdmin', false);
+
+            Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('marca/ajax', false);
+        }
     }
 }

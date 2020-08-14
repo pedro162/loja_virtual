@@ -97,8 +97,100 @@ class PagSeguro
 
         $xml = simplexml_load_string($retorno);
         
+        curl_close($curl);
+
         return $xml;
     }
+
+    public function notficacoes(string $transactionCode)
+    {
+
+        $url = 'https://ws.sandbox.uol.com.br/v2/transactions/notifications/'.$_POST['notificationCode'].'?email='.self::EMAIL_PAGS.'&token='.self::TOKEN_SANDB;
+
+        
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded; charset=UTF-8']);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($crul, CURLOPT_RETURNTRANSFER , true);
+
+        $retorno = curl_exec($curl);
+
+        $xml = simplexml_load_string($retorno);
+
+        curl_close($curl);
+        
+        /*
+            //configurar corretamente
+
+            $crud = $con->prepare('update pedido set status=? where reference=?');
+            $crud->bindValue(1, $xml->status);
+            $crud->bindValue(2, $xml->reference);
+            $crud->execute();
+        
+        */
+
+    }
+
+    public function consulta()
+    {
+        $url = 'https://ws.sandbox.uol.com.br/v2/transactions?email='.self::EMAIL_PAGS.'&token='.self::TOKEN_SANDB.'&reference=refereicia_do_produto';
+
+        
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($crul, CURLOPT_RETURNTRANSFER , true);
+
+        $retorno = curl_exec($curl);
+
+        $xml = simplexml_load_string($retorno);
+
+        curl_close($curl);
+
+        $links = '';
+
+        foreach ($xml->transactions as $transactions) {
+            foreach ($transactions as $transaction) {
+
+                $urlOther = 'https://ws.sandbox.uol.com.br/v2/transactions/'.$transaction->code.'?email='.self::EMAIL_PAGS.'&token='.self::TOKEN_SANDB;
+
+                $links .= "<a href='{$urlOther}'></a>";
+                
+            }
+        }
+
+    }
+
+
+    public function detalhesTransaction($transactionCode)
+    {
+        $url = 'https://ws.sandbox.uol.com.br/v2/transactions/'.$transactionCode.'?email='.self::EMAIL_PAGS.'&token='.self::TOKEN_SANDB;
+
+        
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($crul, CURLOPT_RETURNTRANSFER , true);
+
+        $retorno = curl_exec($curl);
+
+        $xml = simplexml_load_string($retorno);
+
+        curl_close($curl);
+
+        $links = '';
+
+        foreach ($xml->transactions as $transactions) {
+            foreach ($transactions as $transaction) {
+
+                $urlOther = 'https://ws.sandbox.uol.com.br/v2/transactions/'.$transaction->code.'?email='.self::EMAIL_PAGS.'&token='.self::TOKEN_SANDB;
+
+                $links .= "<a href='{$urlOther}'></a>";
+                
+            }
+        }
+    }
+
 
     public function extornTransaction(string $transactionCode)
     {

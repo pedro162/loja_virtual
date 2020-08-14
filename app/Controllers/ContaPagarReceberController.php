@@ -43,7 +43,11 @@ class ContaPagarReceberController extends BaseController
 
 			Transaction::close();
 
-		} catch (\Exception $e) {
+		}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
 			
 			Transaction::rollback();
 

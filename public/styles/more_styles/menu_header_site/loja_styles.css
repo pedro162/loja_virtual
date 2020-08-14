@@ -512,7 +512,19 @@ form .btn-danger:hover{
     #vitrine-home .first-of-grid{
        width: auto; height: auto;
      }
+
+    #menu-principal .submenu{
+        display: none;
+     }
+
+
     
+}
+
+@media(max-width: 700px){
+    #menu-principal .submenu{
+        display: none;
+    }
 }
 
 /*------------------ style para tabela de pedidos ------------*/

@@ -170,6 +170,10 @@ class HomeController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -192,6 +196,10 @@ class HomeController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             
             Transaction::rollback();
@@ -210,6 +218,10 @@ class HomeController extends BaseController
             $this->render('home/loginInit', false);
 
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (Exception $e) {
             
@@ -236,6 +248,10 @@ class HomeController extends BaseController
             //$this->view->result= json_encode([1]);
             //$this->render('home/ajax', false);
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
             Transaction::rollback();
@@ -290,7 +306,11 @@ class HomeController extends BaseController
 
             Transaction::close();
 
-        } catch (\Exception $e) {
+        } catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        }catch (\Exception $e) {
             Transaction::rollback();
             echo $e->getMessage().'-'.$e>getFile();
         }
@@ -322,6 +342,10 @@ class HomeController extends BaseController
             $this->render('admin/home', false);
 
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
             Transaction::rollback();

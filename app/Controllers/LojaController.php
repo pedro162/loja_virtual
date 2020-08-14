@@ -24,17 +24,26 @@ use \Exception;
 class LojaController extends BaseController
 {
     
-	public function painel()
+	public function painel($riquest)
 	{	
 		try {
 
 			Transaction::startTransaction('connection');
 
+			if(! isset($riquest['post'])){
+				throw new Exception("Requisição inválida\n");
+				
+			}
+
 			$this->render('loja/painelUser', false);
 
 			Transaction::close();
 
-		} catch (\Exception $e) {
+		}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
 			
 			Transaction::rollback();
 

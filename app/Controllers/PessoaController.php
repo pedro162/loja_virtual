@@ -17,6 +17,8 @@ use \App\Models\Comentario;
 use \App\Models\FormPgto;
 use \App\Models\PedidoFormPgto;
 use \App\Models\ContaPagarReceber;
+use \App\Models\Cartao;
+use \App\Models\CartaoComprador;
 use \Core\Utilitarios\Utils;
 use Core\Utilitarios\Sessoes;
 use \Exception;
@@ -56,7 +58,11 @@ class PessoaController extends BaseController
     		$this->render('pessoa/pedido/index', false);
     		Transaction::close();
     		
-    	} catch (\Exception $e) {
+    	}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
     		Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
@@ -102,7 +108,11 @@ class PessoaController extends BaseController
             //fax o commit e fecha a conexao com o banco
     		Transaction::close();
     		
-    	} catch (\Exception $e) {
+    	}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
     		Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
@@ -147,6 +157,10 @@ class PessoaController extends BaseController
             //fax o commit e fecha a conexao com o banco
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 
@@ -156,7 +170,7 @@ class PessoaController extends BaseController
         }
     }
 
-	public function cadastro()
+	public function cadastro($riquest)
     {
     	try {
             //busca o usuario logado
@@ -166,8 +180,13 @@ class PessoaController extends BaseController
                 
             }
 
-
     		Transaction::startTransaction('connection');
+
+            if(! isset($riquest['post'])){
+                throw new Exception("Requisição inválida\n");
+                
+            }
+
             $pessoa = new Pessoa();
 
             $this->view->pessoa = $pessoa->findPessoa($usuario->getIdPessoa());
@@ -175,7 +194,11 @@ class PessoaController extends BaseController
 
     		Transaction::close();
     		
-    	} catch (\Exception $e) {
+    	} catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        }catch (\Exception $e) {
     		Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
@@ -184,7 +207,7 @@ class PessoaController extends BaseController
     	}
     }
 
-    public function endereco()
+    public function endereco($riquest)
     {
         try {
             //busca o usuario logado
@@ -196,10 +219,19 @@ class PessoaController extends BaseController
 
             Transaction::startTransaction('connection');
 
+            if(! isset($riquest['post'])){
+                throw new Exception("Requisição inválida\n");
+                
+            }
+
             $this->view->pessoa = $usuario;
             $this->render('pessoa/endereco/index', false);
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 
@@ -220,20 +252,29 @@ class PessoaController extends BaseController
                 
             }
 
+
+    		Transaction::startTransaction('connection');
+
+            if(! isset($request['post'])){
+                throw new Exception("Requisição inválida\n");
+                
+            }
+
+            
             $pagina = 1;
             $itensPorPagina = 10;
 
-            if(isset($request['get']['pagina'])){
-                $pagina = (int) $request['get']['pagina'];
+            if(isset($request['post']['pagina'])){
+                $pagina = (int) $request['post']['pagina'];
             }
 
             $filtroOptionSelected = 0;
             $search = null;
 
-            if(isset($request['get']['filtro'])){
-                $filtroOptionSelected = (int)$request['get']['filtro'];
+            if(isset($request['post']['filtro'])){
+                $filtroOptionSelected = (int)$request['post']['filtro'];
 
-                switch ((int)$request['get']['filtro']) {
+                switch ((int)$request['post']['filtro']) {
                     case 1:
                         $search = 'cancelado';
                         break;
@@ -247,8 +288,6 @@ class PessoaController extends BaseController
                 }
             }
 
-    		Transaction::startTransaction('connection');
-
             $pedido = new Pedido();
 
             $inicio = ($itensPorPagina * $pagina) - $itensPorPagina;
@@ -260,6 +299,20 @@ class PessoaController extends BaseController
                     [['key'=>'status','val'=>$search,'comparator'=> '=','operator'=> 'and']],
                     'venda', $inicio, $itensPorPagina
                 );
+
+            }else if((isset($request['post']['pedido']) )&& ($request['post']['pedido'] > 0)){
+
+                $totItens = $pedido->countItens('PessoaIdPessoa = '.$usuario->getIdPessoa().' and idPedido = '.(int) $request['post']['pedido']);
+
+                $this->view->pedidos = $usuario->infoPedidoComplete([
+                    [
+                        'key'=>'P.idPedido', 'val'=>(int) $request['post']['pedido'],
+                        'comparator' => '=',
+                        'operator' => 'and'
+                    ]
+                ],'venda', $inicio, $itensPorPagina);
+
+                $this->view->pedido = (int) $request['post']['pedido'];
 
             }else{
                 $totItens = $pedido->countItens('PessoaIdPessoa = '.$usuario->getIdPessoa().' and tipo = \'venda\'');
@@ -291,7 +344,7 @@ class PessoaController extends BaseController
     	}
     }
 
-    public function pagamento()
+    public function pagamento($riquest)
     {
         try {
 
@@ -304,19 +357,35 @@ class PessoaController extends BaseController
 
             Transaction::startTransaction('connection');
 
+            if(! isset($riquest['post'])){
+                throw new Exception("Requisição inválida\n");
+                
+            }
+
+            $registros = $usuario->getCartaoComprador();
+
+            $cartoes = [];
+
+            for ($i=0; !($i == count($registros) ); $i++) { 
+                $cartoes[] = $registros[$i]->getCartao()[0];
+            }
+
             //busca todos os pedidos com status de venda
-            $this->view->pedidos = $usuario->infoPedidoComplete();
+            $this->view->registros = $registros;
             $this->view->pessoa = $usuario;
 
             $this->render('pessoa/pagamento/index', false);
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 
-            $erro = ['msg','warning', $e->getMessage()];
-            $this->view->result = json_encode($erro);
+            $this->view->result = '<h4>'.$e->getMessage().'</h4><p><a href="/cartao/cadastrar" class="btn btn-md btn-warning add-card-cred">Adicionar cartão</a></p>';
             $this->render('pessoa/ajax', false);
         }
     }
@@ -348,25 +417,25 @@ class PessoaController extends BaseController
             $pessoa->setNomeComplementar($dados['nome_complementar']);
             $pessoa->setSenha($dados['senha']);
 
-            if(isset($dados['img'])){
+            if(isset($dados['img']) && (strlen($dados['img']) > 0)){
                 $pessoa->setImg($dados['img']);
             }else{
                 $pessoa->setImg('avatar.png');
             }
 
-            if(isset($dados['grupo'])){
+            if(isset($dados['grupo']) && (strlen($dados['grupo']) > 0)){
                 $pessoa->setGrupo($dados['grupo']);
             }else{
                 $pessoa->setGrupo('Cliente');
             }
 
-            if(isset($dados['tipo'])){
+            if(isset($dados['tipo']) && (strlen($dados['tipo']) > 0)){
                 $pessoa->setTipo($dados['tipo']);
             }else{
                 $pessoa->setTipo('F');
             }
 
-            if(isset($dados['sexo'])){
+            if(isset($dados['sexo']) && (strlen($dados['sexo']) > 0)){
                 $pessoa->setSexo($dados['sexo']);
             }else{
                 $pessoa->setSexo('N');
@@ -375,12 +444,15 @@ class PessoaController extends BaseController
             $pessoa->save([]);
 
             $this->view->result = json_encode(['msg', 'success', '<h3>Cadastro efetuado com sucesso</h3> <p> Obs: confirme seu emil através do código enviado.</p>
-                <p><a href= "/pessoa/verificar/codigo" class="btn btn-sm btn-primary" >Validar codigo</a> <a href= "/" class="btn btn-sm btn-secondary" >Voltar</a></p>
+                <p><a href= "#" class="btn btn-sm btn-primary" >Validar codigo</a> <a href= "/" class="btn btn-sm btn-secondary" >Voltar</a></p>
              ']);
             $this->render('pessoa/ajax', false);
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 
@@ -390,7 +462,7 @@ class PessoaController extends BaseController
         }
     }
 
-    public function editar()
+    public function editar($riquest)
     {   
         try {
             //busca o usuario logado
@@ -401,6 +473,12 @@ class PessoaController extends BaseController
             }
 
             Transaction::startTransaction('connection');
+
+            if(! isset($riquest['post'])){
+                throw new Exception("Requisição inválida\n");
+                
+            }
+
             $pessoa = new Pessoa();
 
             $registros = $pessoa->findPessoa($usuario->getIdPessoa());
@@ -410,6 +488,10 @@ class PessoaController extends BaseController
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 
@@ -433,15 +515,17 @@ class PessoaController extends BaseController
                 
             }
 
-            if((!isset($request['post'])) || (empty($request['post']))){
+
+            Transaction::startTransaction('connection');
+
+             if((!isset($request['post'])) || (empty($request['post']))){
 
                 throw new Exception('Parâmetro inválido');
                 
             }
 
-            $dados = $request['post'];
 
-            Transaction::startTransaction('connection');
+            $dados = $request['post'];
             
             $pessoa = new Pessoa();
             $resultPessoa = $pessoa->findPessoa($usuario->getIdPessoa());
@@ -492,6 +576,10 @@ class PessoaController extends BaseController
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 
@@ -509,7 +597,11 @@ class PessoaController extends BaseController
 
     		Transaction::close();
     		
-    	} catch (\Exception $e) {
+    	}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
     		Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage().' - '.$e->getLine()];

@@ -26,7 +26,11 @@ class UserController extends BaseController
 
         	Transaction::close();
 
-		} catch (Exception $e) {
+		}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        }catch (Exception $e) {
 			
 			Transaction::rollback();
 		}
@@ -57,7 +61,11 @@ class UserController extends BaseController
 
         	Transaction::close();
 
-		} catch (Exception $e) {
+		}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (Exception $e) {
 			var_dump($e->getMessage());//falta implentar a msg na sessao para exibir ao ususario
 			Transaction::rollback();
 			//header('location:/usuario/login');

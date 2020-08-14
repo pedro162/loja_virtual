@@ -864,7 +864,7 @@ class Fornecimento extends BaseModel
              $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdproduto = P.idProduto';
              $sql .= ' inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto';
              $sql .= ' WHERE (F.ativo = 1) and ((F.qtdFornecida - F.qtdVendida) > 0) and (Img.tipo = \'primaria\')';
-             $sql .= ' and (PC.classificCateg <> \'secundaria\') ';
+            // $sql .= ' and (PC.classificCateg <> \'secundaria\') ';
 
              $in = implode(',', $inIdCatec);
 

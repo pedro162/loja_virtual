@@ -21,8 +21,13 @@
 $(document).ready(function(){
 
   /*-------- HABILITA OS LINKS DO SISTEMA -----------*/
-  ConfigController.ativarLinks();
+  try{
 
+    ConfigController.ativarLinks();
+
+  }catch(e){
+        console.log(e.message)
+  }
 
   $('.btn-success, .button-modal').css('background-color', '#8B008B');
 
@@ -545,66 +550,83 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
   
  //--------------------CAPITURA OS ITENS ADICIONADOS NA VIEW DE DETALHES E MANDA PARA O CARRINHO 
   $('body').delegate('#formFretQtd button#btnAddCarr', 'click', function(){
-    let cd = $('#formFretQtd').find('input[name=prod]').val();
-    let qtd = $('#formFretQtd').find('select[name=qtd]').val();
+
+    try{
+
+      let cd = $('#formFretQtd').find('input[name=prod]').val();
+      let qtd = $('#formFretQtd').find('select[name=qtd]').val();
 
 
-    if(cd.length == 0 || qtd.length == 0){
-      return false;
+      if(cd.length == 0 || qtd.length == 0){
+        return false;
+      }
+
+      cd = Number(cd);
+      qtd = Number(qtd);
+
+      PedidoController.addToCar(cd, qtd);
+
+    }catch(e){
+        console.log(e.message)
     }
-
-    cd = Number(cd);
-    qtd = Number(qtd);
-
-    PedidoController.addToCar(cd, qtd);
-
-    
     
   })
 
    $('body').delegate('#formCarr .controller', 'click', function(){
     
-    let action = $(this).text().trim();
-    
-    let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
+    try{
 
-    let valQtd = $(this).parent().find('span.form-control').text().trim();
-    valQtd = Number(valQtd);
+      let action = $(this).text().trim();
+      
+      let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
+
+      let valQtd = $(this).parent().find('span.form-control').text().trim();
+      valQtd = Number(valQtd);
 
 
-    if(cd.length == 0){
-      alert('Erro na solicitação');
-      return false;
-    }
-    
-    cd = Number(cd);
-
-    if(action == '-'){
-
-      if(valQtd <= 1){
-        alert('Quantidade solicitada inválida');
+      if(cd.length == 0){
+        alert('Erro na solicitação');
         return false;
       }
-      //remove o item ao carrinho
-      PedidoController.addToCar(cd, 1, true)
-    }else{
-      //adicona o item ao carrinho
-      PedidoController.addToCar(cd, 1)
+      
+      cd = Number(cd);
+
+      if(action == '-'){
+
+        if(valQtd <= 1){
+          alert('Quantidade solicitada inválida');
+          return false;
+        }
+        //remove o item ao carrinho
+        PedidoController.addToCar(cd, 1, true)
+      }else{
+        //adicona o item ao carrinho
+        PedidoController.addToCar(cd, 1)
+      }
+      
+      $('body #carrinhoLink').trigger('click');
+
+    }catch(e){
+        console.log(e.message)
     }
-    
-    $('body #carrinhoLink').trigger('click');
     
   })
 
    //------------- RETIRA O ITEM DO CARRINHO -------------------
   $('body').delegate('#formCarr .controller-delete', 'click', function(){
     
-    let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
-    
-    //adicona o item ao carrinho
-    PedidoController.removeToCar(cd)
-    
-    $('body #carrinhoLink').trigger('click');
+    try{
+
+      let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
+      
+      //adicona o item ao carrinho
+      PedidoController.removeToCar(cd)
+      
+      $('body #carrinhoLink').trigger('click');
+
+    }catch(e){
+        console.log(e.message)
+    }
     
   })
 
@@ -612,11 +634,17 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
   // --------------EXIBE A VIEW DE ITENS NO CARRINHO ----------
   $('body').delegate('#carrinhoLink', 'click', function(event){
     event.preventDefault();
-    let url = $(this).attr('href');
+
+    try{
+
+      let url = $(this).attr('href');
+      
+      //exibe o carrinho
+      PedidoController.showCarrinho(url);
     
-    //exibe o carrinho
-    PedidoController.showCarrinho(url);
-  
+    }catch(e){
+        console.log(e.message)
+    }
     
   })
 
@@ -662,23 +690,33 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
   $('body').delegate('#container-pgto #pgSeguro', 'click', function(e){
   e.preventDefault();
 
-  let element = $(this);
-  let url = $(this).attr('href');
-  let entrega = $('select#entrega-pedido').val();
+    try{
+      let element = $(this);
+      let url = $(this).attr('href');
+      let entrega = $('select#entrega-pedido').val();
 
-  //exibe a view de finazar pedido
-  PedidoController.finalizarPedido(element, url, entrega)
+      //exibe a view de finazar pedido
+      PedidoController.finalizarPedido(element, url, entrega)
+    }catch(e){
+        console.log(e.message)
+    }
   
  })
 
 
   //-------------- FAX BUSCA O PEDIDO PARA VISUALIZAR NO MODAL -----------
   $('body').delegate('#responseUser #tbl-itens-cliente tbody tr', 'click', function(e){
-    
-    let cd = $(this).find('td:eq(0)').text();
+  
+    try{
 
-    let pedido = new PedidoController();
-    pedido.showPedido(cd)
+      let cd = $(this).find('td:eq(0)').text();
+
+      let pedido = new PedidoController();
+      pedido.showPedido(cd)
+
+    }catch(e){
+        console.log(e.message)
+    }
 
   })
 
@@ -738,6 +776,8 @@ $('body').delegate('#NumeroCartao', 'keyup', function(){
       cardBin: NumeroCartao,
       success: function(response) {
         let BandeiraImg = response.brand.name;
+
+        $('#InputBandeira').val(BandeiraImg)
         $('#BandeiraCartao').html("<img src='https://public/img/payment-methods-flags/42x20/"+BandeiraImg+".png' />")
         
         getParcelas(BandeiraImg);
@@ -792,11 +832,11 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   function getTokenCard(){
 
     PagSeguroDirectPayment.createCardToken({
-       cardNumber: '4111111111111111', // Número do cartão de crédito
-       brand: 'visa', // Bandeira do cartão
-       cvv: '013', // CVV do cartão
-       expirationMonth: '12', // Mês da expiração do cartão
-       expirationYear: '2026', // Ano da expiração do cartão, é necessário os 4 dígitos.
+       cardNumber: $('#NumeroCartao').val(), // Número do cartão de crédito
+       brand: $('#InputBandeira').val(), // Bandeira do cartão
+       cvv: $('#cvv').val(), // CVV do cartão
+       expirationMonth: $('#MesValidade').val(), // Mês da expiração do cartão
+       expirationYear: $('#AnoValidade').val(), // Ano da expiração do cartão, é necessário os 4 dígitos.
        success: function(response) {
            $('#TokenCard').val(response.card.token);
        },
@@ -809,6 +849,11 @@ $('body').delegate('#ValorParcelas', 'change', function(){
     });
 
   }
+
+  // CHAMAR A FUNÇÃO DE TOKEN
+  $('body').delegate('#cvv', 'blur', function(){
+    getTokenCard();
+  })
 
   $('body').delegate('form#form-pg-seguro', 'submit', function(ev){
     ev.preventDefault();
@@ -828,28 +873,93 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   $('body').delegate('#menu-principal #penelUser', 'click', function(e){
     e.preventDefault();
 
-    const painel = new PessoaController();
+    try{
 
-    painel.index();
+      const painel = new PessoaController();
+
+      painel.index();
+
+    }catch(e){
+        console.log(e.message)
+    }
     
   })
       //----------- pedidos----
   $('body').delegate('#navPanelUser #ultCompras, #pagination-compras a', 'click', function(ev){
     ev.preventDefault();
-      let url = $(this).attr('href');
+    
+    let arrayUrl = $(this).attr('href').split('?');
 
-      let pedidoPessoa = new PessoaController();
-      pedidoPessoa.pedido(url);
+    try{
+
+        if(arrayUrl[1]){
+
+        let arrayParam = arrayUrl[1].split('&')
+
+        let pagina = null;
+        let filtro = null;
+
+        for(let i=0; !(i == arrayParam.length); i++){
+
+          let subArrParam = arrayParam[i].split('=');
+
+          if(subArrParam[0] == 'pagina'){
+
+            pagina = subArrParam[1];
+
+          }else if(subArrParam[0] == 'filtro'){
+
+            filtro = subArrParam[1];
+
+          }else{
+            throw new Error('Parâmetro inválido')
+          }
+
+        }
+
+        let form = new FormData();
+        form.append('filtro', filtro)
+        form.append('pagina', pagina)
+
+        let pedidoPessoa = new PessoaController();
+        pedidoPessoa.pedido(arrayUrl[0], form);
+
+      }else{
+
+        let pedidoPessoa = new PessoaController();
+        pedidoPessoa.pedido(arrayUrl[0], null);
+      }
+
+
+    }catch(e){
+      console.log(e.message)
+    }
+
   })
+
+
     //pedido com filtro
   $('body').delegate('#pedido-status', 'change', function(ev){
     ev.preventDefault();
       let vl = $(this).val();
-      
-      let url = '/pessoa/compras?filtro='+vl;
+
+      let form = new FormData();
+      form.append('filtro', vl)
 
       let pedidoPessoa = new PessoaController();
-      pedidoPessoa.pedido(url);
+      pedidoPessoa.pedido('/pessoa/compras', form);
+  })
+
+  //pedido com codigo
+  $('body').delegate('#form-find-pedido-id', 'submit', function(ev){
+    ev.preventDefault();
+      let formulario = $(this);
+      let url = formulario.attr('action');
+
+      let form = new FormData(formulario[0]);
+
+      let pedidoPessoa = new PessoaController();
+      pedidoPessoa.pedido(url, form);
   })
 
       //-------- cadastro ---------
@@ -878,6 +988,100 @@ $('body').delegate('#ValorParcelas', 'change', function(){
 
   })
 
+/*---------------------------------------MEIOS DE PAGAMENTO--------------------------------------*/
+  
+    //---------deltar
+  $('body').delegate('#cartoes .cartao-deletar', 'click', function(ev){
+    ev.preventDefault()
+
+    try{
+
+      let arrayUrl = $(this).attr('href').split('?');
+
+      let arrayParam = arrayUrl[1].split('&')
+
+      let cc = null;
+      let cp = null;
+
+      for(let i=0; !(i == arrayParam.length); i++){
+        let subArrParam = arrayParam[i].split('=');
+        if(subArrParam[0] == 'cc'){
+
+          cc = subArrParam[1];
+
+        }else if(subArrParam[0] == 'cp'){
+
+          cp = subArrParam[1];
+
+        }else{
+          throw new Error('Parâmetro inválido')
+        }
+
+      }
+      
+      PagamentoController.deletar(arrayUrl[0], cc, cp);
+
+
+    }catch(e){
+      console.log(e.message)
+    }
+
+    
+  })
+
+  //--- admicionar ---
+  $('body').delegate('a.add-card-cred', 'click', function(ev){
+    ev.preventDefault();
+      
+      let url = $(this).attr('href');
+
+      try{
+
+        PagamentoController.adicionar(url);
+
+
+      }catch(e){
+        console.log(e.message)
+      }
+
+
+  })
+
+  //--- cancelar -> nao adiconar cartao ---
+    $('body').delegate('#cadastro-cartao #cancelar', 'click', function(ev){
+      ev.preventDefault();
+        
+        let url = $(this).attr('href');
+
+        try{
+
+          let pessoa = new PessoaController();
+          pessoa.pagamento(url);
+
+
+        }catch(e){
+          console.log(e.message)
+        }
+
+
+    })
+
+    //--- salva os dados do cartao ---
+    $('body').delegate('form#cadastro-cartao', 'submit', function(ev){
+      ev.preventDefault();
+        
+        let form = $(this);
+
+        try{
+
+          PagamentoController.salvar(form);
+
+        }catch(e){
+          console.log(e.message)
+        }
+
+
+    })
 
   /*---------------------------CHAMA A VIEW DO CHATE ------------*/
 
@@ -949,20 +1153,18 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   //-------------------- CHAMA A VIEW PARA CADASTRAR ENDERECO -------------
   $('body').delegate('#enderecos-pessoa a#new-enderecdo, #enderecos-pessoa a#other-endereco', 'click', function(ev){
     ev.preventDefault();
-    let url = $(this).attr('href');
+    
+    try{
+      
+      let url = $(this).attr('href');
+    
+      LogradouroController.cadastrar(url)
 
-    $.ajax({
-        type:'GET',
-        url:url,
-        dataType:'HTML',
-        success:function(retorno){
-          
-          $('#containerLoja #responseUser').html(retorno);
-          $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-          $(window).scrollTop('0')//posiciona o scroll no top
-        }
 
-      });
+    }catch(e){
+      console.log(e.message)
+    }
+    
   })
 
   $('body').delegate('#enderecos-pessoa a#endereco-editar', 'click', function(ev){
@@ -989,10 +1191,53 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   $('body').delegate('#cadastro-logradouro', 'submit', function(event){
     event.preventDefault();
 
-    let formulario = $(this);
-    LogradouroController.salvarLogradouro(formulario);
+      try{
+
+        let formulario = $(this);
+        LogradouroController.salvarLogradouro(formulario);
+
+      }catch(e){
+        console.log(e.message)
+      }
 
   });
+
+  //------------------ BUSCA O ENDERECO COM BASE NO CEP -----------
+
+  $('body').delegate('#cadastro-logradouro input[name=cep]', 'keyup', function(){
+
+    try{
+      
+      
+    let cep = $(this).val();
+    if(cep.length == 8){
+      LogradouroController.loadCep(cep, '/logradouro/load/cep');
+    }
+
+
+    }catch(e){
+      console.log(e.message)
+    }
+
+     
+  })
+  $('body').delegate('#cadastro-logradouro input[name=cep]', 'select', function(){
+
+    try{
+      
+      
+    let cep = $(this).val();
+    if(cep.length == 8){
+      LogradouroController.loadCep(cep, '/logradouro/load/cep');
+    }
+
+
+    }catch(e){
+      console.log(e.message)
+    }
+
+     
+  })
 
    //---------------------------- ENVAIA O FORMULARIO DE EDICAO DE LOGRADOURO  ---------------- 
  
@@ -1001,8 +1246,14 @@ $('body').delegate('#ValorParcelas', 'change', function(){
 
     let formulario = $(this);
 
-    LogradouroController.atualizarLogradouro(formulario)
-  
+    try{
+
+      LogradouroController.atualizarLogradouro(formulario)
+
+
+    }catch(e){
+      console.log(e.message)
+    }
 
   });
 
@@ -1011,19 +1262,14 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   $('body').delegate('a#pessoa-editar', 'click', function(event){
     event.preventDefault();
 
-    let url = $(this).attr('href');
+    try{
+      let url = $(this).attr('href');
 
-     $.ajax({
-      url: url,
-      type: 'GET',
-      dataType: 'HTML',
-      success: function(retorno){
-         
-        $('#containerLoja #responseUser').html(retorno);
-        $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
-        $(window).scrollTop('0')//posiciona o scroll no top
+      CadastroController.editar(url);
+
+      }catch(e){
+        console.log(e.message)
       }
-    })
 
   });
 
@@ -1032,8 +1278,13 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   $('body').delegate('#cadastro-pessoa-atualizar', 'submit', function(event){
     event.preventDefault();
 
-    let formulario = $(this);
-    CadastroController.atualizarCadastro(formulario);
+    try{
+      let formulario = $(this);
+      CadastroController.atualizarCadastro(formulario);
+
+    }catch(e){
+        console.log(e.message)
+    }
 
   });
 
@@ -1065,6 +1316,45 @@ class BaseController{
   static requestAjax(url, type='GET', dataType = 'HTML', data= null, objRender=null, clearMsg = true){
     if(type == 'POST'){
 
+      $.ajax({
+          url: url,
+          type: type,
+          data: data,
+          processData: false,
+          contentType: false,
+          dataType: dataType,
+          success: function(retorno){
+
+            if(dataType == 'json'){
+
+              //limpa a div de respostas
+              if(clearMsg){
+                $('#msg-response').html('')
+              }
+
+              if(objRender){
+
+                let util = new Utilitarios();
+
+                util.message(objRender, retorno);
+
+              }
+              
+            }else if(dataType == 'HTML'){
+
+              if(clearMsg){
+                $('#msg-response').html('')
+              }
+
+              if(objRender){
+                objRender.html(retorno);
+                $('#bodyLojaVirtual').css('background', '#fff');//muda a cor de fundo da página.
+              }
+            }
+            
+          }
+      })
+
     }else{
 
         $.ajax({
@@ -1076,7 +1366,7 @@ class BaseController{
           if(clearMsg){
             $('#msg-response').html('')
           }
-
+          
           if(objRender){
             objRender.html(retorno);
           }
@@ -1101,36 +1391,42 @@ class BaseController{
 class PessoaController extends BaseController{
 
   index(){
-    BaseController.requestAjax('/loja/painel', 'GET','HTML', null, $('#containerLoja'));   
+
+    //let form = new FormData();
+
+    //form.append('cp', cp)
+    //form.append('cc', cc)
+
+    BaseController.requestAjax('/loja/painel', 'POST','HTML', null, $('#containerLoja'), true);   
   }
 
   endereco(){
        //-------- endereco ---------
-    BaseController.requestAjax('/pessoa/endereco', 'GET','HTML', null, $('#containerLoja #responseUser'));
+    BaseController.requestAjax('/pessoa/endereco', 'POST','HTML', null, $('#containerLoja #responseUser'), true);
     
   }
 
   //----------- pedidos----
-  pedido(url){
+  pedido(url, data=null){
 
     if((!url) || (url.trim().length == 0)){
       throw new Error('Parâmetro inválido\n');
     }
-    BaseController.requestAjax(url, 'GET','HTML', null, $('#containerLoja #responseUser'));
+    BaseController.requestAjax(url, 'POST','HTML', data, $('#containerLoja #responseUser'), true);
 
   }
 
 
   //-------- cadastro ---------
   cadastro(){
-    BaseController.requestAjax('/pessoa/cadastro', 'GET','HTML', null, $('#containerLoja #responseUser'));
+    BaseController.requestAjax('/pessoa/cadastro', 'POST','HTML', null, $('#containerLoja #responseUser'), true);
     
   }
 
 
   //----------- formas de pagamento ------------
   pagamento(){
-    BaseController.requestAjax('/pessoa/pagamento', 'GET','HTML', null, $('#containerLoja #responseUser'));
+    BaseController.requestAjax('/pessoa/pagamento', 'POST','HTML', null, $('#containerLoja #responseUser'), true);
 
   }
 
@@ -1219,6 +1515,11 @@ class PedidoController extends BaseController{
 
 
   static showCarrinho(url){
+
+    if(!url){
+      throw new Error('Parâmetro inválido')
+    }
+
     if(url.trim().length == 0){
       throw new Error('Parâmetro inválido')
     }
@@ -1271,9 +1572,23 @@ class PedidoController extends BaseController{
 
 }
 
+/*----------------------------CONTROLLER DE CADASTRO CLIENTE ----------------------------------*/
 class CadastroController extends BaseController{
 
   constructor(){
+
+  }
+
+  static editar(url){
+    if(!url){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    if(url.trim().length == 0){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    BaseController.requestAjax(url, 'POST','HTML', null, $('#containerLoja #responseUser'), true);
 
   }
 
@@ -1321,7 +1636,7 @@ class CadastroController extends BaseController{
           utilitario.message($('#msg-response'), retorno);
 
           if(retorno[1] == 'success'){
-            BaseController.requestAjax('/pessoa/cadastro', 'GET','HTML', null, $('#containerLoja #responseUser'));
+            BaseController.requestAjax('/pessoa/cadastro', 'POST','HTML', null, $('#containerLoja #responseUser'), null);
           }
         }
 
@@ -1333,6 +1648,8 @@ class CadastroController extends BaseController{
 
 
 }
+
+/*----------------------------CONTROLLER DE ENDERECO ----------------------------------*/
 
 class LogradouroController extends BaseController{
   constructor(){
@@ -1364,7 +1681,7 @@ class LogradouroController extends BaseController{
 
           if(retorno[1] == 'success'){
             BaseController.requestAjax(
-              '/pessoa/endereco', 'GET','HTML', null,
+              '/pessoa/endereco', 'POST','HTML', null,
                $('#containerLoja #responseUser'), false
               );
             
@@ -1378,7 +1695,7 @@ class LogradouroController extends BaseController{
   }
 
   static atualizarLogradouro(formulario){
-    let url = $(this).attr('action');
+    let url = formulario.attr('action');
 
     let form = new FormData(formulario [0]);
 
@@ -1401,8 +1718,9 @@ class LogradouroController extends BaseController{
           utilitario.message($('#msg-response'), retorno)
 
           if(retorno[1] == 'success'){
+
             BaseController.requestAjax(
-              '/pessoa/endereco', 'GET','HTML', null,
+              '/pessoa/endereco', 'POST','HTML', null,
                $('#containerLoja #responseUser'), false
               );
             
@@ -1420,9 +1738,195 @@ class LogradouroController extends BaseController{
 
   }
 
+  static cadastrar(url){
+    BaseController.requestAjax(
+              url, 'POST','HTML', null,
+               $('#containerLoja #responseUser'), false
+              );
+  }
+
+  static loadCep(cep, url){
+
+    if((!cep) || (cep.length == 0)){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    let form = new FormData();
+    form.append('cep', cep);
+    
+    $.ajax({
+        type:'POST',
+        url:url,
+        data:form,
+        processData:false,
+        contentType: false,
+        dataType:'json',
+        success:function(retorno){
+
+          $('body').find('div#msg-cep').css('display', 'none').
+          find('strong').html('')
+
+          if(( retorno.erro) && (retorno.erro == 'true')){
+            alert('Cep não encontrado');
+          }else{
+            //console.log(retorno)
+
+            let endereco = (typeof retorno.logradouro === 'string' ) ? retorno.logradouro : '';
+            //let complemento = retorno.
+            let bairro = (typeof retorno.bairro === 'string' )? retorno.bairro : '';
+            let cidade = (typeof retorno.localidade  === 'string' ) ? retorno.localidade : '';
+
+            $('body').find('#cadastro-logradouro input[name=endereco]').val(endereco);
+            $('body').find('#cadastro-logradouro input[name=bairro]').val(bairro);
+            $('body').find('#cadastro-logradouro input[name=complemento]').val();
+
+
+            //remove os otion selected
+            $('#cadastro-logradouro select[name=cidade] option').removeAttr('selected')
+            $('body').find('#cadastro-logradouro select[name=cidade] option').each(function(){
+              if($(this).html() == cidade){
+                
+                $(this).attr('selected', 'selected');
+              }
+            })
+
+
+
+
+          }
+
+        },
+        beforeSend: function()
+        {
+          $('body').find('div#msg-cep').css('display', 'block').
+          find('strong').html('Aguarde: carregando endereco...')
+        }
+
+      });
+
+
+  }
+
+
 }
 
+
+/*----------------------------CONTROLLER DE MEIOS DE PAGAMENTO ----------------------------------*/
+
+class PagamentoController extends BaseController{
+  constructor(){
+
+  }
+
+  static adicionar(url){
+    if(!url){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    if(url.trim().length == 0){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    BaseController.requestAjax(url.trim(), 'POST','HTML', null, $('#responseUser'), true);
+
+  }
+
+  static deletar(url, cc, cp){
+    if(!url){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    if(url.trim().length == 0){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    if((cc <=0) || (cp <= 0)){
+      throw new Error('Parâmetro inválido\n')
+    }
+
+    let form = new FormData();
+
+    form.append('cp', cp)
+    form.append('cc', cc)
+
+    $.ajax({
+          url: url,
+          type: 'POST',
+          data: form,
+          processData: false,
+          contentType: false,
+          dataType: 'json',
+          success: function(retorno){
+
+              let util = new Utilitarios();
+
+              util.message($('#msg-response'), retorno);
+              if(retorno.length == 3){
+
+                if(retorno[1] == 'success'){
+
+                  BaseController.requestAjax('/pessoa/pagamento', 'POST','HTML', null, $('#containerLoja #responseUser'), false);
+
+                }
+
+              }else{
+                throw new Error('Falha na requisição')
+              }
+
+            
+          }
+      })
+
+  }
+
+  static editar(url){
+
+  }
+
+  static salvar(form){
+    if(!form){
+      throw new Error('Parâmetro inválido');
+    }
+
+    let url = form.attr('action');
+    let dataForm = new FormData(form[0]);
+
+    $.ajax({
+          url: url,
+          type: 'POST',
+          data: dataForm,
+          processData: false,
+          contentType: false,
+          dataType: 'json',
+          success: function(retorno){
+
+              let util = new Utilitarios();
+
+              util.message($('#msg-response'), retorno);
+              if(retorno.length == 3){
+
+                if(retorno[1] == 'success'){
+
+                  BaseController.requestAjax('/pessoa/pagamento', 'POST','HTML', null, $('#containerLoja #responseUser'), false);
+
+                }
+
+              }else{
+                throw new Error('Falha na requisição')
+              }
+            
+          }
+      })
+
+
+  }
+
+
+}
+
+
 /*------------- CONTROLLER DE CONFIGURAÇÃO DA PÁGINA -------------------------*/
+
 class ConfigController extends BaseController{
   constructor(){
 

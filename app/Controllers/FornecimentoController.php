@@ -17,110 +17,153 @@ class FornecimentoController extends BaseController
 
     public function salvar($request)
     {
-        Transaction::startTransaction('connection');
+        try{
+            Transaction::startTransaction('connection');
 
-        $fornecimento = new Fornecimento();
-        $result = $fornecimento->save($request['post']['estoque']);
-        
-        $this->view->result = json_encode($result);
-        $this->render('produtos/ajaxPainelAdmin', false);
+            $fornecimento = new Fornecimento();
+            $result = $fornecimento->save($request['post']['estoque']);
+            
+            $this->view->result = json_encode($result);
+            $this->render('produtos/ajaxPainelAdmin', false);
 
-        Transaction::close();
+            Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage().'-'.$e>getFile();
+        }
         
     }
 
 
     public function lancarEstoque()
     {
-        Transaction::startTransaction('connection');
+        try{
 
-        $produto    = new Produto();
-        $result = $produto->select(
-            ['nomeProduto', 'idProduto'],
-            [], '=', 'asc', null, null, true);
+            Transaction::startTransaction('connection');
 
-        $this->view->produtos = $result;
-        $this->render('fornecimento/lancarEstoque', false);
+            $produto    = new Produto();
+            $result = $produto->select(
+                ['nomeProduto', 'idProduto'],
+                [], '=', 'asc', null, null, true);
 
-        Transaction::close();
+            $this->view->produtos = $result;
+            $this->render('fornecimento/lancarEstoque', false);
+
+            Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage().'-'.$e>getFile();
+        }
     }
 
 
     public function all($request)
     {
-        Transaction::startTransaction('connection');
+        try{
 
-        $pagina = 1;
-        $itensPorPagina = 10;
+            Transaction::startTransaction('connection');
 
-        if(isset($request['get'], $request['get']['pagina'])){
-            $pagina = $request['get']['pagina'];
+            $pagina = 1;
+            $itensPorPagina = 10;
+
+            if(isset($request['get'], $request['get']['pagina'])){
+                $pagina = $request['get']['pagina'];
+            }
+
+            $fornecimento = new Fornecimento();
+            $totItens = (int) $fornecimento->countItens();
+
+            $this->view->totItens = $totItens;
+
+            $inicio = (int) ($itensPorPagina * $pagina) - $itensPorPagina;
+            $inicio = ($inicio == 0) ? 1: $inicio;
+
+
+            $result = $fornecimento->listarConsultaPersonalizada(null, $inicio, $itensPorPagina, true);
+           
+            $this->view->pagina = $pagina;
+            $this->view->itensPorPagina = $itensPorPagina;
+            $this->view->totPaginas = ceil($totItens / $itensPorPagina);
+
+            $stdPaginacao = new \stdClass();
+            $stdPaginacao->pagina = $this->view->pagina;
+            $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
+            $stdPaginacao->totPaginas = $this->view->totPaginas ;
+
+            $this->view->tableFornecimento = $result;
+
+            $this->render('fornecimento/tabelaEstoque', false);
+            
+            Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage().'-'.$e>getFile();
         }
-
-        $fornecimento = new Fornecimento();
-        $totItens = (int) $fornecimento->countItens();
-
-        $this->view->totItens = $totItens;
-
-        $inicio = (int) ($itensPorPagina * $pagina) - $itensPorPagina;
-        $inicio = ($inicio == 0) ? 1: $inicio;
-
-
-        $result = $fornecimento->listarConsultaPersonalizada(null, $inicio, $itensPorPagina, true);
-       
-        $this->view->pagina = $pagina;
-        $this->view->itensPorPagina = $itensPorPagina;
-        $this->view->totPaginas = ceil($totItens / $itensPorPagina);
-
-        $stdPaginacao = new \stdClass();
-        $stdPaginacao->pagina = $this->view->pagina;
-        $stdPaginacao->itensPorPagina = $this->view->itensPorPagina;
-        $stdPaginacao->totPaginas = $this->view->totPaginas ;
-
-        $this->view->tableFornecimento = $result;
-
-        $this->render('fornecimento/tabelaEstoque', false);
-        
-        Transaction::close();
 
     }
 
 
     public function editar($request)
     {   
-         Transaction::startTransaction('connection');
-
-        if(!isset($request['get'], $request['get']['id'])){
-            throw new \Exception("Propriedade indefinida<br/>");
+        try{
             
+            Transaction::startTransaction('connection');
+
+            if(!isset($request['get'], $request['get']['id'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
+            if(empty($request['get']['id'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
+
+            $fornecimento  = new Fornecimento();
+
+            $result = $fornecimento->select(
+                ['idFornecimento','ProdutoIdProduto','nf' , 'FornecedorIdFornecedor',
+                 'dtFornecimento', 'dtRecebimento', 'dtValidade','qtdFornecida', 'vlCompra', 'vlVenda'
+                ],
+                ['idFornecimento'=>$request['get']['id']], '=', 'asc', null, null, true
+
+            )[0];
+
+            $produto    = new Produto();
+            $resultProduto = $produto->select(
+                ['nomeProduto', 'idProduto'],
+                [], '=', 'asc', null, null, true);
+            $this->view->resultProduto = $resultProduto;
+
+            //$this->view->fornecedor = $result->FornecedorIdFornecedor;
+
+            $this->view->result = $result;
+            $this->render('fornecimento/editarEstoque', false);
+
+            Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage().'-'.$e>getFile();
         }
-        if(empty($request['get']['id'])){
-            throw new \Exception("Propriedade indefinida<br/>");
-            
-        }
-
-        $fornecimento  = new Fornecimento();
-
-        $result = $fornecimento->select(
-            ['idFornecimento','ProdutoIdProduto','nf' , 'FornecedorIdFornecedor',
-             'dtFornecimento', 'dtRecebimento', 'dtValidade','qtdFornecida', 'vlCompra', 'vlVenda'
-            ],
-            ['idFornecimento'=>$request['get']['id']], '=', 'asc', null, null, true
-
-        )[0];
-
-        $produto    = new Produto();
-        $resultProduto = $produto->select(
-            ['nomeProduto', 'idProduto'],
-            [], '=', 'asc', null, null, true);
-        $this->view->resultProduto = $resultProduto;
-
-        //$this->view->fornecedor = $result->FornecedorIdFornecedor;
-
-        $this->view->result = $result;
-        $this->render('fornecimento/editarEstoque', false);
-
-        Transaction::close();
     }
 
 

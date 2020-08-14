@@ -18,22 +18,42 @@ use \App\Models\FormPgto;
 use \App\Models\PedidoFormPgto;
 use \App\Models\ContaPagarReceber;
 use \App\Models\Logradouro;
+use \Core\Utilitarios\LoadEnderecoApi;
 use \Core\Utilitarios\Utils;
 use Core\Utilitarios\Sessoes;
 use \Exception;
 
 class LogradouroController extends BaseController
 {
-    public function cadastrar()
+    public function cadastrar($riquest)
     {	
-    	//busca o usuario logado
-        $usuario = Sessoes::usuarioLoad();
-        if($usuario == false){
-            header('Location:/home/init');
-            
-        }
+        try {
 
-        $this->render('logradouro/cadastrar', false);
+            if(! isset($riquest['post'])){
+
+                throw new Exception('Parâmetro inválido');
+                
+            }
+
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            $this->render('logradouro/cadastrar', false);
+            
+        }catch (\PDOException $e) {
+
+
+        } catch (Exception $e) {
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('logradouro/ajax', false);
+        }
     }
 
     public function salvar($request)
@@ -47,15 +67,15 @@ class LogradouroController extends BaseController
 	            
 	        }
 
-        	if((!isset($request['post'])) || (empty($request['post']))){
+            Transaction::startTransaction('connection');
+
+            if((!isset($request['post'])) || (empty($request['post']))){
 
                 throw new Exception('Parâmetro inválido');
                 
             }
 
             $dados = $request['post'];
-
-            Transaction::startTransaction('connection');
 
             $logradouro = new Logradouro();
             $logradouro->setComplemento($dados['complemento']);
@@ -84,6 +104,10 @@ class LogradouroController extends BaseController
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 
@@ -139,6 +163,10 @@ class LogradouroController extends BaseController
            
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 
@@ -175,6 +203,45 @@ class LogradouroController extends BaseController
             
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (Exception $e) {
+            Transaction::rollback();
+
+            $erro = ['msg','warning', $e->getMessage()];
+            $this->view->result = json_encode($erro);
+            $this->render('logradouro/ajax', false);
+        }
+    }
+
+    public function loadCep($request)
+    {
+        try {
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad();
+            if($usuario == false){
+                header('Location:/home/init');
+                
+            }
+
+            
+            Transaction::startTransaction('connection');
+
+            $cepApi = new LoadEnderecoApi($request['post']['cep']);
+            $resultCepApi = $cepApi->getEndereco();
+
+            $this->view->result = $resultCepApi;
+            $this->render('logradouro/ajax', false);
+
+            Transaction::close();
+            
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
             Transaction::rollback();
 

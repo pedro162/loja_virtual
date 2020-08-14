@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use App\Models\ProdutoCategoria;
+use \Core\Database\Transaction;
 use \Exception;
 use \InvalidArgumentException;
 

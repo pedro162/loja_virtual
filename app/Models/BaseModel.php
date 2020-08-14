@@ -10,6 +10,8 @@ use \PDO;
 
 abstract class BaseModel
 {  
+    private $errors = [];
+
     protected static function getConn()
     {
         if(empty(self::$conn))
@@ -182,6 +184,108 @@ abstract class BaseModel
         }else{
             $arrayObj = $result->fetchAll();
             //Transaction::close();
+        }
+
+        if($arrayObj)
+        {
+            return $arrayObj;
+        }
+
+        return false;
+
+
+    }
+
+    public function selectNew(array $elementos, array $where, Array $ordem = null, $litmitInit = null, $limitEnd = null, $std = null, $groupBy = false)
+    {
+
+
+        $sql = "SELECT ";
+        foreach($elementos as $key => $value)
+        {
+                    $sql .= $value.', ';
+        }
+
+        $sql = substr($sql, 0, -2);
+
+        $sql .= ' FROM '.$this->getTable();
+
+
+        $whe = '';
+
+        if((isset($where)) && (count($where) > 0)){
+
+            for ($i=0; !($i == count($where)); $i++) { 
+                if(is_array($where[$i]) && (count($where[$i]) > 0)){
+                    if(isset($where[$i]['key']) && isset($where[$i]['val']) && isset($where[$i]['comparator'])){
+
+                        $key        = trim($where[$i]['key']);
+                        $val        = trim($where[$i]['val']);
+                        $comparator   = trim($where[$i]['comparator']);
+
+                        if(!is_numeric($val)){
+                            $val = $this->satinizar($val);
+                        }
+
+                        $whe .= ' '.$key.' '.$comparator.' '.$val;
+
+                        if(isset($where[$i]['operator'])){
+                            $whe .= ' '.$operator   = trim($where[$i]['operator']);
+                        }
+                    }
+                }
+            }
+            
+        }
+
+
+        if(strlen($whe) > 0)
+        {
+            $sql .= " where ".$whe;
+            
+        }
+
+        if($groupBy == true){
+            $sql .= ' GROUP BY nome'.ucfirst($this->getTable());
+        }
+
+        if(! is_null($ordem)){
+            if(is_array($ordem) && (count($ordem) > 0)){
+
+                $sql .= ' ORDER BY';
+
+                for ($i=0; !($i == count($ordem)) ; $i++) { 
+                    $sql.= ' '.$ordem[$i]['key'].' '.$ordem[$i]['order'].',';
+                }
+
+                $sql = substr($sql, 0, -1);
+            }
+        }
+
+        if(!is_null($litmitInit)){
+
+            $sql .= ' LIMIT '.$litmitInit;
+
+            if(! is_null($limitEnd)){
+                $sql .= ','. $limitEnd;
+            }
+        }
+
+        
+        $conn = Transaction::get();
+
+        $result = $conn->query($sql);
+
+
+        $arrayObj = null;
+
+        if($std){
+            $arrayObj = $result->fetchAll(PDO::FETCH_CLASS, get_class($this));
+           
+
+        }else{
+            $arrayObj = $result->fetchAll();
+           
         }
 
         if($arrayObj)
@@ -375,25 +479,6 @@ abstract class BaseModel
         return $arrayObj;
     }
 
-
-    /*protected function parseStdClass($obj)
-    {
-        $teste = new \ReflectionClass(get_class($this));
-        $methods = $teste->getMethods();
-        $propriedades = $teste->getProperties();
-
-        $stdclass = new \stdclass();
-
-        for ($i=0; !($i == count($methods)) ; $i++) { 
-            if(substr($methods[$i], 0, 2) == 'get'){
-                $stdclass->methods[$i];
-            }
-            
-        }
-        var_dump();
-    }*/
-
-
     protected function parseRequestAjax(array $dados){
         $superArray = [];
 
@@ -450,6 +535,25 @@ abstract class BaseModel
             return $result->minId;
         }
 
+    }
+
+    public function addError(String $val)
+    {
+        if(strlen(trim($val)) == 0){
+            exit('Parâmetro valido');
+        }
+
+        $this->errors[] = $val;
+    }
+
+    public function getError()
+    {
+        $error = '';
+
+        for ($i=0; !($i == count($this->errors) ); $i++) { 
+            $error .= $this->errors[$i].'<br/>';
+        }
+        return $error;
     }
 
 

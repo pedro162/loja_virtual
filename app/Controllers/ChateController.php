@@ -38,7 +38,11 @@ class ChateController extends BaseController
     		$this->render('loja/chate/index', false);
     		Transaction::close();
     		
-    	} catch (\Exception $e) {
+    	}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
     		Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
@@ -77,6 +81,10 @@ class ChateController extends BaseController
             
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
 

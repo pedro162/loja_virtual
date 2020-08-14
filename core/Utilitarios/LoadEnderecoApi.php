@@ -12,6 +12,8 @@ class LoadEnderecoApi
 {
 	const URL_CEP = 'http://viacep.com.br/ws/{cep}/xml';
 	
+	private $cep;
+	
 	function __construct(String $cep)
 	{
 		$this->setCep($cep);
@@ -43,7 +45,7 @@ class LoadEnderecoApi
 			$url = str_replace('{cep}', $this->cep, self::URL_CEP);
 
 			$xml = simplexml_load_file($url);
-			return $xml;
+			return json_encode($xml);
 		}
 
 		throw new Exception("Propriedade não definida\n");

@@ -170,9 +170,11 @@
 
                   break;
                   case 'nome_complementar':
-                    if(val.trim().length < 4){
+                    if(val.trim().length < 3){
 
                         error.push('O sobrnome informado é muito curto');
+                      }else if(val.trim().length > 255){
+                        error.push('O sobrnome informado é muito extenso');
                       }
                   break;
 
@@ -180,6 +182,8 @@
                     if(val.trim().length < 6){
 
                         error.push('O Rg informado é inválido');
+                      }else if(val.trim().length > 12){
+                        error.push('O Rg informado é muito extenso');
                       }
 
                   break;
@@ -195,20 +199,24 @@
                     if(val.trim().length < 6){
 
                         error.push('Email inválido');
+                      }else if(val.trim().length > 100){
+                        error.push('Email muito extenso');
                       }
                   break;
 
                   case 'senha':
-                    if(val.trim().length < 6){
+                    if((val.trim().length < 6) || (val.trim().length > 11)){
 
-                        error.push('Informe uma senha que tenha seis caracteres ou mais!');
+                        error.push('Informe uma senha que tenha entre seis e onze caracteres!');
                       }
                   break;
 
                   case 'nome':
-                    if(val.trim().length < 4){
+                    if(val.trim().length < 3){
 
                         error.push('O nome informado é muito curto!');
+                      }else if(val.trim().length > 255){
+                        error.push('O nome informado é muito extenso!');
                       }
                   break;
                 }

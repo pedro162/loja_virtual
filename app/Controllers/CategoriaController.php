@@ -100,6 +100,10 @@ class CategoriaController extends BaseController
 
             Transaction::close();
             
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (Exception $e) {
 
              Transaction::rollback();

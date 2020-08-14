@@ -111,6 +111,23 @@ class Marca extends BaseModel
     }
 
 
+    public function loadMarcaBasedCateProduct(Int $idCateg)
+    {
+        if((! isset($idCateg)) || ($idCateg <= 0)){
+                throw new Exception('Parâmetro inválido');
+        }
+
+
+        $sql = 'select distinct M.idMarca, M.nomeMarca
+                from Marca M
+                inner join Produto P on P.idMarca = M.idMarca
+                inner join ProdutoCategoria PC on PC.ProdutoIdProduto = P.idProduto
+                where PC.CategoriaIdCategoria = '.$idCateg;
+
+        $result = $this->persolizaConsulta($sql, true);
+
+        return $result;
+    }
 
 
 }

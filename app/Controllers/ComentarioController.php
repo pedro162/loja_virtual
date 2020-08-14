@@ -71,7 +71,11 @@ class ComentarioController extends BaseController
 	        
 	        Transaction::close();
 
-    	} catch (\Exception $e) {
+    	}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
     		Transaction::rollback();
 			
 			$erro = ['msg','warning', $e->getMessage()];
@@ -122,7 +126,11 @@ class ComentarioController extends BaseController
 	        
 	        Transaction::close();
 
-    	} catch (Exception $e) {
+    	}catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (Exception $e) {
     		Transaction::rollback();
 			
 			$erro = ['msg','warning', $e->getMessage()];

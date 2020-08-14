@@ -68,6 +68,10 @@ class ProdutoController extends BaseController
             $this->render('produtos/relacionados', true);
 
             Transaction::close();
+        }catch (\PDOException $e) {
+            
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -119,6 +123,8 @@ class ProdutoController extends BaseController
             }
 
             Transaction::close();
+        }catch (\PDOException $e) {
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -181,6 +187,10 @@ class ProdutoController extends BaseController
             }
 
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -205,6 +215,10 @@ class ProdutoController extends BaseController
            
             
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             Transaction::rollback();
             var_dump($e);
@@ -265,6 +279,10 @@ class ProdutoController extends BaseController
             $this->render('produtos/editar', false);
 
             Transaction::close();
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
             
             Transaction::rollback();
@@ -298,7 +316,11 @@ class ProdutoController extends BaseController
             $this->render('produtos/ajax', false);
 
             Transaction::close();
-        } catch (\Exception $e) {
+        } catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        }catch (\Exception $e) {
             
             Transaction::rollback();
 
@@ -329,6 +351,10 @@ class ProdutoController extends BaseController
             $this->render('produtos/ajax', false);
 
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
             
@@ -438,6 +464,10 @@ class ProdutoController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
 
             Transaction::rollback();
@@ -546,6 +576,10 @@ class ProdutoController extends BaseController
 
             Transaction::close();
 
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
         } catch (\Exception $e) {
 
             Transaction::rollback();
@@ -583,6 +617,10 @@ class ProdutoController extends BaseController
             $this->render('produtos/estoqueLancar', false);
 
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
 
@@ -652,6 +690,10 @@ class ProdutoController extends BaseController
             }
             
             Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
 
         } catch (\Exception $e) {
 
