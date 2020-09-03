@@ -301,8 +301,8 @@ class Pessoa extends BaseModel
 
     public function setNomePessoa(String $nome):bool
     {
-        if((!isset($nome)) || (strlen($nome) <= 0)){
-            throw new Exception("Parâmetro  inválido.");
+        if((!isset($nome)) || (strlen(trim($nome)) < 3) || (strlen(trim($nome)) > 200)){
+            throw new Exception("O nome deve ter entre 3 e 200 caracteres.");
         }
 
        $this->data['nomePessoa'] = $nome;
@@ -373,8 +373,8 @@ class Pessoa extends BaseModel
 
     public function setLogin(String $login):bool
     {
-        if((!isset($login)) || (strlen($login) <= 0)){
-            throw new Exception("Propriedade não inválida.");
+        if((!isset($login)) || (strlen(trim($login)) == 0)){
+            throw new Exception("O email deve ter entre 12 e 100 caracteres.");
         }
 
        $this->data['login'] = $login;
@@ -399,7 +399,7 @@ class Pessoa extends BaseModel
 
     public function setImg(String $img):bool
     {
-        if((!isset($img)) || (strlen($img) <= 0)){
+        if((!isset($img)) || (strlen(trim($img)) == 0)){
             throw new Exception("Parâmetro inválido\n");
         }
 
@@ -426,8 +426,8 @@ class Pessoa extends BaseModel
 
     public function setDocumento(String $documento):bool
     {
-        if((!isset($documento)) || (strlen($documento) <= 0)){
-            throw new Exception("Parâmetro inválido\n");
+        if((!isset($documento)) || (strlen(trim($documento)) != 11)){
+            throw new Exception("O CPF deve ter 11 caracteres\n");
         }
 
        $this->data['documento'] = $documento;
@@ -452,8 +452,8 @@ class Pessoa extends BaseModel
 
     public function setDocumentoComplementar(String $documento):bool
     {
-        if((!isset($documento)) || (strlen($documento) <= 0)){
-            throw new Exception("Propriedade não inválida.");
+        if((!isset($documento)) || (strlen($documento) != 13)){
+            throw new Exception("O RG deve ter 13 caracteres.");
         }
 
        $this->data['documentoComplementar'] = $documento;
@@ -480,8 +480,8 @@ class Pessoa extends BaseModel
 
     public function setNomeComplementar(String $nomeComplementar):bool
     {
-        if((!isset($nomeComplementar)) || (strlen($nomeComplementar) <= 0)){
-            throw new Exception("Parâmetro inválido\n");
+        if((!isset($nomeComplementar)) || (strlen(trim($nomeComplementar)) < 3) || (strlen(trim($nomeComplementar)) > 200)){
+            throw new Exception("Sobrenome deve ter entre 3 e 200 caracteres\n");
         }
 
        $this->data['nomeComplementar'] = $nomeComplementar;
@@ -507,8 +507,8 @@ class Pessoa extends BaseModel
 
     public function setSenha(String $senha):bool
     {
-        if((!isset($senha)) || (strlen($senha) <= 6)){
-            throw new Exception("Parâmetro inválido\n");
+        if((!isset($senha)) || (strlen(trim($senha)) < 9) || (strlen(trim($senha)) > 12)){
+            throw new Exception("Senha deve ter entrre 9 e 12 caracteres\n");
         }
 
        $this->data['senha'] = $senha;

@@ -576,11 +576,12 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
     
     try{
 
-      let action = $(this).text().trim();
+      let element = $(this);
+      let action = element.text().trim();
       
-      let cd = $(this).parent().find('span.form-control').attr('name').split('-')[1];
+      let cd = element.parent().find('span.form-control').attr('name').split('-')[1];
 
-      let valQtd = $(this).parent().find('span.form-control').text().trim();
+      let valQtd = element.parent().find('span.form-control').text().trim();
       valQtd = Number(valQtd);
 
 
@@ -598,7 +599,7 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
           return false;
         }
         //remove o item ao carrinho
-        PedidoController.addToCar(cd, 1, true)
+        PedidoController.addToCar(cd, 1, true, element)
       }else{
         //adicona o item ao carrinho
         PedidoController.addToCar(cd, 1)
@@ -1462,7 +1463,7 @@ class PedidoController extends BaseController{
     return true;
   }
 
-  static addToCar(cd, qtd, remov=false){
+  static addToCar(cd, qtd, remov=false, element = null){
     if((cd <= 0) || (qtd <= 0)){
       return false;
     }
@@ -1952,6 +1953,30 @@ class Pessoa{
     this.cpf;
     this.email;
     this.rg;
+    this.sexo;
+  }
+
+  setSexo(sexo){
+    if(!sexo){
+
+      return false;
+    }
+
+    if((sexo != 'M') || (sexo != 'F')){
+      return false;
+    }
+
+    this.sexo = sexo;
+    return true;
+
+  }
+
+  getSexo(){
+    if(!this.sexo){
+      return false;
+    }
+
+    return this.sexo;
   }
 
   setNome(nome){
@@ -1960,7 +1985,7 @@ class Pessoa{
       return false;
     }
 
-    if(nome.length <= 4){
+    if((nome.length <= 4) || (email.length > 200)){
       return false;
     }
 
@@ -1983,7 +2008,7 @@ class Pessoa{
       return false;
     }
 
-    if(email.length <= 4){
+    if((email.length < 12) || (email.length >200)){
       return false;
     }
 
@@ -2005,7 +2030,7 @@ class Pessoa{
       return false;
     }
 
-    if(rg.length <= 5){
+    if(rg.length != 13){
       return false;
     }
 

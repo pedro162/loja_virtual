@@ -37,7 +37,13 @@ class Sessoes
 				if($_SESSION['produto'][$i][0] == $id){
 
 					if($remove != false){
-						$_SESSION['produto'][$i][1] -= (int)$qtd;
+						
+						if((int)$qtd < (int) $_SESSION['produto'][$i][1]){
+
+							$_SESSION['produto'][$i][1] -= (int)$qtd;
+
+						}
+
 					}else{
 						$_SESSION['produto'][$i][1] += (int)$qtd;
 					}

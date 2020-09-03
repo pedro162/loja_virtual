@@ -29,7 +29,7 @@
 	    			for ($j=0, $logradouro = $registros[$i]->getLogradouro(); !($j == count($logradouro) ); $j++) { 
 	    				
 	    	?>
-	    		<div class="col-sm-4 py-3 " style="border: 4px dotted #ddd; margin: auto;">
+	    		<div class="col-md-4 col-sm-12 py-3 " style="border: 4px dotted #ddd; margin: auto;">
 					<p><strong>Endereco: </strong><?=$logradouro[$j]->getEndereco()?></p>
 					<p><strong>Bairro: </strong><?=$logradouro[$j]->getBairro()?></p>
 					<p><strong>Cidade: </strong><?=$logradouro[$j]->getCidade()->getNome()?></p>

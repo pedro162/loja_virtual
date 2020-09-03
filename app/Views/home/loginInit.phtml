@@ -165,25 +165,24 @@
                   case 'documento':
                       if(validaCpf(val.trim()) == false){
 
-                        error.push('O Cpf informado é inválido');
+                       error.push('O CPF informado é inválido');
+                      }else if(val.trim().length != 11){
+                        error.push('O CPF deve ter 11 caracteres');
                       }
 
                   break;
                   case 'nome_complementar':
                     if(val.trim().length < 3){
 
-                        error.push('O sobrnome informado é muito curto');
-                      }else if(val.trim().length > 255){
-                        error.push('O sobrnome informado é muito extenso');
+                        error.push('O sobrnome deve ter entre 3 e 200 caracteres');
+                      }else if(val.trim().length > 200){
+                        error.push('O sobrnome deve ter entre 3 e 200 caracteres');
                       }
                   break;
 
                   case 'documento_complementar':
-                    if(val.trim().length < 6){
-
-                        error.push('O Rg informado é inválido');
-                      }else if(val.trim().length > 12){
-                        error.push('O Rg informado é muito extenso');
+                    if(val.trim().length != 13){
+                        error.push('O Rg deve ter 13 caracteres');
                       }
 
                   break;
@@ -196,27 +195,27 @@
                   break;
 
                   case 'login':
-                    if(val.trim().length < 6){
+                    if(val.trim().length < 12){
 
                         error.push('Email inválido');
                       }else if(val.trim().length > 100){
-                        error.push('Email muito extenso');
+                        error.push('Email deve ter entre 12 e 100 caracteres');
                       }
                   break;
 
                   case 'senha':
-                    if((val.trim().length < 6) || (val.trim().length > 11)){
+                    if((val.trim().length < 9) || (val.trim().length > 200)){
 
-                        error.push('Informe uma senha que tenha entre seis e onze caracteres!');
+                        error.push('Informe uma senha que tenha entre 9 e 12 caracteres!');
                       }
                   break;
 
                   case 'nome':
                     if(val.trim().length < 3){
 
-                        error.push('O nome informado é muito curto!');
-                      }else if(val.trim().length > 255){
-                        error.push('O nome informado é muito extenso!');
+                        error.push('O nome deve ter entre 3 e 200 caracteres!');
+                      }else if(val.trim().length > 200){
+                         error.push('O nome deve ter entre 3 e 200 caracteres!');
                       }
                   break;
                 }

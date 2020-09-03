@@ -30,78 +30,80 @@
 				<p align="left" class="h6"><strong>DETALHES DO PEDIDO</strong></p>
 			</div>
 			<div class="col-md-12">
-				<table class="table table-light table-hover mb-2">
-					<thead>
-						<tr>
-							<th style="border-bottom: solid 1px #000;">COD</th>
-							<th style="border-bottom: solid 1px #000;">DESCRIÇÃO DO PRODUTO</th>
-							<th style="border-bottom: solid 1px #000;">QTD</th>
-							<th style="border-bottom: solid 1px #000;">VL. UNIT</th>
-							<th style="border-bottom: solid 1px #000;">VL. TOTAL</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php
-							$totalGeral = 0;
-							for ($i=0; !($i == count($this->view->dataItens)) ; $i++) { 
-								# code...
-							
-						?>
+				<div class="table-responsive">
+					<table class="table table-light table-hover mb-2">
+						<thead>
 							<tr>
-								<td  style="border-bottom: solid 1px #000;"><?=$this->view->dataItens[$i]->idProduto?></td>
-								<td  style="border-bottom: solid 1px #000;"><?=strtoupper($this->view->dataItens[$i]->nomeProduto)?></td>
-								<td  style="border-bottom: solid 1px #000;"><?=$this->view->dataItens[$i]->qtd?></td>
-								<td  style="border-bottom: solid 1px #000;"><?=number_format($this->view->dataItens[$i]->precoUnitPratic, 2,',', '.')?></td>
-								<td  style="border-bottom: solid 1px #000;"><?= number_format($this->view->dataItens[$i]->precoUnitPratic * $this->view->dataItens[$i]->qtd, 2, ',','.')?></td>
+								<th style="border-bottom: solid 1px #000;">COD</th>
+								<th style="border-bottom: solid 1px #000;">DESCRIÇÃO DO PRODUTO</th>
+								<th style="border-bottom: solid 1px #000;">QTD</th>
+								<th style="border-bottom: solid 1px #000;">VL. UNIT</th>
+								<th style="border-bottom: solid 1px #000;">VL. TOTAL</th>
 							</tr>
-						<?php
-							$totalGeral += ($this->view->dataItens[$i]->precoUnitPratic * $this->view->dataItens[$i]->qtd);
+						</thead>
+						<tbody>
+							<?php
+								$totalGeral = 0;
+								for ($i=0; !($i == count($this->view->dataItens)) ; $i++) { 
+									# code...
+								
+							?>
+								<tr>
+									<td  style="border-bottom: solid 1px #000;"><?=$this->view->dataItens[$i]->idProduto?></td>
+									<td  style="border-bottom: solid 1px #000;"><?=strtoupper($this->view->dataItens[$i]->nomeProduto)?></td>
+									<td  style="border-bottom: solid 1px #000;"><?=$this->view->dataItens[$i]->qtd?></td>
+									<td  style="border-bottom: solid 1px #000;"><?=number_format($this->view->dataItens[$i]->precoUnitPratic, 2,',', '.')?></td>
+									<td  style="border-bottom: solid 1px #000;"><?= number_format($this->view->dataItens[$i]->precoUnitPratic * $this->view->dataItens[$i]->qtd, 2, ',','.')?></td>
+								</tr>
+							<?php
+								$totalGeral += ($this->view->dataItens[$i]->precoUnitPratic * $this->view->dataItens[$i]->qtd);
 
-							}
-						?>
-						<tr>
-							<td colspan="3"><strong>VALOR TOTAL DO PEDIDO</strong></td>
-							<td colspan="2" align="right">R$ <?= number_format($totalGeral, 2, ',','.')?></td>
-						</tr>
-						<tr>
-							<td  colspan="2" align="left" style="border-bottom: none;"> DESCONTO</td>
-							<td colspan="1" align="right">5%</td>
-							<td  colspan="2" align="right">49,23</td>
-						</tr>
-						<tr>
-							<td colspan="3" style="border-top: none;">TOTAL PARCIAL (SEM FRETE)</td>
-							<td colspan="2" align="right" style="border-top: none;">R$ <?= number_format($totalGeral, 2, ',','.')?></td>
-						</tr>
-						<tr>
-							<td colspan="3">CUSTOS COM TRANSPORTE (FRETE)</td>
-							<td colspan="2" align="right">R$ 00,00</td>
-						</tr>
-						<tr>
-							<td colspan="3"><strong>VALOR FINAL</strong></td>
-							<td colspan="2" align="right">R$ <?= number_format($totalGeral, 2, ',','.')?></td>
-						</tr>
-						<tr>
-							<td colspan="5" rowspan="2" style="border:none;"></td>
-						</tr>
-						<tr></tr>
-						<tr><td colspan="5" style="border:none;"><strong>OBSERVAÇÕES</strong></td></tr>
-						<tr>
-							<td colspan="5" rowspan="3">FRETE ENVIADO PELOS CORREIOS</td>
-						</tr>
-						<tr></tr>
-						<tr></tr>
-						<tr>
-							<td  style="border:none;" colspan="5">São Luís, 04 de junho de 2020</td>
-						</tr>
-						<tr>
-							<td style="border:none; border-bottom: solid 1px #000" colspan="2"></td>
-							<td colspan="3" style="border:none;"></td>
-						</tr>
-						<tr>
-							<td style="border:none;" colspan="5">José Pedro Aguiar Ferreira <br>pedroclooney@gmail.com</td>
-						</tr>
-					</tbody>
-				</table>
+								}
+							?>
+							<tr>
+								<td colspan="3"><strong>VALOR TOTAL DO PEDIDO</strong></td>
+								<td colspan="2" align="right">R$ <?= number_format($totalGeral, 2, ',','.')?></td>
+							</tr>
+							<tr>
+								<td  colspan="2" align="left" style="border-bottom: none;"> DESCONTO</td>
+								<td colspan="1" align="right">5%</td>
+								<td  colspan="2" align="right">49,23</td>
+							</tr>
+							<tr>
+								<td colspan="3" style="border-top: none;">TOTAL PARCIAL (SEM FRETE)</td>
+								<td colspan="2" align="right" style="border-top: none;">R$ <?= number_format($totalGeral, 2, ',','.')?></td>
+							</tr>
+							<tr>
+								<td colspan="3">CUSTOS COM TRANSPORTE (FRETE)</td>
+								<td colspan="2" align="right">R$ 00,00</td>
+							</tr>
+							<tr>
+								<td colspan="3"><strong>VALOR FINAL</strong></td>
+								<td colspan="2" align="right">R$ <?= number_format($totalGeral, 2, ',','.')?></td>
+							</tr>
+							<tr>
+								<td colspan="5" rowspan="2" style="border:none;"></td>
+							</tr>
+							<tr></tr>
+							<tr><td colspan="5" style="border:none;"><strong>OBSERVAÇÕES</strong></td></tr>
+							<tr>
+								<td colspan="5" rowspan="3">FRETE ENVIADO PELOS CORREIOS</td>
+							</tr>
+							<tr></tr>
+							<tr></tr>
+							<tr>
+								<td  style="border:none;" colspan="5">São Luís, 04 de junho de 2020</td>
+							</tr>
+							<tr>
+								<td style="border:none; border-bottom: solid 1px #000" colspan="2"></td>
+								<td colspan="3" style="border:none;"></td>
+							</tr>
+							<tr>
+								<td style="border:none;" colspan="5">José Pedro Aguiar Ferreira <br>pedroclooney@gmail.com</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

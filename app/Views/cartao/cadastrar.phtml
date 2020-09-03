@@ -10,19 +10,19 @@
 					<div class="col">
 						<div class="form-group">
 							<label for="numero">Numero cartão</label>
-							<input type="text" name="numero" id="numero" class="form-control form-control-sm">
+							<input type="text" name="numero" minlength="16" maxlength="16" id="numero" class="form-control form-control-sm">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label for="bandeira">Bandeira cartão</label>
-							<input type="text" name="bandeira" id="bandeira" class="form-control form-control-sm">
+							<input type="text" name="bandeira" maxlength="7" minlength="3" id="bandeira" class="form-control form-control-sm">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label>Cvv</label>
-							<input type="text"  maxlength="3" id="cvv" class="form-control form-control-sm" name="cvv">
+							<input type="text"  maxlength="3" minlength="3" id="cvv" class="form-control form-control-sm" name="cvv">
 						</div>
 					</div>
 				</div>
@@ -30,19 +30,19 @@
 					<div class="col">
 						<div class="form-group">
 							<label for="validade_mes">Mes validade</label>
-							<input type="text" maxlength="2" id="validade_mes" class="form-control form-control-sm" name="validade_mes">
+							<input type="text" maxlength="2" minlength="2" min id="validade_mes" class="form-control form-control-sm" name="validade_mes">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label>Ano validade</label>
-							<input type="text" maxlength="4" id="ano_validade" class="form-control form-control-sm" name="ano_validade">
+							<input type="text" maxlength="4" minlength="4" id="ano_validade" class="form-control form-control-sm" name="ano_validade">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label for="cpf_cartao" >Cpf Cartao</label>
-							<input type="text" id="cpf_cartao" class="form-control form-control-sm" name="cpf_cartao">
+							<input type="text" id="cpf_cartao" class="form-control form-control-sm" maxlength="11"  minlength="11" name="cpf_cartao">
 						</div>
 					</div>
 				</div>

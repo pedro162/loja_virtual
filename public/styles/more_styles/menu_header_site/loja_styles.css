@@ -38,7 +38,7 @@ section{
 #menu-principal{
     background-color: #8B008B;
     color: #fff;
-    height: 100px;
+    height: auto;
     position: fixed;z-index: 1
     
 }
@@ -54,13 +54,8 @@ footer h6{
     color: #fff;
 }
 
-/*muda o alinhameno padrao da classe do bootstrapp*/
-#menu-principal .navbar{
-    justify-content: center;
-}
-
 #logo{
-    margin: 0px 10px;
+    margin: auto;
 }
 /*Muda cor da lista header*/
 
@@ -79,42 +74,13 @@ nav ul li a{
 }
 
 
-/*alinha os elementos da div do menu header*/
-.alinha-header{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    
-}
+
 
 .navbar-search, .login{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-}
-.navbar-search{
-    align-items: left;
-    width: 70%;
-}
-
-.div-search{
-    width: 93%;
-    background-color: #fafa;
-    margin-right: 4px;
-}
-
-#input-search{
-    width: 100%;
-}
-
-#form-header{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    padding: 0;
-    margin: 0 0 0 40px;
 }
 
 
@@ -525,6 +491,10 @@ form .btn-danger:hover{
     #menu-principal .submenu{
         display: none;
     }
+
+     #div-form-filtro-relacionados{
+        display: none;
+     }
 }
 
 /*------------------ style para tabela de pedidos ------------*/

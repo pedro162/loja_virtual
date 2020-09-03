@@ -11,13 +11,13 @@
 					<div class="col">
 						<div class="form-group">
 							<label for="nome">Nome</label>
-							<input type="text" name="nome" id="nome" class="form-control form-control-sm" value="<?=$this->view->registros->getNomePessoa(); ?>">
+							<input type="text" minlength="4" maxlength="200" name="nome" id="nome" class="form-control form-control-sm" value="<?=$this->view->registros->getNomePessoa(); ?>"placeholder="Seu primeiro nome" required="required">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label for="nome_complementar">Sobrenome</label>
-							<input type="text" name="nome_complementar" id="nome_complementar" class="form-control form-control-sm" value="<?=$this->view->registros->getNomeComplementar();?>">
+							<input type="text" minlength="4" maxlength="200" placeholder="Seu segundo nome" name="nome_complementar" id="nome_complementar" class="form-control form-control-sm" value="<?=$this->view->registros->getNomeComplementar();?>" required="required">
 						</div>
 					</div>
 					
@@ -26,19 +26,22 @@
 					<div class="col">
 						<div class="form-group">
 							<label for="documento">Cpf</label>
-							<input type="text" name="documento" id="documento" class="form-control form-control-sm" value="<?=$this->view->registros->getDocumento();?>">
+							<input type="text" minlength="11" maxlength="11" placeholder="CPF com 11 dígitos" name="documento" id="documento" class="form-control form-control-sm" value="<?=$this->view->registros->getDocumento();?>" required="required">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label for="documento_complementar">RG</label>
-							<input type="text" name="documento_complementar" id="documento_complementar" class="form-control form-control-sm" value="<?=$this->view->registros->getDocumentoComplementar();?>">
+							<input type="text" minlength="13" maxlength="13" placeholder="Rg com 13 dígitos" name="documento_complementar" id="documento_complementar" class="form-control form-control-sm" value="<?=$this->view->registros->getDocumentoComplementar();?>" required="required">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label for="sexo">Sexo</label>
-							<input type="text" name="sexo" id="sexo" class="form-control form-control-sm" value="<?=$this->view->registros->getSexo();?>">
+							<select name="sexo" id="sexo" class="form-control form-control-sm" required="required">
+								<option <?=($this->view->registros->getSexo() == 'M') ? 'selected' : '';?> value="M">Masculino</option>
+								<option  <?=($this->view->registros->getSexo() == 'F') ? 'selected' : '';?> value="F">Feminino</option>
+							</select>
 						</div>
 					</div>
 				</div>
@@ -52,13 +55,13 @@
 					<div class="col">
 						<div class="form-group">
 							<label for="login">Email</label>
-							<input type="email" name="login" id="" class="form-control form-control-sm" value="<?=$this->view->registros->getLogin();?>">
+							<input placeholder="exemplo@gmail.com" type="email" name="login" id="" class="form-control form-control-sm" value="<?=$this->view->registros->getLogin();?>" maxlength="100" minlength="12" required="required">
 						</div>
 					</div>
 					<div class="col">
 						<div class="form-group">
 							<label for="senha">Senha</label>
-							<input type="text" name="senha" id="senha" class="form-control form-control-sm">
+							<input type="text" placeholder="Senha com pelomenos 9 dígitos" minlength="9" maxlength="12" name="senha" id="senha" class="form-control form-control-sm" >
 						</div>
 					</div>
 				</div>
