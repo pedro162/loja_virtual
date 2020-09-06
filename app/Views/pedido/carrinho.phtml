@@ -75,20 +75,23 @@
 
 				</form>
 			</div>
-			<div class="row">
-				<div class="col">
-					<hr style="width: 80%;" class="my-5"><br>
-					
-				</div>
+			<?php
+				if(isset($this->view->moreOptions) && (is_array($this->view->moreOptions))){
+			?>
+				<div class="row">
+					<div class="col">
+						<hr style="width: 80%;" class="my-5"><br>
+						
+					</div>
 
-			</div>
-			<div class="row mb-2">
-				<h4 class="text-dark"><strong><span>Mais opções para você</span></strong></h5>
-			</div>
-			<div class="row">
+				</div>
+				<div class="row mb-2">
+					<h4 class="text-dark"><strong><span>Mais opções para você</span></strong></h5>
+				</div>
+				<div class="row">
 
 				<?php
-					if(isset($this->view->moreOptions) && (is_array($this->view->moreOptions))){
+					
 						for ($i=0; !($i == count($this->view->moreOptions) ); $i++) { 
 							
 

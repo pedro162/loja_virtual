@@ -103,6 +103,37 @@ class Sessoes
 
 	}
 
+	public static function getQtdElement(Int $id)
+	{
+		if((!isset($id)) || ($id <=0 )){
+
+			return false;
+		}
+
+		self::sessionInit();
+
+		$qtd = 0;
+		if(array_key_exists('produto', $_SESSION)){
+
+			for ($i=0; !($i == count($_SESSION['produto']) ); $i++) { 
+				$has = $_SESSION['produto'][$i][0] == $id;
+
+				if($has ==true){
+
+					$qtd = (int)$_SESSION['produto'][$i][1];
+					break ;
+				}
+			}
+		}
+
+		if($qtd >= 0){
+			return $qtd;
+		}
+
+		return false;
+
+	}
+
 	public static function rezetCarrinho()
 	{
 		self::sessionInit();

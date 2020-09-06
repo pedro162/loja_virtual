@@ -117,6 +117,28 @@ class PedidoController extends BaseController
                 $remove = true;
             }
 
+            $pedido = new Fornecimento();
+            $pedidoLoaded = $pedido->findFornecimentoForIdProduto($id);
+            if($pedidoLoaded == false){
+
+                throw new Exception("Produto não encontrado\n");
+                
+            }
+
+            $saldoEstoque = $pedidoLoaded->getQtdFornecida() - $pedidoLoaded->getQtdVendida();
+
+            $qtdInSession = Sessoes::getQtdElement($id);
+
+            if(($saldoEstoque < ($qtdInSession + $qtd)) && ($remove == false)){
+
+                throw new Exception('Estoque insuficiente para a quantidade informada.');
+            }
+
+            if((($qtdInSession + $qtd) > 4) && ($remove == false)){
+
+                throw new Exception('Quantidade máxima para cada produto é de 4 itens.');
+            }
+
             Sessoes::sessionAddElement($id, $qtd, $remove);
 
             $qtdItens = $this->qtdIntensCar();

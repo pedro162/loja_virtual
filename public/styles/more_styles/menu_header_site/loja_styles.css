@@ -18,6 +18,10 @@ a:hover{
     
 }
 
+#form-menu-header input{
+    width: 1000px;
+}
+
 body{
     background-color: #fff;
     color: #000;
@@ -458,6 +462,32 @@ form .btn-danger:hover{
 #vitrine-home .first-of-grid {
        width: 100%; height: 100%;
 }
+
+/*Menu mobile de opços do painel cliente */
+#painel-user-menu-moblie{
+    display: none;
+}
+
+/*Menu desktop de opços do painel cliente */
+#painel-user-menu-descktop{
+    display: block;
+}
+
+@media(max-width: 300px){
+    
+    #form-menu-header input{
+        width: 100%;
+    }
+}
+
+@media(max-width: 400px){
+    
+
+    #form-menu-header input{
+        width: 100%;
+    }
+}
+
 @media(max-width: 600px){
     #vitrine-home .last-of-grid {
         width: auto; height: auto;
@@ -483,6 +513,10 @@ form .btn-danger:hover{
         display: none;
      }
 
+    #form-menu-header input{
+        width: 100%;
+        margin-left: 28px;
+    }
 
     
 }
@@ -495,6 +529,32 @@ form .btn-danger:hover{
      #div-form-filtro-relacionados{
         display: none;
      }
+     #painel-user-menu-moblie{
+        display: block;
+     }
+
+     /*Menu mobile de opços do painel cliente */
+    #painel-user-menu-descktop{
+        display: none;
+    }
+
+    #form-menu-header input{
+        width: 100%;
+    }
+}
+
+@media(max-width: 800px){
+    
+    #form-menu-header input{
+        width: 100%;
+    }
+}
+
+@media(max-width: 1200px){
+    
+    #form-menu-header input{
+        width: 100%;
+    }
 }
 
 /*------------------ style para tabela de pedidos ------------*/

@@ -1478,12 +1478,13 @@ class PedidoController extends BaseController{
       type:'GET',
       dataType:'json',
       success:function(retorno){
+        console.log(retorno)
 
         if(retorno.length == 1){
           $('body').find('#qtdItensCarrinho').text(retorno[0]);
           return true;
         }else{
-          //console.log(retorno);
+          alert('Atenção: '+retorno[2])
           return false;
         }
       }
@@ -1551,7 +1552,7 @@ class PedidoController extends BaseController{
           }else{
             let msg = '<div class="row"><div class="col col-sm alert alert-warning h4" align="center">'+retorno[2]+'</div></div>'
             
-            let urilitario = Utilitarios();
+            let urilitario = new Utilitarios();
             urilitario.getModal('<strong>Atençao</strong>',msg);
 
             element.show();

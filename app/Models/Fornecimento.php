@@ -321,9 +321,37 @@ class Fornecimento extends BaseModel
             
         }
 
-        $result = $this->select(['idFornecimento','qtdVendida', 'qtdFornecida', 'ProdutoIdproduto as nomeProduto'], ['idFornecimento'=>$id], '=','asc', null, null,true);
+        $result = $this->selectNew(
+            ['idFornecimento','qtdVendida', 'qtdFornecida', 'ProdutoIdproduto as nomeProduto'],
+            [ 
+                ['key'=>'idFornecimento','val'=>$id, 'comparator'=>'=', 'operator' =>'and'],
+                ['key'=>'ativo','val'=>'1', 'comparator'=>'=']
+            ], null, 1, null, true,false
+        );
         if($result == false){
-            throw new Exception("Elemento não encontrado");
+            throw new Exception("Elemento não encontrado cd=".$id);
+            
+        }
+
+        return $result[0];
+    }
+
+    public function findFornecimentoForIdProduto(Int $id)
+    {
+        if($id <= 0){
+            throw new Exception("Parametro inválido");
+            
+        }
+
+        $result = $this->selectNew(
+            ['idFornecimento','qtdVendida', 'qtdFornecida', 'ProdutoIdproduto as nomeProduto'],
+            [ 
+                ['key'=>'ProdutoIdproduto','val'=>$id, 'comparator'=>'=', 'operator' =>'and'],
+                ['key'=>'ativo','val'=>'1', 'comparator'=>'=']
+            ], null, 1, null, true,false
+        );
+        if($result == false){
+            throw new Exception("Elemento não encontrado cd=".$id);
             
         }
 
