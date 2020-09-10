@@ -55,19 +55,43 @@
 								}
 							 ?>
 						</div>
+
+						<?php
+							$primaria = [];
+							$secundaria = [];
+
+							$prodCateg = $this->view->result->getProdCateg();
+							if($prodCateg){
+								for ($i=0; !($i == count($prodCateg)) ; $i++) { 
+
+									$categoria = $prodCateg[$i]->categoria();
+
+									if(($prodCateg[$i]->getClassificCateg() == 'primaria') && ($categoria != false)){
+
+										$primaria['categ']=$categoria[0]->getNomeCategoria();
+										$primaria['id']= $categoria[0]->getIdCategoria();
+
+									}elseif(($prodCateg[$i]->getClassificCateg() == 'secundaria') && ($categoria != false)){
+
+										$secundaria['categ']=$categoria[0]->getNomeCategoria();
+										$secundaria['id']= $categoria[0]->getIdCategoria();
+									}
+								}
+							}
+						?>
 						<div class="row">
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="form-group">
 									<label for="idCategoria">Categoria: </label>
-									<input type="text" name="" id="idCategoria" class="form-control" required="required">
-									<input type="hidden" name="categoria">
+									<input type="text" name="" id="idCategoria" class="form-control" required="required" value="<?=$primaria['categ'] ?? ''?>">
+									<input type="hidden" name="categoria" value="<?=$primaria['id'] ?? ''?>">
 								</div>
 							</div>
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="form-group">
 									<label for="idSubCategoria">Subcategoria: </label>
-									<input type="text" name="" id="idSubCategoria" class="form-control" required="required">
-									<input type="hidden" name="subCategoria">
+									<input type="text" name="" id="idSubCategoria" class="form-control" required="required" value="<?=$secundaria['categ'] ?? ''?>">
+									<input type="hidden" name="subCategoria" value="<?=$secundaria['id'] ?? ''?>">
 								</div>
 							</div>
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -127,15 +151,40 @@
 						</div>
 					</div>	
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="containerImg">
-						<?=$this->view->imgProduto?>"
+						<div class="row">
+							<?php
+							if(isset($this->view->imgProduto) && (count($this->view->imgProduto) > 0)){
+								for ($i=0; !($i == count($this->view->imgProduto)); $i++) { 
+									
+							?>
+							<img src="../../files/imagens/<?=$this->view->imgProduto[$i]->getUrl();?>" style="width: 160px;" class="mb-2" id="img-<?=$i+1?>">
+							<?php
+							
+									
+									}
+								}
+
+							?>
+						</div>
 						<div class="row">
 						<?php
 								for ($i=0; !($i == count($this->view->img)) ; $i++) { 
 									$col = 12/count($this->view->img);
 								
 							 ?>
-							 <div class="col">
+							 <div class="col-12">
 								<img class="preview" id="img-<?=$i+1?>" name="imgProduto-<?=$i+1?>"/>
+								<?php
+									if($i==0){
+										echo'<p>Imagem nº1</p>';
+									}elseif($i==1){
+										echo'<p>Imagem nº2</p>';
+									}elseif($i==2){
+										echo'<p>Imagem nº3</p>';
+									}elseif($i==3){
+										echo'<p>Imagem nº4</p>';
+									}
+								?>
 							</div>	
 							<?php
 

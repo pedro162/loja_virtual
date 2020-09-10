@@ -86,7 +86,7 @@ class CategoriaController extends BaseController
                 $newResult = [];
 
                 for ($i=0; !($i == count($result)); $i++) {
-                    $newResult[] = [$result[$i]->getIdCategoria(), $result[$i]->getCategoria()];
+                    $newResult[] = [$result[$i]->getIdCategoria(), $result[$i]->getNomeCategoria()];
                    
                 }
                 $this->view->result = json_encode($newResult);

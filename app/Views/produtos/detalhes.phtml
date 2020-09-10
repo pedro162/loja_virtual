@@ -1,5 +1,14 @@
 
 <div class="container-fluid py-3" id="detalheProduto" style="">
+	<?php
+		if((isset($this->view->qtdSaldo)) && ($this->view->qtdSaldo == 0)){
+	?>
+	<div class="row">
+		<div class="col alert alert-warning text-center h2"><strong>Atenção: </strong> Item sem estoque!</div>
+	</div>
+	<?php
+		}
+	?>
 	<div class="row" style="width: 80%; margin:auto;">
 		<div class="col-md-5 col-sm-6 mb-5  mt-3" align="center" id="imgP">
 				<img id="<?=$this->view->produto->getIdProduto();?>"  class="img-produto" src="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>" style="width: 75%; height: 75%;" data-zoom-image="../files/imagens/<?=$this->view->imagensProduto[0]->getUrl();?>"><br><br>
@@ -104,10 +113,25 @@
 							</div>
 							<div class="col">
 								<select class="form-control" id="qtd" name="qtd">
+									<?php
+										if((isset($this->view->qtdSaldo)) && ($this->view->qtdSaldo >= 4)){
+									?>
 									<option value="1">1</option>
 									<option value="2">2</option>
 									<option value="3">3</option>
 									<option value="4">4</option>
+									<?php
+
+										}else{
+											for($i=0; !($i== $this->view->qtdSaldo); $i++){
+									?>
+
+									<option value="<?=$i+1?>"><?=$i+1?></option>
+									<?php
+											}
+
+										}
+									?>
 								</select>
 							</div>
 						</div>

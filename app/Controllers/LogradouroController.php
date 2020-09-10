@@ -80,7 +80,7 @@ class LogradouroController extends BaseController
             $logradouro = new Logradouro();
             $logradouro->setComplemento($dados['complemento']);
 			$logradouro->setCidadeidCidade(1);//obs: ainda falta configurar 
-			$logradouro->setCep($dados['cep']);
+			$logradouro->setCep(Utils::clearMask($dados['cep']));
 			$logradouro->setBairro($dados['bairro']);
 			$logradouro->setTipo($dados['tipo']);
 			$logradouro->setEndereco($dados['endereco']);
@@ -149,7 +149,7 @@ class LogradouroController extends BaseController
 
             $logLoaded->setComplemento($dados['complemento']);
             $logLoaded->setCidadeidCidade(1);//obs: ainda falta configurar 
-            $logLoaded->setCep($dados['cep']);
+            $logLoaded->setCep(Utils::clearMask($dados['cep']));
             $logLoaded->setBairro($dados['bairro']);
             $logLoaded->setTipo($dados['tipo']);
             $logLoaded->setEndereco($dados['endereco']);
@@ -230,7 +230,7 @@ class LogradouroController extends BaseController
             
             Transaction::startTransaction('connection');
 
-            $cepApi = new LoadEnderecoApi($request['post']['cep']);
+            $cepApi = new LoadEnderecoApi(Utils::clearMask($request['post']['cep']));
             $resultCepApi = $cepApi->getEndereco();
 
             $this->view->result = $resultCepApi;

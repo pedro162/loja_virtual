@@ -273,10 +273,9 @@ abstract class BaseModel
 
         
         $conn = Transaction::get();
-
+        
         $result = $conn->query($sql);
-
-
+        
         $arrayObj = null;
 
         if($std){

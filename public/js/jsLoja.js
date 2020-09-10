@@ -1150,7 +1150,13 @@ $('body').delegate('#ValorParcelas', 'change', function(){
   });
 
 
+  //Adiciona masca ao campo de cep
 
+  $('body').delegate('#cadastro-logradouro input[name=cep]', 'keyup', function(ev){
+
+    $(this).mask('00.000-000');
+
+  })
   //-------------------- CHAMA A VIEW PARA CADASTRAR ENDERECO -------------
   $('body').delegate('#enderecos-pessoa a#new-enderecdo, #enderecos-pessoa a#other-endereco', 'click', function(ev){
     ev.preventDefault();
@@ -1211,7 +1217,7 @@ $('body').delegate('#ValorParcelas', 'change', function(){
       
       
     let cep = $(this).val();
-    if(cep.length == 8){
+    if(cep.length == 10){
       LogradouroController.loadCep(cep, '/logradouro/load/cep');
     }
 
@@ -1228,7 +1234,7 @@ $('body').delegate('#ValorParcelas', 'change', function(){
       
       
     let cep = $(this).val();
-    if(cep.length == 8){
+    if(cep.length == 10){
       LogradouroController.loadCep(cep, '/logradouro/load/cep');
     }
 

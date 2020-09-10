@@ -1,7 +1,7 @@
 <?php
 
 namespace Core\Containner;
-
+//deletar este arquivo apos testá-la no diretorio Utilitarios
 class File
 {
 	private $name;

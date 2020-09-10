@@ -1,0 +1,117 @@
+<div class="row">
+	<div class="col-md-12" style="padding: 20px 40px;">
+		<?php
+
+			if(((is_array($this->view->result)) && (count($this->view->result) == 0)) || (! is_array($this->view->result))){
+		 ?>
+		 	<div class="row">
+				<div class="col-md-12 alert alert-warning">
+					<h2 align="center">Nenhum item com estoque baixo!</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-11" align="">
+					<a href="/home/admin" class="btn btn-primary link">Voltar</a>
+				</div>
+			</div>
+		 <?php
+
+		 	}elseif((is_array($this->view->result)) && (count($this->view->result) > 0)){
+		 ?>	
+		<div class="row">
+			<div class="col-md-11">
+				<h4><strong>Estoque</strong></h4>
+			</div>
+			<div class="col-md-1">
+				<a href="/estoque/lancar" class="btn btn-success mb-2" id="cadastrar">
+					<i class="fas fa-plus-circle fa-2x"></i>
+				</a>
+			</div>
+		</div>
+		
+		 <table class="table table-hover" id="">
+		    <thead>
+		      <tr>
+		        <th>Produto</th>
+		        <th>Dt. Recebida</th>
+		        <th>Dt. Validade</th>
+		        <th>Qtd Fornecida</th>
+		        <th>Qtd Vendida</th>
+		        <th>Qtd Saldo</th>
+		        <th>Ação</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		    	<?php 
+					for ($i=0; !($i == count($this->view->result)); $i++) {
+
+						$validade = substr($this->view->result [$i]->getDtValidade(), 0, 10);
+						$validade = explode('-', $validade);
+
+						$dtReceb = substr($this->view->result [$i]->getDtRecebimento(), 0, 10);
+						$dtReceb = explode('-', $dtReceb);
+
+				?>
+					<tr>
+						<td><?=$this->view->result [$i]->getProdutoNome();?></td>
+						<td><?= $dtReceb[2].'/'.$dtReceb[1].'/'.$dtReceb[0];?></td>
+						<td><?= $validade[2].'/'.$validade[1].'/'.$validade[0];?></td>
+						<td><?=$this->view->result [$i]->getQtdFornecida();?></td>
+						<td><?=$this->view->result [$i]->getQtdVendida();?></td>
+						<td class=""><?=$this->view->result [$i]->getQtdFornecida() - $this->view->result [$i]->getQtdVendida();?></td>
+						<td>
+							<a href="/estoque/editar?id=<?=$this->view->result [$i]->getIdFornecimento()?>" class="btn btn-success mr-2">
+								<i class="fas fa-pencil-alt"></i>
+							</a>
+							<a href="/estoque/visualizar?id=<?=$this->view->result [$i]->getIdFornecimento()?>" class="btn btn-primary mr-2">
+								<i class="fas fa-search-plus"></i>
+							</a>
+						</td>
+					</tr>
+
+				<?php 
+					}
+				?>
+		    </tbody>
+		  </table>
+	</div>
+	<!--
+	<div class="col-md-12" id="nav-estoque">
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination justify-content-end">
+		  	<?php 
+		  		$previous = $this->view->pagina - 1;
+		  		$blockPrevius = ($this->view->pagina  == 1) ? 'disabled' : '';
+		  	?>
+		    <li class="page-item <?= $blockPrevius ?>">
+		      <a class="page-link" href="/estoque/all?pagina=<?=$previous?>" tabindex="-1"><strong>Previous</strong></a>
+		    </li>
+
+		    <?php
+		    	for ($i=0; !($i == $this->view->totPaginas); $i++) {
+
+		    		$estilo = ($this->view->pagina == ($i + 1)) ? 'active' : '';
+		    		
+		    ?>
+				<li class="page-item <?= $estilo ?>">
+					<a class="page-link" href="/estoque/all?pagina=<?= $i+1?>">
+					<?= $i+1?>
+					</a>
+				</li>
+		    <?php 
+				}
+
+				$blockNext = ($this->view->pagina  == $this->view->totPaginas) ? 'disabled' : '';
+				$next = $this->view->pagina + 1;
+		    ?>
+
+		    <li class="page-item <?= $blockNext;?>">
+		      <a class="page-link" href="/estoque/all?pagina=<?= $next?>"><strong>Next</strong></a>
+		    </li>
+		  </ul>
+		</nav>
+	</div>-->
+	<?php
+		}
+	 ?>
+</div>

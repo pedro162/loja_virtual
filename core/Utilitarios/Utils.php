@@ -78,6 +78,17 @@ class Utils
         return true;
 
     }
+
+    public static function clearMask(String $val)
+    {
+        if(! isset($val)){
+
+            return false;
+        }
+
+        return preg_replace('/[^0-9]/', '', $val);
+
+    }
     
 
 }

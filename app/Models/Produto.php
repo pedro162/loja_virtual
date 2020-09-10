@@ -172,6 +172,7 @@ class Produto extends BaseModel
             if($res === false){
                 throw new Exception("Falha ao cadastrar produto");
             }
+
         }
 
         return ['msg','success','Produto cadastrado com sucesso!'];
@@ -181,36 +182,99 @@ class Produto extends BaseModel
     //ajustar method de update
     public function modify(array $dados)
     {
-        $this->clear($dados);
 
-        $result = $this->parseCommit();
 
-        $resultUpdate = $this->update($result, $this->getIdProduto());
+        $this->clear($dados); //atribui os dados aos gets e sets
 
-         //prepara os dados para salvar a imagem do produto
-        $dataImg = ['url'=>$this->getImagemProduto(), 'produto'=>$this->getIdProduto(), 'usuario'=>$this->getUsuarioIdUsuario()];//prepara o array com dados para a classe de imagem 
+        $result = $this->parseCommit(); //retorna os dados já filtrados 
 
-        $imagem = $this->getImagem()[0];
-        $idImagem = $imagem->getIdImagem();
-        $dataImg = ['url'=>$this->getImagemProduto(), 'usuario'=>$this->getUsuarioIdUsuario()];
-        $resultImg = $imagem->modify($dataImg);
+        $resultInsertProd = $this->update($result, $this->getIdProduto());//salva o produto
 
-        $produtoCategoria = new ProdutoCategoria();
-        $produtoCategoria->delete('ProdutoIdProduto', '=', $this->getIdProduto());
+        $arrTipoImgUpdated = [];
 
-        for ($i = 0; !($i == count($this->getIdCategoria())); $i++) {
-            $subArraiComm = [];
-            $subArraiCommit['idProduto'] = $this->getIdProduto();
-            $subArraiCommit['idCategoria'] = $this->getIdCategoria()[$i];
+        for ($i=0, $imagem = $this->getImagem(); !($i == count($imagem)) ; $i++) { 
+
+            foreach ($this->getImagemProduto() as $key => $value) {
+
+                $dataImg = ['url'=>$value[1], 'tipo' => $value[0]];//prepara o array
+
+                if($imagem[$i]->getTipo() == $value[0]){
+
+                    $imagem[$i]->modify($dataImg);
+                    $arrTipoImgUpdated[] = $value[0];
+
+                }
+            }
             
+        }
 
-            $res = $produtoCategoria->save($subArraiCommit);
-            if($res == false){
-                throw new Exception("Falha ao atualizar produto");
+
+        //adiciona as imagen que por acaso não haviam no banco.
+        foreach ($this->getImagemProduto() as $key => $value) {
+
+            if(! in_array($value[0], $arrTipoImgUpdated)){
+
+                $imagem = new Imagem();
+                $dataImg = ['url'=>$value[1], 'produto'=>$this->getIdProduto(), 'tipo' => $value[0], 'usuario'=>$this->getUsuarioIdUsuario()];//prepara o array com dados para a classe de imagem
+
+                $resultImg = $imagem->save($dataImg);
+
+                if($resultImg == false){
+                    throw new Exception("Falha ao cadastrar produto");
+                }
+
             }
         }
 
+        //remove o relacionamento anterior entre a categoria e o produto
+        $produtoCategoria = $this->getProdCateg();
+
+        if(is_array($produtoCategoria)){
+            for ($i=0; !($i == count($produtoCategoria)) ; $i++) { 
+
+                $produtoCategoria[$i]->delete('idProdutoCategoria' , '=' ,(int)$produtoCategoria[$i]->getIdProdutoCategoria(), 1);
+            }
+        }
+
+        //estabelece a nova relação
+        $produtoCategoria = new ProdutoCategoria();
+
+        foreach ($this->getIdCategoria() as $key => $value) {
+            $subArraiCommit = [];
+            $subArraiCommit['idProduto'] = $this->getIdProduto();
+            $subArraiCommit['idCategoria'] = $value;
+            
+            if($key == 'subCateg'){
+                $subArraiCommit['classific'] = 'secundaria';
+            }elseif($key == 'categ'){
+                $subArraiCommit['classific'] = 'primaria';
+            }
+            //var_dump($subArraiCommit);
+            $res = $produtoCategoria->save($subArraiCommit);
+            if($res === false){
+                throw new Exception("Falha ao atualizar produto");
+            }
+
+
+            //var_dump($res);
+        }
+
         return ['msg','success','Produto atualizado com sucesso!'];
+    }
+
+
+    public function getProdCateg()
+    {
+
+        $prodCateg = new ProdutoCategoria();
+        $result = $prodCateg->selectNew(['*'],
+         [
+            ['key'=>'ProdutoIdProduto','val'=>$this->getIdProduto(),
+            'comparator'=>'=']
+        ], null,  null, null, true, false);
+
+        return $result;
+
     }
 
     public function getFiltros():array
@@ -454,7 +518,12 @@ class Produto extends BaseModel
     public function getImagem()
     {
         $img = new Imagem();
-        $result = $img->select(['idImagem','url'], ['ProdutoIdProduto'=>$this->getIdProduto()], '=','asc', null, null,true);
+        $result = $img->selectNew(['*'],
+         [
+            [
+                'key'=>'ProdutoIdProduto','val'=>$this->getIdProduto(),'comparator'=>'='
+            ]
+        ], null, null, null, true, false);
         
         if($result != false){
             return $result;
@@ -539,7 +608,11 @@ class Produto extends BaseModel
 
     public function findForId(Int $id)
     {
-        $result = $this->select(['idProduto','gostei', 'votos'], ['idProduto'=>$id], '=','asc', null, null,true);
+        $result = $this->selectNew(['*'],
+         [
+            ['key'=>'idProduto','val'=>$id,'comparator'=>'=', 'operator'=>'and'],
+            ['key'=>'ativo','val'=>'1','comparator'=>'=']
+        ], null, 1, null, true, false);
         if($result == false){
             throw new Exception('Produto não encontrado');
             

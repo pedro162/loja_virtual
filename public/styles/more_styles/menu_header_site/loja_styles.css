@@ -19,7 +19,7 @@ a:hover{
 }
 
 #form-menu-header input{
-    width: 1000px;
+    width: 100%;
 }
 
 body{
@@ -437,8 +437,21 @@ form .btn-danger:hover{
 }
 
 
+/*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+#icon-user-login{
+    width: 50%;
+}
+#icon-user-login span{
+    font-size: 48px;
+    color: #8B008B;
+}
 
-
+/*----------------- MENU DE LOGIN ------------------*/
+#form-login{
+    width: 50%;
+    margin: auto;
+    padding: 20px 30px;
+}
 
 
 
@@ -473,10 +486,85 @@ form .btn-danger:hover{
     display: block;
 }
 
+/*---------------- LOGO HEADER -----------*/
+#logo-header{
+    width: 100px;
+}
+@media(max-width: 275px){
+    
+    #form-menu-header input{
+        width: 100%;
+    }
+
+    /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 24px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 100%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
+    }
+
+    /*---  ESCONDE O FORMULARO DE BUSCA DO MENU ------------*/
+    #div-form-header{
+        display: none;
+    }
+
+    /*---------------- LOGO HEADER -----------*/
+    #logo-header{
+        width: 80px;
+    }
+
+
+}
+
 @media(max-width: 300px){
     
     #form-menu-header input{
         width: 100%;
+    }
+
+     /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 24px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 100%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
+    }
+
+    /*---  ESCONDE O FORMULARO DE BUSCA DO MENU ------------*/
+    #div-form-header{
+        display: none;
+    }
+
+    /*---------------- LOGO HEADER -----------*/
+    #logo-header{
+        width: 80px;
     }
 }
 
@@ -485,6 +573,38 @@ form .btn-danger:hover{
 
     #form-menu-header input{
         width: 100%;
+    }
+
+
+     /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 24px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 100%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
+    }
+
+    /*---  ESCONDE O FORMULARO DE BUSCA DO MENU ------------*/
+    #div-form-header{
+        display: none;
+    }
+
+    /*---------------- LOGO HEADER -----------*/
+    #logo-header{
+        width: 80px;
     }
 }
 
@@ -518,6 +638,37 @@ form .btn-danger:hover{
         margin-left: 28px;
     }
 
+     /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 24px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 100%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
+    }
+
+    /*---  ESCONDE O FORMULARO DE BUSCA DO MENU ------------*/
+    #div-form-header{
+        display: none;
+    }
+
+    /*---------------- LOGO HEADER -----------*/
+    #logo-header{
+        width: 80px;
+    }
+
     
 }
 
@@ -541,6 +692,32 @@ form .btn-danger:hover{
     #form-menu-header input{
         width: 100%;
     }
+
+     /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 24px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 100%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
+    }
+
+    /*---  ESCONDE O FORMULARO DE BUSCA DO MENU ------------*/
+    #div-form-header{
+        display: none;
+    }
 }
 
 @media(max-width: 800px){
@@ -548,12 +725,54 @@ form .btn-danger:hover{
     #form-menu-header input{
         width: 100%;
     }
+
+     /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 24px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 100%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
+    }
 }
 
 @media(max-width: 1200px){
     
     #form-menu-header input{
         width: 100%;
+    }
+
+     /*--------------------ICONE DE USUARIO LOGIN---------------------------*/
+    #icon-user-login{
+        width: 100%;
+    }
+
+    #icon-user-login span{
+        font-size: 48px;
+        color: #8B008B;
+    }
+
+    /*----------------- MENU DE LOGIN ------------------*/
+    #form-login{
+        width: 50%;
+        margin: auto;
+        padding: 20px 30px;
+    }
+
+    #form-login button[type=submit]{
+        margin-right: 20px;
     }
 }
 

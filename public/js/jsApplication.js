@@ -909,6 +909,23 @@ function loadCategoria(obj, request, func)
 
 
   })
+//--------------------------- TABELA DE ESTOQUE BAIXO ------------------------------------
+
+$('html').delegate('#optionPlus a#estoque-baixo', 'click', function(event){
+  event.preventDefault();
+  let url = $(this).attr('href');
+
+  $.ajax({
+    type: 'POST',
+    url:url,
+    data:true,
+    dataType: 'HTML',
+    success: function(retorno){
+      $('#dinamic').html(retorno);
+    }
+  });
+})
+
 //--------------------------- EDITAR ESTOQUE ------------------------------------
 
 $('#dinamic').delegate('#tableProdutos tbody a', 'click', function(event){

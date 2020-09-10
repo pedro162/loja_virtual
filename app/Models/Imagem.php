@@ -18,6 +18,7 @@ class Imagem extends BaseModel
 	private $dataUpload;
 	private $idUsuario;
     private $idImagem;
+    private $tipo;
 
 
     protected function parseCommit()
@@ -98,6 +99,8 @@ class Imagem extends BaseModel
 
             return true;
         }
+
+        return false;
         
     }
 
@@ -113,6 +116,20 @@ class Imagem extends BaseModel
         throw new Exception('Parametro inválido<br/>'.PHP_EOL);
     }
 
+    public function getTipo()
+    {
+
+        if((!isset($this->tipo)) || (strlen($this->tipo) == 0)){
+
+            if(isset($this->data['tipo']) && (strlen($this->data['tipo']) > 0)){
+                return $this->data['tipo'];
+            }
+           
+            throw new Exception("Pripriedade não defindida<br/>");
+        }
+        return $this->tipo;
+
+    }
 
     public function getProdutoIdProduto()
     {

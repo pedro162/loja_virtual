@@ -869,10 +869,10 @@ class Fornecimento extends BaseModel
             
              $sql = 'select PC.CategoriaIdCategoria as idCategoria, P.nomeProduto As produtoNome ,P.idProduto, ';
              $sql .= ' P.altura ,P.largura, P.comprimento, P.textoPromorcional As texto, Img.url, ';
-             $sql .= ' F.vlVenda from Fornecimento as F inner join Produto as P on ';
+             $sql .= ' F.vlVenda, F.qtdFornecida, F.qtdVendida  from Fornecimento as F inner join Produto as P on ';
              $sql .= ' F.ProdutoIdProduto = P.idProduto inner join Imagem as Img on Img.ProdutoIdProduto = P.idProduto ';
              $sql .= ' inner join ProdutoCategoria as PC on PC.ProdutoIdProduto = P.idProduto ';
-             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) > 0 and Img.tipo = \'primaria\' and PC.classificCateg = \'primaria\' and F.ProdutoIdProduto='.$idProduto;
+             $sql .=' WHERE F.ativo = 1 and (F.qtdFornecida - F.qtdVendida) >= 0 and Img.tipo = \'primaria\' and PC.classificCateg = \'primaria\' and F.ProdutoIdProduto='.$idProduto;
 
              $result = $this->persolizaConsulta($sql, $clasRetorno);
              if($result != false){
@@ -1002,28 +1002,33 @@ class Fornecimento extends BaseModel
         throw new Exception('Parâmetro inválido<br/>'.PHP_EOL);
     }
     
-    public function monitoraEstoque()
+    public function monitoraEstoque($array=true)
     {
             $where = 'F.ativo=1 and (F.qtdFornecida - F.qtdVendida <= '.self::ESTOQUEBAIXO.')';
 
             $result = $this->listarConsultaPersonalizada($where,NULL, NULL, true);
 
-            $arrItens = ['qtdItens' =>count($result)];
+            if($array == true){
 
-            $arrItens['itens'] = [];
-            for ($i=0; !($i == count($result)) ; $i++) { 
-                $subArr = [
-                    'idFornecimento'    =>  $result[$i]->getIdFornecimento(),
-                    'qtdFornecida'      =>  $result[$i]->getQtdFornecida(),
-                    'qtdVendida'        =>  $result[$i]->getQtdVendida(),
-                    'idProduto'         =>  $result[$i]->getProdutoIdProduto(),
-                    'produtoNome'       =>  $result[$i]->getProdutoNome()
+                $arrItens = ['qtdItens' =>count($result)];
 
-                        ];
+                $arrItens['itens'] = [];
+                for ($i=0; !($i == count($result)) ; $i++) { 
+                    $subArr = [
+                        'idFornecimento'    =>  $result[$i]->getIdFornecimento(),
+                        'qtdFornecida'      =>  $result[$i]->getQtdFornecida(),
+                        'qtdVendida'        =>  $result[$i]->getQtdVendida(),
+                        'idProduto'         =>  $result[$i]->getProdutoIdProduto(),
+                        'produtoNome'       =>  $result[$i]->getProdutoNome()
+
+                            ];
                 $arrItens['itens'][] = $subArr;
             }
 
             return $arrItens;
+        }
+
+        return $result;
     }
 
     public function getDetalhesPedido()

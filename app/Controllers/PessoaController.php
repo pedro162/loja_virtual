@@ -412,8 +412,8 @@ class PessoaController extends BaseController
             $pessoa = new Pessoa();
             $pessoa->setNomePessoa($dados['nome']);
             $pessoa->setLogin($dados['login']);
-            $pessoa->setDocumento($dados['documento']);
-            $pessoa->setDocumentoComplementar($dados['documento_complementar']);
+            $pessoa->setDocumento(Utils::clearMask($dados['documento']));
+            $pessoa->setDocumentoComplementar(Utils::clearMask($dados['documento_complementar']));
             $pessoa->setNomeComplementar($dados['nome_complementar']);
             $pessoa->setSenha($dados['senha']);
 
@@ -532,8 +532,8 @@ class PessoaController extends BaseController
 
             $resultPessoa->setNomePessoa($dados['nome']);
             $resultPessoa->setLogin($dados['login']);
-            $resultPessoa->setDocumento($dados['documento']);
-            $resultPessoa->setDocumentoComplementar($dados['documento_complementar']);
+            $resultPessoa->setDocumento(Utils::clearMask($dados['documento']));
+            $resultPessoa->setDocumentoComplementar(Utils::clearMask($dados['documento_complementar']));
             $resultPessoa->setNomeComplementar($dados['nome_complementar']);
 
             if(isset($dados['senha']) && (strlen($dados['senha']) > 0)){

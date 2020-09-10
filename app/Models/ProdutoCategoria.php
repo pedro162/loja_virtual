@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use App\Models\Categoria;
 use \Core\Database\Commit;
 use \Core\Database\Transaction;
 use \Exception;
@@ -24,10 +25,14 @@ class ProdutoCategoria extends BaseModel
 
     protected function parseCommit()
     {   
-        $this->data['ProdutoIdProduto']          = $this->ProdutoIdProduto;
-        $this->data['CategoriaIdCategoria']      = $this->CategoriaIdCategoria;
-
-        return $this->data;
+        $arrayPase = [];
+        for ($i=0; !($i == count($this->columns())) ; $i++) { 
+            $chave = $this->columns()[$i]->Field;
+            if(array_key_exists($chave, $this->data)){
+                $arrayPase[$chave] = $this->data[$chave];
+            }
+        }
+        return $arrayPase;
 
     }
     protected function clear(array $dados)
@@ -40,7 +45,7 @@ class ProdutoCategoria extends BaseModel
         }
 
         foreach ($dados as $key => $value) {
-            
+
             switch ($key) {
                 case 'idProduto':
                    $this->setIdProduto($value);
@@ -57,10 +62,21 @@ class ProdutoCategoria extends BaseModel
         }
     }
 
+    public function categoria()
+    {
+        $categoria = new Categoria();
+        $result = $categoria->selectNew(['*'], 
+        [
+            ['key'=>'idCategoria', 'val'=> $this->CategoriaIdCategoria, 'comparator'=>'=']
+        ], null, 1, null, true, false);
+
+        return $result;
+    }
+
     public function setIdCategoria(Int $id):bool
     {   
         if($id > 0){
-            $this->CategoriaIdCategoria = $id;//faltar validar
+            $this->data['CategoriaIdCategoria'] = $id;//faltar validar
             return true;
         }
         throw new Exception("Propriedade inválida<br/>\\n");
@@ -76,7 +92,7 @@ class ProdutoCategoria extends BaseModel
     public function setIdProduto(Int $id):bool
     {
         if($id > 0){
-            $this->ProdutoIdProduto = $id;//faltar validar
+            $this->data['ProdutoIdProduto'] = $id;//faltar validar
             return true;
         }
         throw new Exception("Propriedade inválida<br/>\\n");
@@ -98,6 +114,7 @@ class ProdutoCategoria extends BaseModel
         $this->clear($dados);
 
         $result = $this->parseCommit();
+        var_dump($result);
         
         return $this->insert($result);
     }
@@ -123,6 +140,15 @@ class ProdutoCategoria extends BaseModel
         if(($this->idCategoria > 0) && (isset($this->idCategoria))){
              
             return $this->idCategoria;
+        }
+        throw new Exception("Propriedade não definida<br/>\\n");
+    }
+
+    public function getIdProdutoCategoria()
+    {
+        if((isset($this->idProdutoCategoria)) && ($this->idProdutoCategoria > 0)){
+             
+            return $this->idProdutoCategoria;
         }
         throw new Exception("Propriedade não definida<br/>\\n");
     }

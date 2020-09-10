@@ -127,6 +127,10 @@ class PedidoController extends BaseController
 
             $saldoEstoque = $pedidoLoaded->getQtdFornecida() - $pedidoLoaded->getQtdVendida();
 
+            if($saldoEstoque == 0){
+                throw new Exception('Produto sem estoque');
+            }
+
             $qtdInSession = Sessoes::getQtdElement($id);
 
             if(($saldoEstoque < ($qtdInSession + $qtd)) && ($remove == false)){
@@ -795,6 +799,8 @@ class PedidoController extends BaseController
 
             $fornecimento = new Fornecimento();
             $resultFornce = $fornecimento->loadFornecimentoForIdProduto($idProduto, true);
+            //pega o saldo em estoque
+            $qtdSaldo = $resultFornce->getQtdFornecida() - $resultFornce->getQtdVendida();
 
             $categorias = $resultProduto->produtoCategoria();
             
@@ -847,6 +853,7 @@ class PedidoController extends BaseController
 
             $this->view->usuario = $usuario;
             $this->view->percent = ($media * 20).'%';//determina a porcentagem da estrela de like
+            $this->view->qtdSaldo = $qtdSaldo;
             $this->view->idProduto = $idProduto;
             $this->view->comentarios = $comentarios;
             $this->view->imagensProduto = $imagensProduto;

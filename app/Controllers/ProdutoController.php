@@ -7,7 +7,7 @@ use \Core\Database\Transaction;
 use App\Models\Produto;
 use App\Models\Fabricante;
 use App\Models\Cliente;
-use Core\Containner\File;
+use Core\Utilitarios\File;
 use App\Models\Venda;
 use App\Models\Categoria;
 use App\Models\Marca;
@@ -266,13 +266,8 @@ class ProdutoController extends BaseController
 
             )[0];
             
-            $imagem = __DIR__.'/../../public/files/imagens/'.$result->getImagem()[0]->getUrl();
-            if(file_exists($imagem)){
-                $this->view->imgProduto = '<img style="width: 253px; height: 232px" id="img" src="../files/imagens/'.$result->getImagem()[0]->getUrl().'" />';
-            }else{
-                $this->view->imgProduto = '<img style="width: 253px; height: 232px" id="img" src=""/>';
-            }
-
+            
+            $this->view->imgProduto = $result->getImagem();
             $this->view->categoriaProduto = $result->getCategoria();
             
             $this->view->result = $result;
@@ -497,19 +492,15 @@ class ProdutoController extends BaseController
             set_time_limit(0);
             
             Transaction::startTransaction('connection');
-            $produto = new Produto();
-
-            $imagem = new Imagem();
-            $urlImagem = $imagem->select(['url'], ['ProdutoIdProduto'=>$request['post']['prod']], '=','asc', null, null,true);
-            if($urlImagem == false){
-                die();//falta implemtar testando
+           
+            if(!isset($request['post'])){
+                throw new \Exception("Preencha o formulario corretament\n");
+                
             }
 
-            $extenImg = null;
+
             $nameImg = null;
-
-            $beforeExtension = null;
-
+            //verifica se as imagens foram enviadas
             if(isset($request['file']) && (count($request['file']) == 4) ){
                 foreach ($request['file'] as $key => $value) {
                     if(isset($value['name']) && (strlen($value['name']) > 0)){
@@ -518,7 +509,13 @@ class ProdutoController extends BaseController
                         $beforeExtension = $arrNameExtension[0]; 
 
                         $extenImg = strtolower($arrNameExtension[1]);
-                        $nameImg = strtolower($request['post']['nome']).'.'.$extenImg;
+                        
+                        if((!isset($request['post']['nome'])) || (strlen(trim($request['post']['nome'])) == 0)){
+                            throw new \Exception("Preencha o formulario corretamente\n");
+                            
+                        }
+
+                        $nameImg = strtolower(trim($request['post']['nome'])).'.'.$extenImg;
                         $nameImg = str_replace([' ','_'], ['', ''], $nameImg);
 
                         $request['post']['img'][$key] = $nameImg;
@@ -531,7 +528,14 @@ class ProdutoController extends BaseController
                 throw new \Exception("Adicione as imagens\n");
             }
 
-            foreach ($request['file'] as $key => $value) {
+
+            $produto = new Produto();
+            $produtoLoaded = $produto->findForId((int) $request['post']['prod']);
+
+            $resultPoduto = $produtoLoaded->modify($request['post']);
+
+            if($resultPoduto != false){
+                foreach ($request['file'] as $key => $value) {
 
                     $tipo = null;
                     switch (trim($key)) {
@@ -549,28 +553,19 @@ class ProdutoController extends BaseController
                             break;
                     }
 
+                    $newNameImg = $tipo.'-'.$nameImg;
 
                     if($tipo != null){
-
-
-                        $fiile = new File($tipo.'_'.$nameImg, $value['size'], $value['tmp_name']);
-
-                        $resultUnlink = unlink($nameImg);
+                        $fiile = new File($newNameImg, $value['size'], $value['tmp_name']);
 
                         $fiile->salvar('imagens', true);
                     }
-                
+                    
+                }
             }
 
-            
-            /*$fiile = new File($tipo.'_'.$nameImg, $value['size'], $value['tmp_name']);
 
-                        $resultUnlink = unlink($nameImg);
-
-                        $fiile->salvar('imagens', true);*/
-
-
-            $this->view->result = json_encode($result);
+            $this->view->result = json_encode($resultPoduto);
 
             $this->render('produtos/ajaxPainelAdmin', false);
 
@@ -579,6 +574,9 @@ class ProdutoController extends BaseController
         }catch (\PDOException $e) {
 
             Transaction::rollback();
+            $erro = ['msg','warning', $e->getMessage().' - linha: '.$e->getLine().' - arquivo: '.$e->getFile()];
+            $this->view->result = json_encode($erro);
+            $this->render('produtos/ajaxPainelAdmin', false);
 
         } catch (\Exception $e) {
 

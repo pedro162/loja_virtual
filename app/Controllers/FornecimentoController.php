@@ -11,6 +11,7 @@ use \App\Models\Pessoa;
 use \Core\Utilitarios\Utils;
 use \App\Models\ProdutoCategoria;
 use \App\Models\Venda;
+use Core\Utilitarios\Sessoes;
 
 class FornecimentoController extends BaseController
 {
@@ -18,6 +19,15 @@ class FornecimentoController extends BaseController
     public function salvar($request)
     {
         try{
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
             Transaction::startTransaction('connection');
 
             $fornecimento = new Fornecimento();
@@ -163,6 +173,45 @@ class FornecimentoController extends BaseController
         } catch (\Exception $e) {
             Transaction::rollback();
             echo $e->getMessage().'-'.$e>getFile();
+        }
+    }
+
+    public function baixo($request)
+    {   
+        try{
+
+            Sessoes::sessionInit();//inicia a sessao
+
+            //busca o usuario logado
+            $usuario = Sessoes::usuarioLoad('user_admin');
+            if($usuario == false){
+                header('Location:/usuario/index');
+                
+            }
+
+            Transaction::startTransaction('connection');
+
+            if(!isset($request['post'])){
+                throw new \Exception("Propriedade indefinida<br/>");
+                
+            }
+
+            $fornecimento  = new Fornecimento();
+
+            $result = $fornecimento->monitoraEstoque(false);
+           
+            $this->view->result = $result;
+            $this->render('fornecimento/estoqueBaixo', false);
+
+            Transaction::close();
+
+        }catch (\PDOException $e) {
+
+            Transaction::rollback();
+
+        } catch (\Exception $e) {
+            Transaction::rollback();
+            echo $e->getMessage();
         }
     }
 

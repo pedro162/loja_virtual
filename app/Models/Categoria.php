@@ -133,7 +133,7 @@ class Categoria extends BaseModel
 
     
 
-    public function getCategoria()
+    public function getNomeCategoria()
     {
     	if(empty($this->nomeCategoria)){
     		throw new Exception("Pripriedade não defindida<br/>");

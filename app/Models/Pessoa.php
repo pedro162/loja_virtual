@@ -452,8 +452,8 @@ class Pessoa extends BaseModel
 
     public function setDocumentoComplementar(String $documento):bool
     {
-        if((!isset($documento)) || (strlen($documento) != 13)){
-            throw new Exception("O RG deve ter 13 caracteres.");
+        if((!isset($documento)) || (strlen($documento) != 10)){
+            throw new Exception("O RG deve ter 10 caracteres.");
         }
 
        $this->data['documentoComplementar'] = $documento;
