@@ -192,4 +192,42 @@ class Sessoes
     	}
     	return $_SESSION;
     }
+
+    public static function sendMessage(Array $msg)
+    {
+    	if((!isset($msg)) || (count($msg) == 0)){
+    		throw new \Exception('Parâmetro inválido');
+    		
+    	}
+    	self::sessionInit();
+    	if(! array_key_exists('msg', $_SESSION)){
+    		$_SESSION['msg'] = $msg;
+
+    		return true;
+    	}
+
+    	$_SESSION['msg'] = $msg;
+    	return true;
+
+    }
+
+    public static function getMessage()
+    {	
+    	self::sessionInit();
+
+    	if((array_key_exists('msg', $_SESSION)) && (is_array($_SESSION['msg']))  && (count($_SESSION['msg']) > 0 )){
+    		return $_SESSION['msg'];
+    	}
+    	return false;
+    }
+
+    public static function clearMessage(){
+    	self::sessionInit();
+    	
+    	if((array_key_exists('msg', $_SESSION)) && (is_array($_SESSION['msg']))  && (count($_SESSION['msg']) > 0 )){
+    		unset($_SESSION['msg']);
+    		return true;
+    	}
+    	return false;
+    }
 }

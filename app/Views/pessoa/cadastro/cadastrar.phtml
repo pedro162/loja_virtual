@@ -1,13 +1,13 @@
 <div class="row" style="background-color: #fff; width: 100%;  margin: auto;" align="left">
 	<form method="post" id="cadastro-pessoa" action="/pessoa/salvar" enctype="multipart/form-data" style="margin: auto; width: 80%;">
 		<div class="row">
-			<div class="col">
+			<div class="col-md-6 col-sm-12">
 				<div class="form-group">
 					<label for="nome">Nome</label>
 					<input type="text" minlength="3" maxlength="200" name="nome" id="nome" class="form-control form-control-sm" placeholder="Seu primeiro nome" required="required">
 				</div>
 			</div>
-			<div class="col">
+			<div class="col-md-6 col-sm-12">
 				<div class="form-group">
 					<label for="nome_complementar">Sobrenome</label>
 					<input type="text" name="nome_complementar" id="nome_complementar" minlength="3" maxlength="200" class="form-control form-control-sm" placeholder="Seu segundo nome"  required="required">
@@ -16,19 +16,19 @@
 			
 		</div>
 		<div class="row">
-			<div class="col">
+			<div class="col-md-4 col-sm-12">
 				<div class="form-group">
 					<label for="documento">Cpf</label>
 					<input type="text" placeholder="000.000.000-00" name="documento" id="documento"  maxlength="14" class="form-control form-control-sm" required="required">
 				</div>
 			</div>
-			<div class="col">
+			<div class="col-md-4 col-sm-12">
 				<div class="form-group">
 					<label for="documento_complementar">RG</label>
 					<input type="text" name="documento_complementar" id="documento_complementar" placeholder="000.000.000-0" maxlength="13" class="form-control form-control-sm" required="required">
 				</div>
 			</div>
-			<div class="col">
+			<div class="col-md-4 col-sm-12">
 				<div class="form-group">
 					<label for="sexo">Sexo</label>
 					<select name="sexo" id="sexo" class="form-control form-control-sm" required="required">
@@ -39,19 +39,19 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
+			<div class="col-md-4 col-sm-12">
 				<div class="form-group">
 					<label for="img">Imagem</label>
 					<input type="file" name="img" id="img" class="form-control form-control-sm">
 				</div>
 			</div>
-			<div class="col">
+			<div class="col-md-4 col-sm-12">
 				<div class="form-group">
 					<label for="login">Email</label>
 					<input type="email" required="required" placeholder="exemplo@gmail.com" name="login" id="" class="form-control form-control-sm" minlength="12" maxlength="100">
 				</div>
 			</div>
-			<div class="col">
+			<div class="col-md-4 col-sm-12">
 				<div class="form-group">
 					<label for="senha">Senha</label>
 					<input type="text" required="required" name="senha" placeholder="Senha com pelomenos 9 dígitos" minlength="9" maxlength="12" id="senha" class="form-control form-control-sm">
@@ -59,7 +59,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col" align="left">
+			<div class="col py-2" align="left">
 				<button type="submit" class="btn btn-sm btn-primary">Cadastrar</button>
 				<a align='right' href="/" id="cancelar" class="btn btn-sm btn-danger">Cancelar</a>
 			</div>

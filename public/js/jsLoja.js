@@ -174,8 +174,8 @@ $('#containerLoja, body').delegate('.link-produto', 'click', function(e){
 
       //gera o efeito zoo da imagem.
       $('.img-produto').elevateZoom({
-            //responsive:true,
-            //zoomType: 'lens',
+            responsive:true,
+            zoomType: 'inner',//lens
             cursor:'crosshair',
             scrollZoom:true,
             gallery:'gali',

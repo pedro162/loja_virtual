@@ -623,14 +623,14 @@ class Pessoa extends BaseModel
         $result = $this->select(['*'], ['login' => $user], '=', 'asc', null, null, true, false);
 
         if($result == false){
-            throw new Exception("Usuario o senha inválidos\n");
+            throw new Exception("Usuario ou senha inválidos\n");
         }
 
         if (($result[0]->getLogin() === $user) && ($result[0]->getSenha() === $pass)) {
             return $result[0];
         }
 
-        throw new Exception("Usuario o senha inválidos\n");
+        throw new Exception("Usuario ou senha inválidos\n");
 
         
     }

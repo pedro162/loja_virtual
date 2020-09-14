@@ -211,13 +211,14 @@ class HomeController extends BaseController
     {
         try {
             
-            Sessoes::sessionEnde();
-
             Transaction::startTransaction('connection');
             
             $this->render('home/loginInit', false);
 
             Transaction::close();
+            
+            Sessoes::sessionEnde();
+
 
         }catch (\PDOException $e) {
 
@@ -257,8 +258,8 @@ class HomeController extends BaseController
             Transaction::rollback();
 
             $erro = ['msg','warning', $e->getMessage()];
-            $this->view->result = json_encode($erro);
-            $this->render('home/ajax', false);
+            Sessoes::sendMessage($erro);
+            header('Location:/home/init');
         }
         
         

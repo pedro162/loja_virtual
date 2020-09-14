@@ -8,19 +8,19 @@
 			<form method="post" id="cadastro-logradouro-editar" action="/logradouro/atualizar" enctype="multipart/form-data" style="margin: auto; width: 80%;">
 				<input type="hidden" name="cod" value="<?=$this->view->logradouro->getIdLogradouro();?>">
 				<div class="row">
-					<div class="col">
+					<div class="col-md-4 col-sm-12">
 						<div class="form-group">
 							<label for="cep">Cep</label>
 							<input type="text"  minlength="8" maxlength="8"  name="cep" id="cep" class="form-control form-control-sm" value="<?=$this->view->logradouro->getCep();?>">
 						</div>
 					</div>
-					<div class="col">
+					<div class="col-md-4 col-sm-12">
 						<div class="form-group">
 							<label for="endereco">Endereço</label>
 							<input type="text" name="endereco" id="endereco" class="form-control form-control-sm" value="<?=$this->view->logradouro->getEndereco();?>">
 						</div>
 					</div>
-					<div class="col">
+					<div class="col-md-4 col-sm-12">
 						<div class="form-group">
 							<label for="bairro">Bairro</label>
 							<input type="text" name="bairro" id="bairro" class="form-control form-control-sm" value="<?=$this->view->logradouro->getBairro();?>">
@@ -28,13 +28,13 @@
 					</div>			
 				</div>
 				<div class="row">
-					<div class="col">
+					<div class="col-md-4 col-sm-12">
 						<div class="form-group">
 							<label for="complemento">Complemento</label>
 							<input type="text" name="complemento" id="complemento" class="form-control form-control-sm" value="<?=$this->view->logradouro->getComplemento();?>">
 						</div>
 					</div>
-					<div class="col">
+					<div class="col-md-4 col-sm-12">
 						<div class="form-group">
 							<label for="tipo">Tipo</label>
 							<select class="form-control form-control-sm"  name="tipo" id="tipo">
@@ -44,7 +44,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="col">
+					<div class="col-md-4 col-sm-12">
 						<div class="form-group">
 							<label for="cidade">Cidade</label>
 							<select class="form-control form-control-sm"  name="cidade" id="cidade">
